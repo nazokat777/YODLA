@@ -22,6 +22,18 @@ describe.each(LANGUAGES)('%s to‘plami', (language) => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
+  it('ikki so‘zning tarjimasi bir xil emas', () => {
+    // Mashq generatori chalg'ituvchi variantlarni shu tildagi boshqa
+    // so'zlardan oladi. Ikki so'z bir xil tarjimaga ega bo'lsa, savolda
+    // ikkita "to'g'ri" variant paydo bo'lardi.
+    const translations = all.map((card) => card.translation)
+    const duplicates = translations.filter(
+      (value, index) => translations.indexOf(value) !== index,
+    )
+
+    expect(duplicates).toEqual([])
+  })
+
   it('majburiy maydonlar to‘ldirilgan', () => {
     all.forEach((card) => {
       expect(card.word.trim()).not.toBe('')
