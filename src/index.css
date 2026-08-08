@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   PolyglotPro — global dizayn tokenlari
+   Mobil-birinchi (mobile-first) yondashuv.
+   ============================================================ */
+
+@theme {
+  /* Brend ranglari — Duolingo uslubidagi yorqin, do'stona palitra */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-300: #6ee7b7;
+  --color-brand-500: #10b981; /* asosiy yashil — to'g'ri javob */
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+
+  --color-flame-500: #f59e0b; /* streak olovi */
+  --color-flame-600: #d97706;
+
+  --color-wrong-500: #ef4444; /* xato javob */
+  --color-wrong-600: #dc2626;
+
+  --color-ink-900: #0f172a; /* asosiy matn */
+  --color-ink-600: #475569; /* ikkilamchi matn */
+  --color-ink-300: #cbd5e1; /* chegaralar */
+
+  /* Shriftlar: arab yozuvi uchun alohida zaxira shriftlar */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-arabic: 'Noto Naskh Arabic', 'Amiri', 'Traditional Arabic', serif;
+}
+
+/* ---------- Asosiy sozlamalar ---------- */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-ink-900 antialiased;
+  /* Mobil qurilmada ikki marta bosganda zumlanishning oldini olish */
+  touch-action: manipulation;
+  /* iOS'da "safe area" (notch) hisobga olinadi */
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- RTL (arab tili) qo'llab-quvvatlash ---------- */
+
+/* dir="rtl" elementlari ichida yo'nalishga bog'liq bo'shliqlar avtomatik
+   ishlashi uchun logik utilitalardan foydalaning:
+   ms-* / me-* / ps-* / pe-* / text-start / text-end */
+[dir='rtl'] {
+  font-family: var(--font-arabic);
+}
+
+/* ---------- Yordamchi utilitalar ---------- */
+
+@utility tap-highlight-none {
+  -webkit-tap-highlight-color: transparent;
+}
