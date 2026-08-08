@@ -39,6 +39,9 @@ export function OnboardingScreen() {
         <p className="mt-2 text-sm text-ink-600">
           Kuniga 5 daqiqa — va so'zlar o'zi esda qoladi.
         </p>
+        <p className="mt-1 text-xs text-ink-600">
+          Bittadan boshlang — keyin Profil orqali boshqa til ham qo'shsangiz bo'ladi.
+        </p>
       </div>
 
       <ul className="flex flex-col gap-3">

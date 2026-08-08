@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { PhaseNotice } from '@/components/ui/PhaseNotice'
@@ -72,6 +73,10 @@ export function HomeScreen() {
           <span className="sr-only">kunlik streak</span>
         </div>
       </header>
+
+      {/* Til almashtirgich: har til alohida progress bilan — istalgan payt
+          o'tish mumkin, so'zlar yo'qolmaydi */}
+      <LanguageSwitcher />
 
       {/* Daraja va XP */}
       {level && (
