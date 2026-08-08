@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, type CardRecord } from '@/core/db'
+import { pickLessonCards } from '@/core/lesson/order'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -39,14 +40,9 @@ export function LessonScreen() {
       .then((all) => {
         if (cancelled) return
 
-        // Avval yangi so'zlar, keyin eng kam mustahkamlanganlari
-        const sorted = [...all].sort((a, b) => {
-          if (a.totalReviews !== b.totalReviews) return a.totalReviews - b.totalReviews
-          return a.interval - b.interval
-        })
-
         setPool(all)
-        setCards(sorted.slice(0, LESSON_SIZE))
+        // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
+        setCards(pickLessonCards(all, LESSON_SIZE))
       })
       .catch((error: unknown) => {
         console.error('Darsni yuklab bo‘lmadi:', error)
