@@ -26,6 +26,7 @@ npm run lint       # oxlint
 | Routing  | React Router v7               |
 | Testlar  | Vitest + Testing Library      |
 | Audio    | Web Speech API (Faza 5)       |
+| PWA      | Manifest + qo'lda yozilgan service worker (Faza 7) |
 
 ## Papka strukturasi
 
@@ -314,6 +315,31 @@ uchun ham ochiladi.
 
 > Geymifikatsiya yozuvi o'z xatosini o'zi yutadi: XP yozilmasa ham
 > takrorlash progressi (SRS) saqlanib qoladi. Ular alohida tranzaksiyalarda.
+
+## Offline rejim (PWA)
+
+Ilova telefonga o'rnatiladi va internetsiz ishlaydi — kontent ham,
+progress ham allaqachon qurilmada (IndexedDB), tarmoqdan faqat ilova
+qobig'i kerak edi.
+
+[public/sw.js](public/sw.js) ikki strategiyani ishlatadi:
+
+| So'rov | Strategiya | Sabab |
+| ------ | ---------- | ----- |
+| Navigatsiya (HTML) | Avval tarmoq | Yangi versiya darhol ko'rinadi; internetsiz keshdagi nusxa beriladi |
+| `/assets/*` | Avval kesh | Fayl nomlari hash bilan — mazmuni o'zgarmaydi |
+
+Precache ro'yxati **ataylab yo'q**: Vite fayl nomlarini har build'da
+o'zgartiradi, qo'lda yozilgan ro'yxat esa eskirib qolardi.
+
+Ikonkalar [scripts/make-icons.mjs](scripts/make-icons.mjs) bilan yasaladi —
+rasm kutubxonasisiz, Node'ning ichki `zlib` moduli orqali (`node
+scripts/make-icons.mjs`). Natija repoga commit qilinadi.
+
+> Service worker unit test bilan qoplanmagan: `caches` va `fetch`
+> hodisalari jsdom'da mavjud emas. U brauzerda tekshiriladi —
+> DevTools → Application → Service Workers, so'ng Network → Offline
+> bilan sahifani qayta yuklash.
 
 ## Vaqt va reaktivlik haqida bitta tuzoq
 
