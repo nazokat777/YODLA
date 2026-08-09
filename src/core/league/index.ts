@@ -2,3 +2,4 @@
 export * from './tier'
 export * from './rank'
 export * from './code'
+export * from './friends'

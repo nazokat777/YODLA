@@ -2,10 +2,19 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Mascot } from '@/components/ui/Mascot'
 import { Panel } from '@/components/ui/Panel'
-import { leagueTier, rankEntries, tierTitle, type LeagueRow } from '@/core/league'
+import {
+  buildInviteUrl,
+  filterFriends,
+  leagueTier,
+  normalizeCode,
+  rankEntries,
+  tierTitle,
+  type LeagueRow,
+} from '@/core/league'
 import { getDailyStatsSince } from '@/core/db'
 import { buildWeeklySeries } from '@/core/stats'
-import { fetchWeeklyLeague, isCloudEnabled } from '@/lib/supabase'
+import { addFriend, fetchFriendCodes, fetchWeeklyLeague, isCloudEnabled } from '@/lib/supabase'
+import { useSearchParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
@@ -81,6 +90,15 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
   const [rows, setRows] = useState<LeagueRow[] | null>(null)
   const [isLoading, setIsLoading] = useState(isCloudEnabled())
+  const [friendCodes, setFriendCodes] = useState<string[]>([])
+  const [view, setView] = useState<'all' | 'friends'>('all')
+
+  // Taklif havolasi (`?add=KOD`) maydonni TO'LDIRADI, lekin o'zi
+  // qo'shmaydi: havolani bosgan odam bilmagan holda kimnidir kuzata
+  // boshlamasligi kerak
+  const [searchParams] = useSearchParams()
+  const [codeInput, setCodeInput] = useState(() => searchParams.get('add') ?? '')
+  const [addMessage, setAddMessage] = useState<string | null>(null)
 
   // O'z haftalik XP'im lokal statistikadan — bulut yo'q bo'lsa ham ko'rinadi
   const myWeeklyXp = useMemo(() => {
@@ -100,12 +118,58 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
       setIsLoading(false)
     })
 
+    void fetchFriendCodes(myCode).then((codes) => {
+      if (!cancelled) setFriendCodes(codes)
+    })
+
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [myCode])
 
-  const ranked = useMemo(() => rankEntries(rows ?? [], myCode), [rows, myCode])
+  const visibleRows = useMemo(() => {
+    const all = rows ?? []
+    return view === 'friends' ? filterFriends(all, myCode, friendCodes) : all
+  }, [rows, view, myCode, friendCodes])
+
+  const ranked = useMemo(() => rankEntries(visibleRows, myCode), [visibleRows, myCode])
+
+  async function handleAddFriend() {
+    const code = normalizeCode(codeInput)
+
+    if (!code) {
+      setAddMessage('Kod 6 belgidan iborat bo‘lishi kerak')
+      return
+    }
+    if (code === myCode) {
+      setAddMessage('Bu sizning kodingiz')
+      return
+    }
+
+    const added = await addFriend(myCode, code)
+    setAddMessage(added ? 'Do‘st qo‘shildi' : 'Qo‘shib bo‘lmadi — internetni tekshiring')
+
+    if (added) {
+      setFriendCodes((current) => [...new Set([...current, code])])
+      setCodeInput('')
+    }
+  }
+
+  async function handleInvite() {
+    const url = buildInviteUrl(window.location.origin, myCode)
+    const text = `YODLA'da til o‘rganamiz! Kodim: ${myCode}`
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'YODLA', text, url })
+        return
+      }
+      await navigator.clipboard.writeText(`${text} ${url}`)
+      setAddMessage('Havola nusxalandi')
+    } catch {
+      // Foydalanuvchi bekor qilishi mumkin — bu xato emas
+    }
+  }
   const tier = leagueTier(myWeeklyXp)
 
   return (
@@ -144,6 +208,28 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
         </Panel>
       )}
 
+      {/* Ko'rinish almashtirgich */}
+      <div
+        role="group"
+        aria-label="Reyting ko'rinishi"
+        className="flex gap-1 rounded-2xl border-2 border-ink-300 bg-white p-1"
+      >
+        {(['all', 'friends'] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => setView(option)}
+            aria-pressed={view === option}
+            className={cn(
+              'tap-highlight-none flex-1 rounded-xl px-2 py-2 text-sm font-bold transition-colors',
+              view === option ? 'bg-brand-500 text-white' : 'text-ink-600 hover:bg-brand-50',
+            )}
+          >
+            {option === 'all' ? 'Hammasi' : "Do'stlar"}
+          </button>
+        ))}
+      </div>
+
       {ranked.length > 0 && (
         <section>
           <h2 className="mb-2 font-bold">Haftalik reyting</h2>
@@ -165,11 +251,47 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
           {ranked.length === 1 && (
             <p className="mt-2 text-xs text-ink-600">
-              Hozircha ligada 1 kishi — havolani do'stlaringizga yuboring.
+              {view === 'friends'
+                ? "Hali do'st qo'shmadingiz. Kodingizni ulashing yoki do'stingiz kodini kiriting."
+                : "Hozircha ligada 1 kishi — havolani do'stlaringizga yuboring."}
             </p>
           )}
         </section>
       )}
+
+      <Panel className="flex flex-col gap-3">
+        <h2 className="font-bold">Do'st qo'shish</h2>
+
+        <label htmlFor="friend-code" className="text-sm text-ink-600">
+          Do'stingizning kodi
+        </label>
+        <div className="flex gap-2">
+          <input
+            id="friend-code"
+            type="text"
+            value={codeInput}
+            onChange={(event) => setCodeInput(event.target.value)}
+            maxLength={8}
+            placeholder="Masalan: N2NAWS"
+            autoComplete="off"
+            autoCapitalize="characters"
+            className="h-12 flex-1 rounded-xl border-2 border-ink-300 bg-white px-3 uppercase focus:border-brand-500 focus:outline-none"
+          />
+          <Button onClick={() => void handleAddFriend()} disabled={codeInput.trim().length === 0}>
+            Qo'shish
+          </Button>
+        </div>
+
+        {addMessage && (
+          <p role="status" className="text-sm font-semibold text-brand-700">
+            {addMessage}
+          </p>
+        )}
+
+        <Button variant="secondary" block onClick={() => void handleInvite()}>
+          Taklif qilish
+        </Button>
+      </Panel>
     </div>
   )
 }

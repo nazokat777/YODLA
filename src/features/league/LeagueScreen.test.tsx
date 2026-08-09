@@ -1,7 +1,17 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { LeagueScreen } from './LeagueScreen'
+
+/** Ekran marshrut ichida yashaydi — `useSearchParams` Router talab qiladi */
+function renderScreen(path = '/league') {
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <LeagueScreen />
+    </MemoryRouter>,
+  )
+}
 
 describe('LeagueScreen', () => {
   beforeEach(() => {
@@ -9,20 +19,20 @@ describe('LeagueScreen', () => {
   })
 
   it('rozilik berilmagan bo‘lsa taklif ko‘rsatiladi', () => {
-    render(<LeagueScreen />)
+    renderScreen()
 
     expect(screen.getByText(/ligaga qo.shilish/i)).toBeInTheDocument()
   })
 
   it('nima yuborilishi ochiq yoziladi', () => {
     // Foydalanuvchi nimaga rozi bo'layotganini bilishi shart
-    render(<LeagueScreen />)
+    renderScreen()
 
     expect(screen.getByText(/so.zlaringiz va xatolaringiz qurilmada qoladi/i)).toBeInTheDocument()
   })
 
   it('ism kiritilgach kod yaratiladi', () => {
-    render(<LeagueScreen />)
+    renderScreen()
 
     fireEvent.change(screen.getByLabelText(/ism/i), { target: { value: 'Ali' } })
     fireEvent.click(screen.getByRole('button', { name: /qo.shilish/i }))
@@ -32,16 +42,24 @@ describe('LeagueScreen', () => {
   })
 
   it('ism bo‘sh bo‘lsa qo‘shilib bo‘lmaydi', () => {
-    render(<LeagueScreen />)
+    renderScreen()
 
     expect(screen.getByRole('button', { name: /qo.shilish/i })).toBeDisabled()
   })
 
   it('bulut yo‘q bo‘lsa lokal rejim aytiladi', () => {
     useSettingsStore.getState().joinLeague('Ali')
-    render(<LeagueScreen />)
+    renderScreen()
 
     // Testlarda env bo'sh — foydalanuvchi holatni bilishi kerak
     expect(screen.getByText(/lokal rejim/i)).toBeInTheDocument()
+  })
+
+  it('taklif havolasi kod maydonini to‘ldiradi, lekin O‘ZI qo‘shmaydi', () => {
+    // Havolani bosgan odam bilmagan holda kimnidir kuzata boshlamasligi kerak
+    useSettingsStore.getState().joinLeague('Ali')
+    renderScreen('/league?add=N2NAWS')
+
+    expect(screen.getByLabelText(/do.stingizning kodi/i)).toHaveValue('N2NAWS')
   })
 })

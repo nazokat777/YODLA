@@ -15,9 +15,13 @@ export function isCloudEnabled(): boolean {
   return Boolean(URL && KEY)
 }
 
+interface QueryBuilder<T> extends PromiseLike<{ data: T[] | null; error: unknown }> {
+  eq: (column: string, value: string) => PromiseLike<{ data: T[] | null; error: unknown }>
+}
+
 interface MinimalClient {
   from: (table: string) => {
-    select: (columns: string) => Promise<{ data: LeagueRow[] | null; error: unknown }>
+    select: <T>(columns: string) => QueryBuilder<T>
   }
   rpc: (name: string, params: Record<string, unknown>) => Promise<{ error: unknown }>
 }
@@ -48,7 +52,7 @@ export async function fetchWeeklyLeague(): Promise<LeagueRow[] | null> {
   if (!client) return null
 
   try {
-    const { data, error } = await client.from('yodla_week').select('code,name,xp')
+    const { data, error } = await client.from('yodla_week').select<LeagueRow>('code,name,xp')
     if (error) throw error
 
     return data ?? []
@@ -81,6 +85,44 @@ export async function pushToday(input: {
     return true
   } catch (error) {
     console.error('Natijani yuborib bo‘lmadi:', error)
+    return false
+  }
+}
+
+/** Men qo'shgan do'stlarning kodlari */
+export async function fetchFriendCodes(myCode: string): Promise<string[]> {
+  const client = await getClient()
+  if (!client) return []
+
+  try {
+    const { data, error } = await client
+      .from('yodla_links')
+      .select<{ target_code: string }>('target_code')
+      .eq('follower', myCode)
+    if (error) throw error
+
+    return (data ?? []).map((row) => row.target_code)
+  } catch (error) {
+    console.error('Do‘stlarni olib bo‘lmadi:', error)
+    return []
+  }
+}
+
+/** Do'st qo'shish. Muvaffaqiyat — `true` */
+export async function addFriend(myCode: string, friendCode: string): Promise<boolean> {
+  const client = await getClient()
+  if (!client) return false
+
+  try {
+    const { error } = await client.rpc('yodla_add_friend', {
+      p_me: myCode,
+      p_friend: friendCode,
+    })
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Do‘st qo‘shib bo‘lmadi:', error)
     return false
   }
 }

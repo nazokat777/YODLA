@@ -82,3 +82,50 @@ create or replace view public.yodla_week as
 grant select on public.yodla_week to anon, authenticated;
 grant usage on schema public to anon, authenticated;
 grant select on public.yodla_profiles, public.yodla_daily to anon, authenticated;
+
+-- ============================================================
+-- DO'STLAR (keyingi bosqich)
+-- ============================================================
+
+create table if not exists public.yodla_links (
+  follower    text not null,
+  target_code text not null,
+  created_at  timestamptz default now(),
+  primary key (follower, target_code)
+);
+
+alter table public.yodla_links enable row level security;
+
+drop policy if exists yl_read on public.yodla_links;
+create policy yl_read on public.yodla_links for select to public using (true);
+
+-- Yozuv faqat RPC orqali (kod formati tekshiriladi)
+create or replace function public.yodla_add_friend(p_me text, p_friend text)
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if p_me !~ '^[A-Z0-9]{6}$' or p_friend !~ '^[A-Z0-9]{6}$' then
+    raise exception 'Kod formati notogri';
+  end if;
+
+  -- O'zini o'ziga qo'shish ma'nosiz
+  if upper(p_me) = upper(p_friend) then
+    return;
+  end if;
+
+  insert into public.yodla_links (follower, target_code)
+  values (upper(p_me), upper(p_friend))
+  on conflict do nothing;
+end $$;
+
+create or replace function public.yodla_remove_friend(p_me text, p_friend text)
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  delete from public.yodla_links
+  where follower = upper(p_me) and target_code = upper(p_friend);
+end $$;
+
+grant execute on function public.yodla_add_friend(text, text)    to anon, authenticated;
+grant execute on function public.yodla_remove_friend(text, text) to anon, authenticated;
+grant select on public.yodla_links to anon, authenticated;
