@@ -1,3 +1,6 @@
+/// <reference types="node" />
+// Bu test fayl diskdagi artefaktlarni o'qiydi, shuning uchun Node tiplari
+// aynan shu yerda e'lon qilinadi — ilova kodiga ular kirmaydi.
 import { readFileSync, existsSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
