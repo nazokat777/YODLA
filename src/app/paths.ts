@@ -9,6 +9,7 @@ export const PATHS = {
   /** Aniq darsga o'tish: lessonPath('food-a1') → "/lesson/food-a1" */
   lessonById: (lessonId: string) => `/lesson/${lessonId}`,
   review: '/review',
+  stats: '/stats',
   profile: '/profile',
   league: '/league',
 } as const

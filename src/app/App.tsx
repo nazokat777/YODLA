@@ -12,6 +12,7 @@ import { LessonScreen } from '@/features/lesson/LessonScreen'
 import { NotFoundScreen } from '@/features/misc/NotFoundScreen'
 import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen'
 import { ProfileScreen } from '@/features/profile/ProfileScreen'
+import { StatsScreen } from '@/features/stats/StatsScreen'
 import { ReviewScreen } from '@/features/review/ReviewScreen'
 
 /**
@@ -64,6 +65,7 @@ export function App() {
           <Route path={PATHS.home} element={<HomeScreen />} />
           <Route path={PATHS.review} element={<ReviewScreen />} />
           <Route path={PATHS.league} element={<LeagueScreen />} />
+          <Route path={PATHS.stats} element={<StatsScreen />} />
           <Route path={PATHS.profile} element={<ProfileScreen />} />
         </Route>
 

@@ -1,16 +1,175 @@
-import { PhaseNotice } from '@/components/ui/PhaseNotice'
+import { useEffect, useMemo, useState } from 'react'
+import { Button } from '@/components/ui/Button'
+import { Mascot } from '@/components/ui/Mascot'
+import { Panel } from '@/components/ui/Panel'
+import { leagueTier, rankEntries, tierTitle, type LeagueRow } from '@/core/league'
+import { getDailyStatsSince } from '@/core/db'
+import { buildWeeklySeries } from '@/core/stats'
+import { fetchWeeklyLeague, isCloudEnabled } from '@/lib/supabase'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { addDays, startOfDay } from '@/lib/date'
+import { useNowTick } from '@/hooks/useNowTick'
+import { useSettingsStore } from '@/stores/useSettingsStore'
+import { cn } from '@/lib/cn'
 
 /**
- * Liga ekrani (TZ 6.6): haftalik leaderboard.
- * Bronza → Kumush → Oltin → Olmos. Faza 7'da to'ldiriladi.
+ * Liga ekrani (TZ 6.6): haftalik reyting.
+ *
+ * MUHIM: SOXTA RAQIBLAR YO'Q. Ro'yxatda faqat haqiqiy foydalanuvchilar;
+ * yolg'iz bo'lsangiz shu ochiq yoziladi. Foydalanuvchining o'z loyihasidagi
+ * qoida ham shunday: "Halol bo'l. Soxta statistika yo'q."
+ *
+ * Ma'lumot faqat ROZILIK bilan yuboriladi va faqat ism + haftalik XP.
  */
 export function LeagueScreen() {
+  const leagueCode = useSettingsStore((s) => s.leagueCode)
+  const leagueName = useSettingsStore((s) => s.leagueName)
+  const joinLeague = useSettingsStore((s) => s.joinLeague)
+
+  if (!leagueCode) return <JoinCard onJoin={joinLeague} />
+
+  return <Standings myCode={leagueCode} myName={leagueName} />
+}
+
+/** Rozilik kartasi — nima yuborilishi ochiq aytiladi */
+function JoinCard({ onJoin }: { onJoin: (name: string) => void }) {
+  const [name, setName] = useState('')
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-extrabold">Liga</h1>
-      <PhaseNotice phase="Faza 7">
-        Haftalik reyting jadvali. MVP'da lokal (soxta) raqiblar bilan ishlaydi.
-      </PhaseNotice>
+
+      <Panel className="flex flex-col gap-3 text-center">
+        <Mascot mood="happy" size="md" className="mx-auto" />
+        <p className="text-lg font-extrabold">Ligaga qo'shilish</p>
+        <p className="text-sm text-ink-600">
+          Ismingiz va haftalik XP'ingiz serverga yuboriladi va reytingda ko'rinadi.
+          So'zlaringiz va xatolaringiz qurilmada qoladi.
+        </p>
+        <p className="text-xs text-ink-600">Xohlasangiz taxallus yozing.</p>
+
+        <label htmlFor="league-name" className="text-start text-sm font-semibold">
+          Ism
+        </label>
+        <input
+          id="league-name"
+          type="text"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          maxLength={24}
+          placeholder="Masalan: Ali"
+          className="h-12 w-full rounded-xl border-2 border-ink-300 bg-white px-3 focus:border-brand-500 focus:outline-none"
+        />
+
+        <Button block size="lg" disabled={name.trim().length === 0} onClick={() => onJoin(name.trim())}>
+          Qo'shilish
+        </Button>
+      </Panel>
+    </div>
+  )
+}
+
+/** Reyting: bulut bo'lsa server ma'lumoti, bo'lmasa faqat o'z natijangiz */
+function Standings({ myCode, myName }: { myCode: string; myName: string }) {
+  const now = useNowTick()
+
+  // Oxirgi 7 kun — liga haftalik hisobda ishlaydi
+  const weekStats = useLiveQuery(
+    () => getDailyStatsSince(addDays(startOfDay(now), -6)),
+    [now],
+  )
+
+  const [rows, setRows] = useState<LeagueRow[] | null>(null)
+  const [isLoading, setIsLoading] = useState(isCloudEnabled())
+
+  // O'z haftalik XP'im lokal statistikadan — bulut yo'q bo'lsa ham ko'rinadi
+  const myWeeklyXp = useMemo(() => {
+    const series = buildWeeklySeries(weekStats ?? [], now)
+    return series.reduce((sum, point) => sum + point.xp, 0)
+  }, [weekStats, now])
+
+  useEffect(() => {
+    if (!isCloudEnabled()) return
+
+    let cancelled = false
+
+    void fetchWeeklyLeague().then((data) => {
+      if (cancelled) return
+
+      setRows(data)
+      setIsLoading(false)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const ranked = useMemo(() => rankEntries(rows ?? [], myCode), [rows, myCode])
+  const tier = leagueTier(myWeeklyXp)
+
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-extrabold">Liga</h1>
+
+      <Panel className="text-center">
+        <p className="text-sm text-ink-600">Haftalik daraja</p>
+        <p data-testid="my-tier" className="text-2xl font-extrabold text-brand-700">
+          {tierTitle(tier)}
+        </p>
+        <p className="mt-1 text-sm text-ink-600">
+          {myName} · <strong>{myWeeklyXp} XP</strong> (7 kun)
+        </p>
+        <p className="mt-2 text-xs text-ink-600">
+          Kodingiz: <strong>{myCode}</strong>
+        </p>
+      </Panel>
+
+      {!isCloudEnabled() && (
+        <Panel className="border-flame-500 bg-flame-500/10">
+          <p className="text-sm font-semibold text-flame-600">
+            Lokal rejim: reyting server ulangach ishlaydi.
+          </p>
+          <p className="mt-1 text-xs text-ink-600">
+            Hozircha faqat o'z natijangiz ko'rinadi — bu soxta raqiblar ko'rsatishdan yaxshiroq.
+          </p>
+        </Panel>
+      )}
+
+      {isCloudEnabled() && isLoading && <Panel className="text-ink-600">Yuklanmoqda…</Panel>}
+
+      {isCloudEnabled() && !isLoading && rows === null && (
+        <Panel className="text-sm text-ink-600">
+          Reytingni olib bo'lmadi — internet yo'q bo'lishi mumkin. Natijangiz saqlangan.
+        </Panel>
+      )}
+
+      {ranked.length > 0 && (
+        <section>
+          <h2 className="mb-2 font-bold">Haftalik reyting</h2>
+          <ol className="flex flex-col gap-2">
+            {ranked.map((entry) => (
+              <li
+                key={entry.code}
+                className={cn(
+                  'flex items-center gap-3 rounded-2xl border-2 bg-white p-3',
+                  entry.isMe ? 'border-brand-500 bg-brand-50' : 'border-ink-300',
+                )}
+              >
+                <span className="w-7 text-center font-extrabold text-ink-600">{entry.rank}</span>
+                <span className="flex-1 font-bold">{entry.name}</span>
+                <span className="font-extrabold text-brand-700">{entry.xp} XP</span>
+              </li>
+            ))}
+          </ol>
+
+          {ranked.length === 1 && (
+            <p className="mt-2 text-xs text-ink-600">
+              Hozircha ligada 1 kishi — havolani do'stlaringizga yuboring.
+            </p>
+          )}
+        </section>
+      )}
     </div>
   )
 }

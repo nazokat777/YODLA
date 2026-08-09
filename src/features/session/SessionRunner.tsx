@@ -13,6 +13,7 @@ import {
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech, hasVoiceForLocale, isSpeechSupported } from '@/lib/speech'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
+import { useLeagueSync } from '@/hooks/useLeagueSync'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ExerciseView } from './ExerciseView'
 import { EMPTY_ANSWER, type ExerciseAnswerState } from './answerState'
@@ -80,6 +81,10 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   /** Oxirgi javob uchun berilgan XP — feedbackda ko'rsatiladi */
   const [lastXpGained, setLastXpGained] = useState(0)
   const [goalJustCompleted, setGoalJustCompleted] = useState(false)
+
+  // Bugungi natija ligaga SEANS TUGAGANDA bir marta yuboriladi (rozilik
+  // bo'lsa). Har javobda yuborish o'nlab ortiqcha so'rov bo'lardi.
+  useLeagueSync(index >= queue.length ? 'finished' : 'running')
 
   /**
    * Audio mashqlari faqat brauzer nutq sintezini qo'llab-quvvatlasa

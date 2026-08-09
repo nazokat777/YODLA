@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: PATHS.home, label: 'Bosh sahifa', icon: '🏠', end: true },
   { to: PATHS.review, label: 'Takrorlash', icon: '🔁', end: false },
   { to: PATHS.league, label: 'Liga', icon: '🏆', end: false },
+  { to: PATHS.stats, label: 'Statistika', icon: '📊', end: false },
   { to: PATHS.profile, label: 'Profil', icon: '👤', end: false },
 ]
 

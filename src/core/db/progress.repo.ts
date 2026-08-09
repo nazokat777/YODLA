@@ -245,6 +245,16 @@ export async function finalizeSession({
 }
 
 /** Bosh ekran va profil uchun yig'ma ko'rsatkichlar */
+/**
+ * Berilgan kundan boshlab kunlik statistikalar.
+ *
+ * Haftalik diagramma va liga uchun: `ProgressSnapshot` faqat BUGUNGI
+ * kunni beradi, diagramma esa oxirgi 7 kunni talab qiladi.
+ */
+export async function getDailyStatsSince(from: number): Promise<DailyStat[]> {
+  return db.dailyStats.where('day').aboveOrEqual(from).toArray()
+}
+
 export interface ProgressSnapshot {
   profile: ProfileRecord
   daily: DailyStat

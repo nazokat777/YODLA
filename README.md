@@ -28,6 +28,7 @@ npm run lint       # oxlint
 | Audio    | Web Speech API (Faza 5)       |
 | PWA      | Manifest + qo'lda yozilgan service worker (Faza 7) |
 | Motion   | GSAP (dangasa yuklanadi, Faza 7) |
+| Liga     | Supabase (ixtiyoriy — kalitsiz lokal rejim) |
 
 ## Papka strukturasi
 
@@ -360,6 +361,41 @@ ko'ngil aynishiga sabab bo'ladi.
 
 Kuchli effektlar yo'l va bosh sahifada; mashq siklida harakatlar
 ≤200 ms — javob va keyingi savol orasidagi ritm buzilmasligi kerak.
+
+## Liga va maxfiylik
+
+Haftalik reyting (Bronza → Kumush → Oltin → Olmos). **Tushirish yo'q** —
+daraja joriy haftaning ko'rsatkichi, jazo emas.
+
+> **Soxta raqiblar yo'q.** Reytingda faqat haqiqiy foydalanuvchilar.
+> Yolg'iz bo'lsangiz ro'yxatda bitta o'zingiz turasiz va ekranda shu
+> ochiq yoziladi.
+
+**Ma'lumot faqat rozilik bilan yuboriladi.** Liga ochilganda ism
+so'raladi va qurilmada 6 belgilik kod yaratiladi. Serverga **faqat ism va
+kunlik XP/so'z soni** ketadi. So'zlar, javoblar, xatolar va mnemonikalar
+qurilmadan chiqmaydi.
+
+Kalit bo'lmasa ilova **lokal rejimda** ishlaydi — faqat o'z natijangiz
+ko'rinadi.
+
+### Ishga tushirish
+
+1. Supabase → SQL Editor → [supabase/yodla-schema.sql](supabase/yodla-schema.sql) → RUN
+2. Vercel → Settings → Environment Variables:
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+3. Qayta deploy
+
+### Nega yozuv RPC orqali
+
+Anon kalit brauzerga ketadi va bu repozitoriy ochiq. Jadvalga
+to'g'ridan-to'g'ri yozishga ruxsat berilsa, kimdir "million XP" yozib
+reytingni buzardi. Shuning uchun yozuv faqat `yodla_upsert_day`
+funksiyasi orqali: u XP'ni kunlik **2000** bilan cheklaydi va sanani
+**serverda** qo'yadi (o'tmishni qayta yozib bo'lmaydi).
+
+Bu mutlaq himoya emas — autentifikatsiyasiz uni qurib bo'lmaydi. Lekin
+cheksiz soxta natijani yopadi.
 
 ## Offline rejim (PWA)
 

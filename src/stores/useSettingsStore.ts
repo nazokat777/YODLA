@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { generateCode } from '@/core/league'
 import type { LanguageCode, LevelCode } from '@/core/types'
 
 /**
@@ -15,6 +16,10 @@ interface SettingsState {
   dailyGoalWords: number
   /** Daraja testi natijasi — darslar shu darajadan boshlanadi (Faza 6) */
   startingLevel: LevelCode
+  /** Liga kodi — faqat rozilik berilganda yaratiladi (Faza 7) */
+  leagueCode: string | null
+  /** Reytingda ko'rinadigan ism */
+  leagueName: string
   /** Onboarding tugallanganmi */
   onboardingCompleted: boolean
   /** Arab tili uchun interfeysni ham RTL qilish */
@@ -25,6 +30,8 @@ interface SettingsState {
   setLearningLanguage: (language: LanguageCode) => void
   setDailyGoalWords: (words: number) => void
   setStartingLevel: (level: LevelCode) => void
+  /** Ligaga qo'shilish: kod yaratiladi va ism saqlanadi */
+  joinLeague: (name: string) => void
   completeOnboarding: () => void
   setRtlInterface: (enabled: boolean) => void
   setSoundEnabled: (enabled: boolean) => void
@@ -36,6 +43,8 @@ const INITIAL = {
   learningLanguage: null,
   dailyGoalWords: 20,
   startingLevel: 'A1',
+  leagueCode: null,
+  leagueName: '',
   onboardingCompleted: false,
   rtlInterface: false,
   soundEnabled: true,
@@ -55,6 +64,14 @@ export const useSettingsStore = create<SettingsState>()(
 
       setDailyGoalWords: (dailyGoalWords) => set({ dailyGoalWords }),
       setStartingLevel: (startingLevel) => set({ startingLevel }),
+
+      joinLeague: (leagueName) =>
+        set((state) => ({
+          leagueName,
+          // Kod bir marta yaratiladi: qayta kirishda o'sha kod qoladi,
+          // aks holda reytingda ikkita yozuv paydo bo'lardi
+          leagueCode: state.leagueCode ?? generateCode(),
+        })),
       completeOnboarding: () => set({ onboardingCompleted: true }),
       setRtlInterface: (rtlInterface) => set({ rtlInterface }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
