@@ -50,7 +50,10 @@ src/
 │
 ├── core/                    # domen yadrosi (UI'ga bog'liq emas)
 │   ├── types/               # Card, Grade, ExerciseType, LanguageCode
-│   ├── config/languages.ts  # tillar ro'yxati + RTL/TTS metama'lumoti
+│   ├── config/
+│   │   ├── languages.ts     # tillar ro'yxati + RTL/TTS metama'lumoti
+│   │   └── levels.ts        # LEVEL_ORDER (A1→A2→B1) + levelRank
+│   ├── lesson/order.ts      # pickLessonCards — darsga qaysi so'z chiqadi
 │   ├── srs/                 # SM-2 algoritmi — sof funksiyalar
 │   │   ├── constants.ts     # EF chegaralari, intervallar, o'tish bahosi
 │   │   ├── sm2.ts           # nextEaseFactor / nextInterval / reviewSrsState
@@ -95,7 +98,9 @@ src/
 │   ├── cn.ts                # sinf nomlarini birlashtirish
 │   ├── date.ts              # startOfDay / addDays (DST'ga chidamli)
 │   └── format.ts            # "6 kun", "ertaga" ko'rinishidagi matnlar
-├── content/starterDecks.ts  # vaqtinchalik: har tildan 10 so'z (→ Faza 5)
+├── content/                 # o'quv kontenti
+│   ├── decks/en.ts ru.ts ar.ts  # har til: A1/A2/B1 bo'yicha 102 so'z
+│   └── starterDecks.ts      # daraja tartibida yig'uvchi (STARTER_DECKS)
 └── test/setup.ts            # Vitest global sozlamalari
 ```
 
@@ -181,6 +186,31 @@ eng ko'p uchraydigan klaviatura xatosi — bitta tahrir deb sanaladi.
 - **Jumla qurishda tugmalar `aria-label` oladi** (`so'z — qo'shish` /
   `so'z — olib tashlash`), aks holda ikkala ro'yxatdagi bir xil so'zlar
   farqlanmasdi. So'z tanlangach fokus keyingi mavjud so'zga ko'chiriladi.
+
+## Kontent va darajalar
+
+Har til uchun **102 so'z**, CEFR bo'yicha: A1 42, A2 35, B1 25
+([src/content/decks](src/content/decks)). Uch to'plam bir xil tushunchalarni
+qamraydi — foydalanuvchi tilni almashtirganda o'sha mavzular ketma-ketligini
+ko'radi.
+
+**Dars qaysi so'zni beradi** — [order.ts](src/core/lesson/order.ts) dagi sof
+funksiya hal qiladi: ko'rilmaganlar → daraja (A1→A2→B1) → kam ko'rilgani →
+zaifi.
+
+> "Ko'rilmagan" mezoni **darajadan ustun**. Aks holda o'rganib bo'lingan A1
+> kartalari doim A2 dan oldin turib, dars A1 da abadiy qolib ketardi. Shu
+> tartib "eng past **tugallanmagan** darajadan" qoidasini beradi: A1 ning
+> yangi so'zlari tugagach A2 o'zi ochiladi. Yangi so'z qolmasa, ro'yxat
+> mustahkamlashga o'tadi — dars hech qachon bo'sh qaytmaydi.
+
+Kontent sifati testlar bilan qo'riqlanadi
+([decks.test.ts](src/content/decks.test.ts)): majburiy maydonlar, dublikat
+so'z yo'qligi va **ikki so'zning tarjimasi bir xil emasligi** (aks holda
+chalg'ituvchi variantlar orasida ikkita "to'g'ri" javob paydo bo'lardi).
+Alohida tekshiruv so'zlar **normallashtirilgandan keyin** ham farqlanishini
+kafolatlaydi — arab harakalari tushganda `مَطَار` va `مَطَر` ustma-ust
+tushmasligi kerak.
 
 ## Ma'lumotlar bazasi
 
@@ -270,6 +300,6 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 4 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [ ] **Faza 5** — uch til moduli + namuna kontent + TTS
+- [x] **Faza 5** — uch til moduli + kontent (har tildan 102 so'z) + TTS
 - [ ] **Faza 6** — to'liq onboarding + mascot
 - [ ] **Faza 7** — liga + PWA (offline) + polish

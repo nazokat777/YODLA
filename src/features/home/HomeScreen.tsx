@@ -3,7 +3,6 @@ import { PATHS } from '@/app/paths'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { PhaseNotice } from '@/components/ui/PhaseNotice'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
 import { getLanguageStats, getNextDueDate } from '@/core/db'
@@ -153,10 +152,6 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <PhaseNotice phase="Faza 5">
-        Darslar va o'quv yo'li to'liq kontent (har tildan ~100 so'z) qo'shilgach
-        paydo bo'ladi. Hozircha har tilda 10 tadan namunaviy so'z bor.
-      </PhaseNotice>
     </div>
   )
 }

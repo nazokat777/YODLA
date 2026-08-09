@@ -75,7 +75,7 @@ export function LessonScreen() {
 
       {cards !== null && cards.length === 0 && (
         <Panel className="text-center text-ink-600">
-          Bu tilda hali so‘z yo‘q. Kontent Faza 5'da to‘ldiriladi.
+          Bu tilda hali so‘z yo‘q.
         </Panel>
       )}
 
