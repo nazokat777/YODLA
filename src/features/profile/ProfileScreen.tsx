@@ -2,7 +2,6 @@ import { BadgeTile } from '@/components/ui/BadgeTile'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
 import { Panel } from '@/components/ui/Panel'
-import { PhaseNotice } from '@/components/ui/PhaseNotice'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { BADGES, levelTitle, MAX_STREAK_FREEZES, type BadgeStats } from '@/core/gamification'
 import { useProgress } from '@/hooks/useProgress'
@@ -165,10 +164,6 @@ export function ProfileScreen() {
           />
         </label>
       </Panel>
-
-      <PhaseNotice phase="Faza 7">
-        Haftalik liga (Bronza → Kumush → Oltin → Olmos) va offline rejim.
-      </PhaseNotice>
     </div>
   )
 }

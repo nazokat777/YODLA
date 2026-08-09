@@ -48,8 +48,7 @@ src/
 │   ├── LinkButton.tsx       # tugma ko'rinishidagi <Link>
 │   ├── buttonStyles.ts      # ikkalasi uchun umumiy uslublar
 │   ├── Panel.tsx            # oq karta konteyner
-│   ├── ProgressBar.tsx
-│   └── PhaseNotice.tsx      # vaqtinchalik: "bu qism falon fazada"
+│   └── ProgressBar.tsx
 │
 ├── core/                    # domen yadrosi (UI'ga bog'liq emas)
 │   ├── types/               # Card, Grade, ExerciseType, LanguageCode
