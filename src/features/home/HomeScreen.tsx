@@ -12,6 +12,7 @@ import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { LearningPath } from './LearningPath'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -141,15 +142,14 @@ export function HomeScreen() {
                 ? `Hammasi bajarildi. Keyingi takrorlash — ${formatTimeUntil(nextDueAt, now)}.`
                 : 'Hozircha takrorlanadigan so‘z yo‘q.'}
         </p>
-        <div className="flex flex-col gap-2">
-          <LinkButton to={PATHS.review} block variant={dueCount > 0 ? 'primary' : 'secondary'}>
-            {dueCount > 0 ? 'Takrorlashni boshlash' : 'Takrorlashni ochish'}
-          </LinkButton>
-          <LinkButton to={PATHS.lesson} block variant={dueCount > 0 ? 'secondary' : 'primary'}>
-            Yangi so'zlarni o'rganish
-          </LinkButton>
-        </div>
+        {/* Yangi so'zlar endi o'quv yo'lidan olinadi — takrorlash va
+            o'rganish alohida ishlar */}
+        <LinkButton to={PATHS.review} block variant={dueCount > 0 ? 'primary' : 'secondary'}>
+          {dueCount > 0 ? 'Takrorlashni boshlash' : 'Takrorlashni ochish'}
+        </LinkButton>
       </Panel>
+
+      <LearningPath />
 
       <section>
         <h2 className="mb-2 font-bold">Lug'at holati</h2>

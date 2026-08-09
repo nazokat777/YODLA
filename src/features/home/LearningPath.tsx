@@ -1,0 +1,162 @@
+import { useEffect, useMemo, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { PATHS } from '@/app/paths'
+import { DECKS } from '@/content/starterDecks'
+import { getAllCards } from '@/core/db'
+import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
+import { loadGsap } from '@/lib/motion'
+import { useSettingsStore } from '@/stores/useSettingsStore'
+import { cn } from '@/lib/cn'
+
+/** Holatga qarab doira uslubi */
+const CIRCLE = {
+  completed: 'bg-brand-500 text-white shadow-[0_4px_0_0] shadow-brand-700',
+  current: 'bg-brand-500 text-white ring-4 ring-brand-300 shadow-[0_4px_0_0] shadow-brand-700',
+  skipped: 'border-2 border-brand-300 bg-brand-50 text-brand-700',
+  locked: 'bg-ink-300/40 text-ink-600',
+} as const
+
+/**
+ * O'quv yo'li — bo'limlar zanjiri.
+ *
+ * Bo'lim holati saqlanmaydi, kartalar progressidan hisoblanadi
+ * (`core/path/units.ts`). Shuning uchun dars tugagach ro'yxat o'zi
+ * yangilanadi: `useLiveQuery` bazadagi o'zgarishni sezadi.
+ */
+export function LearningPath() {
+  const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const startingLevel = useSettingsStore((s) => s.startingLevel)
+
+  const cards = useLiveQuery(
+    () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
+    [learningLanguage],
+  )
+
+  const units = useMemo(() => {
+    if (!cards || !learningLanguage) return []
+
+    return buildUnits(cards, {
+      minLevel: startingLevel,
+      topicOrder: topicOrderFromDeck(DECKS[learningLanguage]),
+    })
+  }, [cards, learningLanguage, startingLevel])
+
+  const listRef = useRef<HTMLOListElement>(null)
+
+  // Bo'limlar ketma-ket "otilib" chiqadi. Animatsiya bo'lmasa ro'yxat
+  // shunchaki joyida turadi — DOM allaqachon to'g'ri
+  useEffect(() => {
+    if (units.length === 0) return
+
+    let cancelled = false
+
+    let context: { revert: () => void } | null = null
+
+    void loadGsap().then((gsap) => {
+      if (!gsap || cancelled || !listRef.current) return
+
+      // `gsap.context` React uchun: `revert()` barcha o'zgarishlarni
+      // qaytaradi, ya'ni komponent yo'q qilinganda DOM toza qoladi
+      context = gsap.context(() => {
+        gsap.from('[data-unit]', {
+          // OPACITY ATAYLAB YO'Q: animatsiya tugamay qolsa (fon tab,
+          // to'xtatilgan rAF) bo'limlar ko'rinmas bo'lib qolardi.
+          // Siljish va masshtab esa yarim yo'lda ham o'qilaveradi.
+          y: 28,
+          scale: 0.9,
+          duration: 0.5,
+          stagger: 0.06,
+          ease: 'back.out(1.8)',
+          clearProps: 'transform',
+        })
+
+        // "Nafas": ko'z qayerga qarashni biladi
+        gsap.to('[data-state="current"]', {
+          scale: 1.04,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        })
+      }, listRef)
+    })
+
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [units.length])
+
+  if (units.length === 0) return null
+
+  return (
+    <section>
+      <h2 className="mb-3 font-bold">O'quv yo'li</h2>
+
+      <ol ref={listRef} className="flex flex-col gap-3">
+        {units.map((unit, index) => (
+          <li key={unit.id} data-unit className="flex items-center gap-3">
+            {/* Zigzag: har ikkinchi bo'lim biroz siljiydi */}
+            <div className={cn('flex items-center gap-3', index % 2 === 1 && 'ms-10')}>
+              <UnitCircle unit={unit} />
+              <div className="flex flex-col">
+                <span className="font-bold">{unit.topic}</span>
+                <span className="text-xs text-ink-600">
+                  {unit.level} · {unit.learned}/{unit.total} so'z
+                </span>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+/** Bo'lim doirasi — qulflanganida havola bo'lmaydi */
+function UnitCircle({ unit }: { unit: PathUnit }) {
+  const className = cn(
+    'flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-lg font-extrabold',
+    CIRCLE[unit.state],
+  )
+
+  const label =
+    unit.state === 'locked'
+      ? `${unit.topic} — hali ochilmagan`
+      : `${unit.topic} — ${unit.learned}/${unit.total}`
+
+  if (unit.state === 'locked') {
+    return (
+      <div
+        data-testid={`unit-${unit.id}`}
+        data-state={unit.state}
+        role="button"
+        aria-disabled="true"
+        tabIndex={0}
+        aria-label={label}
+        className={className}
+      >
+        <span aria-hidden="true">🔒</span>
+      </div>
+    )
+  }
+
+  return (
+    <Link
+      to={PATHS.lessonById(unit.id)}
+      data-testid={`unit-${unit.id}`}
+      data-state={unit.state}
+      aria-label={label}
+      className={cn(className, 'tap-highlight-none transition-transform active:translate-y-0.5')}
+    >
+      {unit.state === 'completed' ? (
+        <span aria-hidden="true">✓</span>
+      ) : (
+        <span aria-hidden="true">
+          {unit.learned}/{unit.total}
+        </span>
+      )}
+    </Link>
+  )
+}

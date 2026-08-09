@@ -1,0 +1,83 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+import { render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
+import { useSettingsStore } from '@/stores/useSettingsStore'
+import { LearningPath } from './LearningPath'
+
+const WORDS: NewCardRecordInput[] = [
+  { word: 'hello', translation: 'salom', language: 'en', topic: 'Salomlashish', level: 'A1' },
+  { word: 'mother', translation: 'ona', language: 'en', topic: 'Oila', level: 'A1' },
+  { word: 'airport', translation: 'aeroport', language: 'en', topic: 'Sayohat', level: 'A2' },
+]
+
+function renderPath() {
+  useSettingsStore.getState().reset()
+  useSettingsStore.getState().setLearningLanguage('en')
+
+  return render(
+    <MemoryRouter>
+      <LearningPath />
+    </MemoryRouter>,
+  )
+}
+
+describe('LearningPath', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+  })
+
+  it('bo‘limlarni ko‘rsatadi', async () => {
+    await addMissingCards(WORDS)
+    renderPath()
+
+    expect(await screen.findByText('Salomlashish')).toBeInTheDocument()
+    expect(screen.getByText('Oila')).toBeInTheDocument()
+    expect(screen.getByText('Sayohat')).toBeInTheDocument()
+  })
+
+  it('joriy bo‘lim darsga havola qiladi', async () => {
+    await addMissingCards(WORDS)
+    renderPath()
+
+    const link = await screen.findByRole('link', { name: /salomlashish/i })
+
+    expect(link).toHaveAttribute('href', '/lesson/a1-salomlashish')
+  })
+
+  it('qulflangan bo‘lim havola emas va aria-disabled', async () => {
+    await addMissingCards(WORDS)
+    renderPath()
+
+    // Birinchi bo'lim joriy; keyingilari qulflangan
+    const locked = await screen.findByTestId('unit-a1-oila')
+
+    expect(locked).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.queryByRole('link', { name: /oila/i })).not.toBeInTheDocument()
+  })
+
+  it('tugallangan bo‘limni belgilaydi', async () => {
+    await addMissingCards(WORDS)
+    await db.cards.update('en:hello', { totalReviews: 2 })
+
+    renderPath()
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unit-a1-salomlashish')).toHaveAttribute(
+        'data-state',
+        'completed',
+      )
+    })
+  })
+
+  it('animatsiyasiz ham to‘g‘ri chizadi', async () => {
+    // jsdom'da GSAP ishlamaydi — bu test "animatsiya bezak" qoidasini
+    // avtomatik qo'riqlaydi
+    await addMissingCards(WORDS)
+    renderPath()
+
+    const unit = await screen.findByTestId('unit-a1-salomlashish')
+
+    expect(unit).toBeVisible()
+  })
+})

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
+import { unitIdOf } from '@/core/path'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -23,6 +24,7 @@ export function LessonScreen() {
   const navigate = useNavigate()
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const startingLevel = useSettingsStore((s) => s.startingLevel)
+  const { lessonId } = useParams<{ lessonId?: string }>()
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
   const [pool, setPool] = useState<CardRecord[]>([])
@@ -41,9 +43,17 @@ export function LessonScreen() {
       .then((all) => {
         if (cancelled) return
 
-        setPool(all)
+        // Bo'lim berilgan bo'lsa — faqat o'sha mavzu so'zlari.
+        // Bo'lim ichida daraja bir xil, shuning uchun minLevel uzatilmaydi.
+        const scope = lessonId
+          ? all.filter((card) =>
+              card.level && card.topic ? unitIdOf(card.level, card.topic) === lessonId : false,
+            )
+          : all
+
+        setPool(scope)
         // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
-        setCards(pickLessonCards(all, LESSON_SIZE, startingLevel))
+        setCards(pickLessonCards(scope, LESSON_SIZE, lessonId ? undefined : startingLevel))
       })
       .catch((error: unknown) => {
         console.error('Darsni yuklab bo‘lmadi:', error)
@@ -53,7 +63,7 @@ export function LessonScreen() {
     return () => {
       cancelled = true
     }
-  }, [learningLanguage, lessonKey, startingLevel])
+  }, [learningLanguage, lessonKey, startingLevel, lessonId])
 
   const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
 
