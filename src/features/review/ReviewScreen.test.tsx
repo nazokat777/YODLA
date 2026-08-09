@@ -66,8 +66,8 @@ async function answerRecognition(mode: 'correct' | 'wrong') {
 
   if (!target) throw new Error(`"${mode}" uchun variant topilmadi`)
 
+  // Variantni bosishning o'zi javobni yuboradi
   fireEvent.click(target)
-  fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 }
 
 afterEach(() => {
@@ -80,7 +80,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await seed()
     renderScreen()
 
-    expect(await screen.findByRole('button', { name: /tekshirish/i })).toBeInTheDocument()
+    expect(await screen.findByTestId('exercise-prompt')).toBeInTheDocument()
     expect(screen.getByTestId('session-progress')).toHaveTextContent('0/3')
   })
 
@@ -96,7 +96,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
     expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
@@ -114,7 +114,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await seed()
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     // Xato javobda ham do'stona ohang: "Keyingi safar bo'ladi"
@@ -126,7 +126,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await seed()
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
     expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
@@ -138,14 +138,14 @@ describe('ReviewScreen — mashq oqimi', () => {
       },
       { timeout: 3000 },
     )
-    expect(screen.getByRole('button', { name: /tekshirish/i })).toBeInTheDocument()
+    expect(screen.getByTestId('exercise-prompt')).toBeInTheDocument()
   })
 
   it('xato javobda ozi otmaydi — qaror foydalanuvchida qoladi', async () => {
     await seed()
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     const feedback = await screen.findByText(/keyingi safar/i)
@@ -162,7 +162,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await seed()
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     fireEvent.click(await screen.findByRole('button', { name: /tushunarli/i }))
@@ -173,11 +173,23 @@ describe('ReviewScreen — mashq oqimi', () => {
     })
   })
 
-  it('javob berilmagunicha "Tekshirish" ochirilgan', async () => {
+  it('variantli mashqda "Tekshirish" tugmasi umuman korsatilmaydi', async () => {
     await seed()
     renderScreen()
 
-    expect(await screen.findByRole('button', { name: /tekshirish/i })).toBeDisabled()
+    // Variantni bosishning o'zi javob berish hisoblanadi
+    await screen.findByTestId('exercise-prompt')
+    expect(screen.queryByRole('button', { name: /tekshirish/i })).not.toBeInTheDocument()
+  })
+
+  it('yozma mashqda javob berilmagunicha "Tekshirish" ochirilgan', async () => {
+    await seed()
+    await keepOnly('en:hello', { repetitions: 3, interval: 15, totalReviews: 3 })
+    renderScreen()
+
+    // Yozma javobni avtomatik yuborib bo'lmaydi — tugma qoladi
+    await screen.findByLabelText(/javob/i)
+    expect(screen.getByRole('button', { name: /tekshirish/i })).toBeDisabled()
   })
 
   it('takrorlanadigan karta bolmasa, tinch holatni korsatadi', async () => {
@@ -312,7 +324,7 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
     const xp = await screen.findByTestId('xp-gained')
@@ -329,7 +341,7 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     expect(await screen.findByTestId('xp-gained')).toHaveTextContent(
@@ -342,7 +354,7 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('correct')
     fireEvent.click(await screen.findByRole('button', { name: /davom etish/i }))
 
@@ -363,7 +375,7 @@ describe('ReviewScreen — feedback aniqligi', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     const shown = await screen.findByTestId('correct-answer')
@@ -389,7 +401,7 @@ describe('ReviewScreen — feedback aniqligi', () => {
     await keepOnly('en:hello')
     renderScreen()
 
-    await screen.findByRole('button', { name: /tekshirish/i })
+    await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
     await screen.findByText(/keyingi safar/i)

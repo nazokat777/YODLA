@@ -143,22 +143,29 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   }, [exercise, answer])
 
   /** Tekshirish uchun javobni mashq turiga mos ko'rinishga keltirish */
-  function toAnswerValue(current: Exercise): number | string {
+  function toAnswerValue(current: Exercise, given: ExerciseAnswerState): number | string {
     switch (current.type) {
       case 'recognition':
       case 'listening':
-        return answer.choiceIndex ?? -1
+        return given.choiceIndex ?? -1
       case 'recall':
-        return answer.text
+        return given.text
       case 'construction':
-        return answer.tokenOrder.map((tokenIndex) => current.tokens[tokenIndex]).join(' ')
+        return given.tokenOrder.map((tokenIndex) => current.tokens[tokenIndex]).join(' ')
     }
   }
 
-  const handleSubmit = useCallback(async () => {
-    if (!exercise || !canSubmit || isSaving || verdict !== null) return
+  /**
+   * @param submitted variantli mashqlarda tanlangan javob to'g'ridan-to'g'ri
+   *   uzatiladi — `setState` shu render'da hali ko'rinmaydi, holatga tayansak
+   *   birinchi bosish "javob berilmagan" deb hisoblanardi.
+   */
+  const handleSubmit = useCallback(async (submitted?: ExerciseAnswerState) => {
+    const given = submitted ?? answer
+    const ready = submitted ? true : canSubmit
+    if (!exercise || !ready || isSaving || verdict !== null) return
 
-    const result = checkExercise(exercise, toAnswerValue(exercise))
+    const result = checkExercise(exercise, toAnswerValue(exercise, given))
     const grade = deriveGrade(exercise, result)
 
     setIsSaving(true)
@@ -243,6 +250,9 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
 
   if (!exercise) return null
 
+  /** Variantli mashqda javob bir bosishda beriladi */
+  const isChoiceExercise = exercise.type === 'recognition' || exercise.type === 'listening'
+
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
@@ -266,19 +276,23 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
         answer={answer}
         onAnswerChange={setAnswer}
         revealed={verdict !== null}
-        onSubmit={() => void handleSubmit()}
+        onSubmit={(submitted) => void handleSubmit(submitted)}
       />
 
       <div className="mt-auto pt-2">
         {verdict === null ? (
-          <Button
-            block
-            size="lg"
-            disabled={!canSubmit || isSaving}
-            onClick={() => void handleSubmit()}
-          >
-            Tekshirish
-          </Button>
+          // Variant tanlash o'zi javob berish hisoblanadi — u yerda
+          // "Tekshirish" tugmasi hech qachon bosilmasdi
+          isChoiceExercise ? null : (
+            <Button
+              block
+              size="lg"
+              disabled={!canSubmit || isSaving}
+              onClick={() => void handleSubmit()}
+            >
+              Tekshirish
+            </Button>
+          )
         ) : (
           <FeedbackBar
             exercise={exercise}

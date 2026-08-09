@@ -15,8 +15,14 @@ interface ExerciseViewProps {
   onAnswerChange: (answer: ExerciseAnswerState) => void
   /** Javob berilib, natija ko'rsatilyaptimi */
   revealed: boolean
-  /** Enter bosilganda javobni yuborish */
-  onSubmit: () => void
+  /**
+   * Javobni tekshirishga yuborish.
+   *
+   * Javob argument sifatida beriladi, chunki variantli mashqlarda tanlash
+   * VA yuborish bir harakatda bo'ladi: `setState` shu render'da hali
+   * ko'rinmaydi, shuning uchun tanlangan qiymat to'g'ridan-to'g'ri uzatiladi.
+   */
+  onSubmit: (answer?: ExerciseAnswerState) => void
 }
 
 /**
@@ -44,7 +50,13 @@ export function ExerciseView(props: ExerciseViewProps) {
             correctIndex={exercise.correctIndex}
             selectedIndex={props.answer.choiceIndex}
             revealed={props.revealed}
-            onSelect={(choiceIndex) => props.onAnswerChange({ ...props.answer, choiceIndex })}
+            onSelect={(choiceIndex) => {
+              // Variant tanlash = javob berish: alohida "Tekshirish" qadami
+              // seans ritmini buzadi
+              const chosen = { ...props.answer, choiceIndex }
+              props.onAnswerChange(chosen)
+              props.onSubmit(chosen)
+            }}
           />
         </div>
       )
@@ -75,6 +87,7 @@ function ListeningView({
   exercise,
   answer,
   onAnswerChange,
+  onSubmit,
   revealed,
   speechLocale,
 }: ExerciseViewProps & {
@@ -106,7 +119,11 @@ function ListeningView({
         correctIndex={exercise.correctIndex}
         selectedIndex={answer.choiceIndex}
         revealed={revealed}
-        onSelect={(choiceIndex) => onAnswerChange({ ...answer, choiceIndex })}
+        onSelect={(choiceIndex) => {
+          const chosen = { ...answer, choiceIndex }
+          onAnswerChange(chosen)
+          onSubmit(chosen)
+        }}
       />
     </div>
   )
