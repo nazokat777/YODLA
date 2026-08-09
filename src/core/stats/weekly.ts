@@ -33,3 +33,41 @@ export function buildWeeklySeries(stats: DailyStat[], now: number): DayPoint[] {
     }
   })
 }
+
+export interface WeekTotals {
+  xp: number
+  words: number
+}
+
+/**
+ * Ikki haftaning yig'indisi: joriy (oxirgi 7 kun) va oldingi (undan
+ * avvalgi 7 kun).
+ *
+ * Taqqoslash O'ZI bilan bo'ladi — begonalar bilan emas. Bu ilovaning
+ * "halol statistika" tamoyiliga mos: o'z o'sishini ko'rish reytingdagi
+ * o'rindan ko'ra ishonchli motivatsiya.
+ */
+export function buildWeekComparison(
+  stats: DailyStat[],
+  now: number,
+): { current: WeekTotals; previous: WeekTotals } {
+  const today = startOfDay(now)
+  const currentFrom = addDays(today, -(DAYS - 1))
+  const previousFrom = addDays(today, -(DAYS * 2 - 1))
+
+  const sum = (from: number, to: number): WeekTotals =>
+    stats
+      .filter((stat) => stat.day >= from && stat.day <= to)
+      .reduce(
+        (totals, stat) => ({
+          xp: totals.xp + stat.xp,
+          words: totals.words + stat.cardIds.length,
+        }),
+        { xp: 0, words: 0 },
+      )
+
+  return {
+    current: sum(currentFrom, today),
+    previous: sum(previousFrom, addDays(currentFrom, -1)),
+  }
+}

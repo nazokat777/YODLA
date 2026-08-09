@@ -1,7 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Panel } from '@/components/ui/Panel'
 import { getDailyStatsSince } from '@/core/db'
-import { buildWeeklySeries, type DayPoint } from '@/core/stats'
+import { buildWeekComparison, buildWeeklySeries, type DayPoint } from '@/core/stats'
 import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
@@ -24,6 +24,13 @@ export function StatsScreen() {
     [now],
   )
 
+  // Taqqoslash uchun ikki hafta kerak
+  const twoWeeks = useLiveQuery(
+    () => getDailyStatsSince(addDays(startOfDay(now), -13)),
+    [now],
+  )
+
+  const comparison = buildWeekComparison(twoWeeks ?? [], now)
   const series = buildWeeklySeries(weekStats ?? [], now)
   const weekXp = series.reduce((sum, point) => sum + point.xp, 0)
   const weekWords = series.reduce((sum, point) => sum + point.words, 0)
@@ -45,6 +52,8 @@ export function StatsScreen() {
         </div>
         <WeeklyChart series={series} />
       </Panel>
+
+      <WeekComparison current={comparison.current.xp} previous={comparison.previous.xp} />
 
       <p className="text-xs text-ink-600">
         Nishonlar Profil bo'limida — bu yerda takrorlanmaydi.
@@ -86,6 +95,50 @@ function Tile({ label, value, accent }: { label: string; value: number; accent: 
     <Panel className="p-3 text-center">
       <p className={`text-2xl font-extrabold ${accent}`}>{value}</p>
       <p className="mt-0.5 text-xs text-ink-600">{label}</p>
+    </Panel>
+  )
+}
+
+/**
+ * Joriy hafta vs o'tgan hafta.
+ *
+ * Taqqoslash O'ZI bilan: begonalar bilan emas. Kamayish ham ochiq
+ * ko'rsatiladi — yashirilsa statistika yolg'on bo'lardi, "soxta
+ * statistika yo'q" qoidasi esa buni taqiqlaydi.
+ */
+function WeekComparison({ current, previous }: { current: number; previous: number }) {
+  // Birinchi hafta: taqqoslashga hali asos yo'q
+  if (previous === 0 && current === 0) return null
+
+  const difference = current - previous
+  const isFirstWeek = previous === 0
+
+  return (
+    <Panel>
+      <h2 className="mb-2 font-bold">O'tgan hafta bilan</h2>
+
+      <div className="flex items-baseline justify-between">
+        <span className="text-sm text-ink-600">O'tgan hafta: {previous} XP</span>
+        <span
+          data-testid="week-diff"
+          className={
+            difference >= 0 ? 'font-extrabold text-brand-700' : 'font-extrabold text-flame-600'
+          }
+        >
+          {difference >= 0 ? '+' : ''}
+          {difference} XP
+        </span>
+      </div>
+
+      <p className="mt-2 text-sm text-ink-600">
+        {isFirstWeek
+          ? "Bu sizning birinchi haftangiz — keyingi hafta taqqoslash paydo bo'ladi."
+          : difference > 0
+            ? "Bu hafta yaxshiroq ketyapti. Shu ritmni saqlang."
+            : difference === 0
+              ? 'Aynan o‘tgan haftadagidek.'
+              : "Bu hafta kamroq — ertaga bitta dars yetadi."}
+      </p>
     </Panel>
   )
 }
