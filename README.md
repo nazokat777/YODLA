@@ -54,6 +54,10 @@ src/
 │   │   ├── languages.ts     # tillar ro'yxati + RTL/TTS metama'lumoti
 │   │   └── levels.ts        # LEVEL_ORDER (A1→A2→B1) + levelRank
 │   ├── lesson/order.ts      # pickLessonCards — darsga qaysi so'z chiqadi
+│   ├── placement/           # daraja testi — sof funksiyalar
+│   │   ├── score.ts         # natijadan boshlang'ich darajani aniqlash
+│   │   └── questions.ts     # savollarni kontentdan yasash
+│   ├── text/transliterate.ts # notanish yozuvning o'qilishi
 │   ├── srs/                 # SM-2 algoritmi — sof funksiyalar
 │   │   ├── constants.ts     # EF chegaralari, intervallar, o'tish bahosi
 │   │   ├── sm2.ts           # nextEaseFactor / nextInterval / reviewSrsState
@@ -78,7 +82,8 @@ src/
 │   │   ├── ExerciseView.tsx     # 4 turning ko'rinishi
 │   │   ├── FeedbackBar.tsx      # instant feedback + mnemonika yozish
 │   │   └── ChoiceGrid.tsx, WordDisplay.tsx, SessionSummaryPanel.tsx
-│   ├── onboarding/          # til tanlash → daraja testi → birinchi dars
+│   ├── onboarding/          # til → daraja testi → maqsad → birinchi dars
+│   │   └── steps/           # har qadam alohida komponent
 │   ├── home/                # streak, kunlik maqsad, o'quv yo'li
 │   ├── lesson/              # yangi so'zlarni o'rganish
 │   ├── review/              # SRS bo'yicha takrorlash
@@ -229,6 +234,22 @@ qo'riqlanadi: shadda undoshni ikkilantiradi (`تُفَّاحَة` → tuffaha), 
 boshidagi tayanch alif harakat bilan qo'shilib ketmaydi (`أَب` → ab), so'z
 ichidagi hamza esa bo'g'iz to'xtami (`يَأْكُل` → ya'kul).
 
+## Daraja testi (onboarding)
+
+Yangi foydalanuvchi 9 savolga javob beradi (A1/A2/B1 dan 3 tadan).
+Darajadan 2 ta to'g'ri javob — o'tilgan; boshlang'ich daraja esa
+**o'tilmagan eng past daraja** ([score.ts](src/core/placement/score.ts)).
+
+> Test SRS holatiga **tegmaydi**: `SessionRunner` ishlatilmaydi va bazaga
+> hech narsa yozilmaydi. Aks holda foydalanuvchi o'rganishni boshlamasdan
+> turib bilmagan so'zlari "unutilgan" deb belgilanardi va streak/XP
+> sun'iy boshlanardi.
+
+Natija `startingLevel` sifatida saqlanadi va `pickLessonCards` ga
+uzatiladi: past darajadagi ko'rilmagan so'zlar **o'chirilmaydi**, faqat
+zaxiraga suriladi — shunda A2 dan boshlagan foydalanuvchi so'zlari
+tugaganda ham dars bo'sh qaytmaydi.
+
 ## Ma'lumotlar bazasi
 
 IndexedDB, Dexie orqali. Asosiy indeks — `[language+dueDate]` qo'shma indeksi:
@@ -318,5 +339,5 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 3** — 4 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
 - [x] **Faza 5** — uch til moduli + kontent (har tildan 102 so'z) + TTS
-- [ ] **Faza 6** — to'liq onboarding + mascot
+- [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
 - [ ] **Faza 7** — liga + PWA (offline) + polish

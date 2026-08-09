@@ -1,3 +1,4 @@
+import { Mascot } from '@/components/ui/Mascot'
 import { Panel } from '@/components/ui/Panel'
 import { BADGE_BY_ID } from '@/core/gamification'
 import type { SessionSummary } from './SessionRunner'
@@ -33,9 +34,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
   return (
     <div className="flex flex-col gap-3">
       <Panel className="text-center">
-        <div className="mb-2 text-5xl" aria-hidden="true">
-          🎉
-        </div>
+        <Mascot mood="celebrating" size="md" className="mx-auto mb-2" />
         <p className="text-lg font-extrabold">Seans tugadi!</p>
         <p className="mt-1 text-sm text-ink-600">
           {summary.answered} ta javob · {accuracy}% aniqlik
