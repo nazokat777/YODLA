@@ -1,4 +1,4 @@
-import type { LeagueRow } from '@/core/league'
+import type { CheerKind, LeagueRow } from '@/core/league'
 
 /**
  * Supabase qatlami.
@@ -124,5 +124,54 @@ export async function addFriend(myCode: string, friendCode: string): Promise<boo
   } catch (error) {
     console.error('Do‘st qo‘shib bo‘lmadi:', error)
     return false
+  }
+}
+
+/** Tayyor xabar yuborish. Muvaffaqiyat — `true` */
+export async function sendCheer(
+  fromCode: string,
+  toCode: string,
+  kind: CheerKind,
+): Promise<boolean> {
+  const client = await getClient()
+  if (!client) return false
+
+  try {
+    const { error } = await client.rpc('yodla_send_cheer', {
+      p_from: fromCode,
+      p_to: toCode,
+      p_kind: kind,
+    })
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Xabar yuborib bo‘lmadi:', error)
+    return false
+  }
+}
+
+export interface ReceivedCheer {
+  from_code: string
+  kind: string
+  d: string
+}
+
+/** Menga kelgan xabarlar */
+export async function fetchCheers(myCode: string): Promise<ReceivedCheer[]> {
+  const client = await getClient()
+  if (!client) return []
+
+  try {
+    const { data, error } = await client
+      .from('yodla_cheers')
+      .select<ReceivedCheer>('from_code,kind,d')
+      .eq('to_code', myCode)
+    if (error) throw error
+
+    return data ?? []
+  } catch (error) {
+    console.error('Xabarlarni olib bo‘lmadi:', error)
+    return []
   }
 }

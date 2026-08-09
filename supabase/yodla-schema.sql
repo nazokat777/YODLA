@@ -129,3 +129,50 @@ end $$;
 grant execute on function public.yodla_add_friend(text, text)    to anon, authenticated;
 grant execute on function public.yodla_remove_friend(text, text) to anon, authenticated;
 grant select on public.yodla_links to anon, authenticated;
+
+-- ============================================================
+-- TAYYOR XABARLAR ("cheers")
+-- Erkin matn YO'Q: faqat oldindan belgilangan ro'yxatdan.
+-- Sabab: moderatsiya imkoni yo'q, ilovadan bolalar ham foydalanadi.
+-- ============================================================
+
+create table if not exists public.yodla_cheers (
+  from_code  text not null,
+  to_code    text not null,
+  kind       text not null,
+  d          date not null default current_date,
+  created_at timestamptz default now(),
+  -- Kunlik kalit spamni BAZA DARAJASIDA to'xtatadi: bir xil xabarni
+  -- bir kishiga kuniga bir marta yuborish mumkin
+  primary key (from_code, to_code, kind, d)
+);
+
+alter table public.yodla_cheers enable row level security;
+
+drop policy if exists yc_read on public.yodla_cheers;
+create policy yc_read on public.yodla_cheers for select to public using (true);
+
+create or replace function public.yodla_send_cheer(p_from text, p_to text, p_kind text)
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if p_from !~ '^[A-Z0-9]{6}$' or p_to !~ '^[A-Z0-9]{6}$' then
+    raise exception 'Kod formati notogri';
+  end if;
+
+  -- Ro'yxat qat'iy: mijoz istalgan matn yubora olmaydi
+  if p_kind not in ('bravo', 'streak', 'keep', 'wow') then
+    raise exception 'Notanish xabar turi';
+  end if;
+
+  if upper(p_from) = upper(p_to) then
+    return;
+  end if;
+
+  insert into public.yodla_cheers (from_code, to_code, kind)
+  values (upper(p_from), upper(p_to), p_kind)
+  on conflict do nothing;
+end $$;
+
+grant execute on function public.yodla_send_cheer(text, text, text) to anon, authenticated;
+grant select on public.yodla_cheers to anon, authenticated;

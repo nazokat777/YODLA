@@ -3,17 +3,29 @@ import { Button } from '@/components/ui/Button'
 import { Mascot } from '@/components/ui/Mascot'
 import { Panel } from '@/components/ui/Panel'
 import {
+  CHEERS,
+  cheerByKind,
   buildInviteUrl,
   filterFriends,
   leagueTier,
   normalizeCode,
   rankEntries,
   tierTitle,
+  type CheerKind,
   type LeagueRow,
+  type RankedEntry,
 } from '@/core/league'
 import { getDailyStatsSince } from '@/core/db'
 import { buildWeeklySeries } from '@/core/stats'
-import { addFriend, fetchFriendCodes, fetchWeeklyLeague, isCloudEnabled } from '@/lib/supabase'
+import {
+  addFriend,
+  fetchCheers,
+  fetchFriendCodes,
+  fetchWeeklyLeague,
+  isCloudEnabled,
+  sendCheer,
+  type ReceivedCheer,
+} from '@/lib/supabase'
 import { useSearchParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { addDays, startOfDay } from '@/lib/date'
@@ -99,6 +111,9 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
   const [searchParams] = useSearchParams()
   const [codeInput, setCodeInput] = useState(() => searchParams.get('add') ?? '')
   const [addMessage, setAddMessage] = useState<string | null>(null)
+  const [cheers, setCheers] = useState<ReceivedCheer[]>([])
+  /** Qaysi kishiga xabar tanlanmoqda */
+  const [cheerTarget, setCheerTarget] = useState<string | null>(null)
 
   // O'z haftalik XP'im lokal statistikadan — bulut yo'q bo'lsa ham ko'rinadi
   const myWeeklyXp = useMemo(() => {
@@ -120,6 +135,10 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
     void fetchFriendCodes(myCode).then((codes) => {
       if (!cancelled) setFriendCodes(codes)
+    })
+
+    void fetchCheers(myCode).then((received) => {
+      if (!cancelled) setCheers(received)
     })
 
     return () => {
@@ -153,6 +172,14 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
       setFriendCodes((current) => [...new Set([...current, code])])
       setCodeInput('')
     }
+  }
+
+  async function handleCheer(toCode: string, kind: CheerKind) {
+    setCheerTarget(null)
+
+    const sent = await sendCheer(myCode, toCode, kind)
+    // Kunlik cheklov bazada: bir xil xabar kuniga bir marta
+    setAddMessage(sent ? 'Xabar yuborildi' : 'Bugun bu xabar allaqachon yuborilgan')
   }
 
   async function handleInvite() {
@@ -208,6 +235,27 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
         </Panel>
       )}
 
+      {cheers.length > 0 && (
+        <Panel className="border-brand-500 bg-brand-50">
+          <h2 className="mb-2 font-bold text-brand-700">Sizga xabarlar</h2>
+          <ul className="flex flex-wrap gap-2">
+            {cheers.slice(-8).map((cheer) => {
+              const preset = cheerByKind(cheer.kind)
+              if (!preset) return null
+
+              return (
+                <li
+                  key={`${cheer.from_code}-${cheer.kind}-${cheer.d}`}
+                  className="rounded-full bg-white px-3 py-1 text-sm font-semibold"
+                >
+                  <span aria-hidden="true">{preset.icon}</span> {preset.label}
+                </li>
+              )
+            })}
+          </ul>
+        </Panel>
+      )}
+
       {/* Ko'rinish almashtirgich */}
       <div
         role="group"
@@ -245,9 +293,28 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
                 <span className="w-7 text-center font-extrabold text-ink-600">{entry.rank}</span>
                 <span className="flex-1 font-bold">{entry.name}</span>
                 <span className="font-extrabold text-brand-700">{entry.xp} XP</span>
+
+                {!entry.isMe && (
+                  <button
+                    type="button"
+                    onClick={() => setCheerTarget(cheerTarget === entry.code ? null : entry.code)}
+                    aria-label={`${entry.name}ga xabar yuborish`}
+                    className="tap-highlight-none flex h-9 w-9 items-center justify-center rounded-full hover:bg-brand-50"
+                  >
+                    <span aria-hidden="true">💬</span>
+                  </button>
+                )}
               </li>
             ))}
           </ol>
+
+          {cheerTarget && (
+            <CheerPicker
+              entry={ranked.find((entry) => entry.code === cheerTarget)}
+              onPick={(kind) => void handleCheer(cheerTarget, kind)}
+              onClose={() => setCheerTarget(null)}
+            />
+          )}
 
           {ranked.length === 1 && (
             <p className="mt-2 text-xs text-ink-600">
@@ -293,5 +360,54 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
         </Button>
       </Panel>
     </div>
+  )
+}
+
+/**
+ * Xabar tanlash paneli.
+ *
+ * Erkin matn yo'q — faqat ro'yxatdan. Moderatsiya imkoni bo'lmagan
+ * ilovada bu yagona xavfsiz yo'l.
+ */
+function CheerPicker({
+  entry,
+  onPick,
+  onClose,
+}: {
+  entry: RankedEntry | undefined
+  onPick: (kind: CheerKind) => void
+  onClose: () => void
+}) {
+  if (!entry) return null
+
+  return (
+    <Panel className="mt-2 border-brand-500">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="font-bold">{entry.name}ga xabar</p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Yopish"
+          className="tap-highlight-none text-xl text-ink-600"
+        >
+          ✕
+        </button>
+      </div>
+
+      <ul className="grid grid-cols-2 gap-2">
+        {CHEERS.map((cheer) => (
+          <li key={cheer.kind}>
+            <button
+              type="button"
+              onClick={() => onPick(cheer.kind)}
+              className="tap-highlight-none flex w-full items-center gap-2 rounded-xl border-2 border-ink-300 bg-white p-2 text-sm font-semibold hover:border-brand-500"
+            >
+              <span aria-hidden="true">{cheer.icon}</span>
+              {cheer.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Panel>
   )
 }
