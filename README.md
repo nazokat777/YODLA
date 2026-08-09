@@ -27,6 +27,7 @@ npm run lint       # oxlint
 | Testlar  | Vitest + Testing Library      |
 | Audio    | Web Speech API (Faza 5)       |
 | PWA      | Manifest + qo'lda yozilgan service worker (Faza 7) |
+| Motion   | GSAP (dangasa yuklanadi, Faza 7) |
 
 ## Papka strukturasi
 
@@ -55,6 +56,7 @@ src/
 │   │   ├── languages.ts     # tillar ro'yxati + RTL/TTS metama'lumoti
 │   │   └── levels.ts        # LEVEL_ORDER (A1→A2→B1) + levelRank
 │   ├── lesson/order.ts      # pickLessonCards — darsga qaysi so'z chiqadi
+│   ├── path/units.ts        # o'quv yo'li bo'limlari (kartalardan hisoblanadi)
 │   ├── placement/           # daraja testi — sof funksiyalar
 │   │   ├── score.ts         # natijadan boshlang'ich darajani aniqlash
 │   │   └── questions.ts     # savollarni kontentdan yasash
@@ -315,6 +317,49 @@ uchun ham ochiladi.
 
 > Geymifikatsiya yozuvi o'z xatosini o'zi yutadi: XP yozilmasa ham
 > takrorlash progressi (SRS) saqlanib qoladi. Ular alohida tranzaksiyalarda.
+
+## O'quv yo'li
+
+Bosh sahifadagi zanjir — **bo'lim = daraja + mavzu**. Ikkalasi ham
+kartada bor, shuning uchun yo'l uchun alohida ma'lumot saqlanmaydi:
+holat har safar progressdan hisoblanadi
+([units.ts](src/core/path/units.ts)).
+
+| Holat | Ma'nosi |
+| ----- | ------- |
+| `completed` | barcha so'zi kamida bir marta ko'rilgan |
+| `current` | birinchi tugallanmagan bo'lim |
+| `locked` | joriydan keyingilari |
+| `skipped` | daraja testi "bilaman" degan, lekin ko'rilmagan |
+
+`skipped` ataylab alohida: A2 dan boshlagan foydalanuvchining A1
+bo'limlariga ✓ qo'yish yolg'on bo'lardi — ular so'nik ko'rinadi, lekin
+ochib o'rganish mumkin.
+
+Bo'lim bosilganda `/lesson/a1-oila` ochiladi va dars faqat o'sha mavzu
+so'zlaridan tuziladi.
+
+## Animatsiya
+
+GSAP **dangasa yuklanadi** ([motion.ts](src/lib/motion.ts)) — birinchi
+ochilish tezligiga tegmaydi.
+
+> **Animatsiya — bezak.** Interfeys animatsiyasiz ham to'g'ri bo'lishi
+> shart: GSAP yuklanmasa yoki `prefers-reduced-motion` yoqilgan bo'lsa,
+> ekran shunchaki yakuniy holatida turadi.
+
+Bu qoida testda qo'riqlanadi va u allaqachon bitta xatoni ushladi: kirish
+animatsiyasi `opacity: 0` dan boshlangan edi, ya'ni animatsiya tugamay
+qolsa (fon tab, to'xtatilgan `requestAnimationFrame`) bo'limlar ko'rinmas
+bo'lib qolardi. Endi faqat siljish va masshtab animatsiya qilinadi —
+yarim yo'lda ham matn o'qiladi.
+
+`loadGsap()` harakat kamaytirilganda `null` qaytaradi: kutubxona umuman
+yuklanmaydi. Bu did emas — harakat vestibulyar buzilishi bor odamlarda
+ko'ngil aynishiga sabab bo'ladi.
+
+Kuchli effektlar yo'l va bosh sahifada; mashq siklida harakatlar
+≤200 ms — javob va keyingi savol orasidagi ritm buzilmasligi kerak.
 
 ## Offline rejim (PWA)
 
