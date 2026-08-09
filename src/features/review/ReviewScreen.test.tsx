@@ -122,6 +122,42 @@ describe('ReviewScreen — mashq oqimi', () => {
     expect(screen.getByTestId('correct-answer')).toBeInTheDocument()
   })
 
+  it('togri javobdan keyin keyingi mashqqa ozi otadi', async () => {
+    await seed()
+    renderScreen()
+
+    await screen.findByRole('button', { name: /tekshirish/i })
+    await answerRecognition('correct')
+
+    expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
+
+    // "Davom etish" bosilmaydi — feedback o'zi yopilib, keyingi mashq chiqadi
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/to.g.ri!/i)).not.toBeInTheDocument()
+      },
+      { timeout: 3000 },
+    )
+    expect(screen.getByRole('button', { name: /tekshirish/i })).toBeInTheDocument()
+  })
+
+  it('xato javobda ozi otmaydi — qaror foydalanuvchida qoladi', async () => {
+    await seed()
+    renderScreen()
+
+    await screen.findByRole('button', { name: /tekshirish/i })
+    await answerRecognition('wrong')
+
+    const feedback = await screen.findByText(/keyingi safar/i)
+
+    // To'g'ri javobni o'qish va assotsiatsiya yozish uchun vaqt kerak,
+    // shuning uchun bu yerda avtomatik o'tish bo'lmaydi
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    expect(feedback).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /tushunarli/i })).toBeInTheDocument()
+  })
+
   it('xato javob berilgan karta seans oxiriga qaytariladi', async () => {
     await seed()
     renderScreen()

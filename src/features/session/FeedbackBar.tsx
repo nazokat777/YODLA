@@ -5,7 +5,7 @@ import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import { setMnemonic } from '@/core/db'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
-import { speak } from '@/lib/speech'
+import { SpeakButton } from './SpeakButton'
 
 interface FeedbackBarProps {
   exercise: Exercise
@@ -115,14 +115,7 @@ export function FeedbackBar({
 
   /** Talaffuz tugmasi — faqat o'rganilayotgan tildagi matn uchun */
   const speakButton = (text: string) => (
-    <button
-      type="button"
-      onClick={() => speak(text, language.speechLocale)}
-      aria-label="Talaffuzni eshitish"
-      className="tap-highlight-none flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl hover:bg-white/60"
-    >
-      🔊
-    </button>
+    <SpeakButton text={text} locale={language.speechLocale} />
   )
 
   return (

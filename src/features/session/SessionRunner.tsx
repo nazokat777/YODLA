@@ -31,6 +31,14 @@ export interface SessionSummary {
   newBadges: string[]
 }
 
+/**
+ * To'g'ri javobdan keyin keyingi mashqqa o'zi o'tishdan oldingi pauza (ms).
+ *
+ * Yetarli: ✓ belgisi va "+XP" ni ko'rish, tovushni eshitish. Ortiqcha emas:
+ * har savolda "Davom etish"ni bosish seans ritmini buzadi.
+ */
+const AUTO_ADVANCE_MS = 900
+
 const EMPTY_SUMMARY: SessionSummary = {
   answered: 0,
   correct: 0,
@@ -215,6 +223,23 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
 
     setIndex((current) => current + 1)
   }, [verdict, updatedCard])
+
+  /**
+   * To'g'ri javobdan keyin keyingi mashqqa O'ZI o'tadi.
+   *
+   * Faqat "correct" uchun: o'sha panelda o'qiladigan yangi ma'lumot yo'q
+   * (✓ va XP). Xato yoki "deyarli" javobda esa to'g'ri javob, talaffuz va
+   * assotsiatsiya yozish taklifi ko'rsatiladi — u yerda vaqtni foydalanuvchi
+   * o'zi belgilaydi, aks holda o'rganishning eng foydali lahzasi qochadi.
+   *
+   * "Davom etish" tugmasi qoladi: kutmasdan darhol o'tish mumkin.
+   */
+  useEffect(() => {
+    if (verdict !== 'correct') return
+
+    const timer = setTimeout(handleContinue, AUTO_ADVANCE_MS)
+    return () => clearTimeout(timer)
+  }, [verdict, handleContinue])
 
   if (!exercise) return null
 

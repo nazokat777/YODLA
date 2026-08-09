@@ -19,7 +19,6 @@ export interface LanguageMeta {
   name: string
   /** Ona tilidagi nomi */
   nativeName: string
-  flag: string
   dir: TextDirection
   /** Web Speech API uchun til tegi */
   speechLocale: string

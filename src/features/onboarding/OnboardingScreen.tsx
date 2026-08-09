@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
+import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
 import type { LanguageCode } from '@/core/types'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -60,9 +61,7 @@ export function OnboardingScreen() {
                     : 'border-ink-300 hover:border-ink-600/40',
                 )}
               >
-                <span className="text-3xl" aria-hidden="true">
-                  {lang.flag}
-                </span>
+                <LanguageBadge language={lang} size="lg" />
                 <span className="flex flex-col">
                   <span className="font-bold">{lang.name}</span>
                   <span

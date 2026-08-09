@@ -1,4 +1,5 @@
 import { BadgeTile } from '@/components/ui/BadgeTile'
+import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
 import { Panel } from '@/components/ui/Panel'
 import { PhaseNotice } from '@/components/ui/PhaseNotice'
@@ -121,10 +122,8 @@ export function ProfileScreen() {
                   : 'border-ink-300',
               )}
             >
-              <span className="block text-2xl" aria-hidden="true">
-                {lang.flag}
-              </span>
-              <span className="text-xs font-semibold">{lang.nativeName}</span>
+              <LanguageBadge language={lang} className="mb-1" />
+              <span className="block text-xs font-semibold">{lang.nativeName}</span>
             </button>
           ))}
         </div>

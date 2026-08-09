@@ -5,6 +5,7 @@ import type { Exercise } from '@/core/exercises'
 import { cn } from '@/lib/cn'
 import { speak } from '@/lib/speech'
 import { ChoiceGrid } from './ChoiceGrid'
+import { SpeakButton } from './SpeakButton'
 import { WordDisplay } from './WordDisplay'
 import type { ExerciseAnswerState } from './answerState'
 
@@ -32,8 +33,10 @@ export function ExerciseView(props: ExerciseViewProps) {
     case 'recognition':
       return (
         <div className="flex flex-col gap-4">
-          <Panel className="flex min-h-32 items-center justify-center text-center">
+          <Panel className="flex min-h-32 flex-col items-center justify-center gap-2 text-center">
             <WordDisplay text={exercise.prompt} language={language} testId="exercise-prompt" />
+            {/* So'zni o'qiy olmaslik — notanish yozuvda eng katta to'siq */}
+            <SpeakButton text={exercise.prompt} locale={language.speechLocale} size="lg" />
           </Panel>
           <p className="text-sm font-semibold text-ink-600">Bu so'z nimani anglatadi?</p>
           <ChoiceGrid

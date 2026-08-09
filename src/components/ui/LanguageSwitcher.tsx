@@ -1,4 +1,5 @@
 import { LANGUAGE_LIST } from '@/core/config/languages'
+import { LanguageBadge } from './LanguageBadge'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 
@@ -43,9 +44,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
               isActive ? 'bg-brand-500 text-white' : 'text-ink-600 hover:bg-brand-50',
             )}
           >
-            <span className="text-lg" aria-hidden="true">
-              {lang.flag}
-            </span>
+            <LanguageBadge language={lang} size="sm" active={isActive} />
             <span>{shortName}</span>
           </button>
         )

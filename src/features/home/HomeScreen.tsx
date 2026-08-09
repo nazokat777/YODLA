@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
+import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
@@ -53,8 +54,15 @@ export function HomeScreen() {
       <header className="flex items-center justify-between">
         <div>
           <p className="text-sm text-ink-600">O'rganilmoqda</p>
-          <h1 className="text-xl font-extrabold">
-            {language ? `${language.flag} ${language.name}` : 'Til tanlanmagan'}
+          <h1 className="flex items-center gap-2 text-xl font-extrabold">
+            {language ? (
+              <>
+                <LanguageBadge language={language} size="sm" />
+                {language.name}
+              </>
+            ) : (
+              'Til tanlanmagan'
+            )}
           </h1>
         </div>
 
