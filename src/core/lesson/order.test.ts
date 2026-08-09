@@ -94,3 +94,49 @@ describe('pickLessonCards', () => {
     expect(cards.map((c) => c.id)).toEqual(['b', 'a'])
   })
 })
+
+describe('pickLessonCards — boshlang‘ich daraja', () => {
+  it('past darajadagi ko‘rilmagan so‘z oxirga suriladi', () => {
+    const cards = [
+      card('a1', { level: 'A1', totalReviews: 0 }),
+      card('a2', { level: 'A2', totalReviews: 0 }),
+    ]
+
+    expect(pickLessonCards(cards, 2, 'A2').map((c) => c.id)).toEqual(['a2', 'a1'])
+  })
+
+  it('ko‘rilgan kartalar past darajadagi yangi so‘zdan oldin turadi', () => {
+    // Mustahkamlash "bilaman" deb belgilangan darajadagi so'zdan muhimroq
+    const cards = [
+      card('a1', { level: 'A1', totalReviews: 0 }),
+      card('b1seen', { level: 'B1', totalReviews: 5 }),
+    ]
+
+    expect(pickLessonCards(cards, 2, 'A2').map((c) => c.id)).toEqual(['b1seen', 'a1'])
+  })
+
+  it('boshqa hech narsa qolmasa past daraja baribir qaytadi', () => {
+    // Dars hech qachon bo'sh qaytmaydi
+    const cards = [card('a1', { level: 'A1', totalReviews: 0 })]
+
+    expect(pickLessonCards(cards, 5, 'B1').map((c) => c.id)).toEqual(['a1'])
+  })
+
+  it('minLevel berilmasa tartib o‘zgarmaydi', () => {
+    const cards = [
+      card('a2', { level: 'A2', totalReviews: 0 }),
+      card('a1', { level: 'A1', totalReviews: 0 }),
+    ]
+
+    expect(pickLessonCards(cards, 2).map((c) => c.id)).toEqual(['a1', 'a2'])
+  })
+
+  it('minLevel A1 bo‘lsa hech narsa surilmaydi', () => {
+    const cards = [
+      card('a2', { level: 'A2', totalReviews: 0 }),
+      card('a1', { level: 'A1', totalReviews: 0 }),
+    ]
+
+    expect(pickLessonCards(cards, 2, 'A1').map((c) => c.id)).toEqual(['a1', 'a2'])
+  })
+})

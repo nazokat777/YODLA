@@ -1,11 +1,28 @@
 import { levelRank } from '@/core/config/levels'
 import type { CardRecord } from '@/core/db'
+import type { LevelCode } from '@/core/types'
+
+/**
+ * Tartiblash guruhlari (kichigi oldin).
+ *
+ * `LOW_LEVEL_NEW` — foydalanuvchi daraja testida "bilaman" deb ko'rsatgan
+ * darajadagi yangi so'zlar. Ular O'CHIRILMAYDI, faqat zaxiraga suriladi:
+ * A2 dan boshlagan foydalanuvchining A2/B1 so'zlari tugasa, dars bo'sh
+ * qaytmasligi kerak.
+ */
+const GROUP = { NEW: 0, SEEN: 1, LOW_LEVEL_NEW: 2 } as const
+
+function groupOf(card: CardRecord, minRank: number): number {
+  if (card.totalReviews > 0) return GROUP.SEEN
+
+  return levelRank(card.level) < minRank ? GROUP.LOW_LEVEL_NEW : GROUP.NEW
+}
 
 /**
  * Darsga chiqadigan kartalarni tanlaydi.
  *
  * Tartib mezonlari (ketma-ket):
- *   1. hali ko'rilmagan kartalar oldin — dars YANGI so'z o'rgatadi
+ *   1. guruh — yangi → mustahkamlash → past darajadagi yangi
  *   2. daraja — A1 → A2 → B1
  *   3. kam ko'rilgani oldin (`totalReviews`)
  *   4. eng kam mustahkamlangani oldin (`interval`)
@@ -16,19 +33,23 @@ import type { CardRecord } from '@/core/db'
  * mezonini oldinga qo'yish "eng past TUGALLANMAGAN darajadan" degan
  * qoidani beradi: A1 yangi so'zlari tugagach A2 o'zi ochiladi.
  *
- * Yangi so'z qolmaganda ro'yxat mustahkamlashga o'tadi (eng zaif karta
- * oldin) — shuning uchun dars hech qachon bo'sh qaytmaydi.
- *
  * Bu domen qoidasi (qaysi so'z keyingi o'rgatiladi), UI emas — shuning
  * uchun ekrandan ajratilgan va React'siz test qilinadi.
+ *
+ * @param minLevel daraja testi natijasi; berilmasa hamma daraja teng
  */
-export function pickLessonCards(cards: CardRecord[], size: number): CardRecord[] {
+export function pickLessonCards(
+  cards: CardRecord[],
+  size: number,
+  minLevel?: LevelCode,
+): CardRecord[] {
+  const minRank = minLevel === undefined ? 0 : levelRank(minLevel)
+
   // Nusxa olinadi: chaqiruvchi bergan massiv o'zgarmasligi kerak
   return [...cards]
     .sort((a, b) => {
-      const aSeen = a.totalReviews > 0 ? 1 : 0
-      const bSeen = b.totalReviews > 0 ? 1 : 0
-      if (aSeen !== bSeen) return aSeen - bSeen
+      const byGroup = groupOf(a, minRank) - groupOf(b, minRank)
+      if (byGroup !== 0) return byGroup
 
       const byLevel = levelRank(a.level) - levelRank(b.level)
       if (byLevel !== 0) return byLevel
