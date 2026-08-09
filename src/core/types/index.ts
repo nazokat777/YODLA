@@ -12,6 +12,9 @@ export type LevelCode = 'A1' | 'A2' | 'B1'
 /** Matn yo'nalishi — arab tili uchun RTL */
 export type TextDirection = 'ltr' | 'rtl'
 
+/** Yozuv turi — transliteratsiya (o'qishga yordam) shunga qarab tanlanadi */
+export type ScriptCode = 'latin' | 'cyrillic' | 'arabic'
+
 /** Til haqidagi metama'lumot (UI'da ko'rsatish uchun) */
 export interface LanguageMeta {
   code: LanguageCode
@@ -20,6 +23,7 @@ export interface LanguageMeta {
   /** Ona tilidagi nomi */
   nativeName: string
   dir: TextDirection
+  script: ScriptCode
   /** Web Speech API uchun til tegi */
   speechLocale: string
 }

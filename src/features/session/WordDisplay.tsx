@@ -1,3 +1,4 @@
+import { transliterate } from '@/core/text/transliterate'
 import type { LanguageMeta } from '@/core/types'
 import { cn } from '@/lib/cn'
 
@@ -20,20 +21,35 @@ interface WordDisplayProps {
  */
 export function WordDisplay({ text, language, size = 'lg', className, testId }: WordDisplayProps) {
   const isRtl = language.dir === 'rtl'
+  // O'qishga yordam: notanish yozuvdagi so'zni ovoz chiqarib o'qish uchun
+  const reading = transliterate(text, language.script)
 
   return (
-    <p
-      data-testid={testId}
-      dir={language.dir}
-      lang={language.code}
-      className={cn(
-        'font-extrabold',
-        size === 'lg' ? 'text-3xl' : 'text-xl',
-        isRtl && (size === 'lg' ? 'text-[2.75rem] leading-relaxed' : 'text-2xl leading-relaxed'),
-        className,
+    <>
+      <p
+        data-testid={testId}
+        dir={language.dir}
+        lang={language.code}
+        className={cn(
+          'font-extrabold',
+          size === 'lg' ? 'text-3xl' : 'text-xl',
+          isRtl && (size === 'lg' ? 'text-[2.75rem] leading-relaxed' : 'text-2xl leading-relaxed'),
+          className,
+        )}
+      >
+        {text}
+      </p>
+
+      {reading && (
+        <p
+          data-testid={testId ? `${testId}-reading` : undefined}
+          dir="ltr"
+          lang="uz"
+          className={cn('text-ink-600', size === 'lg' ? 'text-base' : 'text-sm')}
+        >
+          {reading}
+        </p>
       )}
-    >
-      {text}
-    </p>
+    </>
   )
 }

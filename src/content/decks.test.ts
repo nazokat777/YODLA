@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
+import { LANGUAGES } from '@/core/config/languages'
 import { LEVEL_ORDER } from '@/core/config/levels'
+import { transliterate } from '@/core/text/transliterate'
 import { normalizeAnswer } from '@/core/exercises/normalize'
 import { makeCardId } from '@/core/srs'
 import type { LanguageCode } from '@/core/types'
 import { DECKS, STARTER_DECKS } from './starterDecks'
 
-const LANGUAGES: LanguageCode[] = ['en', 'ru', 'ar']
+const LANGUAGE_CODES: LanguageCode[] = ['en', 'ru', 'ar']
 
-describe.each(LANGUAGES)('%s to‘plami', (language) => {
+describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
   const deck = DECKS[language]
   const all = LEVEL_ORDER.flatMap((level) => deck[level])
 
@@ -43,6 +45,21 @@ describe.each(LANGUAGES)('%s to‘plami', (language) => {
     const duplicates = normalized.filter((value, index) => normalized.indexOf(value) !== index)
 
     expect(duplicates).toEqual([])
+  })
+
+  it('lotin bo‘lmagan yozuvdagi har so‘z o‘qilishini beradi', () => {
+    // Transliteratsiya hisoblab chiqariladi. Agar biror belgi jadvalga
+    // kiritilmagan bo'lsa, natijada o'sha belgi o'zgarmasdan qolib ketardi —
+    // foydalanuvchi "o'qishga yordam" o'rniga yana o'sha yozuvni ko'rardi.
+    const { script } = LANGUAGES[language]
+    if (script === 'latin') return
+
+    all.forEach((card) => {
+      const reading = transliterate(card.word, script)
+
+      expect(reading).toBeTruthy()
+      expect(reading).toMatch(/^[a-z' -]+$/i)
+    })
   })
 
   it('majburiy maydonlar to‘ldirilgan', () => {

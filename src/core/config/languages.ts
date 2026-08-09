@@ -10,6 +10,7 @@ export const LANGUAGES: Record<LanguageCode, LanguageMeta> = {
     name: 'Ingliz tili',
     nativeName: 'English',
     dir: 'ltr',
+    script: 'latin',
     speechLocale: 'en-US',
   },
   ru: {
@@ -17,6 +18,7 @@ export const LANGUAGES: Record<LanguageCode, LanguageMeta> = {
     name: 'Rus tili',
     nativeName: 'Русский',
     dir: 'ltr',
+    script: 'cyrillic',
     speechLocale: 'ru-RU',
   },
   ar: {
@@ -24,6 +26,7 @@ export const LANGUAGES: Record<LanguageCode, LanguageMeta> = {
     name: 'Arab tili',
     nativeName: 'العربية',
     dir: 'rtl',
+    script: 'arabic',
     speechLocale: 'ar-SA',
   },
 }

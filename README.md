@@ -212,6 +212,23 @@ Alohida tekshiruv so'zlar **normallashtirilgandan keyin** ham farqlanishini
 kafolatlaydi — arab harakalari tushganda `مَطَار` va `مَطَر` ustma-ust
 tushmasligi kerak.
 
+## O'qishga yordam (transliteratsiya)
+
+Arabcha va ruscha so'z ostida uning o'zbek lotinida o'qilishi ko'rsatiladi
+(`آسِف` → *asif*, `жёлтый` → *joltiy*). So'zni o'qiy olmagan foydalanuvchi
+uni yodlay olmaydi — bu qulaylik emas, zaruriyat.
+
+O'qilish **hisoblab chiqariladi** ([transliterate.ts](src/core/text/transliterate.ts)),
+kontentga qo'lda yozilmaydi: arabcha so'zlar harakat bilan kiritilgan, ya'ni
+unlilar matnning o'zida bor. Shu tufayli yangi so'z qo'shilganda qo'shimcha
+maydon to'ldirish shart emas.
+
+Bu ilmiy transliteratsiya emas — diakritikasiz, o'zbekcha odatiy yozilishga
+moslangan (`خ` → x, `ش` → sh, `غ` → g'). Uchta nozik qoida testlar bilan
+qo'riqlanadi: shadda undoshni ikkilantiradi (`تُفَّاحَة` → tuffaha), so'z
+boshidagi tayanch alif harakat bilan qo'shilib ketmaydi (`أَب` → ab), so'z
+ichidagi hamza esa bo'g'iz to'xtami (`يَأْكُل` → ya'kul).
+
 ## Ma'lumotlar bazasi
 
 IndexedDB, Dexie orqali. Asosiy indeks — `[language+dueDate]` qo'shma indeksi:

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import { setMnemonic } from '@/core/db'
+import { transliterate } from '@/core/text/transliterate'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
 import { SpeakButton } from './SpeakButton'
@@ -98,6 +99,7 @@ export function FeedbackBar({
   const tone = TONE[verdict]
   const language = LANGUAGES[exercise.card.language]
   const { answer, context } = resolveAnswerLines(exercise)
+  const answerReading = answer.isTarget ? transliterate(answer.text, language.script) : null
   const panelRef = useRef<HTMLDivElement>(null)
 
   /**
@@ -155,14 +157,22 @@ export function FeedbackBar({
           <p className="text-sm text-ink-600">To'g'ri javob:</p>
 
           <div className="flex items-center gap-2">
-            <p
-              data-testid="correct-answer"
-              dir={answer.isTarget ? language.dir : 'ltr'}
-              lang={answer.isTarget ? language.code : 'uz'}
-              className="text-xl font-bold"
-            >
-              {answer.text}
-            </p>
+            <div className="flex flex-col">
+              <p
+                data-testid="correct-answer"
+                dir={answer.isTarget ? language.dir : 'ltr'}
+                lang={answer.isTarget ? language.code : 'uz'}
+                className="text-xl font-bold"
+              >
+                {answer.text}
+              </p>
+              {/* Javobni ko'rish yetarli emas — uni o'qiy olish ham kerak */}
+              {answer.isTarget && answerReading && (
+                <p dir="ltr" lang="uz" className="text-sm text-ink-600">
+                  {answerReading}
+                </p>
+              )}
+            </div>
             {answer.isTarget && speakButton(answer.text)}
           </div>
 
