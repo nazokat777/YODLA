@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { LEVEL_ORDER } from '@/core/config/levels'
+import { normalizeAnswer } from '@/core/exercises/normalize'
 import { makeCardId } from '@/core/srs'
 import type { LanguageCode } from '@/core/types'
 import { DECKS, STARTER_DECKS } from './starterDecks'
@@ -30,6 +31,16 @@ describe.each(LANGUAGES)('%s to‘plami', (language) => {
     const duplicates = translations.filter(
       (value, index) => translations.indexOf(value) !== index,
     )
+
+    expect(duplicates).toEqual([])
+  })
+
+  it('so‘zlar normallashtirilgandan keyin ham farqlanadi', () => {
+    // Javob tekshirishda arab harakalari tushiriladi, rus `ё` → `е` bo'ladi.
+    // Ikki so'z shundan keyin bir xil bo'lib qolsa, foydalanuvchi to'g'ri
+    // yozsa ham "xato" olishi mumkin edi (masalan مَطَار va مَطَر).
+    const normalized = all.map((card) => normalizeAnswer(card.word, language))
+    const duplicates = normalized.filter((value, index) => normalized.indexOf(value) !== index)
 
     expect(duplicates).toEqual([])
   })

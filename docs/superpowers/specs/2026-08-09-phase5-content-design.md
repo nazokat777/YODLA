@@ -89,12 +89,22 @@ export function pickLessonCards(cards: CardRecord[], size: number): CardRecord[]
 
 Tartiblash mezonlari (ketma-ket):
 
-1. **Daraja** — A1 → A2 → B1. `level` yo'q karta oxirida turadi
+1. **Ko'rilmaganlar oldin** — dars yangi so'z o'rgatadi.
+2. **Daraja** — A1 → A2 → B1. `level` yo'q karta oxirida turadi
    (eski/qo'lda qo'shilgan kartalar dars boshini egallab olmasligi uchun).
-2. **Ko'rilmaganlar oldin** — `totalReviews` o'sish bo'yicha.
-3. **Eng kam mustahkam** — `interval` o'sish bo'yicha.
+3. **Kam ko'rilgani oldin** — `totalReviews` o'sish bo'yicha.
+4. **Eng kam mustahkam** — `interval` o'sish bo'yicha.
 
-Natijada A1 tugamaguncha A2 so'zlari yangi dars sifatida chiqmaydi.
+Natijada A1 ning yangi so'zlari tugamaguncha A2 chiqmaydi, A1 tugagach
+esa A2 o'zi ochiladi.
+
+**Nega daraja birinchi mezon emas:** o'rganib bo'lingan A1 kartalari
+ro'yxatda qoladi. Daraja birinchi bo'lsa, ular har doim A2 dan oldin
+turardi va dars A1 da abadiy qolib ketardi — "eng past TUGALLANMAGAN
+darajadan" qoidasi buzilardi.
+
+Yangi so'z qolmaganda ro'yxat mustahkamlashga o'tadi (eng zaif karta
+oldin), shuning uchun dars hech qachon bo'sh qaytmaydi.
 `LessonScreen` faqat ko'rsatish bilan shug'ullanadi.
 
 **Nega ekrandan chiqariladi:** tartib — domen qoidasi (qaysi so'z

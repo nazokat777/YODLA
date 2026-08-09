@@ -94,12 +94,26 @@ describe('pickLessonCards', () => {
   })
 
   it('A1 tugallangach A2 kartasi darsga chiqadi', () => {
-    // A1 ko'rilgan, A2 hali yangi — lekin daraja mezoni birinchi,
-    // shuning uchun A1 baribir oldinda; dars hajmi 1 bo'lsa A1 chiqadi
-    const cards = [card('a2', { level: 'A2', totalReviews: 0 }), card('a1', { level: 'A1', totalReviews: 3 })]
+    // A1 so'zlari allaqachon ko'rilgan, A2 hali yangi.
+    // "Ko'rilmagan" mezoni darajadan ustun — aks holda dars A1 da
+    // abadiy qolib ketardi va A2 hech qachon ochilmasdi.
+    const cards = [
+      card('a1', { level: 'A1', totalReviews: 3 }),
+      card('a2', { level: 'A2', totalReviews: 0 }),
+    ]
 
-    expect(pickLessonCards(cards, 1).map((c) => c.id)).toEqual(['a1'])
-    expect(pickLessonCards(cards, 2).map((c) => c.id)).toEqual(['a1', 'a2'])
+    expect(pickLessonCards(cards, 1).map((c) => c.id)).toEqual(['a2'])
+    expect(pickLessonCards(cards, 2).map((c) => c.id)).toEqual(['a2', 'a1'])
+  })
+
+  it('ko‘rilmaganlar orasida past daraja oldin turadi', () => {
+    const cards = [
+      card('b1', { level: 'B1', totalReviews: 0 }),
+      card('a1', { level: 'A1', totalReviews: 0 }),
+      card('a2', { level: 'A2', totalReviews: 0 }),
+    ]
+
+    expect(pickLessonCards(cards, 3).map((c) => c.id)).toEqual(['a1', 'a2', 'b1'])
   })
 
   it('darajasi yo‘q kartalar oxirida turadi', () => {
@@ -165,9 +179,19 @@ import type { CardRecord } from '@/core/db'
  * Darsga chiqadigan kartalarni tanlaydi.
  *
  * Tartib mezonlari (ketma-ket):
- *   1. daraja — A1 → A2 → B1 (past daraja tugamaguncha keyingisi boshlanmaydi)
- *   2. ko'rilmaganlar oldin (`totalReviews`)
- *   3. eng kam mustahkamlangan oldin (`interval`)
+ *   1. hali ko'rilmagan kartalar oldin — dars YANGI so'z o'rgatadi
+ *   2. daraja — A1 → A2 → B1
+ *   3. kam ko'rilgani oldin (`totalReviews`)
+ *   4. eng kam mustahkamlangani oldin (`interval`)
+ *
+ * NEGA daraja BIRINCHI mezon emas: A1 kartalari o'rganib bo'lingandan
+ * keyin ham ro'yxatda qoladi. Daraja birinchi bo'lsa, ular har doim A2
+ * dan oldin turardi va dars A1 da abadiy qolib ketardi. "Ko'rilmagan"
+ * mezonini oldinga qo'yish "eng past TUGALLANMAGAN darajadan" degan
+ * qoidani beradi: A1 yangi so'zlari tugagach A2 o'zi ochiladi.
+ *
+ * Yangi so'z qolmaganda ro'yxat mustahkamlashga o'tadi (eng zaif karta
+ * oldin) — shuning uchun dars hech qachon bo'sh qaytmaydi.
  *
  * Bu domen qoidasi (qaysi so'z keyingi o'rgatiladi), UI emas — shuning
  * uchun ekrandan ajratilgan va React'siz test qilinadi.
@@ -176,6 +200,10 @@ export function pickLessonCards(cards: CardRecord[], size: number): CardRecord[]
   // Nusxa olinadi: chaqiruvchi bergan massiv o'zgarmasligi kerak
   return [...cards]
     .sort((a, b) => {
+      const aSeen = a.totalReviews > 0 ? 1 : 0
+      const bSeen = b.totalReviews > 0 ? 1 : 0
+      if (aSeen !== bSeen) return aSeen - bSeen
+
       const byLevel = levelRank(a.level) - levelRank(b.level)
       if (byLevel !== 0) return byLevel
 
@@ -193,7 +221,7 @@ export function pickLessonCards(cards: CardRecord[], size: number): CardRecord[]
 npx vitest run src/core/lesson/order.test.ts
 ```
 
-Expected: PASS — 7 passed.
+Expected: PASS — 8 passed.
 
 - [ ] **Step 6: Commit**
 
@@ -251,7 +279,7 @@ npm test
 npm run typecheck
 ```
 
-Expected: 271 passed (264 bazaviy + 7 yangi); typecheck xatosiz.
+Expected: 272 passed (264 bazaviy + 8 yangi); typecheck xatosiz.
 
 - [ ] **Step 4: Commit**
 
