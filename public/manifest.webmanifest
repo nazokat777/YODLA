@@ -1,0 +1,24 @@
+{
+  "name": "PolyglotPro — Til o'rganish",
+  "short_name": "PolyglotPro",
+  "description": "Ingliz, rus va arab tillarini aqlli takrorlash (SRS) orqali o'rganing.",
+  "lang": "uz",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#10b981",
+  "background_color": "#10b981",
+  "categories": ["education"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
