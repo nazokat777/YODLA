@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { LanguageCode } from '@/core/types'
+import type { LanguageCode, LevelCode } from '@/core/types'
 
 /**
  * Ilova sozlamalari (Zustand).
@@ -13,6 +13,8 @@ interface SettingsState {
   learningLanguage: LanguageCode | null
   /** Kunlik maqsad — kuniga nechta so'z (geymifikatsiya, Faza 4) */
   dailyGoalWords: number
+  /** Daraja testi natijasi — darslar shu darajadan boshlanadi (Faza 6) */
+  startingLevel: LevelCode
   /** Onboarding tugallanganmi */
   onboardingCompleted: boolean
   /** Arab tili uchun interfeysni ham RTL qilish */
@@ -22,6 +24,7 @@ interface SettingsState {
 
   setLearningLanguage: (language: LanguageCode) => void
   setDailyGoalWords: (words: number) => void
+  setStartingLevel: (level: LevelCode) => void
   completeOnboarding: () => void
   setRtlInterface: (enabled: boolean) => void
   setSoundEnabled: (enabled: boolean) => void
@@ -32,6 +35,7 @@ interface SettingsState {
 const INITIAL = {
   learningLanguage: null,
   dailyGoalWords: 20,
+  startingLevel: 'A1',
   onboardingCompleted: false,
   rtlInterface: false,
   soundEnabled: true,
@@ -50,6 +54,7 @@ export const useSettingsStore = create<SettingsState>()(
         }),
 
       setDailyGoalWords: (dailyGoalWords) => set({ dailyGoalWords }),
+      setStartingLevel: (startingLevel) => set({ startingLevel }),
       completeOnboarding: () => set({ onboardingCompleted: true }),
       setRtlInterface: (rtlInterface) => set({ rtlInterface }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),

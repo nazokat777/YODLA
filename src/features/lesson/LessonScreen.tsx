@@ -22,6 +22,7 @@ const LESSON_SIZE = 5
 export function LessonScreen() {
   const navigate = useNavigate()
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const startingLevel = useSettingsStore((s) => s.startingLevel)
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
   const [pool, setPool] = useState<CardRecord[]>([])
@@ -42,7 +43,7 @@ export function LessonScreen() {
 
         setPool(all)
         // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
-        setCards(pickLessonCards(all, LESSON_SIZE))
+        setCards(pickLessonCards(all, LESSON_SIZE, startingLevel))
       })
       .catch((error: unknown) => {
         console.error('Darsni yuklab bo‘lmadi:', error)
@@ -52,7 +53,7 @@ export function LessonScreen() {
     return () => {
       cancelled = true
     }
-  }, [learningLanguage, lessonKey])
+  }, [learningLanguage, lessonKey, startingLevel])
 
   const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
 
