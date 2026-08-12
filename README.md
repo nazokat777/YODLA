@@ -107,7 +107,8 @@ src/
 │   ├── date.ts              # startOfDay / addDays (DST'ga chidamli)
 │   └── format.ts            # "6 kun", "ertaga" ko'rinishidagi matnlar
 ├── content/                 # o'quv kontenti
-│   ├── decks/en.ts ru.ts ar.ts  # har til: A1/A2/B1 bo'yicha 132 so'z
+│   ├── decks/en.ts ru.ts ar.ts  # qo'lda yozilgan (132/til, jumlalari bilan)
+│   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise
 │   └── starterDecks.ts      # daraja tartibida yig'uvchi (STARTER_DECKS)
 └── test/setup.ts            # Vitest global sozlamalari
 ```
@@ -236,6 +237,27 @@ moslangan (`خ` → x, `ش` → sh, `غ` → g'). Uchta nozik qoida testlar bila
 qo'riqlanadi: shadda undoshni ikkilantiradi (`تُفَّاحَة` → tuffaha), so'z
 boshidagi tayanch alif harakat bilan qo'shilib ketmaydi (`أَب` → ab), so'z
 ichidagi hamza esa bo'g'iz to'xtami (`يَأْكُل` → ya'kul).
+
+## Import qilingan lug'at
+
+Qo'lda yozilgan 132 so'z (jumlalari bilan) ustiga tashqi manbalardan
+lug'at qo'shilgan:
+
+| Til | Manba | So'z |
+| --- | ----- | ---- |
+| Arab | Mabdaul qiroat / Madina (169 dars) | +2161 |
+| Ingliz | Enterprise 1 | +1486 |
+| Rus | — (qo'lda yozilgan) | 132 |
+
+[scripts/import-vocab.mjs](scripts/import-vocab.mjs) manba JSON'larini
+o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
+Import qilingan so'zlarda **jumla yo'q** — "jumla qurish" mashqi ular uchun
+berilmaydi (qolgan 3 mashq ishlaydi).
+
+Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
+normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini
+(noyob tarjima, toza transliteratsiya) `decks.test.ts` bilan bir xil
+qo'llaydi. Tashlangan: arab 1294, ingliz 814.
 
 ## Daraja testi (onboarding)
 

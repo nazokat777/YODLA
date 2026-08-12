@@ -67,8 +67,17 @@ describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
       expect(card.word.trim()).not.toBe('')
       expect(card.translation.trim()).not.toBe('')
       expect(card.topic?.trim()).toBeTruthy()
-      expect(card.sentence?.trim()).toBeTruthy()
-      expect(card.sentenceTranslation?.trim()).toBeTruthy()
+    })
+  })
+
+  it('jumla bo‘lsa, tarjimasi ham bo‘ladi', () => {
+    // Jumla IXTIYORIY (import qilingan lug'atlarda yo'q — o'shanda "jumla
+    // qurish" mashqi berilmaydi). Lekin jumla bor bo'lsa, tarjimasisiz
+    // qolmasligi kerak: FeedbackBar uni kontekst sifatida ko'rsatadi.
+    all.forEach((card) => {
+      if (card.sentence?.trim()) {
+        expect(card.sentenceTranslation?.trim()).toBeTruthy()
+      }
     })
   })
 
