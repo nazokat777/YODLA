@@ -107,7 +107,7 @@ src/
 │   ├── date.ts              # startOfDay / addDays (DST'ga chidamli)
 │   └── format.ts            # "6 kun", "ertaga" ko'rinishidagi matnlar
 ├── content/                 # o'quv kontenti
-│   ├── decks/en.ts ru.ts ar.ts  # har til: A1/A2/B1 bo'yicha 117 so'z
+│   ├── decks/en.ts ru.ts ar.ts  # har til: A1/A2/B1 bo'yicha 132 so'z
 │   └── starterDecks.ts      # daraja tartibida yig'uvchi (STARTER_DECKS)
 └── test/setup.ts            # Vitest global sozlamalari
 ```
