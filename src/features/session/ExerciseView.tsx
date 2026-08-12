@@ -5,7 +5,7 @@ import type { Exercise } from '@/core/exercises'
 import { cn } from '@/lib/cn'
 import { speak } from '@/lib/speech'
 import { ChoiceGrid } from './ChoiceGrid'
-import { SpeakButton } from './SpeakButton'
+import { SpeakButton } from '@/components/ui/SpeakButton'
 import { WordDisplay } from './WordDisplay'
 import type { ExerciseAnswerState } from './answerState'
 

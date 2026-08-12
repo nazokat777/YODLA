@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Mascot } from '@/components/ui/Mascot'
 import { ProgressBar } from '@/components/ui/ProgressBar'
+import { SpeakButton } from '@/components/ui/SpeakButton'
 import { DECKS } from '@/content/starterDecks'
 import { LANGUAGES } from '@/core/config/languages'
 import { LEVEL_ORDER } from '@/core/config/levels'
@@ -76,14 +77,19 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
         </span>
       </div>
 
-      <p
-        data-testid="placement-word"
-        dir={meta.dir}
-        lang={meta.code}
-        className="mb-4 rounded-2xl border-2 border-ink-300 bg-white p-6 text-center text-3xl font-extrabold"
-      >
-        {question.word}
-      </p>
+      <div className="mb-4 flex flex-col items-center gap-2 rounded-2xl border-2 border-ink-300 bg-white p-6">
+        <p
+          data-testid="placement-word"
+          dir={meta.dir}
+          lang={meta.code}
+          className="text-center text-3xl font-extrabold"
+        >
+          {question.word}
+        </p>
+        {/* Notanish yozuvdagi so'zni eshitmasa, foydalanuvchi taxmin qila
+            olmaydi — talaffuz testda ham kerak */}
+        <SpeakButton text={question.word} locale={meta.speechLocale} />
+      </div>
 
       <ul className="flex flex-col gap-2">
         {question.options.map((option, choice) => (

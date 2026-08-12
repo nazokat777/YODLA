@@ -6,7 +6,7 @@ import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
-import { SpeakButton } from './SpeakButton'
+import { SpeakButton } from '@/components/ui/SpeakButton'
 
 interface FeedbackBarProps {
   exercise: Exercise
