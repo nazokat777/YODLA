@@ -15,7 +15,7 @@ import { MAX_CHOICES, type Exercise } from './types'
  * pastga tushiladi.
  */
 const DIFFICULTY_LADDER: Array<{ minRepetitions: number; types: ExerciseType[] }> = [
-  { minRepetitions: 4, types: ['recall', 'construction'] },
+  { minRepetitions: 4, types: ['recall', 'construction', 'spelling'] },
   { minRepetitions: 2, types: ['listening', 'recall', 'cloze'] },
   { minRepetitions: 1, types: ['recognition', 'listening'] },
   { minRepetitions: 0, types: ['recognition'] },
@@ -102,6 +102,42 @@ function clozeBlank(sentence: string, word: string): string | null {
   return pattern.test(sentence) ? sentence.replace(pattern, '___') : null
 }
 
+/**
+ * So'z harflarini aralashtiradi.
+ *
+ * Bir necha marta urinib, kirish tartibidan FARQLI natija berishga harakat
+ * qiladi — aks holda harflar allaqachon to'g'ri tartibda turgan bo'lardi va
+ * mashq ma'nosini yo'qotardi. Takror harfli qisqa so'zlarda farq chiqmasligi
+ * mumkin, bu normal.
+ */
+function scrambleLetters(word: string, random: RandomSource): string[] {
+  const letters = [...word]
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const shuffled = shuffle(letters, random)
+    if (shuffled.join('') !== word) return shuffled
+  }
+
+  return shuffle(letters, random)
+}
+
+/**
+ * So'z harfma-harf yig'ishga yaroqlimi.
+ *
+ * Arab tili chiqarib tashlanadi: harflar so'z ichida ulanadi va ajratilganda
+ * boshqa shaklga kiradi — alohida harflardan yig'ish chalkash bo'lardi.
+ * Uzun so'zda esa harflar soni ekranga sig'maydi va mashq mexanik ishga
+ * aylanadi.
+ */
+function isSpellable(card: CardRecord): boolean {
+  if (card.language === 'ar') return false
+
+  const word = card.word.trim()
+  if (word.length < 3 || word.length > 10) return false
+
+  return !/\s/.test(word)
+}
+
 /** Variantlar ro'yxati va to'g'ri javob indeksi */
 function buildChoices(
   card: CardRecord,
@@ -146,7 +182,7 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
       return pool.some((candidate) => candidate.id !== card.id)
     }
     case 'spelling':
-      return false
+      return isSpellable(card)
     case 'matching':
       return false
   }
@@ -233,7 +269,20 @@ export function generateExercise(options: GenerateExerciseOptions): Exercise {
       }
     }
 
-    case 'spelling':
+    case 'spelling': {
+      // Mavjudlik yuqorida tekshirilgan; bu shart faqat tip tizimi uchun
+      if (!isSpellable(card)) return buildRecall(card)
+
+      return {
+        id,
+        type,
+        card,
+        prompt: card.translation,
+        letters: scrambleLetters(card.word, random),
+        answer: card.word,
+      }
+    }
+
     case 'matching':
     case 'recall':
       return buildRecall(card)

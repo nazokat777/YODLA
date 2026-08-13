@@ -92,7 +92,11 @@ describe('pickExerciseType — adaptiv qiyinlik', () => {
       }),
     )
 
-    expect(types.every((type) => type === 'recall' || type === 'construction')).toBe(true)
+    expect(
+      types.every(
+        (type) => type === 'recall' || type === 'construction' || type === 'spelling',
+      ),
+    ).toBe(true)
   })
 })
 
@@ -133,7 +137,8 @@ describe('pickExerciseType — mavjud bo‘lmagan turlarni chetlab o‘tish', ()
       }),
     )
 
-    expect(types.every((type) => type === 'recall')).toBe(true)
+    // Jumlasiz kartada shu pog'onadan faqat yozish va harfma-harf qoladi
+    expect(types.every((type) => type === 'recall' || type === 'spelling')).toBe(true)
   })
 
   it('to‘plamda boshqa karta bo‘lmasa, variantli turlar tanlanmaydi', () => {
@@ -221,14 +226,19 @@ describe('generateExercise — tanib olish', () => {
 
 describe('generateExercise — jumla qurish', () => {
   it('so‘zlar aralashtiriladi, javob asl tartibda qoladi', () => {
-    const exercise = generateExercise({
-      card: makeCard({ repetitions: 6, ...SENTENCE }),
-      pool: [],
-      allowAudio: false,
-      random: seededRandom(3),
-    })
+    // Shu pog'onada bir necha tur bor — jumla qurish chiqqan urug'ni topamiz
+    let exercise = null
+    for (let seed = 1; seed < 60 && !exercise; seed += 1) {
+      const candidate = generateExercise({
+        card: makeCard({ repetitions: 6, ...SENTENCE }),
+        pool: [],
+        allowAudio: false,
+        random: seededRandom(seed),
+      })
+      if (candidate.type === 'construction') exercise = candidate
+    }
 
-    if (exercise.type !== 'construction') throw new Error('kutilmagan tur')
+    if (!exercise || exercise.type !== 'construction') throw new Error('kutilmagan tur')
 
     expect(exercise.answer).toBe('This is my house')
     expect(exercise.prompt).toBe('Bu mening uyim')
@@ -236,14 +246,16 @@ describe('generateExercise — jumla qurish', () => {
   })
 
   it('bir so‘zli jumla uchun bu tur yaratilmaydi', () => {
-    const type = pickExerciseType({
-      card: makeCard({ repetitions: 6, sentence: 'Hello', sentenceTranslation: 'Salom' }),
-      pool: POOL,
-      allowAudio: false,
-      random: seededRandom(1),
-    })
+    const types = SEEDS.map((seed) =>
+      pickExerciseType({
+        card: makeCard({ repetitions: 6, sentence: 'Hello', sentenceTranslation: 'Salom' }),
+        pool: POOL,
+        allowAudio: false,
+        random: seededRandom(seed),
+      }),
+    )
 
-    expect(type).toBe('recall')
+    expect(types).not.toContain('construction')
   })
 })
 
@@ -353,5 +365,60 @@ describe('generateExercise — gap ichida (cloze)', () => {
     })
 
     expect(findCloze(mismatch, [mismatch, ...POOL])).toBeNull()
+  })
+})
+
+describe('generateExercise — harfma-harf (spelling)', () => {
+  /** rep>=4 pog'onasida spelling qidiramiz */
+  function findSpelling(card: CardRecord, pool: CardRecord[]) {
+    for (let seed = 1; seed < 60; seed += 1) {
+      const exercise = generateExercise({ card, pool, allowAudio: false, random: seededRandom(seed) })
+      if (exercise.type === 'spelling') return exercise
+    }
+    return null
+  }
+
+  it('harflar — so‘z harflarining aralashmasi, javob so‘zning o‘zi', () => {
+    const water = makeCard({ id: 'en:water', word: 'water', translation: 'suv', repetitions: 4 })
+    const spelling = findSpelling(water, [water, ...POOL])
+
+    expect(spelling).not.toBeNull()
+    expect(spelling!.answer).toBe('water')
+    expect(spelling!.prompt).toBe('suv')
+    expect([...spelling!.letters].sort().join('')).toBe([...'water'].sort().join(''))
+  })
+
+  it('arab so‘zida spelling yaratilmaydi (harflar ajralganda shakli o‘zgaradi)', () => {
+    const arabic = makeCard({
+      id: 'ar:ma',
+      word: 'ماء',
+      translation: 'suv',
+      language: 'ar',
+      repetitions: 4,
+    })
+
+    expect(findSpelling(arabic, [arabic, ...POOL])).toBeNull()
+  })
+
+  it('juda uzun so‘zda spelling yaratilmaydi', () => {
+    const long = makeCard({
+      id: 'en:refrigerator',
+      word: 'refrigerator',
+      translation: 'muzlatgich',
+      repetitions: 4,
+    })
+
+    expect(findSpelling(long, [long, ...POOL])).toBeNull()
+  })
+
+  it('ko‘p so‘zli iborada spelling yaratilmaydi', () => {
+    const phrase = makeCard({
+      id: 'en:goodmorning',
+      word: 'good day',
+      translation: 'xayrli kun',
+      repetitions: 4,
+    })
+
+    expect(findSpelling(phrase, [phrase, ...POOL])).toBeNull()
   })
 })
