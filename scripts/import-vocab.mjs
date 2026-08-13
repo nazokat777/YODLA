@@ -240,7 +240,17 @@ const PERSONAL_NAMES = new Set([
 
 /* ------------------------------ Ingliz ------------------------------- */
 function importEnglish() {
-  const t = taken('en.ts', normalizeCommon)
+  // Qo'lda yozilgan deck VA Enterprise app importi — ikkalasi ham ustun
+  // turadi. App manbasi qo'lda yozilgan, bu esa skanerdan OCR bilan olingan:
+  // bir xil so'z ikkalasida bo'lsa, sifatlisi qoladi.
+  const hand = taken('en.ts', normalizeCommon)
+  const app = taken('imported-en-app.ts', normalizeCommon)
+  const t = {
+    words: new Set([...hand.words, ...app.words]),
+    translations: new Set([...hand.translations, ...app.translations]),
+    norms: new Set([...hand.norms, ...app.norms]),
+  }
+
   const vocab = JSON.parse(readFileSync(EN_SRC, 'utf8')).vocabulary
 
   const clean = []

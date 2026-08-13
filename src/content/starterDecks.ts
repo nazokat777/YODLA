@@ -46,12 +46,13 @@ function withSentences(deck: Deck, sentences: Record<string, string>): Deck {
 export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
   switch (lang) {
     case 'en': {
-      const [{ EN_DECK }, { EN_IMPORTED }, { EN_SENTENCES }] = await Promise.all([
+      const [{ EN_DECK }, { EN_APP }, { EN_IMPORTED }, { EN_SENTENCES }] = await Promise.all([
         import('./decks/en'),
+        import('./decks/imported-en-app'),
         import('./decks/imported-en'),
         import('./decks/sentences-en'),
       ])
-      return withSentences(merge(EN_DECK, EN_IMPORTED), EN_SENTENCES)
+      return withSentences(merge(EN_DECK, EN_APP, EN_IMPORTED), EN_SENTENCES)
     }
     case 'ru': {
       const [{ RU_DECK }, { RU_EXTRA }, { RU_DICT }, { RU_SENTENCES }] = await Promise.all([

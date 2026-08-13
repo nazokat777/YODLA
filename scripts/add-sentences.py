@@ -31,7 +31,7 @@ CONFIG = {
     'en': {
         'code': 'eng',
         'const': 'EN_SENTENCES',
-        'decks': ['en.ts', 'imported-en.ts'],
+        'decks': ['en.ts', 'imported-en-app.ts', 'imported-en.ts'],
         'letters': 'A-Za-z',
         'names': ('Tom', 'Mary', 'John'),
     },

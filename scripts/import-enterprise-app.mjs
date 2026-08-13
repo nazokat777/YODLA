@@ -1,0 +1,232 @@
+/**
+ * Enterprise APP kontentidan ingliz lug'atini import qiladi.
+ *
+ * Manba: D:/Enterprise/enterprise-app/assets/content/enterprise1/unit_*.json
+ *
+ * NEGA ALOHIDA MANBA: avvalgi `enterprise-trainer/structured.json` skanerdan
+ * OCR bilan olingan edi — tarjimalarida xato bor ("adverb → ergash gap"), misol
+ * jumlalari esa buzuq ("kts cloudy amd windy"). Bu yangi kontent QO'LDA
+ * yozilgan: har so'zning o'zbekcha ma'nosi va har jumlaning tarjimasi bor.
+ * Shuning uchun to'qnashuvda SHU manba ustun turadi.
+ *
+ * Ikki xil ma'lumot olinadi:
+ *   - `wordFormation[].items[]` → so'z juftlari (base/baseUz, derived/derivedUz)
+ *   - `sentencePatterns[]`      → exampleEn + exampleUz (TARJIMALI jumla)
+ *
+ * Tarjimali jumla qimmatli: "gap ichida" mashqidan tashqari "jumla qurish"
+ * mashqini ham ochadi (uning savoli aynan o'zbekcha jumla bo'ladi).
+ *
+ * Natija: src/content/decks/imported-en-app.ts (repoga commit qilinadi).
+ * Ishga tushirish:  node scripts/import-enterprise-app.mjs
+ *   (import-vocab.mjs dan OLDIN — u shu fayl egallagan so'zlarni chetlab o'tadi)
+ */
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs'
+
+const SRC = 'D:/Enterprise/enterprise-app/assets/content/enterprise1'
+
+/* --------------------------- sifat filtrlari --------------------------- */
+
+/** Faqat kichik harfli inglizcha so'z yoki qisqa ibora */
+const CLEAN_WORD = /^[a-z][a-z' -]*$/
+
+/**
+ * Tarjima o'rniga GRAMMATIKA IZOHI yozilgan yozuvlar.
+ *
+ * Manbada so'z yasalish qoidalari ham shu maydonda uchraydi:
+ * `studied → "Y → I + ED"`, `buying → "o'zgarmaydi"`. Ular lug'at emas.
+ */
+function isGrammarNote(text) {
+  const lower = text.toLowerCase()
+
+  return (
+    text.includes('→') ||
+    text.includes('->') ||
+    text.startsWith('-') ||
+    text.length < 2 ||
+    lower.includes("o'zgarmaydi") ||
+    lower.includes('undosh') ||
+    lower.includes('unli ')
+  )
+}
+
+/** So'z lug'atga yaroqlimi */
+function isUsableWord(word) {
+  if (!CLEAN_WORD.test(word)) return false
+  if (word.length < 2 || word.length > 24) return false
+
+  // Uch va undan ko'p so'zli iboralar karta sifatida og'ir
+  return word.split(/\s+/).length <= 2
+}
+
+/**
+ * Jumla mashqqa yaroqlimi.
+ * Ikki muqobilli ("A? / B?") jumlalar "jumla qurish"da chalkash bo'ladi.
+ */
+function isUsableSentence(en, uz) {
+  if (!en || !uz || en.includes('/') || uz.includes('/')) return false
+
+  const words = en.split(/\s+/)
+  return words.length >= 3 && words.length <= 10
+}
+
+/* ------------------------- so'z chegarasi ------------------------- */
+
+/** So'z jumlada ALOHIDA so'z sifatida turibdimi (generate.ts bilan bir xil) */
+function appearsIn(sentence, word) {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'iu').test(sentence)
+}
+
+/* --------------------- mavjud deck'dan band qiymatlar --------------------- */
+
+const APOS = /['’‘ʻʼ`´′]/g
+const normalize = (t) => t.toLowerCase().replace(APOS, "'").replace(/\s+/g, ' ').trim()
+
+function taken(file) {
+  const src = readFileSync(`src/content/decks/${file}`, 'utf8')
+  const words = new Set()
+  const translations = new Set()
+  const norms = new Set()
+  const re = /(word|translation): (?:'([^']*)'|"([^"]*)")/g
+  let m
+
+  while ((m = re.exec(src))) {
+    const value = m[2] ?? m[3]
+    if (m[1] === 'translation') translations.add(value.toLowerCase())
+    else {
+      words.add(value)
+      norms.add(normalize(value))
+    }
+  }
+
+  return { words, translations, norms }
+}
+
+/* ------------------------------ o'qish ------------------------------ */
+
+const files = readdirSync(SRC)
+  .filter((name) => /^unit_\d+\.json$/.test(name))
+  .map((name) => ({ name, data: JSON.parse(readFileSync(`${SRC}/${name}`, 'utf8')) }))
+  // Kitob tartibi — `order` maydoni (qo'shimcha epizodlar 3.5 kabi kasr oladi)
+  .sort((a, b) => (a.data.order ?? a.data.unit) - (b.data.order ?? b.data.unit))
+
+/** Jumlalar: inglizcha → o'zbekcha */
+const sentences = []
+for (const { data } of files) {
+  for (const pattern of data.sentencePatterns ?? []) {
+    const en = (pattern.exampleEn ?? '').trim()
+    const uz = (pattern.exampleUz ?? '').trim()
+    if (isUsableSentence(en, uz)) sentences.push({ en, uz })
+  }
+}
+
+/** So'zlar — kitob tartibida */
+const ordered = []
+const seenWord = new Set()
+let dropped = 0
+
+for (const { data } of files) {
+  const unitTitle = (data.title ?? '').trim()
+  const topic = `Enterprise ${data.unit}-unit${unitTitle ? `: ${unitTitle}` : ''}`
+
+  for (const rule of data.wordFormation ?? []) {
+    for (const item of rule.items ?? []) {
+      for (const [wordKey, uzKey] of [
+        ['base', 'baseUz'],
+        ['derived', 'derivedUz'],
+      ]) {
+        const raw = (item[wordKey] ?? '').trim()
+        const uz = (item[uzKey] ?? '').trim()
+        const word = raw.toLowerCase()
+
+        if (!raw || !uz) { dropped += 1; continue }
+        // Katta harf — atoqli ot yoki qoida sarlavhasi ("play THE violin")
+        if (raw !== word) { dropped += 1; continue }
+        if (!isUsableWord(word)) { dropped += 1; continue }
+        if (isGrammarNote(uz)) { dropped += 1; continue }
+        if (word === uz.toLowerCase()) { dropped += 1; continue }
+        if (seenWord.has(word)) { dropped += 1; continue }
+
+        seenWord.add(word)
+        ordered.push({ word, uz, topic })
+      }
+    }
+  }
+}
+
+/* --------------------------- dedup + daraja --------------------------- */
+
+const hand = taken('en.ts')
+const clean = []
+const seenTr = new Set()
+
+for (const entry of ordered) {
+  const trKey = entry.uz.toLowerCase()
+
+  if (hand.words.has(entry.word) || hand.norms.has(normalize(entry.word))) { dropped += 1; continue }
+  if (hand.translations.has(trKey) || seenTr.has(trKey)) { dropped += 1; continue }
+
+  seenTr.add(trKey)
+
+  // Shu so'z qatnashgan eng qisqa jumla — tarjimasi bilan
+  const match = sentences
+    .filter((s) => appearsIn(s.en, entry.word))
+    .sort((a, b) => a.en.length - b.en.length)[0]
+
+  clean.push({ ...entry, sentence: match?.en, sentenceTranslation: match?.uz })
+}
+
+// Daraja KITOB TARTIBIDAGI O'RIN bo'yicha (boshqa tillar bilan bir xil qoida)
+const a1End = Math.floor(clean.length * 0.3)
+const a2End = Math.floor(clean.length * 0.65)
+const buckets = { A1: [], A2: [], B1: [] }
+
+clean.forEach((entry, index) => {
+  buckets[index < a1End ? 'A1' : index < a2End ? 'A2' : 'B1'].push(entry)
+})
+
+/* ------------------------------ TS yozish ------------------------------ */
+
+const esc = (s) => (s.includes("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`)
+
+let body = ''
+for (const level of ['A1', 'A2', 'B1']) {
+  body += `  ${level}: [\n`
+  for (const entry of buckets[level]) {
+    body +=
+      '    {\n' +
+      `      word: ${esc(entry.word)},\n` +
+      `      translation: ${esc(entry.uz)},\n` +
+      "      language: 'en',\n" +
+      `      topic: ${esc(entry.topic)},\n` +
+      `      level: '${level}',\n` +
+      (entry.sentence ? `      sentence: ${esc(entry.sentence)},\n` : '') +
+      (entry.sentenceTranslation
+        ? `      sentenceTranslation: ${esc(entry.sentenceTranslation)},\n`
+        : '') +
+      '    },\n'
+  }
+  body += '  ],\n'
+}
+
+writeFileSync(
+  'src/content/decks/imported-en-app.ts',
+  "import type { NewCardRecordInput } from '@/core/db'\n" +
+    "import type { LevelCode } from '@/core/types'\n\n" +
+    '/**\n' +
+    " * AVTOMATIK YARATILGAN — qo'lda tahrirlamang.\n" +
+    ' * Manba: Enterprise app kontenti. scripts/import-enterprise-app.mjs\n' +
+    " * Qo'lda yozilgan kontent, shuning uchun to'qnashuvda shu manba ustun.\n" +
+    ' */\n' +
+    'export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {\n' +
+    body +
+    '}\n',
+)
+
+const total = clean.length
+const withSentence = clean.filter((entry) => entry.sentence).length
+console.log(
+  `ingliz (app): +${total} (A1 ${buckets.A1.length}, A2 ${buckets.A2.length}, B1 ${buckets.B1.length}) — tashlandi ${dropped}`,
+)
+console.log(`  tarjimali jumla biriktirildi: ${withSentence}`)
+console.log(`  manbadagi yaroqli jumlalar: ${sentences.length}`)

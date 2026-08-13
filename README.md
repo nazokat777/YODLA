@@ -82,7 +82,8 @@ src/
 ├── features/                # ekranlar, har biri o'z papkasida
 │   ├── session/             # MASHQ SEANSI — review va lesson uchun umumiy
 │   │   ├── SessionRunner.tsx    # holat mashinasi: mashq → javob → feedback
-│   │   ├── ExerciseView.tsx     # 4 turning ko'rinishi
+│   │   ├── ExerciseView.tsx     # turlarning ko'rinishi
+│   │   ├── MatchingView.tsx     # juft topish (ko'p-kartali)
 │   │   ├── FeedbackBar.tsx      # instant feedback + mnemonika yozish
 │   │   └── ChoiceGrid.tsx, WordDisplay.tsx, SessionSummaryPanel.tsx
 │   ├── onboarding/          # til → daraja testi → maqsad → birinchi dars
@@ -108,7 +109,9 @@ src/
 │   └── format.ts            # "6 kun", "ertaga" ko'rinishidagi matnlar
 ├── content/                 # o'quv kontenti
 │   ├── decks/en.ts ru.ts ar.ts  # qo'lda yozilgan (132/til, jumlalari bilan)
-│   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise
+│   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise (OCR)
+│   ├── decks/imported-en-app.ts    # AVTO: Enterprise app (qo'lda yozilgan, ustun)
+│   ├── decks/sentences-{en,ru}.ts  # AVTO: Tatoeba jumlalari
 │   ├── decks/ru-extra.ts           # qo'lda tanlangan ruscha
 │   ├── decks/imported-ru.ts        # AVTO: Ru-Uz-Dictionary (ru.db)
 │   └── starterDecks.ts      # loadLanguageDeck — tilni DANGASA yuklaydi
@@ -329,10 +332,31 @@ savol sifatida aynan o'zbekcha jumlani talab qiladi, shuning uchun bunday
 kartada u berilmaydi. Qoida `decks.test.ts` da: tarjima jumlasiz qolmasin
 (teskarisi ruxsat), va tarjimasiz jumla o'z so'zini albatta ichiga olsin.
 
-**Enterprise darsligidan jumla OLINMADI.** `example` maydoni 99% da bor,
-lekin ular skanerdan olingan OCR parchalari: *"kts cloudy amd windy"*,
-*"PRM TON ES ... bedroom downstairs"*. Qat'iy filtrdan keyin ham sifatsiz
-qoldi.
+**Ikkita Enterprise manbasi bor va ular teng emas:**
+
+| Manba | Nima beradi | Sifat |
+| ----- | ----------- | ----- |
+| `enterprise-app/.../unit_*.json` | 2182 so'z + 583 **tarjimali** jumla | qo'lda yozilgan |
+| `enterprise-trainer/structured.json` | 888 so'z | skanerdan OCR |
+
+App manbasi **ustun turadi**: to'qnashuvda o'sha qoladi
+([import-enterprise-app.mjs](scripts/import-enterprise-app.mjs) OCR importidan
+OLDIN ishlaydi va u band qilgan so'zlarni OCR importi chetlab o'tadi). Sabab —
+OCR tarjimalarida xato bor edi (`adverb → "ergash gap"`, aslida "ravish").
+
+App manbasidagi jumlalarning **o'zbekcha tarjimasi ham bor**, shuning uchun
+ular "jumla qurish" mashqini ham ochadi (Tatoeba jumlalari faqat "gap ichida"
+uchun yaraydi). Manbada so'z yasalish qoidalari ham shu maydonda uchraydi
+(`studied → "Y → I + ED"`) — ular tarjima emas, filtrlanadi.
+
+**Enterprise trainer'ning `example` maydonidan jumla OLINMADI.** 99% da bor,
+lekin ular OCR parchalari: *"kts cloudy amd windy"*, *"PRM TON ES ... bedroom
+downstairs"*.
+
+**Darslikdagi shaxs ismlari tashlanadi** (`PERSONAL_NAMES`). Ular mashqlarda
+doim qatnashgani uchun chastotasi yuqori va chastota bo'yicha bo'linganda
+hammasi A1'ga — boshlovchining ilk darslariga tushardi (`chris → Kris`).
+Mamlakat va bayram nomlari qoladi — ular haqiqiy lug'at.
 
 Ingliz va rus tillari uchun jumlalar **Tatoeba**dan olinadi
 ([scripts/add-sentences.py](scripts/add-sentences.py)) — odamlar yozgan,
@@ -342,9 +366,9 @@ ularni jumlasiz kartalarga biriktiradi. Sabab — jumlalar boshqa manbadan
 keladi va o'z generatori bilan yangilanadi; ularni har yozuvga yozib
 qo'yish ikkala faylni qo'lda sinxron ushlashni talab qilardi.
 
-Jumla qamrovi: **5300+ / 7572** karta (ar 453, en 1559, ru 2585).
+Jumla qamrovi: **5600+ / 9156** karta (ar 453, en 2650, ru 2585).
 
-Bahosi: `sentences-en` +15.6 KB gzip, `sentences-ru` +41 KB gzip. Ikkalasi
+Bahosi: `sentences-en` +20 KB gzip, `sentences-ru` +41 KB gzip. Ikkalasi
 ham TIL BO'LAGIDA — asosiy JS (~131 KB gzip) o'zgarmadi va foydalanuvchi
 faqat o'zi tanlagan tilnikini yuklaydi.
 
@@ -360,7 +384,7 @@ oylar davomidagi takrorlash progressini nolga qaytarardi.
 Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
 normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini
 (noyob tarjima, toza transliteratsiya) `decks.test.ts` bilan bir xil
-qo'llaydi. Tashlangan: arab 1294, ingliz 814.
+qo'llaydi. Tashlangan: arab 1294, ingliz 1412 (app manbasi ustun bo'lgani uchun).
 
 ## Daraja testi (onboarding)
 
@@ -569,7 +593,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (7572 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (9156 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
 - [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
       + GSAP animatsiyalari
