@@ -11,10 +11,36 @@
  */
 const CACHE_NAME = 'polyglotpro-v1'
 
+/**
+ * Ilova qobig'i — offline'dagi yagona tayanch.
+ *
+ * SPA barcha manzillarda AYNI hujjatni beradi, lekin javob so'ralgan manzil
+ * bilan keshlanadi ("/", "/review", ...). Shu sababli "/index.html" hech
+ * qachon keshga tushmaydi va unga tayanish xato edi: foydalanuvchi offline'da
+ * ilgari ochmagan sahifasiga ("/stats") kirsa, 503 olardi — holbuki JS va CSS
+ * allaqachon keshda va SPA istalgan manzilni chiza olardi.
+ *
+ * Shuning uchun ildiz hujjati o'rnatishda ATAYLAB keshlanadi va barcha
+ * navigatsiyalar uchun tayanch bo'ladi.
+ */
+const APP_SHELL = '/'
+
 self.addEventListener('install', (event) => {
-  // Yangi versiya kutib turmasin: ilova bitta bundle'dan iborat,
-  // shuning uchun almashtirish xavfsiz
-  event.waitUntil(self.skipWaiting())
+  event.waitUntil(
+    (async () => {
+      try {
+        const cache = await caches.open(CACHE_NAME)
+        await cache.add(APP_SHELL)
+      } catch {
+        // Tarmoq yo'q bo'lsa ham o'rnatish to'xtamaydi — qobiq keyingi
+        // muvaffaqiyatli navigatsiyada keshga tushadi
+      }
+
+      // Yangi versiya kutib turmasin: ilova bitta bundle'dan iborat,
+      // shuning uchun almashtirish xavfsiz
+      await self.skipWaiting()
+    })(),
+  )
 })
 
 self.addEventListener('activate', (event) => {
@@ -46,7 +72,7 @@ async function handleNavigation(request) {
   try {
     return await fetchAndCache(request)
   } catch {
-    const cached = (await caches.match(request)) ?? (await caches.match('/index.html'))
+    const cached = (await caches.match(request)) ?? (await caches.match(APP_SHELL))
     if (cached) return cached
 
     return new Response('Oflayn rejim: sahifa hali yuklanmagan.', {

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { registerServiceWorker, shouldRegisterServiceWorker } from './pwa'
 
@@ -28,5 +29,25 @@ describe('registerServiceWorker', () => {
     vi.stubGlobal('navigator', {})
 
     expect(() => registerServiceWorker()).not.toThrow()
+  })
+})
+
+/// <reference types="node" />
+describe('sw.js — offline tayanchi', () => {
+  const source = readFileSync('public/sw.js', 'utf8')
+
+  it('o‘rnatishda ilova qobig‘ini keshlaydi', () => {
+    // Aks holda offline'da FAQAT oldin ochilgan manzillar ishlardi:
+    // navigatsiya javoblari o'z manzili bilan saqlanadi ("/", "/review"),
+    // ya'ni "/stats" ga hech qachon kirmagan odam offline'da 503 olardi.
+    expect(source).toMatch(/addEventListener\('install'/)
+    expect(source).toMatch(/APP_SHELL/)
+  })
+
+  it('navigatsiya tayanchi HAQIQATAN keshlanadigan manzil bo‘ladi', () => {
+    // `/index.html` hech qachon keshga tushmaydi: SPA barcha manzillarda
+    // bir xil hujjatni beradi va u so'ralgan manzil bilan saqlanadi
+    expect(source).not.toMatch(/caches\.match\('\/index\.html'\)/)
+    expect(source).toMatch(/caches\.match\(APP_SHELL\)/)
   })
 })
