@@ -4,6 +4,7 @@ import type { LanguageCode, LevelCode } from '@/core/types'
 import { AR_DECK } from './decks/ar'
 import { EN_DECK } from './decks/en'
 import { RU_DECK } from './decks/ru'
+import { RU_EXTRA } from './decks/ru-extra'
 import { AR_IMPORTED } from './decks/imported-ar'
 import { EN_IMPORTED } from './decks/imported-en'
 
@@ -25,7 +26,7 @@ function withImported(base: Deck, imported: Deck): Deck {
 /** Til → daraja → so'zlar. Daraja bo'yicha so'rovlar uchun ochiq qoldirilgan */
 export const DECKS: Record<LanguageCode, Deck> = {
   en: withImported(EN_DECK, EN_IMPORTED),
-  ru: RU_DECK,
+  ru: withImported(RU_DECK, RU_EXTRA),
   ar: withImported(AR_DECK, AR_IMPORTED),
 }
 
