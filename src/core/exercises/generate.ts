@@ -16,7 +16,7 @@ import { MAX_CHOICES, type Exercise } from './types'
  */
 const DIFFICULTY_LADDER: Array<{ minRepetitions: number; types: ExerciseType[] }> = [
   { minRepetitions: 4, types: ['recall', 'construction'] },
-  { minRepetitions: 2, types: ['listening', 'recall'] },
+  { minRepetitions: 2, types: ['listening', 'recall', 'cloze'] },
   { minRepetitions: 1, types: ['recognition', 'listening'] },
   { minRepetitions: 0, types: ['recognition'] },
 ]
@@ -60,6 +60,48 @@ function collectDistractors(
   return [...shuffle(sameTopic, random), ...shuffle(otherTopic, random)].slice(0, MAX_CHOICES - 1)
 }
 
+/**
+ * Chalg'ituvchi SO'ZLAR (tarjima emas) — cloze uchun.
+ * `collectDistractors` bilan bir xil mantiq, faqat `word` maydonini yig'adi:
+ * gap ichidagi variantlar o'rganilayotgan tilda bo'lishi kerak.
+ */
+function collectWordDistractors(
+  card: CardRecord,
+  pool: readonly CardRecord[],
+  random: RandomSource,
+): string[] {
+  const seen = new Set([card.word.toLowerCase()])
+  const sameTopic: string[] = []
+  const otherTopic: string[] = []
+
+  for (const candidate of pool) {
+    if (candidate.id === card.id) continue
+
+    const key = candidate.word.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+
+    if (card.topic && candidate.topic === card.topic) sameTopic.push(candidate.word)
+    else otherTopic.push(candidate.word)
+  }
+
+  return [...shuffle(sameTopic, random), ...shuffle(otherTopic, random)].slice(0, MAX_CHOICES - 1)
+}
+
+/**
+ * Jumlada so'zni "___" bilan almashtiradi (birinchi uchrashini, katta-kichik
+ * harfga befarq, so'z chegarasi bilan).
+ *
+ * Topilmasa null — so'z jumlada TURLANGAN shaklda kelishi mumkin ("drink" /
+ * "drinks"), unda bo'sh joy qoldirish noto'g'ri bo'lardi.
+ */
+function clozeBlank(sentence: string, word: string): string | null {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pattern = new RegExp(`\\b${escaped}\\b`, 'i')
+
+  return pattern.test(sentence) ? sentence.replace(pattern, '___') : null
+}
+
 /** Variantlar ro'yxati va to'g'ri javob indeksi */
 function buildChoices(
   card: CardRecord,
@@ -97,6 +139,16 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
       return true
     case 'construction':
       return sentenceTokens(card) !== null && Boolean(card.sentenceTranslation)
+    case 'cloze': {
+      const sentence = card.sentence?.trim()
+      if (!sentence || clozeBlank(sentence, card.word) === null) return false
+
+      return pool.some((candidate) => candidate.id !== card.id)
+    }
+    case 'spelling':
+      return false
+    case 'matching':
+      return false
   }
 }
 
@@ -162,6 +214,27 @@ export function generateExercise(options: GenerateExerciseOptions): Exercise {
       }
     }
 
+    case 'cloze': {
+      const sentence = card.sentence?.trim()
+      const blanked = sentence ? clozeBlank(sentence, card.word) : null
+      const distractors = blanked ? collectWordDistractors(card, pool, random) : []
+      // Mavjudlik yuqorida tekshirilgan; bu shart faqat tip tizimi uchun
+      if (!blanked || distractors.length === 0) return buildRecall(card)
+
+      const options = shuffle([card.word, ...distractors], random)
+
+      return {
+        id,
+        type,
+        card,
+        prompt: blanked,
+        options,
+        correctIndex: options.indexOf(card.word),
+      }
+    }
+
+    case 'spelling':
+    case 'matching':
     case 'recall':
       return buildRecall(card)
   }

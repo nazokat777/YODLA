@@ -297,3 +297,61 @@ describe('generateExercise — barqarorlik', () => {
     }
   })
 })
+
+describe('generateExercise — gap ichida (cloze)', () => {
+  const water = makeCard({
+    id: 'en:water',
+    word: 'water',
+    translation: 'suv',
+    topic: 'Ovqat',
+    repetitions: 2,
+    sentence: 'I drink water every morning',
+    sentenceTranslation: 'Men har tong suv ichaman',
+  })
+
+  /** Ladder tasodifiy tanlaydi — bir necha urug' bilan cloze qidiramiz */
+  function findCloze(card: CardRecord, pool: CardRecord[]) {
+    for (let seed = 1; seed < 60; seed += 1) {
+      const exercise = generateExercise({ card, pool, allowAudio: false, random: seededRandom(seed) })
+      if (exercise.type === 'cloze') return exercise
+    }
+    return null
+  }
+
+  it('jumlada ___ bo‘ladi, so‘zning o‘zi ko‘rinmaydi', () => {
+    const cloze = findCloze(water, [water, ...POOL])
+
+    expect(cloze).not.toBeNull()
+    expect(cloze!.prompt).toContain('___')
+    expect(cloze!.prompt.toLowerCase()).not.toContain('water')
+  })
+
+  it('variantlar O‘RGANILAYOTGAN tilda bo‘ladi va to‘g‘risi ichida', () => {
+    const cloze = findCloze(water, [water, ...POOL])
+
+    expect(cloze!.options).toContain('water')
+    expect(cloze!.options[cloze!.correctIndex]).toBe('water')
+    // Tarjima emas — o'zbekcha so'z variantlarda bo'lmasligi kerak
+    expect(cloze!.options).not.toContain('suv')
+  })
+
+  it('jumlasiz kartada cloze yaratilmaydi', () => {
+    const noSentence = makeCard({ id: 'en:water', word: 'water', repetitions: 2 })
+
+    expect(findCloze(noSentence, [noSentence, ...POOL])).toBeNull()
+  })
+
+  it('so‘z jumlada topilmasa cloze yaratilmaydi', () => {
+    // Turlangan shakl ("drinks" ≠ "drink") — bo'sh joy qoldirib bo'lmaydi
+    const mismatch = makeCard({
+      id: 'en:drink',
+      word: 'drink',
+      translation: 'ichmoq',
+      repetitions: 2,
+      sentence: 'She drinks tea',
+      sentenceTranslation: 'U choy ichadi',
+    })
+
+    expect(findCloze(mismatch, [mismatch, ...POOL])).toBeNull()
+  })
+})
