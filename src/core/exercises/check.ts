@@ -52,12 +52,31 @@ export function checkExercise(exercise: Exercise, answer: number | string): Answ
       return typeof answer === 'string'
         ? checkTextAnswer(answer, exercise.answer, exercise.card.language)
         : 'wrong'
+
+    case 'cloze':
+      return typeof answer === 'number'
+        ? checkChoiceAnswer(answer, exercise.correctIndex)
+        : 'wrong'
+
+    case 'spelling':
+      return typeof answer === 'string'
+        ? checkTextAnswer(answer, exercise.answer, exercise.card.language)
+        : 'wrong'
+
+    // Juft topish natijasi MatchingView da hisoblanadi — bu shohobcha
+    // faqat union to'liqligi uchun
+    case 'matching':
+      return 'wrong'
   }
 }
 
 /** Mashq turining "qiyin" (aktiv ishlab chiqarish talab qiladigan) ekani */
 function isProductiveType(exercise: Exercise): boolean {
-  return exercise.type === 'recall' || exercise.type === 'construction'
+  return (
+    exercise.type === 'recall' ||
+    exercise.type === 'construction' ||
+    exercise.type === 'spelling'
+  )
 }
 
 /**

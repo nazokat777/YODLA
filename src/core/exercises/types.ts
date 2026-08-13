@@ -49,11 +49,51 @@ export interface ConstructionExercise extends BaseExercise {
   answer: string
 }
 
+/** 5. Gap ichida (o'rta): jumlada tushgan so'zni variantlardan tanla */
+export interface ClozeExercise extends BaseExercise {
+  type: 'cloze'
+  /** Jumla — o'rganilayotgan so'z o'rnida "___" */
+  prompt: string
+  /** O'RGANILAYOTGAN tildagi so'z variantlari (tarjima emas) */
+  options: string[]
+  correctIndex: number
+}
+
+/** 6. Harfma-harf (qiyin): aralash harflardan so'zni yig' */
+export interface SpellingExercise extends BaseExercise {
+  type: 'spelling'
+  /** O'zbekcha tarjima — nima yozish kerakligi */
+  prompt: string
+  /** Aralashtirilgan harflar */
+  letters: string[]
+  /** To'g'ri so'z */
+  answer: string
+}
+
+/** Juft topishdagi bitta juft */
+export interface MatchingPair {
+  cardId: string
+  /** O'rganilayotgan tildagi so'z */
+  word: string
+  /** O'zbekcha tarjima */
+  translation: string
+}
+
+/** 7. Juft topish (ko'p-kartali): so'z va tarjimani juftla */
+export interface MatchingExercise extends BaseExercise {
+  type: 'matching'
+  /** Juftlanishi kerak bo'lgan kartalar (odatda 5 ta) */
+  pairs: MatchingPair[]
+}
+
 export type Exercise =
   | RecognitionExercise
   | RecallExercise
   | ListeningExercise
   | ConstructionExercise
+  | ClozeExercise
+  | SpellingExercise
+  | MatchingExercise
 
 /** Javob natijasi */
 export type AnswerVerdict =

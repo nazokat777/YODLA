@@ -156,3 +156,49 @@ describe('deriveGrade', () => {
     expect(deriveGrade(recall, 'wrong')).toBeLessThan(3)
   })
 })
+
+describe('checkExercise — cloze', () => {
+  const cloze: Exercise = {
+    id: 'en:water:cloze',
+    type: 'cloze',
+    card: makeCard({ id: 'en:water', word: 'water', translation: 'suv' }),
+    prompt: 'I drink ___ every morning',
+    options: ['water', 'bread', 'tea', 'salt'],
+    correctIndex: 0,
+  }
+
+  it('to‘g‘ri indeks — correct', () => {
+    expect(checkExercise(cloze, 0)).toBe('correct')
+  })
+
+  it('xato indeks — wrong', () => {
+    expect(checkExercise(cloze, 2)).toBe('wrong')
+  })
+})
+
+describe('checkExercise — spelling', () => {
+  const spelling: Exercise = {
+    id: 'en:water:spelling',
+    type: 'spelling',
+    card: makeCard({ id: 'en:water', word: 'water', translation: 'suv' }),
+    prompt: 'suv',
+    letters: ['w', 'a', 't', 'e', 'r'],
+    answer: 'water',
+  }
+
+  it('to‘g‘ri harflar — correct', () => {
+    expect(checkExercise(spelling, 'water')).toBe('correct')
+  })
+
+  it('bitta harf xato — almost (imlo bag‘rikengligi)', () => {
+    expect(checkExercise(spelling, 'watar')).toBe('almost')
+  })
+
+  it('bo‘sh javob — wrong', () => {
+    expect(checkExercise(spelling, '')).toBe('wrong')
+  })
+
+  it('harfma-harf aktiv tur — to‘g‘ri javobga baho 5', () => {
+    expect(deriveGrade(spelling, 'correct')).toBe(5)
+  })
+})
