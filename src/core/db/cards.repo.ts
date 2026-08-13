@@ -123,6 +123,42 @@ export async function syncCardContent(inputs: NewCardRecordInput[]): Promise<num
 }
 
 /**
+ * Kontentdan CHIQARILGAN kartalarni tozalaydi va o'chirilganlar sonini
+ * qaytaradi.
+ *
+ * NEGA KERAK: lug'at sifati yaxshilanganda (masalan darslikdagi shaxs
+ * ismlari olib tashlanganda) eski o'rnatishlarda o'sha kartalar qolib
+ * ketardi — `addMissingCards` faqat qo'shadi.
+ *
+ * NEGA FAQAT TAKRORLANMAGANLARI: agar foydalanuvchi so'zni allaqachon
+ * o'rgangan bo'lsa, uni jimgina o'chirish uning mehnatini va statistikasini
+ * yo'q qilish bo'lardi. Bunday kartalar joyida qoladi — bittasi ortiqcha
+ * turgani ziyon qilmaydi, yo'qolgan progress esa qaytmaydi.
+ */
+export async function pruneRemovedCards(
+  language: LanguageCode,
+  inputs: NewCardRecordInput[],
+): Promise<number> {
+  return db.transaction('rw', db.cards, async () => {
+    const keep = new Set(
+      inputs.map((input) => input.id ?? makeCardId(input.language, input.word)),
+    )
+
+    const stale = await db.cards
+      .where('language')
+      .equals(language)
+      .filter((card) => !keep.has(card.id) && card.totalReviews === 0)
+      .primaryKeys()
+
+    if (stale.length > 0) {
+      await db.cards.bulkDelete(stale)
+    }
+
+    return stale.length
+  })
+}
+
+/**
  * Takrorlash muddati yetgan kartalar — eng "kechikkani" birinchi bo'lib.
  *
  * `[language+dueDate]` qo'shma indeksi bo'yicha oraliq skan qilinadi,

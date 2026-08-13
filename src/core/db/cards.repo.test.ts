@@ -11,6 +11,7 @@ import {
   getLanguageStats,
   getNextDueDate,
   gradeCard,
+  pruneRemovedCards,
   syncCardContent,
   type NewCardRecordInput,
 } from './cards.repo'
@@ -368,5 +369,48 @@ describe('syncCardContent', () => {
 
     expect(updated).toBe(0)
     expect(await getCard('en:ghost')).toBeUndefined()
+  })
+})
+
+describe('pruneRemovedCards', () => {
+  it('kontentdan chiqarilgan, hech qachon takrorlanmagan kartani o‘chiradi', async () => {
+    // Darslikdagi shaxs ismlari lug'atdan chiqarildi — eski o'rnatishlarda
+    // ular baribir qolib ketardi
+    await addMissingCards(
+      [
+        { word: 'hello', translation: 'salom', language: 'en' },
+        { word: 'chris', translation: 'Kris', language: 'en' },
+      ],
+      NOW,
+    )
+
+    const removed = await pruneRemovedCards('en', [
+      { word: 'hello', translation: 'salom', language: 'en' },
+    ])
+
+    expect(removed).toBe(1)
+    expect(await getCard('en:chris')).toBeUndefined()
+    expect(await getCard('en:hello')).toBeDefined()
+  })
+
+  it('TAKRORLANGAN kartaga tegmaydi — mehnat yo‘qolmaydi', async () => {
+    await addMissingCards([{ word: 'chris', translation: 'Kris', language: 'en' }], NOW)
+    await gradeCard('en:chris', 4)
+
+    const removed = await pruneRemovedCards('en', [])
+
+    // Foydalanuvchi bu so'zni o'rgangan bo'lsa, uni jimgina o'chirish
+    // uning progressini yo'q qilish bo'lardi
+    expect(removed).toBe(0)
+    expect(await getCard('en:chris')).toBeDefined()
+  })
+
+  it('boshqa tilning kartalariga tegmaydi', async () => {
+    await addMissingCards(RU_WORDS, NOW)
+
+    const removed = await pruneRemovedCards('en', [])
+
+    expect(removed).toBe(0)
+    expect(await getCard('ru:привет')).toBeDefined()
   })
 })
