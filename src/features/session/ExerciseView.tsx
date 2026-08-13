@@ -77,6 +77,16 @@ export function ExerciseView(props: ExerciseViewProps) {
 
     case 'construction':
       return <ConstructionView {...props} exercise={exercise} />
+
+    case 'cloze':
+      return <ClozeView {...props} exercise={exercise} />
+
+    case 'spelling':
+      return <SpellingView {...props} exercise={exercise} />
+
+    // Juft topish o'z ko'rinishida (MatchingView) seans darajasida chiziladi
+    case 'matching':
+      return null
   }
 }
 
@@ -261,6 +271,139 @@ function ConstructionView({
             )}
           >
             {token}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** 5. Gap ichida — jumlada tushib qolgan so'zni tanlash */
+function ClozeView({
+  exercise,
+  answer,
+  onAnswerChange,
+  onSubmit,
+  revealed,
+}: ExerciseViewProps & { exercise: Extract<Exercise, { type: 'cloze' }> }) {
+  const language = LANGUAGES[exercise.card.language]
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Panel className="flex min-h-32 flex-col items-center justify-center gap-2 text-center">
+        <p className="text-sm text-ink-600">Tushib qolgan so'zni toping</p>
+        <p
+          dir={language.dir}
+          lang={language.code}
+          data-testid="cloze-sentence"
+          className={cn('text-2xl font-bold leading-relaxed', language.dir === 'rtl' && 'text-3xl')}
+        >
+          {exercise.prompt}
+        </p>
+      </Panel>
+
+      <ChoiceGrid
+        options={exercise.options}
+        correctIndex={exercise.correctIndex}
+        selectedIndex={answer.choiceIndex}
+        revealed={revealed}
+        onSelect={(choiceIndex) => {
+          // Tanib olish kabi: variant tanlash o'zi javob berish hisoblanadi
+          const chosen = { ...answer, choiceIndex }
+          onAnswerChange(chosen)
+          onSubmit(chosen)
+        }}
+      />
+    </div>
+  )
+}
+
+/** 6. Harfma-harf — aralash harflardan so'zni yig'ish */
+function SpellingView({
+  exercise,
+  answer,
+  onAnswerChange,
+  revealed,
+}: ExerciseViewProps & { exercise: Extract<Exercise, { type: 'spelling' }> }) {
+  const language = LANGUAGES[exercise.card.language]
+  const used = new Set(answer.tokenOrder)
+  const poolRef = useRef<HTMLDivElement>(null)
+
+  function addLetter(index: number) {
+    if (revealed || used.has(index)) return
+
+    onAnswerChange({ ...answer, tokenOrder: [...answer.tokenOrder, index] })
+
+    // Jumla qurishdagi kabi: bosilgan tugma yashirilganda fokus <body> ga
+    // tushib ketmasligi uchun keyingi mavjud harfga ko'chiriladi
+    requestAnimationFrame(() => {
+      const next = poolRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')
+      next?.focus({ preventScroll: true })
+    })
+  }
+
+  function removeLetter(position: number) {
+    if (revealed) return
+
+    onAnswerChange({
+      ...answer,
+      tokenOrder: answer.tokenOrder.filter((_, i) => i !== position),
+    })
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Panel className="flex min-h-24 flex-col items-center justify-center gap-1 text-center">
+        <p className="text-sm text-ink-600">Bu so'zni harflardan yig'ing</p>
+        <p className="text-xl font-bold">{exercise.prompt}</p>
+      </Panel>
+
+      {/* Yig'ilayotgan so'z — bo'sh kataklar nechta harf kerakligini ko'rsatadi */}
+      <div className="flex min-h-16 flex-wrap content-start items-center gap-2 rounded-2xl border-2 border-dashed border-ink-300 p-3">
+        {answer.tokenOrder.map((letterIndex, position) => (
+          <button
+            key={`${letterIndex}-${position}`}
+            type="button"
+            disabled={revealed}
+            onClick={() => removeLetter(position)}
+            lang={language.code}
+            // Yig'ilgan va tanlanmagan harflar bir xil matnga ega — ekran
+            // o'quvchi ularni faqat shu nom orqali farqlaydi
+            aria-label={`${exercise.letters[letterIndex]} — olib tashlash`}
+            className="tap-highlight-none flex h-12 w-11 items-center justify-center rounded-xl border-2 border-brand-500 bg-brand-50 text-xl font-extrabold"
+          >
+            {exercise.letters[letterIndex]}
+          </button>
+        ))}
+
+        {/* Qolgan joylar — nechta harf kutilayotgani ko'rinib turadi */}
+        {Array.from({ length: exercise.letters.length - answer.tokenOrder.length }).map(
+          (_, position) => (
+            <span
+              key={`bosh-${position}`}
+              aria-hidden="true"
+              className="h-12 w-11 rounded-xl border-2 border-ink-300/60 bg-slate-50"
+            />
+          ),
+        )}
+      </div>
+
+      {/* Tanlanmagan harflar */}
+      <div ref={poolRef} className="flex flex-wrap justify-center gap-2">
+        {exercise.letters.map((letter, index) => (
+          <button
+            key={`${letter}-${index}`}
+            type="button"
+            disabled={revealed || used.has(index)}
+            onClick={() => addLetter(index)}
+            lang={language.code}
+            aria-label={`${letter} — qo'shish`}
+            className={cn(
+              'tap-highlight-none flex h-12 w-11 items-center justify-center rounded-xl border-2 border-ink-300 bg-white text-xl font-extrabold shadow-[0_2px_0_0] shadow-ink-300 transition-transform active:translate-y-[2px] active:shadow-none',
+              used.has(index) && 'invisible',
+            )}
+          >
+            {letter}
           </button>
         ))}
       </div>
