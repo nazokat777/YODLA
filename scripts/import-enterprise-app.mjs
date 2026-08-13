@@ -49,6 +49,19 @@ function isGrammarNote(text) {
   )
 }
 
+/**
+ * Karta boshidagi ARTIKL va infinitiv belgisini olib tashlaydi.
+ *
+ * Manbada so'zlar ko'pincha grammatik shakli bilan yozilgan: `a museum`,
+ * `the beach`, `an aircraft`, `to sell` — 2182 yozuvdan 540 tasi shunday.
+ * Karta sifatida bu noto'g'ri: o'quvchi "museum" so'zini bilishi kerak,
+ * "a museum" ni emas. Tanib olish mashqida ham `a museum` varianti
+ * boshqalardan ajralib turib, javobni oshkor qilardi.
+ */
+function stripLeadingParticle(word) {
+  return word.replace(/^(?:an?|the|to) +/, '').trim()
+}
+
 /** So'z lug'atga yaroqlimi */
 function isUsableWord(word) {
   if (!CLEAN_WORD.test(word)) return false
@@ -137,11 +150,12 @@ for (const { data } of files) {
       ]) {
         const raw = (item[wordKey] ?? '').trim()
         const uz = (item[uzKey] ?? '').trim()
-        const word = raw.toLowerCase()
+        const lower = raw.toLowerCase()
+        const word = stripLeadingParticle(lower)
 
         if (!raw || !uz) { dropped += 1; continue }
         // Katta harf — atoqli ot yoki qoida sarlavhasi ("play THE violin")
-        if (raw !== word) { dropped += 1; continue }
+        if (raw !== lower) { dropped += 1; continue }
         if (!isUsableWord(word)) { dropped += 1; continue }
         if (isGrammarNote(uz)) { dropped += 1; continue }
         if (word === uz.toLowerCase()) { dropped += 1; continue }

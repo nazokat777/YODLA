@@ -19,7 +19,14 @@ const MAX_TRIES = 8
  * qayta-qayta tekshiramiz.
  */
 export function useHasVoice(locale: string): boolean {
-  const [available, setAvailable] = useState(true)
+  // Boshlang'ich qiymat DARHOL hisoblanadi. Qattiq `true` qo'yilsa, nutq
+  // sintezi umuman yo'q muhitda qiymat birinchi effektda `false` ga o'zgarib,
+  // ortiqcha qayta chizishni keltirib chiqarardi — mashq qayta yaratilib,
+  // foydalanuvchi yozayotgan javob o'chib ketardi.
+  //
+  // `hasVoiceForLocale` ovozlar hali yuklanmagan bo'lsa baribir `true`
+  // qaytaradi, shuning uchun tugma miltillamaydi.
+  const [available, setAvailable] = useState(() => hasVoiceForLocale(locale))
 
   useEffect(() => {
     if (!isSpeechSupported()) {

@@ -23,6 +23,12 @@ import { readFileSync, writeFileSync } from 'node:fs'
 
 const AR_SRC = 'D:/LEARN ARABIC EASILY/app/assets/content/qiroat_lessons.json'
 const EN_SRC = 'D:/Enterprise/enterprise-trainer/data/parsed/structured.json'
+/**
+ * Enterprise app'ning "beginner" bo'limi — bir xil OCR quvuridan chiqqan,
+ * lekin ichida deck'da UMUMAN yo'q kundalik so'zlar bor (restaurant, phone,
+ * plane, museum...). Shu sababli u ham qo'shiladi; sifat filtrlari bir xil.
+ */
+const EN_BEGINNER_SRC = 'D:/Enterprise/enterprise-app/assets/content/beginner/words.json'
 
 /* ------------------------- normalize (arab) ------------------------- */
 // normalize.ts bilan bir xil bo'lishi shart
@@ -251,7 +257,10 @@ function importEnglish() {
     norms: new Set([...hand.norms, ...app.norms]),
   }
 
-  const vocab = JSON.parse(readFileSync(EN_SRC, 'utf8')).vocabulary
+  const vocab = [
+    ...JSON.parse(readFileSync(EN_SRC, 'utf8')).vocabulary,
+    ...JSON.parse(readFileSync(EN_BEGINNER_SRC, 'utf8')).words,
+  ]
 
   const clean = []
   const seenWord = new Set()

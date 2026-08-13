@@ -36,9 +36,9 @@ describe('useHasVoice', () => {
 
     const { result } = renderHook(() => useHasVoice('en-US'))
 
-    // Boshida "bor" deb hisoblanadi (tugma miltillamasin)
-    expect(result.current).toBe(true)
-
+    // Muhimi — YAKUNIY javob. Oraliq qiymat ataylab tekshirilmaydi: u
+    // ro'yxat qachon yuklanishiga bog'liq va uni tekshirish hookni
+    // amalga oshirilish tafsilotiga bog'lab qo'yardi.
     await waitFor(() => expect(result.current).toBe(false), { timeout: 3000 })
   })
 
