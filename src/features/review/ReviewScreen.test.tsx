@@ -438,8 +438,12 @@ describe('ReviewScreen — eshitib tushunish mashqi', () => {
 
     expect(await screen.findByText(/nima eshitdingiz/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /qayta eshitish/i })).toBeInTheDocument()
-    // So'z avtomatik o'qib berilgan
-    expect(speak).toHaveBeenCalled()
+    // So'z avtomatik o'qib berilgan. `waitFor` shart: o'qish effekt ichida
+    // chaqiriladi va u mashq ko'ringan lahzada hali ishlab ulgurmagan
+    // bo'lishi mumkin (testni vaqti-vaqti bilan yiqitardi).
+    await waitFor(() => {
+      expect(speak).toHaveBeenCalled()
+    })
   })
 
   it('nutq sintezi yoq bolsa audio mashq umuman berilmaydi', async () => {

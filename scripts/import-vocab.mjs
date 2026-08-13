@@ -156,10 +156,33 @@ function importArabic() {
   const seenTr = new Set()
   let dropped = 0
 
-  for (const lesson of data.lessons) {
-    // Kitob chegaralari: 1-52 → A1, 53-112 → A2, 113+ → B1
-    const level = lesson.num <= 52 ? 'A1' : lesson.num <= 112 ? 'A2' : 'B1'
-    const topic = `Qiroat ${lesson.num}-dars`
+  /*
+   * Manbada UCHTA kitob birlashtirilgan va har birida dars raqami 1 dan
+   * qayta boshlanadi (109 ta takroriy `num`). Kitob chegarasi — raqam
+   * kamayib ketgan joy.
+   *
+   * Bu ikki narsa uchun muhim:
+   *  1. DARAJA — Madina 1/2/3 aynan pedagogik ketma-ketlik: A1/A2/B1.
+   *     `num` ni to'g'ridan-to'g'ri chegara sifatida ishlatish xato edi:
+   *     2-kitobning 1-60 darslari ham "num <= 52" ga tushib, deyarli
+   *     hamma so'z A1'da to'planib qolgan edi (2056 / 202 / 35).
+   *  2. MAVZU nomi — `Qiroat 5-dars` uch xil darsga to'g'ri kelardi va
+   *     o'quv yo'lida ular bitta bo'limga qo'shilib ketardi.
+   */
+  const lessons = data.lessons
+  const bookOf = []
+  let book = 0
+  lessons.forEach((lesson, index) => {
+    if (index > 0 && lesson.num < lessons[index - 1].num) book += 1
+    bookOf[index] = book
+  })
+
+  const LEVEL_BY_BOOK = ['A1', 'A2', 'B1']
+
+  for (const [index, lesson] of lessons.entries()) {
+    const bookNumber = bookOf[index] + 1
+    const level = LEVEL_BY_BOOK[Math.min(bookOf[index], LEVEL_BY_BOOK.length - 1)]
+    const topic = `Qiroat ${bookNumber}-kitob ${lesson.num}-dars`
 
     for (const v of lesson.vocab ?? []) {
       const word = (v.ar ?? '').trim()
