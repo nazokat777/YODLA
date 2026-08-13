@@ -73,7 +73,76 @@ def extract(word, meaning):
         return None
     if translit(word) == lat:
         return None  # ruscha bosh so'z sizib chiqqan
+    if is_russian_leak(word, lat):
+        return None
     return lat
+
+
+# Ruscha qaytim fe'llari lotinchada shu bilan tugaydi; o'zbekchada bunday
+# qo'shimcha yo'q
+REFLEXIVE = re.compile(r'(ts|s)ya$')
+
+VOWELS = 'аеёиоуыэюя'
+
+
+def is_infinitive(word):
+    """Ruscha FE'L noaniq shaklimi.
+
+    Fe'l `-ть` dan oldin UNLI oladi (приходи-ть, переда-ть), ot esa undosh
+    (смер-ть, гос-ть, час-ть). Shu farq muhim: otlarning tarjimasi to'g'ri
+    ("гость → mehmon"), ularni tekshiruvga tortish shart emas.
+    """
+    if word.endswith('ться'):
+        return len(word) > 4 and word[-5] in VOWELS
+    if word.endswith('ть'):
+        return len(word) > 2 and word[-3] in VOWELS
+    return False
+
+
+def edit_distance(a, b):
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+
+def is_russian_leak(word, lat):
+    """Tarjima o'rniga RUSCHA so'zning lotinchasi tushib qolganmi.
+
+    Manbadagi ta'rif ba'zan o'zbekcha emas, ruscha sinonim bo'ladi. U ham
+    kirillda yozilgani uchun transliteratsiyadan bemalol o'tadi va natijada
+    "приходить → priezjat" kabi yozuv chiqadi — bu tarjima emas.
+
+    Ikki belgi ishlatiladi:
+      - lotincha "-sya/-tsya" bilan tugashi (ruscha qaytim fe'li);
+      - BOSH SO'Z FE'L bo'lsa va tarjima uning transliteratsiyasiga juda
+        o'xshasa.
+
+    Fe'l sharti muhim: o'zbek tilida ruschadan o'zlashgan OTLAR ko'p
+    ("restoran", "telefon", "muzey") va ular to'g'ri tarjima — ularni
+    o'chirib yubormaslik kerak. Ruscha fe'l NOANIQ SHAKLI esa hech qachon
+    o'zlashmaydi.
+    """
+    if REFLEXIVE.search(lat):
+        return True
+
+    # To'g'ri o'zbek fe'li — ildizi ruschadan olingan bo'lsa ham ("filtrlamoq",
+    # "garantiyalamoq") bu haqiqiy tarjima
+    if lat.endswith('moq'):
+        return False
+
+    if not is_infinitive(word):
+        return False
+
+    # Ruscha fe'lning lotinchasiga JUDA yaqin bo'lsa — bu tarjima emas.
+    # Chegara nisbiy: "perat" ↔ "peredat" (0.40) va "priezjat" ↔ "prixodit"
+    # (0.50) ilinadi, to'g'ri tarjimalar esa uzoqda qoladi
+    # ("yod" ↔ "pamyat" 2.0, "tirsak" ↔ "lokot" 1.2).
+    head = translit(word) or ''
+    return edit_distance(head, lat) / max(1, min(len(head), len(lat))) <= 0.6
 
 
 def taken():

@@ -381,6 +381,26 @@ maydonlarini ustiga yozadi va **SM-2 holatiga tegmaydi** (`interval`,
 `easeFactor`, `dueDate`, `repetitions`). Oddiy `bulkPut` foydalanuvchining
 oylar davomidagi takrorlash progressini nolga qaytarardi.
 
+### Rus lug'atidagi "ruscha sizib chiqishi"
+
+Manba ta'riflari ba'zan o'zbekcha emas, **ruscha sinonim** bo'ladi. U ham
+kirillda yozilgani uchun transliteratsiyadan bemalol o'tib, `приходить →
+priezjat` kabi soxta tarjima yasardi. Ikki qoida buni to'xtatadi
+([import-ru-dict.py](scripts/import-ru-dict.py)):
+
+- lotinchada `-sya/-tsya` bilan tugasa — ruscha qaytim fe'li, o'zbekchada
+  bunday qo'shimcha yo'q;
+- bosh so'z **fe'l** bo'lsa va tarjima uning transliteratsiyasiga juda yaqin
+  bo'lsa (nisbiy tahrir masofasi ≤ 0.6).
+
+Fe'l sharti muhim: ruschadan o'zlashgan **otlar** o'zbek tilida ko'p
+(`restoran`, `telefon`, `muzey`) va ular to'g'ri tarjima. Fe'lning noaniq
+shakli esa hech qachon o'zlashmaydi. Fe'l `-ть` dan oldin UNLI oladi
+(`приходи-ть`), ot esa undosh (`смер-ть`, `гос-ть`) — shu bilan ajratiladi.
+`-moq` bilan tugagan tarjima ham ozod: `filtrlamoq`, `garantiyalamoq` —
+ildizi ruscha bo'lsa ham haqiqiy o'zbek fe'li. Natija: 58 soxta yozuv
+tashlandi.
+
 Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
 normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini
 (noyob tarjima, toza transliteratsiya) `decks.test.ts` bilan bir xil
