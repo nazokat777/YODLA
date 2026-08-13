@@ -2,26 +2,47 @@ import { describe, expect, it } from 'vitest'
 import { render } from '@testing-library/react'
 import { Mascot } from './Mascot'
 
+/** Personaj tasviri — bezak bo'lgani uchun `alt` bo'sh, rol yo'q */
+function mascotOf(container: HTMLElement) {
+  return container.querySelector('img')
+}
+
 describe('Mascot', () => {
   it('bezak element sifatida ekran o‘quvchidan yashiriladi', () => {
     // Yonidagi matn ma'noni allaqachon beradi — takrorlash shovqin bo'lardi
     const { container } = render(<Mascot mood="idle" />)
-    const svg = container.querySelector('svg')
+    const image = mascotOf(container)
 
-    expect(svg).not.toBeNull()
-    expect(svg).toHaveAttribute('aria-hidden', 'true')
+    expect(image).not.toBeNull()
+    expect(image).toHaveAttribute('aria-hidden', 'true')
+    expect(image).toHaveAttribute('alt', '')
   })
 
-  it('har kayfiyat uchun boshqacha chizadi', () => {
+  it('quvnoq kayfiyatda boshqa tasvir ko‘rsatiladi', () => {
     const { container: idle } = render(<Mascot mood="idle" />)
     const { container: happy } = render(<Mascot mood="happy" />)
 
-    expect(idle.innerHTML).not.toBe(happy.innerHTML)
+    expect(mascotOf(idle)?.getAttribute('src')).not.toBe(mascotOf(happy)?.getAttribute('src'))
+  })
+
+  it('bir guruhdagi kayfiyatlar bir tasvirni bo‘lishadi', () => {
+    // Har kayfiyat uchun alohida fayl saqlash hajmni ikki baravar oshirardi
+    const { container: happy } = render(<Mascot mood="happy" />)
+    const { container: celebrating } = render(<Mascot mood="celebrating" />)
+
+    expect(mascotOf(happy)?.getAttribute('src')).toBe(mascotOf(celebrating)?.getAttribute('src'))
   })
 
   it('kayfiyat data-atributi bilan belgilanadi', () => {
     const { container } = render(<Mascot mood="celebrating" />)
 
-    expect(container.querySelector('svg')).toHaveAttribute('data-mood', 'celebrating')
+    expect(mascotOf(container)).toHaveAttribute('data-mood', 'celebrating')
+  })
+
+  it('o‘lchamlar oldindan beriladi — joy siljimasin', () => {
+    const { container } = render(<Mascot mood="idle" />)
+
+    expect(mascotOf(container)).toHaveAttribute('width', '256')
+    expect(mascotOf(container)).toHaveAttribute('height', '256')
   })
 })
