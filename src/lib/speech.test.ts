@@ -25,7 +25,11 @@ function stubSpeech(voices: SpeechSynthesisVoice[]) {
       lang = ''
       rate = 1
       voice: SpeechSynthesisVoice | null = null
-      constructor(public text: string) {}
+      text: string
+
+      constructor(text: string) {
+        this.text = text
+      }
     },
   )
 }
