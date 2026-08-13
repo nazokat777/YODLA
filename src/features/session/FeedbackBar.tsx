@@ -74,9 +74,29 @@ function resolveAnswerLines(exercise: Exercise): { answer: Line; context: Line |
       }
 
     case 'construction':
+    case 'spelling':
       return {
         answer: { text: exercise.answer, isTarget: true },
         context: null,
+      }
+
+    case 'cloze':
+      // Variantlar SO'ZLAR edi — javob ham so'z. Jumla kontekst sifatida
+      // qoladi, lekin bo'sh joy to'ldirilgan holda ko'rsatiladi
+      return {
+        answer: { text: exercise.options[exercise.correctIndex], isTarget: true },
+        context: {
+          text: exercise.prompt.replace('___', exercise.options[exercise.correctIndex]),
+          isTarget: true,
+        },
+      }
+
+    // Juft topishda feedback paneli ko'rsatilmaydi — natija o'sha yerda
+    // rang bilan beriladi
+    case 'matching':
+      return {
+        answer: { text: exercise.card.word, isTarget: true },
+        context: { text: exercise.card.translation, isTarget: false },
       }
   }
 }
