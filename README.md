@@ -569,6 +569,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (har tildan 102 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (7572 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
-- [ ] **Faza 7** — liga + PWA (offline) + polish
+- [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
+      + GSAP animatsiyalari
