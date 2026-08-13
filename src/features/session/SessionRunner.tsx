@@ -18,6 +18,7 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ExerciseView } from './ExerciseView'
 import { EMPTY_ANSWER, type ExerciseAnswerState } from './answerState'
 import { FeedbackBar } from './FeedbackBar'
+import { MatchingView, type MatchingResult } from './MatchingView'
 
 /** Seans yakunidagi hisobot */
 export interface SessionSummary {
@@ -143,7 +144,13 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
       case 'recall':
         return answer.text.trim().length > 0
       case 'construction':
+      case 'spelling':
         return answer.tokenOrder.length > 0
+      case 'cloze':
+        return answer.choiceIndex !== null
+      // Juft topishda "Tekshirish" tugmasi yo'q — yakuni o'zi keladi
+      case 'matching':
+        return false
     }
   }, [exercise, answer])
 
@@ -157,6 +164,12 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
         return given.text
       case 'construction':
         return given.tokenOrder.map((tokenIndex) => current.tokens[tokenIndex]).join(' ')
+      case 'cloze':
+        return given.choiceIndex ?? -1
+      case 'spelling':
+        return given.tokenOrder.map((letterIndex) => current.letters[letterIndex]).join('')
+      case 'matching':
+        return -1
     }
   }
 
@@ -237,6 +250,62 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   }, [verdict, updatedCard])
 
   /**
+   * Juft topish yakunlandi — bir mashqda BIR NECHTA karta baholanadi.
+   *
+   * Baho: to'g'ri = 4, xato = 2. Nol emas, chunki juft topish tanib olishga
+   * yaqin passiv tur: bu yerdagi xato so'z butunlay unutilganini bildirmaydi,
+   * shuning uchun intervalni noldan boshlash haqsizlik bo'lardi.
+   *
+   * Navbat BITTAGA suriladi: qolgan kartalar o'z navbatida yana chiqadi,
+   * bu yerdagi baho ular uchun bonus takror bo'ladi.
+   */
+  const handleMatchingComplete = useCallback(
+    async (results: MatchingResult[]) => {
+      if (isSaving) return
+
+      setIsSaving(true)
+
+      let correct = 0
+      let wrong = 0
+      let xpTotal = 0
+
+      for (const { cardId, verdict } of results) {
+        try {
+          await gradeCard(cardId, verdict === 'correct' ? 4 : 2)
+        } catch (error) {
+          // Bittasi saqlanmasa ham qolganlari yoziladi — butun juftlikni
+          // bekor qilish foydalanuvchining mehnatini yo'qqa chiqarardi
+          console.error('Juftlik bahosini saqlab bo‘lmadi:', error)
+        }
+
+        try {
+          const progress = await recordAnswer({ cardId, verdict, dailyGoalWords })
+          xpTotal += progress.xpGained
+        } catch (error) {
+          console.error('XP ni yozib bo‘lmadi:', error)
+        }
+
+        if (verdict === 'correct') correct += 1
+        else wrong += 1
+      }
+
+      setSummary((current) => ({
+        ...current,
+        answered: current.answered + results.length,
+        correct: current.correct + correct,
+        wrong: current.wrong + wrong,
+        xpEarned: current.xpEarned + xpTotal,
+      }))
+
+      if (soundEnabled) playCorrectSound()
+
+      setIsSaving(false)
+      setIndex((current) => current + 1)
+    },
+    [isSaving, dailyGoalWords, soundEnabled],
+  )
+
+  /**
    * To'g'ri javobdan keyin keyingi mashqqa O'ZI o'tadi.
    *
    * Faqat "correct" uchun: o'sha panelda o'qiladigan yangi ma'lumot yo'q
@@ -256,14 +325,40 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   if (!exercise) return null
 
   /** Variantli mashqda javob bir bosishda beriladi */
-  const isChoiceExercise = exercise.type === 'recognition' || exercise.type === 'listening'
+  const isChoiceExercise =
+    exercise.type === 'recognition' || exercise.type === 'listening' || exercise.type === 'cloze'
+
+  // Juft topish bir mashqda bir nechta kartani baholaydi, shuning uchun
+  // ko'rsatkich navbat uzunligidan oshib ketishi mumkin
+  const progressValue = Math.min(summary.answered, queue.length)
+
+  // Juft topish standart "javob → feedback" oqimidan chetda: o'z yakunini
+  // o'zi belgilaydi, shuning uchun FeedbackBar va bir-javob mashinasi
+  // chetlab o'tiladi
+  if (exercise.type === 'matching') {
+    return (
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
+          <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
+            {progressValue}/{queue.length}
+          </span>
+        </div>
+
+        <MatchingView
+          exercise={exercise}
+          onComplete={(results) => void handleMatchingComplete(results)}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
-        <ProgressBar value={summary.answered} max={queue.length} label="Seans progressi" />
+        <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
         <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-          {summary.answered}/{queue.length}
+          {progressValue}/{queue.length}
         </span>
       </div>
 
