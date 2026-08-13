@@ -250,6 +250,22 @@ describe('ReviewScreen — adaptiv qiyinlik', () => {
   })
 })
 
+/**
+ * Jumla qurishda so'zlarni tartib bilan bosadi.
+ *
+ * Har bosishdan keyin React'ga navbat beriladi: fon rejimida lug'at bazaga
+ * yozilib turadi va ekran qayta chiziladi — ketma-ket sinxron bosishlar
+ * eskirgan tugmaga tushib, testni vaqti-vaqti bilan yiqitardi.
+ */
+async function buildSentence(tokens: string[]) {
+  for (const token of tokens) {
+    fireEvent.click(await screen.findByRole('button', { name: new RegExp(`^${token} .*qo`) }))
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: new RegExp(`^${token} .*olib tashlash`) })).toBeInTheDocument()
+    })
+  }
+}
+
 describe('ReviewScreen — jumla qurish mashqi', () => {
   it('sozlarni tartib bilan tanlab jumla tuziladi', async () => {
     // Math.random qat'iy qilinadi: repetitions 6 da ['recall','construction']
@@ -277,9 +293,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
     // So'zlarni to'g'ri tartibda bosamiz.
     // Tugmalar nomi "so'z — qo'shish" ko'rinishida (ekran o'quvchi uchun
     // "qo'shish" va "olib tashlash" tugmalari farqlanishi kerak).
-    for (const token of ['This', 'is', 'my', 'house']) {
-      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${token} .*qo`) }))
-    }
+    await buildSentence(['This', 'is', 'my', 'house'])
 
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
@@ -306,9 +320,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
     renderScreen()
     await screen.findByText(/shu jumlani tuzing/i)
 
-    for (const token of ['house', 'my', 'is', 'This']) {
-      fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${token} .*qo`) }))
-    }
+    await buildSentence(['house', 'my', 'is', 'This'])
 
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
