@@ -1,4 +1,5 @@
 import { speak } from '@/lib/speech'
+import { useHasVoice } from '@/hooks/useHasVoice'
 import { cn } from '@/lib/cn'
 
 interface SpeakButtonProps {
@@ -18,6 +19,12 @@ interface SpeakButtonProps {
  * tugma so'z ko'rsatilgan har joyda hamrohlik qiladi.
  */
 export function SpeakButton({ text, locale, size = 'sm', className }: SpeakButtonProps) {
+  const hasVoice = useHasVoice(locale)
+
+  // Bu tilda ovoz o'rnatilmagan bo'lsa tugma UMUMAN ko'rsatilmaydi: bosilsa
+  // hech narsa bo'lmaydigan tugma foydalanuvchini chalg'itadi
+  if (!hasVoice) return null
+
   return (
     <button
       type="button"
