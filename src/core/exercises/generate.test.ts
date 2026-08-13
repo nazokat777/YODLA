@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CardRecord } from '@/core/db'
 import { seededRandom } from '@/lib/random'
-import { generateExercise, pickExerciseType } from './generate'
+import { MATCHING_SIZE, generateExercise, pickExerciseType } from './generate'
 import { MAX_CHOICES } from './types'
 
 function makeCard(overrides: Partial<CardRecord> = {}): CardRecord {
@@ -65,7 +65,11 @@ describe('pickExerciseType — adaptiv qiyinlik', () => {
       }),
     )
 
-    expect(types.every((type) => type === 'recognition' || type === 'listening')).toBe(true)
+    expect(
+      types.every(
+        (type) => type === 'recognition' || type === 'listening' || type === 'matching',
+      ),
+    ).toBe(true)
   })
 
   it('repetitions 2–3 da aktiv yozish talab qilinadi', () => {
@@ -420,5 +424,44 @@ describe('generateExercise — harfma-harf (spelling)', () => {
     })
 
     expect(findSpelling(phrase, [phrase, ...POOL])).toBeNull()
+  })
+})
+
+describe('generateExercise — juft topish (matching)', () => {
+  /** rep>=1 pog'onasida matching qidiramiz */
+  function findMatching(card: CardRecord, pool: CardRecord[]) {
+    for (let seed = 1; seed < 60; seed += 1) {
+      const exercise = generateExercise({ card, pool, allowAudio: false, random: seededRandom(seed) })
+      if (exercise.type === 'matching') return exercise
+    }
+    return null
+  }
+
+  it('5 noyob juft chiqadi va joriy karta ichida bo‘ladi', () => {
+    const card = makeCard({ repetitions: 1 })
+    const matching = findMatching(card, POOL)
+
+    expect(matching).not.toBeNull()
+    expect(matching!.pairs).toHaveLength(MATCHING_SIZE)
+
+    const ids = matching!.pairs.map((pair) => pair.cardId)
+    expect(new Set(ids).size).toBe(MATCHING_SIZE)
+    expect(ids).toContain(card.id)
+  })
+
+  it('har juftda so‘z va tarjimasi bir kartadan olinadi', () => {
+    const matching = findMatching(makeCard({ repetitions: 1 }), POOL)
+
+    for (const pair of matching!.pairs) {
+      const source = POOL.find((c) => c.id === pair.cardId)
+      expect(pair.word).toBe(source!.word)
+      expect(pair.translation).toBe(source!.translation)
+    }
+  })
+
+  it('to‘plamda yetarli karta bo‘lmasa matching yaratilmaydi', () => {
+    const small = POOL.slice(0, 4)
+
+    expect(findMatching(small[0], small)).toBeNull()
   })
 })

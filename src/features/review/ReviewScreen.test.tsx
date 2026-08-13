@@ -254,7 +254,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
   it('sozlarni tartib bilan tanlab jumla tuziladi', async () => {
     // Math.random qat'iy qilinadi: repetitions 6 da ['recall','construction']
     // ro'yxatidan ikkinchisi (construction) tanlansin
-    vi.spyOn(Math, 'random').mockReturnValue(0.9)
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
 
     await addMissingCards(
       [
@@ -287,7 +287,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
   })
 
   it('xato tartibda tuzilgan jumla xato hisoblanadi', async () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.9)
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
 
     await addMissingCards(
       [

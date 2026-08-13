@@ -1,7 +1,7 @@
 import type { CardRecord } from '@/core/db'
 import type { ExerciseType } from '@/core/types'
 import { shuffle, type RandomSource } from '@/lib/random'
-import { MAX_CHOICES, type Exercise } from './types'
+import { MAX_CHOICES, type Exercise, type MatchingPair } from './types'
 
 /**
  * Adaptiv qiyinlik (Flow nazariyasi).
@@ -17,7 +17,7 @@ import { MAX_CHOICES, type Exercise } from './types'
 const DIFFICULTY_LADDER: Array<{ minRepetitions: number; types: ExerciseType[] }> = [
   { minRepetitions: 4, types: ['recall', 'construction', 'spelling'] },
   { minRepetitions: 2, types: ['listening', 'recall', 'cloze'] },
-  { minRepetitions: 1, types: ['recognition', 'listening'] },
+  { minRepetitions: 1, types: ['recognition', 'listening', 'matching'] },
   { minRepetitions: 0, types: ['recognition'] },
 ]
 
@@ -138,6 +138,32 @@ function isSpellable(card: CardRecord): boolean {
   return !/\s/.test(word)
 }
 
+/** Juft topishdagi kartalar soni */
+export const MATCHING_SIZE = 5
+
+/**
+ * Joriy karta + to'plamdan yana `MATCHING_SIZE - 1` ta kartani olib juftlar
+ * tuzadi. Yetarli karta bo'lmasa null — generator bir pog'ona pastga tushadi.
+ */
+function buildMatching(
+  card: CardRecord,
+  pool: readonly CardRecord[],
+  random: RandomSource,
+): MatchingPair[] | null {
+  const others = shuffle(
+    pool.filter((candidate) => candidate.id !== card.id),
+    random,
+  ).slice(0, MATCHING_SIZE - 1)
+
+  if (others.length < MATCHING_SIZE - 1) return null
+
+  return shuffle([card, ...others], random).map((item) => ({
+    cardId: item.id,
+    word: item.word,
+    translation: item.translation,
+  }))
+}
+
 /** Variantlar ro'yxati va to'g'ri javob indeksi */
 function buildChoices(
   card: CardRecord,
@@ -184,7 +210,8 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
     case 'spelling':
       return isSpellable(card)
     case 'matching':
-      return false
+      // O'zidan tashqari kamida MATCHING_SIZE-1 karta kerak
+      return pool.filter((candidate) => candidate.id !== card.id).length >= MATCHING_SIZE - 1
   }
 }
 
@@ -283,7 +310,14 @@ export function generateExercise(options: GenerateExerciseOptions): Exercise {
       }
     }
 
-    case 'matching':
+    case 'matching': {
+      const pairs = buildMatching(card, pool, random)
+      // Mavjudlik yuqorida tekshirilgan; bu shart faqat tip tizimi uchun
+      if (!pairs) return buildRecall(card)
+
+      return { id, type, card, pairs }
+    }
+
     case 'recall':
       return buildRecall(card)
   }
