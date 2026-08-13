@@ -69,6 +69,46 @@ function taken(file, normalizer) {
   return { words, translations, norms }
 }
 
+/* -------------------- arab jumlasi (cloze uchun) -------------------- */
+
+/**
+ * Dars matnidan so'z QATNASHGAN jumlani ajratib oladi.
+ *
+ * Manba raqamli va toza (OCR emas), jumlalar esa darslik uslubida qisqa:
+ * "هَذَا كِتَابٌ." Shu sababli ular "gap ichida" mashqi uchun juda mos.
+ *
+ * Chegara `\b` bilan emas, Unicode sinflari bilan qaraladi: `\b` faqat
+ * ASCII harflarga tayanadi va arab yozuvida hech qachon mos kelmaydi.
+ * `\p{M}` — harakatlar, ular so'zning davomi.
+ */
+function sentenceForWord(word, reading) {
+  if (!reading) return null
+
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const boundary = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'u')
+
+  const candidates = reading
+    .split(/[.؟!\n]+/)
+    .map((part) => part.trim())
+    .filter((part) => {
+      if (!boundary.test(part)) return false
+
+      const words = part.split(/\s+/)
+      // Juda qisqa jumlada bo'sh joydan keyin kontekst qolmaydi; juda
+      // uzunini telefon ekranida o'qish qiyin
+      if (words.length < 2 || words.length > 9) return false
+
+      // Transliteratsiya jadvaliga sig'masa, o'qilishida notanish belgi qolardi
+      return arabicIsClean(part)
+    })
+
+  if (candidates.length === 0) return null
+
+  // Eng qisqasi — bo'sh joy va uning konteksti bir qarashda ko'rinadi
+  candidates.sort((a, b) => a.length - b.length)
+  return candidates[0]
+}
+
 /* ------------------------------ TS yozish ------------------------------ */
 function esc(s) {
   return s.includes("'") ? `"${s}"` : `'${s}'`
@@ -86,6 +126,9 @@ function toTs(constName, lang, buckets) {
         `      language: '${lang}',\n` +
         `      topic: ${esc(w.topic)},\n` +
         `      level: '${level}',\n` +
+        // Jumla bo'lsa "gap ichida" mashqi ishlaydi. Tarjimasi yo'q —
+        // "jumla qurish" uchun u shart, shuning uchun bu tur berilmaydi.
+        (w.sentence ? `      sentence: ${esc(w.sentence)},\n` : '') +
         '    },\n'
     }
     body += '  ],\n'
@@ -136,13 +179,18 @@ function importArabic() {
       seenWord.add(word)
       seenNorm.add(norm)
       seenTr.add(trKey)
-      buckets[level].push({ word, uz, topic })
+      // Dars matnida shu so'z qatnashgan jumla bo'lsa — "gap ichida" mashqi
+      buckets[level].push({ word, uz, topic, sentence: sentenceForWord(word, lesson.reading) })
     }
   }
 
   writeFileSync('src/content/decks/imported-ar.ts', toTs('AR_IMPORTED', 'ar', buckets))
   const total = buckets.A1.length + buckets.A2.length + buckets.B1.length
+  const withSentence = Object.values(buckets)
+    .flat()
+    .filter((entry) => entry.sentence).length
   console.log(`arab: +${total} (A1 ${buckets.A1.length}, A2 ${buckets.A2.length}, B1 ${buckets.B1.length}) — tashlandi ${dropped}`)
+  console.log(`  jumla biriktirildi: ${withSentence} (${Math.round((withSentence / total) * 100)}%)`)
 }
 
 /* ------------------------------ Ingliz ------------------------------- */

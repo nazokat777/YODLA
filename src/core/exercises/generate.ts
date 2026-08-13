@@ -94,10 +94,16 @@ function collectWordDistractors(
  *
  * Topilmasa null — so'z jumlada TURLANGAN shaklda kelishi mumkin ("drink" /
  * "drinks"), unda bo'sh joy qoldirish noto'g'ri bo'lardi.
+ *
+ * NEGA `\b` EMAS: JavaScript'da `\b` faqat ASCII harflarga tayanadi, ya'ni
+ * arab va kirill yozuvida u HECH QACHON mos kelmasdi va bu tillarda cloze
+ * umuman yaratilmasdi. Unicode harf/belgi sinflari bilan qaralgan chegara
+ * uchala yozuvda ham ishlaydi. `\p{M}` — arab harakatlari: ular so'zning
+ * davomi hisoblanadi, aks holda so'z o'rtasidan kesilardi.
  */
 function clozeBlank(sentence: string, word: string): string | null {
   const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const pattern = new RegExp(`\\b${escaped}\\b`, 'i')
+  const pattern = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'iu')
 
   return pattern.test(sentence) ? sentence.replace(pattern, '___') : null
 }

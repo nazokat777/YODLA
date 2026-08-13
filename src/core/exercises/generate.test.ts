@@ -465,3 +465,76 @@ describe('generateExercise — juft topish (matching)', () => {
     expect(findMatching(small[0], small)).toBeNull()
   })
 })
+
+describe('generateExercise — cloze lotin bo‘lmagan yozuvlarda', () => {
+  /** Ladder tasodifiy tanlaydi — cloze chiqqan urug'ni qidiramiz */
+  function findCloze(card: CardRecord, pool: CardRecord[]) {
+    for (let seed = 1; seed < 60; seed += 1) {
+      const exercise = generateExercise({ card, pool, allowAudio: false, random: seededRandom(seed) })
+      if (exercise.type === 'cloze') return exercise
+    }
+    return null
+  }
+
+  it('rus tilida bo‘sh joy qoldiriladi', () => {
+    const water = makeCard({
+      id: 'ru:voda',
+      word: 'вода',
+      translation: 'suv',
+      language: 'ru',
+      repetitions: 2,
+      sentence: 'Это холодная вода',
+      sentenceTranslation: 'Bu sovuq suv',
+    })
+    const pool = [
+      water,
+      makeCard({ id: 'ru:hleb', word: 'хлеб', translation: 'non', language: 'ru' }),
+      makeCard({ id: 'ru:chai', word: 'чай', translation: 'choy', language: 'ru' }),
+    ]
+
+    const cloze = findCloze(water, pool)
+
+    expect(cloze).not.toBeNull()
+    expect(cloze!.prompt).toBe('Это холодная ___')
+  })
+
+  it('arab tilida bo‘sh joy qoldiriladi', () => {
+    // `\b` faqat ASCII harflar bilan ishlaydi — arab yozuvida u hech qachon
+    // mos kelmasdi va cloze umuman yaratilmasdi
+    const book = makeCard({
+      id: 'ar:kitab',
+      word: 'كِتَابٌ',
+      translation: 'kitob',
+      language: 'ar',
+      repetitions: 2,
+      sentence: 'هَذَا كِتَابٌ',
+      sentenceTranslation: 'Bu kitob',
+    })
+    const pool = [
+      book,
+      makeCard({ id: 'ar:qalam', word: 'قَلَمٌ', translation: 'qalam', language: 'ar' }),
+      makeCard({ id: 'ar:bab', word: 'بَابٌ', translation: 'eshik', language: 'ar' }),
+    ]
+
+    const cloze = findCloze(book, pool)
+
+    expect(cloze).not.toBeNull()
+    expect(cloze!.prompt).toBe('هَذَا ___')
+  })
+
+  it('so‘zning BO‘LAGI bo‘sh joy bilan almashtirilmaydi', () => {
+    // "чай" so'zi "чайник" ichida uchraydi — bu mos kelish emas
+    const tea = makeCard({
+      id: 'ru:chai',
+      word: 'чай',
+      translation: 'choy',
+      language: 'ru',
+      repetitions: 2,
+      sentence: 'Там стоит чайник',
+      sentenceTranslation: 'U yerda choynak turibdi',
+    })
+    const pool = [tea, makeCard({ id: 'ru:hleb', word: 'хлеб', translation: 'non', language: 'ru' })]
+
+    expect(findCloze(tea, pool)).toBeNull()
+  })
+})

@@ -82,14 +82,43 @@ describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
     })
   })
 
-  it('jumla bo‘lsa, tarjimasi ham bo‘ladi', () => {
-    // Jumla IXTIYORIY (import qilingan lug'atlarda yo'q — o'shanda "jumla
-    // qurish" mashqi berilmaydi). Lekin jumla bor bo'lsa, tarjimasisiz
-    // qolmasligi kerak: FeedbackBar uni kontekst sifatida ko'rsatadi.
+  it('jumla tarjimasi jumlasiz qolmaydi', () => {
+    // Jumla IXTIYORIY. Tarjimasiz jumla ham HAQIQIY holat: import qilingan
+    // arab so'zlariga dars matnidan jumla biriktirilgan, lekin uning
+    // o'zbekcha tarjimasi yo'q. Bunday kartada "gap ichida" mashqi ishlaydi
+    // (u faqat jumlaning O'ZINI ko'rsatadi), "jumla qurish" esa berilmaydi —
+    // uning savoli aynan o'zbekcha jumla bo'lardi.
+    //
+    // Teskarisi esa xato: tarjima bor, jumla yo'q — bu ma'nosiz yozuv.
     all.forEach((card) => {
-      if (card.sentence?.trim()) {
-        expect(card.sentenceTranslation?.trim()).toBeTruthy()
+      if (card.sentenceTranslation?.trim()) {
+        expect(card.sentence?.trim()).toBeTruthy()
       }
+    })
+  })
+
+  it('tarjimasiz jumla o‘z so‘zini albatta ichiga oladi', () => {
+    // Tarjimali jumla "jumla qurish" uchun ham xizmat qiladi, shuning uchun
+    // unda so'z TURLANGAN shaklda kelishi mumkin ("eye" → "Close your eyes").
+    // Bunday jumlada "gap ichida" mashqi berilmaydi, xolos.
+    //
+    // Tarjimasiz jumla esa FAQAT "gap ichida" uchun qo'shilgan (import
+    // qilingan arab so'zlari). So'z unda topilmasa, u shunchaki foydasiz
+    // yuk — import filtri buzilganini bildiradi.
+    //
+    // Chegara `\b` bilan emas: u faqat ASCII harflar bilan ishlaydi va
+    // arab/kirill yozuvida hech qachon mos kelmasdi.
+    all.forEach((card) => {
+      const sentence = card.sentence?.trim()
+      if (!sentence || card.sentenceTranslation?.trim()) return
+
+      const escaped = card.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const pattern = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'iu')
+
+      expect(
+        pattern.test(sentence),
+        `"${card.word}" so'zi o'z jumlasida topilmadi: "${sentence}"`,
+      ).toBe(true)
     })
   })
 

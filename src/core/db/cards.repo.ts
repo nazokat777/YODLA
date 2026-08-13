@@ -69,6 +69,59 @@ export async function addMissingCards(
   })
 }
 
+/** Kontent yangilanganda ustiga yozilishi mumkin bo'lgan maydonlar */
+const CONTENT_FIELDS = ['topic', 'level', 'sentence', 'sentenceTranslation'] as const
+
+/**
+ * MAVJUD kartalarning kontent maydonlarini yangilaydi va o'zgartirilganlar
+ * sonini qaytaradi.
+ *
+ * NEGA KERAK: `addMissingCards` faqat yangi kartani qo'shadi. Kontent
+ * takomillashganda (masalan import qilingan arab so'zlariga "gap ichida"
+ * mashqi uchun jumla biriktirilganda) yaxshilanish faqat ilovani YANGI
+ * o'rnatganlarga yetib borardi — eski foydalanuvchilar eski kartalari
+ * bilan qolib ketardi.
+ *
+ * NEGA `bulkPut` EMAS: u SM-2 holatini (interval, easeFactor, dueDate,
+ * repetitions) ham qayta yozadi va foydalanuvchining oylar davomidagi
+ * takrorlash progressini nolga qaytarardi. Shuning uchun bu yerda faqat
+ * kontent maydonlari ko'chiriladi.
+ */
+export async function syncCardContent(inputs: NewCardRecordInput[]): Promise<number> {
+  if (inputs.length === 0) return 0
+
+  return db.transaction('rw', db.cards, async () => {
+    const ids = inputs.map((input) => input.id ?? makeCardId(input.language, input.word))
+    const existing = await db.cards.bulkGet(ids)
+
+    const changed: CardRecord[] = []
+
+    inputs.forEach((input, index) => {
+      const card = existing[index]
+      if (!card) return
+
+      // Faqat haqiqatan farq qilgan kartalar yoziladi: har ochilishda
+      // minglab yozuvni behuda yangilash sekin va ma'nosiz
+      const differs = CONTENT_FIELDS.some((field) => card[field] !== input[field])
+      if (!differs) return
+
+      changed.push({
+        ...card,
+        topic: input.topic,
+        level: input.level,
+        sentence: input.sentence,
+        sentenceTranslation: input.sentenceTranslation,
+      })
+    })
+
+    if (changed.length > 0) {
+      await db.cards.bulkPut(changed)
+    }
+
+    return changed.length
+  })
+}
+
 /**
  * Takrorlash muddati yetgan kartalar — eng "kechikkani" birinchi bo'lib.
  *

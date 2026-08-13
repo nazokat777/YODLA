@@ -11,6 +11,7 @@ import {
   getLanguageStats,
   getNextDueDate,
   gradeCard,
+  syncCardContent,
   type NewCardRecordInput,
 } from './cards.repo'
 
@@ -309,5 +310,63 @@ describe('clearAllCards', () => {
 
     expect(await getAllCards('en')).toHaveLength(0)
     expect(await getAllCards('ru')).toHaveLength(0)
+  })
+})
+
+describe('syncCardContent', () => {
+  it('mavjud kartaga yangi jumlani qo‘shadi', async () => {
+    // Kontent yangilanganda ("gap ichida" mashqi uchun jumla qo'shildi)
+    // u ALLAQACHON o'rnatilgan foydalanuvchilarga ham yetib borishi kerak
+    await addMissingCards([{ word: 'hello', translation: 'salom', language: 'en' }], NOW)
+
+    const updated = await syncCardContent([
+      { word: 'hello', translation: 'salom', language: 'en', sentence: 'Say hello to her' },
+    ])
+
+    expect(updated).toBe(1)
+    expect((await getCard('en:hello'))?.sentence).toBe('Say hello to her')
+  })
+
+  it('o‘RGANISH PROGRESSINI buzmaydi', async () => {
+    await addMissingCards([{ word: 'hello', translation: 'salom', language: 'en' }], NOW)
+    await gradeCard('en:hello', 5)
+
+    const before = await getCard('en:hello')
+
+    await syncCardContent([
+      { word: 'hello', translation: 'salom', language: 'en', sentence: 'Say hello to her' },
+    ])
+
+    const after = await getCard('en:hello')
+    // SM-2 holati daxlsiz qolishi SHART — aks holda kontent yangilanishi
+    // foydalanuvchining oylar davomidagi mehnatini nolga qaytarardi
+    expect(after?.interval).toBe(before?.interval)
+    expect(after?.repetitions).toBe(before?.repetitions)
+    expect(after?.easeFactor).toBe(before?.easeFactor)
+    expect(after?.dueDate).toBe(before?.dueDate)
+    expect(after?.totalReviews).toBe(before?.totalReviews)
+  })
+
+  it('o‘zgarmagan kartaga tegmaydi', async () => {
+    await addMissingCards(
+      [{ word: 'hello', translation: 'salom', language: 'en', sentence: 'Say hello to her' }],
+      NOW,
+    )
+
+    const updated = await syncCardContent([
+      { word: 'hello', translation: 'salom', language: 'en', sentence: 'Say hello to her' },
+    ])
+
+    // Har ochilishda bazani behuda yozish shart emas
+    expect(updated).toBe(0)
+  })
+
+  it('bazada yo‘q kartani yaratmaydi', async () => {
+    const updated = await syncCardContent([
+      { word: 'ghost', translation: 'arvoh', language: 'en', sentence: 'A ghost appeared' },
+    ])
+
+    expect(updated).toBe(0)
+    expect(await getCard('en:ghost')).toBeUndefined()
   })
 })

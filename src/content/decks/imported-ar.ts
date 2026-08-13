@@ -27,6 +27,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'هَذِهِ مِسْطَرَةٌ',
     },
     {
       word: 'هَذَا',
@@ -34,6 +35,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'هَذَا وَرَقٌ',
     },
     {
       word: 'هَذِهِ',
@@ -41,6 +43,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'مَا هَذِهِ',
     },
     {
       word: 'هَاتِ',
@@ -48,6 +51,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'هَاتِ الكُرَّاسَةَ',
     },
     {
       word: 'مِحْبَرَةٌ',
@@ -76,6 +80,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'هَذَا وَرَقٌ',
     },
     {
       word: 'حِبْرٌ',
@@ -139,6 +144,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'هَذَا مَكْتَبُ الْمُعَلِّمِ',
     },
     {
       word: 'مَقْعَدُ التِّلْمِيذِ',
@@ -146,6 +152,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'أَيْنَ مَقْعَدُ التِّلْمِيذِ',
     },
     {
       word: 'دَرْسٌ',
@@ -181,6 +188,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'عُثْمَانُ يَقْرَأُ الدَّرْسَ فِي الفَصْلِ',
     },
     {
       word: 'مِحْفَظَةٌ',
@@ -230,6 +238,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'اُقْعُدْ عَلَى الْكُرْسِيِّ',
     },
     {
       word: 'فِنْجَانٌ',
@@ -251,6 +260,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'هَذَا رَفٌّ',
     },
     {
       word: 'سَخَّانَةُ الْمَاءِ',
@@ -258,6 +268,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'أَيْنَ سَخَّانَةُ الْمَاءِ',
     },
     {
       word: 'إِبْرِيقُ الشَّايِ',
@@ -293,6 +304,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'خُذِ الْمِقْلَمَةَ يَا كَرِيمُ',
     },
     {
       word: 'خِزَانَةٌ',
@@ -335,6 +347,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 5-dars',
       level: 'A1',
+      sentence: 'تَعَالَ هُنَا',
     },
     {
       word: 'ثَوْرٌ',
@@ -384,6 +397,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'أَنَا أَكْتُبُ',
     },
     {
       word: 'أَنْتَ',
@@ -391,6 +405,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'أَنْتَ تِلْمِيذٌ',
     },
     {
       word: 'هُوَ',
@@ -398,6 +413,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'هُوَ يَصِيحُ',
     },
     {
       word: 'مِنْ',
@@ -440,6 +456,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'أَنَا أَلْعَبُ بَعْدَ الدَّرْسِ',
     },
     {
       word: 'اِبْنٌ',
@@ -531,6 +548,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 9-dars',
       level: 'A1',
+      sentence: 'هَذَا فَأْرٌ',
     },
     {
       word: 'هِرٌّ',
@@ -559,6 +577,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 9-dars',
       level: 'A1',
+      sentence: 'يُوجَدُ الذِّئْبُ فِي الغَابَةِ',
     },
     {
       word: 'إِلَى',
@@ -566,6 +585,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 9-dars',
       level: 'A1',
+      sentence: 'التِّلْمِيذُ ذَهَبَ إِلَى الْمَدْرَسَةِ',
     },
     {
       word: 'مَرْكَبٌ',
@@ -573,6 +593,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 10-dars',
       level: 'A1',
+      sentence: 'هَذَا مَرْكَبٌ',
     },
     {
       word: 'طَبَقٌ',
@@ -580,6 +601,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 10-dars',
       level: 'A1',
+      sentence: 'هَذَا طَبَقٌ',
     },
     {
       word: 'مِلْعَقَةٌ',
@@ -636,6 +658,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 10-dars',
       level: 'A1',
+      sentence: 'قُمْتُ فَقَرَأْتُ دَرْسِي',
     },
     {
       word: 'مِقَصٌّ',
@@ -643,6 +666,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'هَذَا سِكِّينٌ وَذَلِكَ مِقَصٌّ',
     },
     {
       word: 'قَدَحٌ',
@@ -664,6 +688,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'هَذَا غَنِيٌّ وَهَذَا فَقِيرٌ',
     },
     {
       word: 'فَقِيرٌ',
@@ -671,6 +696,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'هَذَا غَنِيٌّ وَهَذَا فَقِيرٌ',
     },
     {
       word: 'قَلِيلٌ',
@@ -678,6 +704,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'هَذَا قَلِيلٌ وَهَذَا كَثِيرٌ',
     },
     {
       word: 'كَثِيرٌ',
@@ -685,6 +712,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'هَذَا قَلِيلٌ وَهَذَا كَثِيرٌ',
     },
     {
       word: 'ذَلِكَ',
@@ -699,6 +727,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'قَرَأْتُ دَرْسِي أَمَامَ مُعَلِّمِي',
     },
     {
       word: 'نَحْنُ',
@@ -706,6 +735,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'نَحْنُ نَقْرَأُ كَثِيرًا',
     },
     {
       word: 'هُمْ',
@@ -713,6 +743,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'هُمْ يَفْهَمُونَ الدَّرْسَ',
     },
     {
       word: 'أَنْتُمْ',
@@ -720,6 +751,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'أَنْتُمْ تَحْفَظُونَ الدَّرْسَ',
     },
     {
       word: 'سَاحَةُ الدَّارِ',
@@ -734,6 +766,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'التَّلَامِذَةُ يَقْرَؤُونَ الدَّرْسَ',
     },
     {
       word: 'اِقْرَؤُوا',
@@ -748,6 +781,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'هُمْ يَفْهَمُونَ الدَّرْسَ',
     },
     {
       word: 'تَفْتَحُونَ',
@@ -755,6 +789,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'لِمَ تَفْتَحُونَ الأَبْوَابَ',
     },
     {
       word: 'تَحْفَظُونَ',
@@ -762,6 +797,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'أَنْتُمْ تَحْفَظُونَ الدَّرْسَ',
     },
     {
       word: 'تَضْحَكُونَ',
@@ -769,6 +805,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'لِمَ تَضْحَكُونَ',
     },
     {
       word: 'تَبْكُونَ',
@@ -776,6 +813,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'لِمَ تَبْكُونَ',
     },
     {
       word: 'يَنَامُونَ',
@@ -790,6 +828,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'لِمَ تَسْكُتُونَ',
     },
     {
       word: 'جَدٌّ',
@@ -818,6 +857,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'أَنَا أُحِبُّ جَدَّتِي كَثِيرًا',
     },
     {
       word: 'يُطِيعُونَ',
@@ -825,6 +865,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'الأَوْلَادُ يُطِيعُونَ آبَاءَهُمْ',
     },
     {
       word: 'أَيُّهَا',
@@ -832,6 +873,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'اِفْتَحُوا الشَّبَابِيكَ أَيُّهَا الأَوْلَادُ',
     },
     {
       word: 'أَيَّتُهَا',
@@ -867,6 +909,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'هَؤُلَاءِ بَنَاتِي',
     },
     {
       word: 'أُولَئِكَ',
@@ -881,6 +924,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 14-dars',
       level: 'A1',
+      sentence: 'وَأَنَا أَيْضًا قَرَأْتُ',
     },
     {
       word: 'صَاحِبٌ',
@@ -909,6 +953,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 15-dars',
       level: 'A1',
+      sentence: 'مَعَ مَنْ جِئْتَ',
     },
     {
       word: 'ثُمَّ',
@@ -916,6 +961,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 15-dars',
       level: 'A1',
+      sentence: 'خَرَجَ الْمُعَلِّمُ مِنَ الفَصْلِ ثُمَّ التَّلَامِذَةُ',
     },
     {
       word: 'كَتَبْنَا',
@@ -930,6 +976,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 15-dars',
       level: 'A1',
+      sentence: 'هَلْ قَرَأْتُمْ دُرُوسَكُمْ أَيُّهَا التَّلَامِذَةُ',
     },
     {
       word: 'ذَهَبُوا',
@@ -1007,6 +1054,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'لَا تَلْعَبْ وَقْتَ الدَّرْسِ',
     },
     {
       word: 'لَا تَلْعَبُوا',
@@ -1049,6 +1097,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'التِّلْمِيذُ كَسْلَانُ',
     },
     {
       word: 'كَبِيرٌ',
@@ -1056,6 +1105,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'العِجْلُ كَبِيرٌ',
     },
     {
       word: 'صَغِيرٌ',
@@ -1063,6 +1113,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'البَابُ صَغِيرٌ',
     },
     {
       word: 'طَوِيلٌ',
@@ -1070,6 +1121,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'القَلَمُ طَوِيلٌ',
     },
     {
       word: 'قَصِيرٌ',
@@ -1084,6 +1136,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'القَلَمُ جَدِيدٌ',
     },
     {
       word: 'قَدِيمٌ',
@@ -1091,6 +1144,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'الكِتَابُ قَدِيمٌ',
     },
     {
       word: 'حَادٌّ',
@@ -1098,6 +1152,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'السِّكِّينُ حَادٌّ',
     },
     {
       word: 'كَهَامٌ',
@@ -1105,6 +1160,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'الفَأْسُ كَهَامٌ',
     },
     {
       word: 'قُفْلٌ',
@@ -1140,6 +1196,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'الكُرْسِيُّ رَفِيعٌ',
     },
     {
       word: 'وَضِيعٌ',
@@ -1147,6 +1204,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'الكُرْسِيُّ وَضِيعٌ',
     },
     {
       word: 'وَاسِعٌ',
@@ -1168,6 +1226,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'الوَلَدُ مُطِيعٌ',
     },
     {
       word: 'عَاصٍ',
@@ -1175,6 +1234,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'التِّلْمِيذُ عَاصٍ',
     },
     {
       word: 'مُؤَدَّبٌ',
@@ -1182,6 +1242,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'الوَلَدُ مُؤَدَّبٌ',
     },
     {
       word: 'غَيْرُ مُؤَدَّبٍ',
@@ -1196,6 +1257,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'القَلَمُ جَمِيلٌ',
     },
     {
       word: 'قَبِيحٌ',
@@ -1203,6 +1265,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 18-dars',
       level: 'A1',
+      sentence: 'الوَلَدُ قَبِيحٌ',
     },
     {
       word: 'سُلَّمٌ',
@@ -1231,6 +1294,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'نَمْ بَاكِرًا وَقُمْ بَاكِرًا',
     },
     {
       word: 'مُتَأَخِّرًا',
@@ -1238,6 +1302,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'لِمَ جِئْتَ مُتَأَخِّرًا',
     },
     {
       word: 'مَفْتُوحٌ',
@@ -1245,6 +1310,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'البَابُ الكَبِيرُ مَفْتُوحٌ وَالبَابُ الصَّغِيرُ مُقْفَلٌ',
     },
     {
       word: 'مُقْفَلٌ',
@@ -1252,6 +1318,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'البَابُ الكَبِيرُ مَفْتُوحٌ وَالبَابُ الصَّغِيرُ مُقْفَلٌ',
     },
     {
       word: 'مَحْبُوبٌ',
@@ -1259,6 +1326,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'هَذَا الوَلَدُ مَحْبُوبٌ',
     },
     {
       word: 'مَمْقُوتٌ',
@@ -1266,6 +1334,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'التِّلْمِيذُ الْمُجْتَهِدُ مَحْبُوبٌ وَالتِّلْمِيذُ الكَسْلَانُ مَمْقُوتٌ',
     },
     {
       word: 'الْيَوْمَ',
@@ -1287,6 +1356,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'أَقْفِلِ البَابَ جَيِّدًا',
     },
     {
       word: 'بِطِّيخٌ',
@@ -1329,6 +1399,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 20-dars',
       level: 'A1',
+      sentence: 'التُّفَّاحُ لَذِيذٌ جِدًّا',
     },
     {
       word: 'مُرٌّ',
@@ -1343,6 +1414,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 20-dars',
       level: 'A1',
+      sentence: 'التُّفَّاحُ لَذِيذٌ جِدًّا',
     },
     {
       word: 'رَطْلٌ',
@@ -1462,6 +1534,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'عِشْرُونَ كِتَابًا',
     },
     {
       word: 'ثَلَاثُونَ',
@@ -1469,6 +1542,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'ثَلَاثُونَ تِلْمِيذًا',
     },
     {
       word: 'أَرْبَعُونَ',
@@ -1490,6 +1564,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'سِتُّونَ قَلَمًا',
     },
     {
       word: 'سَبْعُونَ',
@@ -1504,6 +1579,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'ثَمَانُونَ كُرَّاسَةً',
     },
     {
       word: 'تِسْعُونَ',
@@ -1511,6 +1587,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'تِسْعُونَ مَلِّيمًا',
     },
     {
       word: 'مَكْتَبَةٌ',
@@ -1735,6 +1812,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 25-dars',
       level: 'A1',
+      sentence: 'هَذَا إِنْسَانٌ',
     },
     {
       word: 'جَبْهَةٌ',
@@ -1763,6 +1841,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 25-dars',
       level: 'A1',
+      sentence: 'هَذَا أَنْفٌ',
     },
     {
       word: 'فَمٌ',
@@ -1903,6 +1982,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 26-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ كَفٍّ خَمْسُ أَصَابِعَ وَلِكُلِّ إِصْبَعٍ ظُفْرٌ',
     },
     {
       word: 'شَارِبٌ',
@@ -1910,6 +1990,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 26-dars',
       level: 'A1',
+      sentence: 'شَارِبٌ أَبْيَضُ',
     },
     {
       word: 'فَخِذٌ',
@@ -1924,6 +2005,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 26-dars',
       level: 'A1',
+      sentence: 'لَا تَكْذِبْ أَبَدًا',
     },
     {
       word: 'لَا يَكْذِبُ',
@@ -1931,6 +2013,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 26-dars',
       level: 'A1',
+      sentence: 'التِّلْمِيذُ الْمُؤَدَّبُ لَا يَكْذِبُ أَبَدًا',
     },
     {
       word: 'يَدٌ يُمْنَى',
@@ -1980,6 +2063,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ كَفٍّ رَاحَةٌ',
     },
     {
       word: 'مِرْفَقٌ',
@@ -1987,6 +2071,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ يَدٍ مِرْفَقٌ وَلِكُلِّ رِجْلٍ رُكْبَةٌ',
     },
     {
       word: 'كَعْبٌ',
@@ -2001,6 +2086,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ يَدٍ مِرْفَقٌ وَلِكُلِّ رِجْلٍ رُكْبَةٌ',
     },
     {
       word: 'كُلُّ أَحَدٍ',
@@ -2057,6 +2143,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 28-dars',
       level: 'A1',
+      sentence: 'ذَهَبْنَا أَمْسِ إِلَى الغَابَةِ',
     },
     {
       word: 'حَفِظَكَ اللهُ',
@@ -2078,6 +2165,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 28-dars',
       level: 'A1',
+      sentence: 'عِنْدِي كِتَابُ مَبْدَاءِ القِرَاءَةِ',
     },
     {
       word: 'عِنْدَكَ',
@@ -2085,6 +2173,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 28-dars',
       level: 'A1',
+      sentence: 'عِنْدَكَ مَالٌ كَثِيرٌ',
     },
     {
       word: 'عِنْدَهُ',
@@ -2106,6 +2195,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'هَذَا جَائِعٌ وَهَذَا عَطْشَانُ',
     },
     {
       word: 'عَطْشَانُ',
@@ -2113,6 +2203,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'هَذَا جَائِعٌ وَهَذَا عَطْشَانُ',
     },
     {
       word: 'بَخِيلٌ',
@@ -2120,6 +2211,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'هَذَا الرَّجُلُ بَخِيلٌ لَا يُحْسِنُ إِلَى الفُقَرَاءِ',
     },
     {
       word: 'عَاصِمَةٌ',
@@ -2155,6 +2247,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'هَذِهِ اِمْرَأَةٌ',
     },
     {
       word: 'مُعَلِّمَةٌ',
@@ -2162,6 +2255,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'هَذِهِ مُعَلِّمَةٌ',
     },
     {
       word: 'تِلْمِيذَةٌ',
@@ -2169,6 +2263,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'هَذِهِ تِلْمِيذَةٌ',
     },
     {
       word: 'الصَّبِيَّةُ',
@@ -2190,6 +2285,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'كُرَةٌ كَبِيرَةٌ',
     },
     {
       word: 'مُؤَدَّبَةٌ',
@@ -2197,6 +2293,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'هَذِهِ التِّلْمِيذَةُ مُؤَدَّبَةٌ',
     },
     {
       word: 'عَالِمٌ',
@@ -2204,6 +2301,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'هَذَا الرَّجُلُ عَالِمٌ',
     },
     {
       word: 'جَاهِلٌ',
@@ -2211,6 +2309,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'هَذَا الغَنِيُّ جَاهِلٌ',
     },
     {
       word: 'فَاضِلٌ',
@@ -2218,6 +2317,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'هَذَا الرَّجُلُ فَاضِلٌ',
     },
     {
       word: 'فَاضِلَةٌ',
@@ -2225,6 +2325,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'بِنْتُكَ فَاضِلَةٌ',
     },
     {
       word: 'مُحْتَرَمَةٌ',
@@ -2232,6 +2333,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'تِلْكَ الْمُعَلِّمَةُ مُحْتَرَمَةٌ',
     },
     {
       word: 'هِيَ',
@@ -2239,6 +2341,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'هِيَ جَاهِلَةٌ',
     },
     {
       word: 'تَقْرَأُ',
@@ -2246,6 +2349,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'عَائِشَةُ تَقْرَأُ وَفَاطِمَةُ تَكْتُبُ',
     },
     {
       word: 'تَكْتُبُ',
@@ -2253,6 +2357,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'عَائِشَةُ تَقْرَأُ وَفَاطِمَةُ تَكْتُبُ',
     },
     {
       word: 'اِحْتَرِمُوا',
@@ -2260,6 +2365,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'اِحْتَرِمُوا هَذِهِ الْمُعَلِّمَةَ الفَاضِلَةَ',
     },
     {
       word: 'مِنْضَدَةٌ',
@@ -2302,6 +2408,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'اُكْتُبِي يَا عَائِشَةُ',
     },
     {
       word: 'تُسَاوِي',
@@ -2330,6 +2437,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'اُكْتُبِي يَا عَائِشَةُ',
     },
     {
       word: 'نَظِيفٌ',
@@ -2337,6 +2445,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'مِنْدِيلٌ نَظِيفٌ',
     },
     {
       word: 'وَسِخٌ',
@@ -2358,6 +2467,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'مِنْدِيلٌ نَظِيفٌ',
     },
     {
       word: 'فِرَاشٌ',
@@ -2379,6 +2489,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'هَاتِي الْمِصْبَاحَ يَا فَرِيدَةُ',
     },
     {
       word: 'تَكْتُبِينَ',
@@ -2386,6 +2497,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'هَلْ تَكْتُبِينَ مَكْتُوبًا إِلَى أَبِيكِ',
     },
     {
       word: 'حَجَرٌ',
@@ -2428,6 +2540,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 34-dars',
       level: 'A1',
+      sentence: 'لَعِبَتْ فَاطِمَةُ فِي الْجُنَيْنَةِ مَعَ أُخْتِهَا عَائِشَةَ',
     },
     {
       word: 'قِدْرٌ',
@@ -2456,6 +2569,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'بَرْمِيلٌ كَبِيرٌ',
     },
     {
       word: 'مِبْرَدٌ',
@@ -2512,6 +2626,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'سَرْجٌ جَمِيلٌ',
     },
     {
       word: 'مُوسَى',
@@ -2708,6 +2823,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'خُفُّكَ أَغْلَى مِنْ خُفِّي',
     },
     {
       word: 'أَرْخَصُ',
@@ -2715,6 +2831,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'طَاقِيَّتُكَ أَرْخَصُ مِنْ طَاقِيَّتِي',
     },
     {
       word: 'عِنْدَمَا',
@@ -2729,6 +2846,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'سَمْعًا وَطَاعَةً يَا أُخْتِي',
     },
     {
       word: 'عِنْدَمَا أَذْهَبُ',
@@ -2820,6 +2938,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 38-dars',
       level: 'A1',
+      sentence: 'كُتِبَ الْمَكْتُوبُ',
     },
     {
       word: 'يُقْرَأُ',
@@ -2848,6 +2967,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'هَذِهِ سَاعَةُ الْجَيْبِ وَهَذِهِ سَاعَةُ الْجِدَارِ',
     },
     {
       word: 'سَاعَةُ الْجِدَارِ',
@@ -2855,6 +2975,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'هَذِهِ سَاعَةُ الْجَيْبِ وَهَذِهِ سَاعَةُ الْجِدَارِ',
     },
     {
       word: 'سَاعَةٌ مُنَبِّهَةٌ',
@@ -2862,6 +2983,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'هَذِهِ سَاعَةٌ مُنَبِّهَةٌ',
     },
     {
       word: 'جِدَارٌ',
@@ -2869,6 +2991,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'هَذَا جِدَارٌ وَهَذَا سَقْفٌ',
     },
     {
       word: 'سَقْفٌ',
@@ -2876,6 +2999,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'هَذَا جِدَارٌ وَهَذَا سَقْفٌ',
     },
     {
       word: 'مُسَافِرٌ',
@@ -2967,6 +3091,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 40-dars',
       level: 'A1',
+      sentence: 'يَوْمٌ مُصْحٍ',
     },
     {
       word: 'يَوْمٌ مُمْطِرٌ',
@@ -2974,6 +3099,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 40-dars',
       level: 'A1',
+      sentence: 'يَوْمٌ مُمْطِرٌ',
     },
     {
       word: 'بَعِيدٌ',
@@ -2981,6 +3107,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 41-dars',
       level: 'A1',
+      sentence: 'بَيْتُكُمْ بَعِيدٌ مِنَ الْمَدْرَسَةِ',
     },
     {
       word: 'سَهْلٌ',
@@ -2995,6 +3122,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 41-dars',
       level: 'A1',
+      sentence: 'دَرْسُنَا اليَوْمَ صَعْبٌ جِدًّا وَكَانَ دَرْسُ الأَمْسِ سَهْلاً جِدًّا',
     },
     {
       word: 'مِيزَانٌ',
@@ -3051,6 +3179,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 41-dars',
       level: 'A1',
+      sentence: 'يَجِبُ عَلَيَّ أَنْ أَقْرَأَ دَرْسِي',
     },
     {
       word: 'يَجِبُ عَلَيْكَ',
@@ -3128,6 +3257,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 42-dars',
       level: 'A1',
+      sentence: 'تَجِيءُ وَحْدَكَ أَمْ مَعَ زَوْجَتِكَ',
     },
     {
       word: 'وَحْدَهُ',
@@ -3177,6 +3307,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 43-dars',
       level: 'A1',
+      sentence: 'أَنَا صَحِيحٌ وَأَنْتَ مَرِيضٌ',
     },
     {
       word: 'مَرِيضٌ',
@@ -3184,6 +3315,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 43-dars',
       level: 'A1',
+      sentence: 'أَنَا صَحِيحٌ وَأَنْتَ مَرِيضٌ',
     },
     {
       word: 'دَاءٌ',
@@ -3212,6 +3344,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 43-dars',
       level: 'A1',
+      sentence: 'لَا تَضْحَكُوا أَثْنَاءَ الدَّرْسِ',
     },
     {
       word: 'لَمْ يَكْتُبْ',
@@ -3226,6 +3359,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 44-dars',
       level: 'A1',
+      sentence: 'هَذَا الرَّجُلُ شُجَاعٌ',
     },
     {
       word: 'جَبَانٌ',
@@ -3233,6 +3367,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 44-dars',
       level: 'A1',
+      sentence: 'أَنَا شُجَاعٌ وَأَنْتَ جَبَانٌ',
     },
     {
       word: 'عَدُوٌّ',
@@ -3247,6 +3382,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 44-dars',
       level: 'A1',
+      sentence: 'جَدِّي شَيْخٌ كَبِيرٌ',
     },
     {
       word: 'عَجُوزٌ',
@@ -3275,6 +3411,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 44-dars',
       level: 'A1',
+      sentence: 'صَدِيقِي لَيْسَ بِمَرِيضٍ',
     },
     {
       word: 'خَاتَمٌ',
@@ -3366,6 +3503,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'هَذَا الرَّجُلُ قَوِيٌّ جِدًّا',
     },
     {
       word: 'ضَعِيفٌ',
@@ -3373,6 +3511,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'أَنْتَ قَوِيٌّ وَأَنَا ضَعِيفٌ',
     },
     {
       word: 'أَظُنُّ فِي الفَصْلِ',
@@ -3527,6 +3666,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'أَنْتُنَّ تَجْتَهِدْنَ أَيَّتُهَا البَنَاتُ',
     },
     {
       word: 'تَقْرَأْنَ',
@@ -3541,6 +3681,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'أَخَوَاتِي يَكْتُبْنَ الْمَكْتُوبَ إِلَى أَبِي',
     },
     {
       word: 'اِفْهَمْنَ',
@@ -3562,6 +3703,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 48-dars',
       level: 'A1',
+      sentence: 'أَنْتَ الَّذِي تُقَدِّمُ لَنَا الشَّايَ',
     },
     {
       word: 'الَّتِي',
@@ -3569,6 +3711,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 48-dars',
       level: 'A1',
+      sentence: 'أَنْتِ الَّتِي تُعَلِّمِينَ هَذِهِ التِّلْمِيذَةَ',
     },
     {
       word: 'اللَّذَانِ',
@@ -3961,6 +4104,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'أَمَّا البَطَاطِسُ فَيُؤْكَلُ مَطْبُوخًا فَقَطْ',
     },
     {
       word: 'مَمْلُوحًا',
@@ -3968,6 +4112,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'وَمِنْهَا مَا يُؤْكَلُ مَطْبُوخًا أَوْ مَمْلُوحًا كَالْكُرْنُبِ وَالْبَاذِنْجَانِ',
     },
     {
       word: 'حَفِيدٌ',
@@ -4122,6 +4267,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 52-dars',
       level: 'A1',
+      sentence: 'فَسَقَطَتْ قِطْعَةُ اللَّحْمِ مِنْ فَمِهِ وَلَمْ يَجِدْ شَيْئًا بَدَلَهَا',
     },
     {
       word: 'عُمْرٌ',
@@ -4136,6 +4282,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'وَهِيَ تُحِبُّ فَرِيدًا مَحَبَّةً شَدِيدَةً',
     },
     {
       word: 'مَخْزَنٌ',
@@ -4143,6 +4290,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'وَلَهُ مَخْزَنٌ كَبِيرٌ',
     },
     {
       word: 'طُولُ اليَوْمِ',
@@ -4164,6 +4312,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'وَأَمَّا وَالِدَتُهُ فَهِيَ تَشْتَغِلُ بِإِدَارَةِ أُمُورِ البَيْتِ',
     },
     {
       word: 'لَمْ يَتَعَلَّمْ بَعْدُ',
@@ -4171,6 +4320,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 1-dars',
       level: 'A1',
+      sentence: 'وَهُوَ لَمْ يَتَعَلَّمْ بَعْدُ شَيْئًا',
     },
     {
       word: 'شَيْءٌ',
@@ -4185,6 +4335,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'وَأَخَذَ كُلُّ وَاحِدٍ مِنْهُمْ مَكَانَهُ',
     },
     {
       word: 'بَيْنَ هَؤُلَاءِ',
@@ -4192,6 +4343,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'وَكَانَ بَيْنَ هَؤُلَاءِ فَرِيدٌ أَيْضًا',
     },
     {
       word: 'بَعْدَ هُنَيْهَةٍ',
@@ -4206,6 +4358,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'فَقَامَ التَّلَامِذَةُ تَعْظِيمًا لَهُ',
     },
     {
       word: 'بُدِيءَ',
@@ -4213,6 +4366,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'ثُمَّ بُدِيءَ الدَّرْسُ',
     },
     {
       word: 'دَرْسُ الأَمْسِ',
@@ -4227,6 +4381,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'ثُمَّ قَامَ فَرِيدٌ فَقَرَأَ كَمَا قَرَأَ الأَوَّلَانِ',
     },
     {
       word: 'أَمَرَهُ',
@@ -4248,6 +4403,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'ثُمَّ قَامَ آخَرُ فَقَرَأَ كَمَا قَرَأَ الأَوَّلُ',
     },
     {
       word: 'كُلُّهُمْ',
@@ -4255,6 +4411,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'وَبَعْدَ انْتِهَاءِ الدَّرْسِ انْصَرَفَ التَّلَامِذَةُ كُلُّهُمْ إِلَى بُيُوتِهِمْ',
     },
     {
       word: 'جَرْوٌ',
@@ -4262,6 +4419,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'كَلْبُ فَرِيدٍ جَرْوٌ جَمِيلٌ',
     },
     {
       word: 'غَيْرَ',
@@ -4269,6 +4427,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'هُوَ لَا يَأْكُلُ شَيْئًا غَيْرَ الخُبْزِ وَاللَّحْمِ',
     },
     {
       word: 'قُرْبَ',
@@ -4276,6 +4435,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'بَيْتُ فَرِيدٍ قُرْبَ بَيْتِ رَشِيدٍ',
     },
     {
       word: 'حِينَ',
@@ -4297,6 +4457,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'وَحِينَ رَآهُ صَارَ يَنْبَحُ وَيَرْكُضُ وَرَاءَهُ',
     },
     {
       word: 'لَاحِقٌ',
@@ -4304,6 +4465,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'هُوَ لَاحِقٌ دِيكَ رَشِيدٍ',
     },
     {
       word: 'قُدَّامَ',
@@ -4332,6 +4494,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'الفَصْلُ الَّذِي يَتَعَلَّمُ فِيهِ عَبْدُ الكَرِيمِ حُجْرَةٌ غَيْرُ كَبِيرَةٍ',
     },
     {
       word: 'عِدَّةٌ',
@@ -4395,6 +4558,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 5-dars',
       level: 'A1',
+      sentence: 'جَلَسَ رَشِيدٌ ذَاتَ لَيْلَةٍ بِالْقُرْبِ مِنَ الْمِصْبَاحِ',
     },
     {
       word: 'اِسْتِعْدَادٌ',
@@ -4465,6 +4629,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 5-dars',
       level: 'A1',
+      sentence: 'كَانَ وَلَدٌ سَائِرًا فِي الطَّرِيقِ',
     },
     {
       word: 'سَالِمًا',
@@ -4472,6 +4637,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 5-dars',
       level: 'A1',
+      sentence: 'وَبَلَغَ الْمَكَانَ الْمَقْصُودَ سَالِمًا',
     },
     {
       word: 'دَأْبٌ',
@@ -4535,6 +4701,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'فَرَمَى بُنْدُقِيَّتَهُ فِي الْحَالِ وَصَعِدَ فِي شَجَرَةٍ قَرِيبَةٍ مِنْهُ',
     },
     {
       word: 'مُمَازِحًا',
@@ -4584,6 +4751,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'لِأَنَّهُ مَا كَانَ يَعْرِفُ قَبْلَ ذَلِكَ مَا هُوَ الصَّدَى',
     },
     {
       word: 'عِنْدَ ذَلِكَ',
@@ -4605,6 +4773,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'فَصَرَخَ عَلِيٌّ بِأَعْلَى صَوْتِهِ أَنْتَ أَحْمَقُ',
     },
     {
       word: 'أُلْفَةٌ',
@@ -4654,6 +4823,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 8-dars',
       level: 'A1',
+      sentence: 'فَلَمَّا نَامَ الصَّيَّادُ أَخَذَ الدُّبُّ يَحْرُسُهُ عَلَى حَسْبِ عَادَتِهِ',
     },
     {
       word: 'لِيَسْتَرِيحَ',
@@ -4661,6 +4831,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 8-dars',
       level: 'A1',
+      sentence: 'فَنَزَلَ فِي الطَّرِيقِ فِي ظِلِّ شَجَرَةٍ لِيَسْتَرِيحَ',
     },
     {
       word: 'خَيْرٌ',
@@ -4668,6 +4839,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 8-dars',
       level: 'A1',
+      sentence: 'عَدُوٌّ عَاقِلٌ خَيْرٌ مِنْ صَدِيقٍ جَاهِلٍ',
     },
     {
       word: 'أَثَرٌ',
@@ -4822,6 +4994,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 10-dars',
       level: 'A1',
+      sentence: 'وَكَانَ يُشِيرُ بِإِصْبَعِهِ إِلَى الأَعْضَاءِ الَّتِي كَانَ يُسَمِّيهَا',
     },
     {
       word: 'طَرَفٌ',
@@ -4906,6 +5079,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'فَإِذَا هَدَّدَ النَّائِمَ خَطَرٌ مَا نَبَّهَتْهُ سَرِيعًا',
     },
     {
       word: 'سَرِيعٌ',
@@ -4955,6 +5129,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'وَقَالَ هَذَا حِصْرِمٌ رَأَيْتُهُ فِي حَلَبٍ',
     },
     {
       word: 'حَلَب',
@@ -4976,6 +5151,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 12-dars',
       level: 'A1',
+      sentence: 'فَرَاحَ مِثْلَمَا أَتَى وَجَوْفُهُ فِي لَهَبٍ',
     },
     {
       word: 'قَفَصٌ',
@@ -5011,6 +5187,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'فَيَخْرُجُ وَيَقْعُدُ عَلَى رَأْسِ القَفَصِ أَوْ يَطِيرُ حَوْلَ البَيْتِ',
     },
     {
       word: 'بِمَا أَنَّهَا',
@@ -5039,6 +5216,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'وَكَانَتْ تَفْتَحُ لَهُ القَفَصَ حِينًا بَعْدَ حِينٍ',
     },
     {
       word: 'حُزْنٌ',
@@ -5214,6 +5392,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'أَلَا تَرَى أَنَّهُ حَامِلٌ فِي مِنْقَارِهِ حَشِيشًا لِيَبْنِيَ عُشَّهُ',
     },
     {
       word: 'غَزْلٌ',
@@ -5354,6 +5533,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'أَمَا عِنْدَكَ الأَشْيَاءُ اللَّازِمَةُ لِلْمُحَافَظَةِ عَلَى النَّظَافَةِ',
     },
     {
       word: 'مُحَافَظَةٌ',
@@ -5445,6 +5625,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 20-dars',
       level: 'A1',
+      sentence: 'مَرْحَبًا أَهْلًا بِوَقْتِ اللَّعِبِ إِنَّهُ وَقْتُ الْهَنَاءِ وَالطَّرَبِ',
     },
     {
       word: 'وَمَرْحَبًا',
@@ -5480,6 +5661,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 20-dars',
       level: 'A1',
+      sentence: 'كَثْرَةُ الدَّرْسِ عَنَاءٌ لِلْجَسَدِ تُورِثُ النَّفْسَ اِنْقِبَاضًا وَكَمَدْ',
     },
     {
       word: 'اِنْقِبَاضٌ',
@@ -5529,6 +5711,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 20-dars',
       level: 'A1',
+      sentence: 'إِنَّمَا اللَّعْبُ بِلَا دَرْسٍ حَرَامْ وَكَذَاكَ الدَّرْسُ دُونَ اللَّعِبِ',
     },
     {
       word: 'إِنَّمَا أَنَا أَلْعَبُ',
@@ -5585,6 +5768,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 21-dars',
       level: 'A1',
+      sentence: 'فَأَخَذَ عَصًا وَأَخَذَ يَضْرِبُهُ ضَرْبًا شَدِيدًا',
     },
     {
       word: 'غُشِيَ عَلَيْهِ',
@@ -5634,6 +5818,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 22-dars',
       level: 'A1',
+      sentence: 'فَرَفَعَ صَوْتَهُ بِالبُكَاءِ',
     },
     {
       word: 'طَيَاشَةٌ',
@@ -5676,6 +5861,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 23-dars',
       level: 'A1',
+      sentence: 'فَتِّشْ عَنْهُ عَاجِلًا قَبْلَ أَنْ يَفُوتَ الوَقْتُ',
     },
     {
       word: 'سِلْسِلَةٌ',
@@ -5697,6 +5883,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 23-dars',
       level: 'A1',
+      sentence: 'فَتِّشْ عَنْهُ عَاجِلًا قَبْلَ أَنْ يَفُوتَ الوَقْتُ',
     },
     {
       word: 'فِي أَوَّلِ خُطْوَةٍ',
@@ -5753,6 +5940,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 24-dars',
       level: 'A1',
+      sentence: 'فَذَهَبَا بِهَا إِلَى قِرْدٍ لِيَقْضِيَ بَيْنَهُمَا',
     },
     {
       word: 'اِسْتَحْضَرَ',
@@ -6117,6 +6305,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 28-dars',
       level: 'A1',
+      sentence: 'فِي أَقَلَّ مِنْ سَاعَةٍ',
     },
     {
       word: 'بَدَلَ',
@@ -6124,6 +6313,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 28-dars',
       level: 'A1',
+      sentence: 'وَلِمَاذَا لَا يَكْتُبُ كُلُّ النَّاسِ تِلْغُرَافَاتٍ بَدَلَ الْمَكَاتِيبِ',
     },
     {
       word: 'أُجْرَةٌ',
@@ -6173,6 +6363,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'فَأَخَذَتْهُ الْحَيْرَةُ وَالْحُزْنُ وَلَمْ يَعْرِفْ مَاذَا يَصْنَعُ',
     },
     {
       word: 'قُوتٌ',
@@ -6194,6 +6385,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'فَخَطَرَ بِبَالِهِ أَنْ يَقْصُدَ النَّمْلَةَ وَيَسْتَقْرِضَهَا شَيْئًا مِنَ القُوتِ',
     },
     {
       word: 'فَخَطَرَ بِبَالِهِ',
@@ -6201,6 +6393,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'فَخَطَرَ بِبَالِهِ أَنْ يَقْصُدَ النَّمْلَةَ وَيَسْتَقْرِضَهَا شَيْئًا مِنَ القُوتِ',
     },
     {
       word: 'مُسْتَهْزِئَةً',
@@ -6215,6 +6408,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'فَمِثْلُكَ لَا يَسْتَحِقُّ الرَّحْمَةَ وَالإِحْسَانَ',
     },
     {
       word: 'يَنْبَغِي لَكَ',
@@ -6243,6 +6437,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 30-dars',
       level: 'A1',
+      sentence: 'فَأَحَبَّ أَنْ يَشْتَرِيَ بِهَا خَرُوفًا لِيَجْعَلَهُ قُرْبَانًا',
     },
     {
       word: 'وَفِيمَا هُوَ',
@@ -6369,6 +6564,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'وَعِنْدَ انْقِضَاءِ وَقْتِ اللَّعِبِ دَقَّ جَرَسُ الْمَدْرَسَةِ',
     },
     {
       word: 'أَقُصُّ',
@@ -6383,6 +6579,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'فَسَكَتَ التَّلَامِذَةُ كُلُّهُمْ وَجَلَسُوا هَادِئِينَ لَا يَتَحَرَّكُونَ',
     },
     {
       word: 'لَا يَتَحَرَّكُونَ',
@@ -6390,6 +6587,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'فَسَكَتَ التَّلَامِذَةُ كُلُّهُمْ وَجَلَسُوا هَادِئِينَ لَا يَتَحَرَّكُونَ',
     },
     {
       word: 'شَاخِصَةٌ',
@@ -6397,6 +6595,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'وَعُيُونُهُمْ شَاخِصَةٌ إِلَى الْمُعَلِّمِ',
     },
     {
       word: 'مُعَلَّقَةٌ',
@@ -6425,6 +6624,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'وَعَلَيْهَا جِبَالٌ عَالِيَةٌ وَأَوْدِيَةٌ عَمِيقَةٌ تَجْرِي فِيهَا الأَنْهَارُ',
     },
     {
       word: 'وَمِنَ الغَرِيبِ',
@@ -6453,6 +6653,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'مَا أَعْظَمَ أَعْمَالَكَ يَا رَبُّ كُلُّهَا بِحِكْمَةٍ صَنَعْتَ',
     },
     {
       word: 'بِحِكْمَةٍ صَنَعْتَ',
@@ -6460,6 +6661,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'مَا أَعْظَمَ أَعْمَالَكَ يَا رَبُّ كُلُّهَا بِحِكْمَةٍ صَنَعْتَ',
     },
     {
       word: 'جَدْوَلٌ',
@@ -6502,6 +6704,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'فَاتَّفَقَ أَنَّهَا نَامَتْ بَعْدَ مُعَالَجَةٍ دَامَتْ خَمْسَةَ أَيَّامٍ',
     },
     {
       word: 'عَنْ بَغْضَاءَ',
@@ -6551,6 +6754,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'فَنَظَرَتْ عِنْدَئِذٍ وَالِدَتُهُ نَظْرَةً غَضْبَى',
     },
     {
       word: 'الْحُمَّى',
@@ -6600,6 +6804,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'اِتَّفَقَ الْحَالُ مَعَ الصَّيَّادِ فِي بَلْدَةٍ مِنْ أَصْغَرِ الْبِلَادِ',
     },
     {
       word: 'الطُّعْمُ',
@@ -6628,6 +6833,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'فَغَطَسَتْ فِي الْمَاءِ بَعْضَ أَذْرُعٍ وَشَبَكَتْ سَمَكَةً كَالإِصْبَعْ',
     },
     {
       word: 'شَبَكَتْ',
@@ -6642,6 +6848,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'قَالَتْ لَهُ وَهَلْ لِمِثْلِي مَنْفَعَهْ يَالَيْتَمَا بَدَّلْتَنِي بِضَفْدَعَهْ',
     },
     {
       word: 'بَدَّلْتَنِي',
@@ -6649,6 +6856,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'قَالَتْ لَهُ وَهَلْ لِمِثْلِي مَنْفَعَهْ يَالَيْتَمَا بَدَّلْتَنِي بِضَفْدَعَهْ',
     },
     {
       word: 'ضَفْدَعٌ',
@@ -6684,6 +6892,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'وَعَاجِزٌ مَنْ تَرَكَ الْمَوْجُدَا طَمَاعَةً وَطَلَبَ الْمَفْقُودَا',
     },
     {
       word: 'الْمَفْقُودَا',
@@ -6691,6 +6900,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'وَعَاجِزٌ مَنْ تَرَكَ الْمَوْجُدَا طَمَاعَةً وَطَلَبَ الْمَفْقُودَا',
     },
     {
       word: 'كُرْكِيٌّ',
@@ -6824,6 +7034,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'وَلَا يُحِسُّ بِي أَحَدٌ إِلَّا حِينَ أَقَعُ',
     },
     {
       word: 'أَقْدِرُ',
@@ -6845,6 +7056,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'مَعَ أَنَّهُ حَالَمَا تَمُدُّ يَدَكَ أَرَاكَ وَأَهْرُبُ',
     },
     {
       word: 'أَنْ تُخْفِيَهَا',
@@ -6887,6 +7099,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'بَلْ أَطِيرُ إِلَى حَيْثُ أَشَاءُ',
     },
     {
       word: 'أَقَعُ',
@@ -6894,6 +7107,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'وَلَا يُحِسُّ بِي أَحَدٌ إِلَّا حِينَ أَقَعُ',
     },
     {
       word: 'أَطْيَبُ الْمَأْكُولَاتِ',
@@ -6915,6 +7129,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 35-dars',
       level: 'A1',
+      sentence: 'وَإِذَا دَفَعَنِي أَحَدٌ أَذْهَبُ ثُمَّ أَرْجِعُ إِلَى حَيْثُ كُنْتُ',
     },
     {
       word: 'جَنَاحَايَ',
@@ -6950,6 +7165,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 36-dars',
       level: 'A1',
+      sentence: 'وَأَمَّا الثَّوْرُ فَكَانَ يَعْمَلُ بِدُونِ انْقِطَاعٍ',
     },
     {
       word: 'أَنْ يُرْشِدَهُ',
@@ -7034,6 +7250,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'فَصَارَتْ تَتْبَعُهُ وَتُطَارِدُهُ',
     },
     {
       word: 'لَا يَلْوِي عَلَى شَيْءٍ',
@@ -7048,6 +7265,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'فَمَاتَتِ الْمِسْكِينَةُ قَتِيلَ حُمْقِهَا',
     },
     {
       word: 'قَاطِعُ الطَّرِيقِ',
@@ -7076,6 +7294,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 38-dars',
       level: 'A1',
+      sentence: 'لَا تُضَيِّعْ أَوَّلَ الْعُمْرِ سُدًى فَتَرَى آخِرَهُ شَرَّ الْفَشَلْ',
     },
     {
       word: 'شَرَّ الفَشَلِ',
@@ -7167,6 +7386,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'اِصْطَدْتُ دُبًّا',
     },
     {
       word: 'جِيءْ بِهِ',
@@ -7174,6 +7394,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 39-dars',
       level: 'A1',
+      sentence: 'جِيءْ بِهِ هُنَا',
     },
     {
       word: 'كَلْبَةٌ',
@@ -7265,6 +7486,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 42-dars',
       level: 'A1',
+      sentence: 'يَسْرَحُ فِي الْبَيْتِ بِلَا احْتِشَامٍ يَأْكُلُ مَاشَاءَ مِنَ الطَّعَامِ',
     },
     {
       word: 'تَارَةً',
@@ -7356,6 +7578,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 44-dars',
       level: 'A1',
+      sentence: 'وَالإِنْسَانُ يَنْسُبُ إِلَيْهِ حِيَلًا كَثِيرَةً غَيْرَ صَحِيحَةٍ',
     },
     {
       word: 'غَيْرُ صَحِيْحَةٍ',
@@ -7461,6 +7684,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'كَانَ رَجُلٌ مُسَافِرًا فِي النَّوَاحِي الْجُنُوبِيَّةِ مِنْ إِفْرِيقِيَّةَ',
     },
     {
       word: 'عَنْ بُعْدٍ',
@@ -7468,6 +7692,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'فَرَأَى فِيهَا أَسَدًا عَنْ بُعْدٍ',
     },
     {
       word: 'وَاتَّفَقَ',
@@ -7496,6 +7721,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'فَفَكَّرَ فِي أَنْ يَخْتَالَ لَهُ حِيلَةً يُهْلِكُهُ وَيَتَخَلَّصُ مِنْهُ',
     },
     {
       word: 'يُهْلِكُهُ',
@@ -7503,6 +7729,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'فَفَكَّرَ فِي أَنْ يَخْتَالَ لَهُ حِيلَةً يُهْلِكُهُ وَيَتَخَلَّصُ مِنْهُ',
     },
     {
       word: 'يَتَخَلَّصُ مِنْهُ',
@@ -7685,6 +7912,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 46-dars',
       level: 'A1',
+      sentence: 'فَإِذَا تَرَعْرَعَ أَدَّبْتُهُ وَأَحْسَنْتُ تَأْدِيْبَهُ وَأُشَدِّدُ عَلَيْهِ فِي ذَلِكَ',
     },
     {
       word: 'الْيَمَنُ',
@@ -7699,6 +7927,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'فَوَضَعْنَا الْمَائِدَةَ لِنَتَعَشَّى',
     },
     {
       word: 'كَمَا هِيَ',
@@ -7706,6 +7935,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'وَتَرَكْنَا الْمَائِدَةَ كَمَا هِيَ',
     },
     {
       word: 'أَسِفْنَا',
@@ -7713,6 +7943,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'فَلَمَّا صَلَّيْنَا أَسِفْنَا عَلَيْهَا',
     },
     {
       word: 'فَبَيْنَمَا نَحْنُ كَذَلِكَ',
@@ -7734,6 +7965,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'فَبَادَرْنَا إِلَيْهِ وَنَحْنُ نَحْسَبُهُ الدَّجَاجَةَ',
     },
     {
       word: 'خُوَانٌ',
@@ -7755,6 +7987,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 47-dars',
       level: 'A1',
+      sentence: 'فَرَجَعْنَا وَقَدْ خَسِرْنَا الدَّجَاجَتَيْنِ بِسَبَبِ مَكْرِهِ',
     },
     {
       word: 'سُنْبُلٌ',
@@ -7825,6 +8058,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'مَنْ عَلَّمَ الْعُصْفُورَ أَنْ يَبْنِيَ عُشًّا فِي الشَّجَرِ',
     },
     {
       word: 'أَنْ تَجْنِيَ',
@@ -7832,6 +8066,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'مَنْ عَلَّمَ النَّحْلَةَ أَنْ تَجْنِيَ مِنَ الزَّهْرِ الْعَسَلْ',
     },
     {
       word: 'بِلَا كَلَلٍ',
@@ -7846,6 +8081,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'مَنْ عَلَّمَ الْبُلْبُلَ أَنْ يَتْلُو أَطَايِبَ الْغِنَا',
     },
     {
       word: 'كُلُّ خَاطِرٍ',
@@ -7860,6 +8096,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'يُطْرِبُ كُلَّ خَاطِرٍ بِكُلِّ لَحْنٍ حَسَنَا',
     },
     {
       word: 'لِحِيْنِهِ',
@@ -7867,6 +8104,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'تَخْزِنُهُ فِي وَكْرِهَا لِحِيْنِهِ عَلَى انْتِظَامْ',
     },
     {
       word: 'مُرْشِدٌ',
@@ -7874,6 +8112,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'وَهُوَ لِكُلِّ مُرْشِدٌ لِكُلِّ خَيْرٍ أَبَدَا',
     },
     {
       word: 'آمِلًا',
@@ -7881,6 +8120,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'فَاطْلُبْ إِلَيْهِ آمِلًا مَا خَابَ مَنْ لَهُ أَمَلْ',
     },
     {
       word: 'مَا خَابَ',
@@ -7888,6 +8128,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 49-dars',
       level: 'A1',
+      sentence: 'فَاطْلُبْ إِلَيْهِ آمِلًا مَا خَابَ مَنْ لَهُ أَمَلْ',
     },
     {
       word: 'لِتُحْضِرَ',
@@ -7930,6 +8171,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'فَلَمَّا أَبْصَرُوا بَيَاضَ أَرْجُلِهِ تَحَقَّقُوا أَنَّ أُمَّهُمْ بِالْبَابِ وَفَتَحُوا',
     },
     {
       word: 'مُسْرِعًا',
@@ -7937,6 +8179,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'فَدَخَلَ الدُّبُّ مُسْرِعًا وَافْتَرَسَهُمْ إِلَّا وَاحِدًا كَانَ اخْتَفَى',
     },
     {
       word: 'جَدْيٌ',
@@ -8000,6 +8243,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 51-dars',
       level: 'A1',
+      sentence: 'فَقَابَلَهُ رَجُلٌ مَعَهُ صَحْفَةٌ فِيهَا سَمَكٌ',
     },
     {
       word: 'صَحْفَةٌ',
@@ -8007,6 +8251,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 51-dars',
       level: 'A1',
+      sentence: 'فَقَابَلَهُ رَجُلٌ مَعَهُ صَحْفَةٌ فِيهَا سَمَكٌ',
     },
     {
       word: 'أُجَرِّبَهُ',
@@ -8021,6 +8266,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 51-dars',
       level: 'A1',
+      sentence: 'وَأَخَذَ يُجَرِّبُهُ ذَهَابًا وَإِيَابًا حَتَّى ابْتَعَدَ عَنِ اللِّصِّ كَثِيْرًا',
     },
     {
       word: 'إِيَابًا',
@@ -8154,6 +8400,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 52-dars',
       level: 'A1',
+      sentence: 'فَلَحِقَهُ قَطِيْعٌ مِنَ الذِّئَابِ يُرِيْدُ افْتِرَاسَهُ',
     },
     {
       word: 'سَائِقٌ',
@@ -8175,6 +8422,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 52-dars',
       level: 'A1',
+      sentence: 'وَأَمَّا الثَّالِثُ فَأَوْصَلَهُمْ إِلَى قَرْيَتِهِمْ سَالِمِيْنَ',
     },
     {
       word: 'الوَصِيَّةُ',
@@ -8329,6 +8577,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-dars',
       level: 'A1',
+      sentence: 'وَلَكِنْ مَا الْحِيلَةُ قَدْ كَانَ مَا كَانَ',
     },
     {
       word: 'الْمُقَدَّمُ ذِكْرُهُ',
@@ -8469,6 +8718,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 3-dars',
       level: 'A1',
+      sentence: 'فَلَمْ يُجَاوِزْ غَيْرَ بَعِيدٍ حَتَّى رَأَى ظَبْيًا',
     },
     {
       word: 'خِنْزِيرٌ بَرِّيٌّ',
@@ -8588,6 +8838,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'أَلَيْسَ هَذَا العَمَلُ شَرِيفًا أَسْتَحِقُّ عَلَيْهِ الْمُكَافَأَةَ',
     },
     {
       word: 'وَثِيقَةٌ',
@@ -8651,6 +8902,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 4-dars',
       level: 'A1',
+      sentence: 'فَجِئْتُ بِجَانِبِهِ وَأَيْقَظْتُهُ بِكَيْفِيَّةٍ نَجَا مِنَ الوُقُوعِ فِيهَا',
     },
     {
       word: 'فَضَمَّهُ إِلَى صَدْرِهِ',
@@ -8742,6 +8994,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'فَأَخَذَ العَطْفُ عَلَيْهَا مَأْخَذًا فَابْتَدَرَتْ إِنْقَاذَهَا مِنَ الأَذَى',
     },
     {
       word: 'مَأْخَذًا',
@@ -8749,6 +9002,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'فَأَخَذَ العَطْفُ عَلَيْهَا مَأْخَذًا فَابْتَدَرَتْ إِنْقَاذَهَا مِنَ الأَذَى',
     },
     {
       word: 'مَثْوًى',
@@ -8791,6 +9045,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 6-dars',
       level: 'A1',
+      sentence: 'وَهِيَ تَقُولُ قَوْلَهَا إِيْجَازًا كَمَا تُجَازِي هَكَذَا نُجَازَى',
     },
     {
       word: 'يُضْرَبُ بِهَا الْمَثَلُ',
@@ -8798,6 +9053,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'وَقُوَّتُهُ يُضْرَبُ بِهَا الْمَثَلُ',
     },
     {
       word: 'لِبْدَةٌ',
@@ -8805,6 +9061,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'وَلَيْسَ لَهَا لِبْدَةٌ مِثْلُهُ',
     },
     {
       word: 'طُولٌ',
@@ -8861,6 +9118,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 7-dars',
       level: 'A1',
+      sentence: 'وَلَهُ زَمْجَرَةٌ مُزْعِجَةٌ جِدًّا تَهْتَزُّ لَهَا الغَابَاتُ وَالآكَامُ',
     },
     {
       word: 'عَرِينٌ',
@@ -8924,6 +9182,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 8-dars',
       level: 'A1',
+      sentence: 'ثُمَّ إِنَّ أَرْنَبًا أَصَابَتْهَا القُرْعَةُ وَصَارَتْ غَدَاءَ الأَسَدِ',
     },
     {
       word: 'تُكَلِّفُ',
@@ -9008,6 +9267,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 9-dars',
       level: 'A1',
+      sentence: 'لِأَنَّهُ سَبَبُ وُجُودِكَ',
     },
     {
       word: 'إِعَالَةٌ',
@@ -9141,6 +9401,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 10-dars',
       level: 'A1',
+      sentence: 'وَمِنْهَا نَوْعٌ طَوِيلُ الأَجْنِحَةِ رَقِيقُهَا يَأْلَفُ الجِبَالَ',
     },
     {
       word: 'البَعُوضُ',
@@ -9232,6 +9493,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 11-dars',
       level: 'A1',
+      sentence: 'ما الَّذِي يُوقِفُكَ سِرْ بِنا',
     },
     {
       word: 'لا أَبْرَحُ',
@@ -9456,6 +9718,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'وَهِيَ كَالْجَمَلِ تُحِبُّ سُكْنَى الصَّحْراءِ',
     },
     {
       word: 'نَظِيرٌ',
@@ -9498,6 +9761,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'وَبَعْضُ النَّاسِ مُغْرَمُونَ بِهِ كَثِيرًا',
     },
     {
       word: 'قِشْرٌ',
@@ -9512,6 +9776,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 13-dars',
       level: 'A1',
+      sentence: 'وَقِشْرُ الْبَيْضِ يَصْلُحُ لِعَمَلِ الأَقْداحِ وَنَحْوِها وَيُعْتَبَرُ كَآنِيَةِ الْعاجِ',
     },
     {
       word: 'جَوَادٌ',
@@ -9694,6 +9959,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'قَدْ جاءَ فِي صَحائِفِ التَّخْيِيلِ حِكايَةٌ بَدِيعَةُ التَّمْثِيلِ',
     },
     {
       word: 'الْمَلا',
@@ -9701,6 +9967,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'شَيْخٌ لَهُ ثَلاَثَةُ ذُكُورُ كَسَلُهُمْ بَيْنَ الْمَلا شَهِيرُ',
     },
     {
       word: 'فَرامُوا',
@@ -9708,6 +9975,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'قَضَى فَرامُوا بَعْدَهُ الْوِرَاثَهْ وَلَمْ يَكُنْ خَلَّفَ لِلثَّلاثَهْ',
     },
     {
       word: 'مَزْعُومٌ',
@@ -9743,6 +10011,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'وَسَكَتَ الثَّالِثُ عَنْ تِبْيانِ ما عِنْدَهُ مِنْ راجِحِ الْبُرْهانِ',
     },
     {
       word: 'مُجْمَجَةٌ',
@@ -9757,6 +10026,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 16-dars',
       level: 'A1',
+      sentence: 'قالَ لَهُ الشَّارِعُ فُهْ بِالْحُجَّهْ فَمَجْمَجَتْ أَلْفاظُهُ الْمُرْتَجَّهْ',
     },
     {
       word: 'الْبَرِّيَّةُ',
@@ -9771,6 +10041,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 17-dars',
       level: 'A1',
+      sentence: 'وَيَبْلُغُ عُلُوُّهُ عَشْرَ أَقْدامٍ تَقْرِيبًا',
     },
     {
       word: 'الْكَثِيفَةُ',
@@ -9911,6 +10182,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'ثُمَّ إِنَّهُمْ تَوَجَّهُوا إِلَيْهِ وَأَخْبَرُوهُ بِما صارَ إِلَيْهِ رَأْيُهُمْ',
     },
     {
       word: 'كَفَافٌ',
@@ -9953,6 +10225,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 19-dars',
       level: 'A1',
+      sentence: 'وَراجَعُوهُ مَرَّةً ثانِيَةً فَلَمْ يُجْدِ نَفْعًا',
     },
     {
       word: 'عَبِيدٌ',
@@ -10128,6 +10401,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 21-dars',
       level: 'A1',
+      sentence: 'كَمْ حَسَنٍ ظاهِرُهُ قَبِيحُ وَسَحِجٍ عُنْوانُهُ مَلِيحُ',
     },
     {
       word: 'لا يَنْثَنِي',
@@ -10135,6 +10409,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 21-dars',
       level: 'A1',
+      sentence: 'فَالْعاقِلُ الْكامِلُ فِي الرِّجالِ لا يَنْثَنِي لِزُخْرُفِ الْمَقالِ',
     },
     {
       word: 'زُخْرُفٌ',
@@ -10296,6 +10571,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 23-dars',
       level: 'A1',
+      sentence: 'أَمْ كَيْفَ تَقُولُ بِنَفْيِ الصَّانِعِ',
     },
     {
       word: 'الْمُناظَرَةُ',
@@ -10464,6 +10740,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 24-dars',
       level: 'A1',
+      sentence: 'وَفِي لُنْدُرَةَ يُوجَدُ صِنْفٌ مِنَ الْكِلابِ أُعِدَّ لإِنْقاذِ الْغَرْقَى',
     },
     {
       word: 'مَنْزِلَةٌ',
@@ -10534,6 +10811,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 24-dars',
       level: 'A1',
+      sentence: 'وَإِذْ لَمْ يَكُنْ عَلَيْهِ بَيِّنَةٌ واضِحَةٌ عَلَى الْقَتْلِ أَطْلَقَهُ',
     },
     {
       word: 'الْمُتَّهَمُ',
@@ -10590,6 +10868,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 25-dars',
       level: 'A1',
+      sentence: 'وَأَمَّا الْعاجِزَةُ فَلَمْ تَزَلْ فِي إِقْبالٍ وَإِدْبارٍ حَتَّى صِيدَتْ',
     },
     {
       word: 'الْمُؤَثِّراتِ الْجَوِّيَّةِ',
@@ -10702,6 +10981,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'وَوَجْهُهُ دَمِيمٌ جِدًّا يُضْحَكُ مِنْهُ',
     },
     {
       word: 'مَغَارَةٌ',
@@ -10786,6 +11066,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'وَلَهُ مَقْدِرَةٌ غَرِيبَةٌ عَلَى الْقَفْزِ وَالْجَرْيِ',
     },
     {
       word: 'الأُورانَ أُوتانَ',
@@ -10877,6 +11158,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 27-dars',
       level: 'A1',
+      sentence: 'وَفَرْوَتُهُ لَطِيفَةٌ بَرَّاقَةٌ',
     },
     {
       word: 'الزِّنْجِيُّ',
@@ -11101,6 +11383,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 29-dars',
       level: 'A1',
+      sentence: 'فَنِلْتُ مِنْ قُوَّتِي مالا يُنالْ أَلْتَقِمُ الشَّوْكَ وَلَوْ كَالنِّصالْ',
     },
     {
       word: 'شَوْكٌ',
@@ -11248,6 +11531,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'فَرامَ أَنْ يَبِيعَهُ فَلَمْ يَتَّفِقْ لَهُ ذَلِكَ',
     },
     {
       word: 'عَطَّارٌ',
@@ -11269,6 +11553,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 31-dars',
       level: 'A1',
+      sentence: 'فَاجْتَمَعَ النَّاسُ حَوْلَهُ يَسْأَلُونَهُ عَنْ شَأْنِهِ',
     },
     {
       word: 'عَضُدٌ',
@@ -11346,6 +11631,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'وَخُلُقُهُ فِي غَايَةِ الشَّراسَةِ وَالضِّيقِ لا يَسْتَأْنِسُ الْبَتَّةَ',
     },
     {
       word: 'لا يَسْتَأْنِسُ',
@@ -11353,6 +11639,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'وَخُلُقُهُ فِي غَايَةِ الشَّراسَةِ وَالضِّيقِ لا يَسْتَأْنِسُ الْبَتَّةَ',
     },
     {
       word: 'الْبَتَّةَ',
@@ -11360,6 +11647,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'وَخُلُقُهُ فِي غَايَةِ الشَّراسَةِ وَالضِّيقِ لا يَسْتَأْنِسُ الْبَتَّةَ',
     },
     {
       word: 'عُجْبٌ بِنَفْسِهِ',
@@ -11402,6 +11690,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'فَخَرَجَ نَمِرٌ مِنَ الْغابَةِ وَدَنا مِنْهُما وَجَعَلَ يُلاعِبُهُما',
     },
     {
       word: 'عَرَضًا',
@@ -11479,6 +11768,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 32-dars',
       level: 'A1',
+      sentence: 'فَبادَرَهُ بِالسَّلامِ مُظْهِرًا لَهُ الإِحْتِرامَ وَالإعتِبارَ وَالْخُضُوعَ',
     },
     {
       word: 'الضَّارِيَة',
@@ -11507,6 +11797,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ شَخْصٍ مَشْرَبُ فِي ذَوْقِهِ مُسْتَعْذَبُ',
     },
     {
       word: 'مُسْتَعْذَبُ',
@@ -11514,6 +11805,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'لِكُلِّ شَخْصٍ مَشْرَبُ فِي ذَوْقِهِ مُسْتَعْذَبُ',
     },
     {
       word: 'الْبَطَلُ النَّبِيلُ',
@@ -11535,6 +11827,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'فَكَمْ مِنَ الأَعْمَالِ ما جَلَّ عَنْ مِثالِ',
     },
     {
       word: 'رُتْبَةٌ',
@@ -11549,6 +11842,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'أَوْ فِي الْفَسادِ نُبِذا أَوْ لَمْ يُصادِف جَهْبَذا',
     },
     {
       word: 'جَهْبَذَا',
@@ -11577,6 +11871,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 33-dars',
       level: 'A1',
+      sentence: 'كَيْ يُحْمَدَ الْمُنْقَلَبُ',
     },
     {
       word: 'بَرْقٌ',
@@ -11668,6 +11963,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 34-dars',
       level: 'A1',
+      sentence: 'والصَّاعِقَةُ تَتَّجِهُ إِلَى كُلِّ مَا هُوَ مُحَدَّدُ الرَّأْسِ وَمُرْتَفِعٌ',
     },
     {
       word: 'الْقَضِيْبُ',
@@ -11969,6 +12265,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'فَيَسْتَوْقِفُ الأَقْدامَ عَجَبًا وَيُرْقِصُ الْقُلوبَ طَرَبًا وَهُوَ صَدَّاحٌ بارِعٌ',
     },
     {
       word: 'لَحْنٌ',
@@ -12053,6 +12350,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 37-dars',
       level: 'A1',
+      sentence: 'وَيَخْشُنُ صَوْتُهُ بَعْدَ ذَلِكَ وَتَأْخُذُهُ اللُّكْنَةُ',
     },
     {
       word: 'الْهَشَّةُ',
@@ -13201,6 +13499,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'فَالرَّوْضُ يَزْدانُ بِالأَنْوارِ فاغِمُهُ وَالْحُرُّ بِالْعَدْلِ وَالإِحْسَانِ يَزْدانُ',
     },
     {
       word: 'فاغِمُهُ',
@@ -13208,6 +13507,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 45-dars',
       level: 'A1',
+      sentence: 'فَالرَّوْضُ يَزْدانُ بِالأَنْوارِ فاغِمُهُ وَالْحُرُّ بِالْعَدْلِ وَالإِحْسَانِ يَزْدانُ',
     },
     {
       word: 'أَحْقَرُ',
@@ -13551,6 +13851,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 48-dars',
       level: 'A1',
+      sentence: 'مِنَ الْمَبَانِي الَّتِي يَبْلَى الزَّمانُ وَلا تَبْلَى الأَهْرامُ',
     },
     {
       word: 'مَبْنًى',
@@ -13565,6 +13866,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 48-dars',
       level: 'A1',
+      sentence: 'مِنَ الْمَبَانِي الَّتِي يَبْلَى الزَّمانُ وَلا تَبْلَى الأَهْرامُ',
     },
     {
       word: 'الْعَهْدُ',
@@ -13789,6 +14091,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'وَأَفْضَلُ ما اشْتَغَلْتَ بِهِ كِتابٌ جَلِيلٌ نَفْعُهُ حُلْوُ الْمَذاقِ',
     },
     {
       word: 'السُّوقَةُ',
@@ -13824,6 +14127,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 50-dars',
       level: 'A1',
+      sentence: 'إِذا حُمِلَ النِّضارُ عَلَى نِياقٍ فَأَيُّ الْفَخْرِ يُحْسَبُ لِلنِّياقِ',
     },
     {
       word: 'نَاقَةٌ',
@@ -14006,6 +14310,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 52-dars',
       level: 'A1',
+      sentence: 'وَكانَ كَلامُهُ هَذا عَلَى سَبِيلِ الْمَزْحِ',
     },
     {
       word: 'فَما عَسَى أَنْ يَكُونَ',
@@ -14043,6 +14348,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 53-dars',
       level: 'A2',
+      sentence: 'كَانَتْ حَمَامَةٌ تَبِيْضُ فِي رَأْسِ نَخْلَةٍ طَوِيْلَةٍ جِدًّا',
     },
     {
       word: 'مَالِكُ الْحَزِيْنُ',
@@ -14050,6 +14356,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 53-dars',
       level: 'A2',
+      sentence: 'ثُمَّ طَارَ مَالِكُ الْحَزِيْنُ إِلَى شَاطِيءِ النَّهْرِ',
     },
     {
       word: 'تَبِيْضُ',
@@ -14057,6 +14364,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 53-dars',
       level: 'A2',
+      sentence: 'كَانَتْ حَمَامَةٌ تَبِيْضُ فِي رَأْسِ نَخْلَةٍ طَوِيْلَةٍ جِدًّا',
     },
     {
       word: 'نَخْلَةٌ',
@@ -14169,6 +14477,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 54-dars',
       level: 'A2',
+      sentence: 'كَانَ الْغُرَابُ فِي الزَّمَانِ الْخَالِي يَمْشِي عَلَى رِجْلَيْهِ بِاعْتِدَالِ',
     },
     {
       word: 'أَعْرَابِيٌّ',
@@ -14183,6 +14492,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 55-dars',
       level: 'A2',
+      sentence: 'فَقَابَلَهُ وَهُوَ فِي سُوقِهَا إِسْكَافٌ يُدْعَى حُنَيْنًا وَبِيَدِهِ خُفَّانِ',
     },
     {
       word: 'يُدْعَى',
@@ -14190,6 +14500,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 55-dars',
       level: 'A2',
+      sentence: 'فَقَابَلَهُ وَهُوَ فِي سُوقِهَا إِسْكَافٌ يُدْعَى حُنَيْنًا وَبِيَدِهِ خُفَّانِ',
     },
     {
       word: 'حُنَيْنٌ',
@@ -14302,6 +14613,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 56-dars',
       level: 'A2',
+      sentence: 'وَأَمَّا رِجْلُهُ فَهِيَ مُفَصَّلَةٌ إِلَى أَصَابِعَ',
     },
     {
       word: 'مَفْصِلٌ',
@@ -14379,6 +14691,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 57-dars',
       level: 'A2',
+      sentence: 'وَإِيَّاكِ إِذَا سَمِعْتِ النَّاسَ يَتَكَلَّمُونَ أَنْ تَنْطِقِي',
     },
     {
       word: 'حُوتٌ',
@@ -14554,6 +14867,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 59-dars',
       level: 'A2',
+      sentence: 'فَأَصَابَهُ جُوعٌ وَهُزَالٌ شَدِيْدٌ',
     },
     {
       word: 'هُزَالٌ',
@@ -14582,6 +14896,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 59-dars',
       level: 'A2',
+      sentence: 'فَإِذَا كَانَ ذَلِكَ فَهُوَ هَلَاكِي وَنَفَادُ مُدَّتِي',
     },
     {
       word: 'نَفَادُ مُدَّتِي',
@@ -14659,6 +14974,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 59-dars',
       level: 'A2',
+      sentence: 'فَعَاشَ بِهَا مَا عَاشَ ثُمَّ هَرِمَ فَلَمْ يَسْتَطِعْ صَيْدًا',
     },
     {
       word: 'اِصْطَحَبَا',
@@ -14736,6 +15052,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 53-dars',
       level: 'A2',
+      sentence: 'ثُمَّ يَحْضُرُ بَعْدَهُ الْمُدَّعَى عَلَيْهِ مَصْحُوبًا بِجُمْهُورٍ مِنَ النَّاسِ',
     },
     {
       word: 'مُضَاعَفٌ',
@@ -14757,6 +15074,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 53-dars',
       level: 'A2',
+      sentence: 'ثُمَّ يَحْضُرُ بَعْدَهُ الْمُدَّعَى عَلَيْهِ مَصْحُوبًا بِجُمْهُورٍ مِنَ النَّاسِ',
     },
     {
       word: 'جُمْهُورٌ',
@@ -14806,6 +15124,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 54-dars',
       level: 'A2',
+      sentence: 'أَحْسَنَ اللهُ بِنا إِنَّ الْخَطايا لا تَفُوحُ',
     },
     {
       word: 'فُضُوحٌ',
@@ -14862,6 +15181,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 55-dars',
       level: 'A2',
+      sentence: 'فَدَخَلَتْ امْرَأَةٌ مُعْتَدِلَةُ الْخِلْقَةِ جَمِيلَةُ الصُّورَةِ عَلَيْها رِداءٌ مُرَقَّعٌ',
     },
     {
       word: 'عَلَى اسْتِحْياءٍ',
@@ -15002,6 +15322,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 56-dars',
       level: 'A2',
+      sentence: 'صافِ الْكِرامَ فَإِنَّهُمْ أَهْلُ النُّهَى فَاحْذَرْ عَلَيْكَ مَوَدَّةَ الأَنْذالِ',
     },
     {
       word: 'حارِمِيكَ',
