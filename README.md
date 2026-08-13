@@ -109,7 +109,8 @@ src/
 ├── content/                 # o'quv kontenti
 │   ├── decks/en.ts ru.ts ar.ts  # qo'lda yozilgan (132/til, jumlalari bilan)
 │   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise
-│   ├── decks/ru-extra.ts           # qo'lda tanlangan ruscha (manba yo'q)
+│   ├── decks/ru-extra.ts           # qo'lda tanlangan ruscha
+│   ├── decks/imported-ru.ts        # AVTO: Ru-Uz-Dictionary (ru.db)
 │   └── starterDecks.ts      # daraja tartibida yig'uvchi (STARTER_DECKS)
 └── test/setup.ts            # Vitest global sozlamalari
 ```
@@ -248,7 +249,7 @@ lug'at qo'shilgan:
 | --- | ----- | ---- |
 | Arab | Mabdaul qiroat / Madina (169 dars) | +2161 |
 | Ingliz | Enterprise 1 | +1486 |
-| Rus | qo'lda tanlangan (manba yo'q) | +118 |
+| Rus | Ru-Uz-Dictionary + qo'lda | +3411 +118 |
 
 [scripts/import-vocab.mjs](scripts/import-vocab.mjs) manba JSON'larini
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
