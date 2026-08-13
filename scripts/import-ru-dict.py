@@ -18,6 +18,23 @@ import os, re, sqlite3, urllib.request
 DB_URL = 'https://github.com/Mahmudxon/Ru-Uz-Dictionary/raw/master/app/src/main/assets/ru.db'
 DB_PATH = os.path.join(os.environ.get('TEMP', '/tmp'), 'ru-uz.db')
 
+# Chastota ro'yxati (OpenSubtitles) — so'zlar ko'p ishlatilishiga qarab tartiblangan
+FREQ_URL = 'https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/ru/ru_50k.txt'
+FREQ_PATH = os.path.join(os.environ.get('TEMP', '/tmp'), 'ru_freq.txt')
+
+
+def load_freq_rank():
+    """So'z -> chastota o'rni (kichik = ko'p ishlatiladi)."""
+    if not os.path.exists(FREQ_PATH):
+        print('chastota roʻyxati yuklanmoqda…')
+        urllib.request.urlretrieve(FREQ_URL, FREQ_PATH)
+    rank = {}
+    for i, line in enumerate(open(FREQ_PATH, encoding='utf-8')):
+        w = line.split(' ', 1)[0].strip().lower()
+        if w and w not in rank:
+            rank[w] = i
+    return rank
+
 # O'zbek kirill -> lotin (DB da ќ ѓ ћ = uzbek q g' h)
 M = {'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'j','з':'z','и':'i','й':'y',
 'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
@@ -80,10 +97,11 @@ def main():
         urllib.request.urlretrieve(DB_URL, DB_PATH)
 
     tw, tt, tn = taken()
+    rank = load_freq_rank()
     c = sqlite3.connect(DB_PATH)
-    buckets = {'A1': [], 'A2': [], 'B1': []}
     seenW, seenT, seenN = set(), set(), set()
     dropped = 0
+    clean = []  # (rank, word, uz)
 
     for word, meaning in c.execute('select word, meaning from WORDS'):
         if not re.match(r'^[а-яё]{3,14}$', word or ''):
@@ -101,8 +119,16 @@ def main():
         if uz.lower() in tt or uz.lower() in seenT:
             dropped += 1; continue
         seenW.add(word); seenN.add(norm); seenT.add(uz.lower())
-        # Daraja taxminiy — chastota yo'q, ruscha so'z uzunligi bo'yicha
-        level = 'A1' if len(word) <= 5 else 'A2' if len(word) <= 8 else 'B1'
+        clean.append((rank.get(word.lower(), 10**9), word, uz))
+
+    # Daraja CHASTOTA bo'yicha: ko'p ishlatiladigan so'z pastroq darajada.
+    # Chastota tartibida taqsimlaymiz: 30% A1, 35% A2, 35% B1
+    clean.sort(key=lambda x: x[0])
+    n = len(clean)
+    a1_end, a2_end = int(n * 0.30), int(n * 0.65)
+    buckets = {'A1': [], 'A2': [], 'B1': []}
+    for i, (_, word, uz) in enumerate(clean):
+        level = 'A1' if i < a1_end else 'A2' if i < a2_end else 'B1'
         buckets[level].append((word, uz))
 
     def esc(s):
@@ -127,7 +153,7 @@ def main():
            '/**\n'
            " * AVTOMATIK YARATILGAN — qo'lda tahrirlamang.\n"
            ' * Manba: Mahmudxon/Ru-Uz-Dictionary (ru.db). scripts/import-ru-dict.py.\n'
-           ' * Daraja taxminiy (so\'z uzunligi bo\'yicha — chastota yo\'q).\n'
+           ' * Daraja CHASTOTA bo\'yicha (OpenSubtitles ru_50k chastota ro\'yxati).\n'
            ' */\n'
            'export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {\n'
            + body + '}\n')

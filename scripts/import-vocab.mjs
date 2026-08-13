@@ -149,8 +149,6 @@ function importArabic() {
 function importEnglish() {
   const t = taken('en.ts', normalizeCommon)
   const vocab = JSON.parse(readFileSync(EN_SRC, 'utf8')).vocabulary
-  const levelOf = (module) =>
-    module.startsWith('Module 1') ? 'A1' : module.startsWith('Module 2') ? 'A2' : 'B1'
 
   const clean = []
   const seenWord = new Set()
@@ -170,17 +168,20 @@ function importEnglish() {
 
     seenWord.add(word)
     seenTr.add(trKey)
-    clean.push({ word, uz, level: levelOf(v.module) })
+    clean.push({ word, uz, freq: v.freq ?? 0 })
   }
 
-  // Har daraja ichida 20 tadan mavzuga bo'linadi (o'quv yo'li bo'limlari)
+  // Daraja CHASTOTA bo'yicha (Enterprise `freq` maydoni): ko'p ishlatiladigan
+  // so'z pastroq darajada. Chastota tartibida taqsimlaymiz: 30% A1, 35% A2, 35% B1
+  clean.sort((a, b) => b.freq - a.freq)
+  const a1End = Math.floor(clean.length * 0.3)
+  const a2End = Math.floor(clean.length * 0.65)
   const buckets = { A1: [], A2: [], B1: [] }
-  for (const level of ['A1', 'A2', 'B1']) {
-    const list = clean.filter((w) => w.level === level)
-    list.forEach((w, i) => {
-      buckets[level].push({ word: w.word, uz: w.uz, topic: `Enterprise ${level}-${Math.floor(i / 20) + 1}` })
-    })
-  }
+  clean.forEach((w, i) => {
+    const level = i < a1End ? 'A1' : i < a2End ? 'A2' : 'B1'
+    const list = buckets[level]
+    list.push({ word: w.word, uz: w.uz, topic: `Enterprise ${level}-${Math.floor(list.length / 20) + 1}` })
+  })
 
   writeFileSync('src/content/decks/imported-en.ts', toTs('EN_IMPORTED', 'en', buckets))
   const total = clean.length

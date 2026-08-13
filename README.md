@@ -251,6 +251,8 @@ lug'at qo'shilgan:
 | Ingliz | Enterprise 1 | +1486 |
 | Rus | Ru-Uz-Dictionary + qo'lda | +3411 +118 |
 
+Daraja **chastota bo'yicha**: ingliz Enterprise `freq`, rus OpenSubtitles ru_50k. Ko'p ishlatiladigan so'z pastroq darajada (30% A1 / 35% A2 / 35% B1). Arab — Madina kitob tartibida.
+
 [scripts/import-vocab.mjs](scripts/import-vocab.mjs) manba JSON'larini
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
 Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~129 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
