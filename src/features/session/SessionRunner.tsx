@@ -11,7 +11,8 @@ import {
   type Exercise,
 } from '@/core/exercises'
 import { PASSING_GRADE } from '@/core/srs'
-import { cancelSpeech, hasVoiceForLocale, isSpeechSupported } from '@/lib/speech'
+import { cancelSpeech } from '@/lib/speech'
+import { useHasVoice } from '@/hooks/useHasVoice'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
 import { useLeagueSync } from '@/hooks/useLeagueSync'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -88,16 +89,16 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   useLeagueSync(index >= queue.length ? 'finished' : 'running')
 
   /**
-   * Audio mashqlari faqat brauzer nutq sintezini qo'llab-quvvatlasa
-   * yaratiladi. Aks holda foydalanuvchi hech narsa eshitmasdan
-   * javob berishga majbur bo'lardi.
+   * Audio mashqlari faqat shu tilda HAQIQIY ovoz bo'lsa yaratiladi.
+   *
+   * MUHIM — bu bir martalik hisob EMAS: ovozlar ro'yxati asinxron yuklanadi
+   * va birinchi renderda bo'sh bo'ladi. Bir marta tekshirilsa "ovoz bor" deb
+   * qabul qilinardi va foydalanuvchiga hech narsa eshitilmaydigan "nima
+   * eshitdingiz?" mashqi berilardi. `useHasVoice` ro'yxat to'lgach javobni
+   * yangilaydi va mashq qayta tanlanadi.
    */
-  const allowAudio = useMemo(() => {
-    const language = cards[0] ? LANGUAGES[cards[0].language] : null
-    if (!language) return false
-
-    return isSpeechSupported() && hasVoiceForLocale(language.speechLocale)
-  }, [cards])
+  const speechLocale = LANGUAGES[cards[0]?.language ?? 'en'].speechLocale
+  const allowAudio = useHasVoice(speechLocale) && cards.length > 0
 
   // Navbatdagi karta o'zgarganda yangi mashq yaratiladi
   useEffect(() => {

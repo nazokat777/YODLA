@@ -121,3 +121,40 @@ describe('SessionRunner — juft topish', () => {
     })
   })
 })
+
+describe('SessionRunner — audio mashqlari', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('tilda ovoz bo‘lmasa "eshitib tushunish" mashqi BERILMAYDI', async () => {
+    // Foydalanuvchining tizimidagi holat: faqat ruscha ovoz bor.
+    // Ovozlar ro'yxati kechikib yuklanadi — birinchi tekshiruvda bo'sh.
+    let calls = 0
+    vi.stubGlobal('speechSynthesis', {
+      getVoices: () => {
+        calls += 1
+        return calls > 1 ? [{ name: 'Irina', lang: 'ru-RU' } as SpeechSynthesisVoice] : []
+      },
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      cancel: () => {},
+      speak: () => {},
+    })
+    vi.stubGlobal('SpeechSynthesisUtterance', class {})
+
+    const cards = [
+      makeCard('water', 'suv'),
+      makeCard('bread', 'non'),
+      makeCard('tea', 'choy'),
+    ]
+
+    render(<SessionRunner cards={[cards[0]]} pool={cards} onFinish={() => {}} />)
+
+    // Ovozsiz "Nima eshitdingiz?" mashqi javob berib bo'lmaydigan mashq —
+    // ro'yxat yuklangach u yo'qolishi kerak
+    await waitFor(() => {
+      expect(screen.queryByText(/nima eshitdingiz/i)).not.toBeInTheDocument()
+    })
+
+    vi.unstubAllGlobals()
+  })
+})

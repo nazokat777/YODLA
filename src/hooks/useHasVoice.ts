@@ -46,11 +46,16 @@ export function useHasVoice(locale: string): boolean {
     }
 
     check()
-    synth.addEventListener('voiceschanged', check)
+
+    // Hodisa API'si bo'lmasligi mumkin (eski webview'lar, testdagi soxta
+    // obyektlar). Bunda qayta tekshiruvning o'zi yetarli — talaffuz
+    // tugmasi butun ekranni yiqitmasligi kerak.
+    const canListen = typeof synth.addEventListener === 'function'
+    if (canListen) synth.addEventListener('voiceschanged', check)
 
     return () => {
       clearTimeout(timer)
-      synth.removeEventListener('voiceschanged', check)
+      if (canListen) synth.removeEventListener('voiceschanged', check)
     }
   }, [locale])
 
