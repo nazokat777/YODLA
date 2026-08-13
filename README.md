@@ -74,7 +74,7 @@ src/
 │   │   ├── xp.ts            # XP va daraja egri chizig'i
 │   │   └── badges.ts        # nishon ta'riflari (sof shartlar)
 │   └── exercises/           # mashqlar (retrieval practice)
-│       ├── types.ts         # 4 mashq turining tiplari
+│       ├── types.ts         # 7 mashq turining tiplari
 │       ├── generate.ts      # generator + adaptiv qiyinlik zinasi
 │       ├── normalize.ts     # javob normallashtirish + editDistance
 │       └── check.ts         # tekshirish → SM-2 bahosi
@@ -155,19 +155,42 @@ Uchta ongli qaror (kodda ham izohlangan):
 ## Mashqlar (retrieval practice)
 
 Har bir takrorlash **aktiv eslab chaqirish** talab qiladi — passiv o'qish emas.
-To'rt tur, qiyinligi bo'yicha:
+Bir so'z har safar **boshqacha** so'raladi: bir xil savol takrorlanaversa,
+javob so'zning ma'nosiga emas, savolning ko'rinishiga bog'lanib qoladi.
 
-| Tur            | Nima qilinadi                | Qachon beriladi   |
-| -------------- | ---------------------------- | ----------------- |
-| `recognition`  | 4 variantdan tarjimani tanla | repetitions 0–1   |
-| `listening`    | audio eshitib, ma'nosini tanla | repetitions 1–3 |
-| `recall`       | so'zni klaviaturadan yoz     | repetitions 2+    |
-| `construction` | so'zlardan jumla tuz         | repetitions 4+    |
+Yetti tur, qiyinligi bo'yicha:
+
+| Tur            | Nima qilinadi                    | Qachon beriladi |
+| -------------- | -------------------------------- | --------------- |
+| `recognition`  | 4 variantdan tarjimani tanla     | repetitions 0–1 |
+| `matching`     | 5 so'zni tarjimasi bilan juftla  | repetitions 1+  |
+| `listening`    | audio eshitib, ma'nosini tanla   | repetitions 1–3 |
+| `cloze`        | jumlada tushgan so'zni tanla     | repetitions 2+  |
+| `recall`       | so'zni klaviaturadan yoz         | repetitions 2+  |
+| `spelling`     | aralash harflardan so'zni yig'   | repetitions 4+  |
+| `construction` | so'zlardan jumla tuz             | repetitions 4+  |
 
 Qiyinlik [generate.ts](src/core/exercises/generate.ts) dagi zina bo'yicha
 avtomatik oshadi (Flow nazariyasi). Tur mavjud bo'lmasa — audio yo'q, jumla
-yozilmagan yoki lug'at kichik — bir pog'ona pastga tushiladi. Generator hech
-qachon "hech narsa" qaytarmaydi.
+yozilmagan, lug'at kichik yoki so'z arab yozuvida — bir pog'ona pastga
+tushiladi. Generator hech qachon "hech narsa" qaytarmaydi.
+
+Ikki turning o'z sharti bor:
+
+- **`cloze`** jumlani talab qiladi va so'z jumlada **aynan** shu shaklda
+  uchrashi kerak. "drink" so'zi "She drinks tea" jumlasida turlangan —
+  bunday holatda bo'sh joy qoldirish noto'g'ri bo'lardi, shuning uchun tur
+  yaratilmaydi.
+- **`spelling`** faqat lotin/kirill yozuvida va 3–10 harfli bir so'zli
+  kartalarda. Arab harflari so'z ichida ulanadi va ajratilganda boshqa
+  shaklga kiradi — alohida harflardan yig'ish chalkash bo'lardi.
+
+**`matching` — ko'p kartali istisno.** Qolgan oltitasi bitta kartani
+so'raydi; juft topish esa bir mashqda 5 kartani baholaydi. Shuning uchun
+[SessionRunner](src/features/session/SessionRunner.tsx) da alohida tarmoq
+bor: FeedbackBar chetlab o'tiladi, har juft uchun SM-2 bahosi yoziladi
+(to'g'ri 4, xato 2 — juft topish passivroq tur, u yerdagi xato so'z butunlay
+unutilganini bildirmaydi), navbat esa bittaga suriladi.
 
 **Foydalanuvchi o'zini baholamaydi** — SM-2 bahosi mashq natijasidan chiqadi:
 
@@ -176,7 +199,7 @@ qachon "hech narsa" qaytarmaydi.
 | xato                      | 0    | interval 1 kunga qaytadi      |
 | kichik imlo xatosi        | 3    | o'tdi, easeFactor pasayadi    |
 | to'g'ri (oson tur)        | 4    | easeFactor o'zgarmaydi        |
-| to'g'ri (yozish / jumla)  | 5    | easeFactor oshadi             |
+| to'g'ri (yozish / jumla / harfma-harf) | 5 | easeFactor oshadi        |
 
 Javob solishtirishdan oldin normallashtiriladi
 ([normalize.ts](src/core/exercises/normalize.ts)): arab harakalari tushiriladi,
@@ -240,6 +263,31 @@ qo'riqlanadi: shadda undoshni ikkilantiradi (`تُفَّاحَة` → tuffaha), 
 boshidagi tayanch alif harakat bilan qo'shilib ketmaydi (`أَب` → ab), so'z
 ichidagi hamza esa bo'g'iz to'xtami (`يَأْكُل` → ya'kul).
 
+## Talaffuz (TTS)
+
+Ovoz **aniq tanlanadi**, faqat `utterance.lang` ga tayanilmaydi
+([speech.ts](src/lib/speech.ts)). Sabab jonli xatoda topilgan: agar ovoz
+tanlanmasa, brauzer tizimdagi **standart** ovozni oladi — Windows'da faqat
+ruscha ovoz o'rnatilgan bo'lsa, inglizcha `water` ruscha talaffuzda o'qilardi.
+Foydalanuvchi buzuq talaffuzni to'g'ri deb yodlab qolardi.
+
+Shuning uchun qoida qat'iy:
+
+- avval aynan mos lokal (`en-US`), keyin o'sha til (`en-GB` ham bo'ladi);
+- **mos ovoz topilmasa umuman o'qilmaydi** — noto'g'ri tildagi ovozdan
+  ko'ra jimlik afzal;
+- ovoz yo'q bo'lsa 🔊 tugmasi ham **ko'rsatilmaydi**
+  ([useHasVoice](src/hooks/useHasVoice.ts)) — bosilsa hech narsa
+  bo'lmaydigan tugma chalg'itadi.
+
+Ovozlar ro'yxati asinxron yuklanadi va `voiceschanged` hodisasi ba'zan
+komponent ulanmasidan oldin otib bo'ladi. Faqat hodisaga tayansak holat
+"ovoz bor"da qotib qolardi, shuning uchun ro'yxat to'lguncha qisqa vaqt
+qayta-qayta tekshiriladi.
+
+> Inglizcha ovoz yo'q bo'lsa Windows'da:
+> **Settings → Time & Language → Speech → Manage voices → Add voices**.
+
 ## Import qilingan lug'at
 
 Qo'lda yozilgan 132 so'z (jumlalari bilan) ustiga tashqi manbalardan
@@ -257,8 +305,8 @@ Daraja **chastota bo'yicha**: ingliz Enterprise `freq`, rus OpenSubtitles ru_50k
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
 Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~129 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
 
-Import qilingan so'zlarda **jumla yo'q** — "jumla qurish" mashqi ular uchun
-berilmaydi (qolgan 3 mashq ishlaydi).
+Import qilingan so'zlarda **jumla yo'q** — "jumla qurish" va "gap ichida"
+mashqlari ular uchun berilmaydi (qolgan 5 mashq ishlaydi).
 
 Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
 normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini
@@ -470,7 +518,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 
 - [x] **Faza 1** — setup, papka strukturasi, routing, dizayn tokenlari
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
-- [x] **Faza 3** — 4 xil mashq turi + instant feedback
+- [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
 - [x] **Faza 5** — uch til moduli + kontent (har tildan 102 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot

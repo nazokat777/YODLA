@@ -1,5 +1,5 @@
 /**
- * Ilova ikonkalarini yasaydi (yashil fon + oq mushuk).
+ * Ilova ikonkalarini yasaydi (yashil fon + oq feya).
  *
  * NEGA RASM KUTUBXONASISIZ: ikonka oddiy geometrik shakllardan iborat,
  * shuning uchun har piksel analitik tekshiruv bilan bo'yaladi. PNG esa
@@ -73,8 +73,6 @@ function encodePng(size, pixels) {
 
 const inCircle = (x, y, cx, cy, r) => (x - cx) ** 2 + (y - cy) ** 2 <= r * r
 
-const inEllipse = (x, y, cx, cy, rx, ry) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1
-
 /** Uchburchak ichidami — barisentrik belgi testi */
 function inTriangle(x, y, [ax, ay], [bx, by], [cx, cy]) {
   const sign = (px, py, qx, qy, rx, ry) => (px - rx) * (qy - ry) - (qx - rx) * (py - ry)
@@ -99,35 +97,74 @@ function inRoundedSquare(x, y, radius) {
   return inCircle(x, y, cx, cy, radius)
 }
 
+/** Burchakka burilgan ellips — qanotlar yotiq emas, qiya turadi */
+function inRotatedEllipse(x, y, cx, cy, rx, ry, degrees) {
+  const rad = (degrees * Math.PI) / 180
+  const dx = x - cx
+  const dy = y - cy
+  const rotX = dx * Math.cos(rad) + dy * Math.sin(rad)
+  const rotY = -dx * Math.sin(rad) + dy * Math.cos(rad)
+
+  return (rotX / rx) ** 2 + (rotY / ry) ** 2 <= 1
+}
+
 /**
- * Mushuk silueti ichidami (normallashtirilgan 0..1 koordinatalar,
+ * Feya silueti ichidami (normallashtirilgan 0..1 koordinatalar,
  * `scale` — markazga nisbatan kichraytirish).
+ *
+ * NEGA SILUET, NEGA 3D RENDER EMAS: ikonka 48px gacha kichrayadi (brauzer
+ * yorlig'i, telefon ekrani). Tafsilotli render u yerda loyqa dog'ga
+ * aylanadi — sinab ko'rilgan. Sodda va qalin shakl har o'lchamda o'qiladi.
  */
-function catAt(x, y, scale) {
+function fairyAt(x, y, scale) {
   // Markazga nisbatan masshtablash
   const px = (x - 0.5) / scale + 0.5
   const py = (y - 0.5) / scale + 0.5
 
-  const ears =
-    inTriangle(px, py, [0.24, 0.4], [0.18, 0.12], [0.42, 0.28]) ||
-    inTriangle(px, py, [0.76, 0.4], [0.82, 0.12], [0.58, 0.28])
+  // Qanotlar YUQORIGA qiya — pastga qaragan simmetrik dog'lar gulbargga
+  // o'xshab qolardi
+  // Bitta juft: to'rtta qanot 48px da shaklsiz dog'ga aylanardi
+  const wings =
+    inRotatedEllipse(px, py, 0.26, 0.42, 0.235, 0.125, -38) ||
+    inRotatedEllipse(px, py, 0.74, 0.42, 0.235, 0.125, 38)
 
-  const head = inCircle(px, py, 0.5, 0.56, 0.32)
+  const head = inCircle(px, py, 0.5, 0.19, 0.1)
+  // Tana ikki qismdan: ingichka bel va keng ko'ylak — "poya" bo'lib
+  // ko'rinmasligi uchun
+  const torso = inTriangle(px, py, [0.5, 0.27], [0.435, 0.56], [0.565, 0.56])
+  const skirt = inTriangle(px, py, [0.5, 0.45], [0.34, 0.82], [0.66, 0.82])
+  // Qo'llar — odam siluetini beradi
+  const arms =
+    inRotatedEllipse(px, py, 0.4, 0.4, 0.085, 0.028, 28) ||
+    inRotatedEllipse(px, py, 0.6, 0.4, 0.085, 0.028, -28)
+  // Sehr yulduzi — "feya" ekanini bir qarashda aytadi
+  const star =
+    inRotatedEllipse(px, py, 0.82, 0.15, 0.085, 0.022, 0) ||
+    inRotatedEllipse(px, py, 0.82, 0.15, 0.085, 0.022, 90)
 
-  if (!ears && !head) return null
+  const body = head || torso || skirt || arms
 
-  // Yuz tafsilotlari fon rangida "o'yiladi" — kichik o'lchamda ham aniq
-  const eyes = inCircle(px, py, 0.39, 0.51, 0.052) || inCircle(px, py, 0.61, 0.51, 0.052)
-  const nose = inEllipse(px, py, 0.5, 0.64, 0.04, 0.03)
+  if (!wings && !body && !star) return null
 
-  return eyes || nose ? GREEN : WHITE
+  // Tana chekkasi fon rangida "o'yiladi": aks holda tana va qanotlar
+  // qo'shilib bitta shaklsiz dog' bo'lib qolardi
+  const pad = 0.024
+  const bodyEdge =
+    !body &&
+    (inCircle(px, py, 0.5, 0.19, 0.1 + pad) ||
+      inTriangle(px, py, [0.5, 0.25], [0.415, 0.575], [0.585, 0.575]) ||
+      inTriangle(px, py, [0.5, 0.425], [0.32, 0.845], [0.68, 0.845]) ||
+      inRotatedEllipse(px, py, 0.4, 0.4, 0.085 + pad, 0.028 + pad, 28) ||
+      inRotatedEllipse(px, py, 0.6, 0.4, 0.085 + pad, 0.028 + pad, -28))
+
+  return bodyEdge ? GREEN : WHITE
 }
 
 /* ------------------------------ Chizish ------------------------------ */
 
 /**
  * @param size   piksel o'lchami
- * @param scale  mushuk kattaligi (maskable uchun kichikroq: Android
+ * @param scale  feya kattaligi (maskable uchun kichikroq: Android
  *               ikonkani doiraga qirqadi, chekkadagi tasvir kesilib qoladi)
  * @param rounded burchaklar yumaloqlanadimi (maskable — to'la kvadrat)
  */
@@ -143,7 +180,7 @@ function drawIcon(size, { scale = 1, rounded = true } = {}) {
       const insideBackground = rounded ? inRoundedSquare(nx, ny, 0.22) : true
       if (!insideBackground) continue // shaffof qoladi
 
-      const color = catAt(nx, ny, scale) ?? GREEN
+      const color = fairyAt(nx, ny, scale) ?? GREEN
       pixels[offset] = color[0]
       pixels[offset + 1] = color[1]
       pixels[offset + 2] = color[2]
