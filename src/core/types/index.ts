@@ -66,3 +66,9 @@ export type ExerciseType =
   | 'listening'
   /** So'zlardan to'g'ri jumla tuz (qiyin) */
   | 'construction'
+  /** Jumlada tushib qolgan so'zni variantlardan tanla */
+  | 'cloze'
+  /** Aralash harflardan so'zni yig' */
+  | 'spelling'
+  /** Bir nechta so'z va tarjimani juftlab chiq (ko'p-kartali) */
+  | 'matching'
