@@ -88,7 +88,8 @@ function isProductiveType(exercise: Exercise): boolean {
  *   xato              → 0  (interval 1 kunga qaytadi)
  *   kichik imlo xatosi → 3  (o'tdi, lekin easeFactor pasayadi)
  *   to'g'ri, oson tur  → 4  (tanib olish / eshitish — passivroq)
- *   to'g'ri, qiyin tur → 5  (yozish / jumla qurish — aktiv eslab chaqirish)
+ *   to'g'ri, qiyin tur → 5  (yozish / jumla qurish / harfma-harf — aktiv
+ *                            eslab chaqirish)
  */
 export function deriveGrade(exercise: Exercise, verdict: AnswerVerdict): Grade {
   if (verdict === 'wrong') return 0
