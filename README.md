@@ -181,6 +181,13 @@ Ikki turning o'z sharti bor:
   uchrashi kerak. "drink" so'zi "She drinks tea" jumlasida turlangan —
   bunday holatda bo'sh joy qoldirish noto'g'ri bo'lardi, shuning uchun tur
   yaratilmaydi.
+
+  So'z chegarasi `\b` bilan **qaralmaydi**: JavaScript'da u faqat ASCII
+  harflarga tayanadi, ya'ni arab va kirill yozuvida hech qachon mos
+  kelmasdi va bu tillarda cloze umuman yaratilmasdi. O'rniga Unicode
+  sinflari ishlatiladi — `(?<![\p{L}\p{M}])so'z(?![\p{L}\p{M}])`. `\p{M}`
+  arab harakatlarini qamraydi: ular so'zning davomi, aks holda so'z
+  o'rtasidan kesilardi.
 - **`spelling`** faqat lotin/kirill yozuvida va 3–10 harfli bir so'zli
   kartalarda. Arab harflari so'z ichida ulanadi va ajratilganda boshqa
   shaklga kiradi — alohida harflardan yig'ish chalkash bo'lardi.
@@ -305,8 +312,50 @@ Daraja **chastota bo'yicha**: ingliz Enterprise `freq`, rus OpenSubtitles ru_50k
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
 Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~129 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
 
-Import qilingan so'zlarda **jumla yo'q** — "jumla qurish" va "gap ichida"
-mashqlari ular uchun berilmaydi (qolgan 5 mashq ishlaydi).
+### Jumlalar va "gap ichida" mashqi
+
+Import qilingan so'zlarning ko'pida jumla **yo'q** — o'shanda "jumla qurish"
+va "gap ichida" berilmaydi (qolgan 5 mashq ishlayveradi).
+
+Istisno — **arab tili**: Mabdaul qiroat manbasida har darsning matni bor va
+u toza raqamli yozuv (OCR emas). Skript so'z **aynan** qatnashgan eng qisqa
+jumlani ajratib oladi (2–9 so'z, transliteratsiya jadvaliga sig'adigan) —
+`هَذَا كِتَابٌ`, `اُقْعُدْ عَلَى الْكُرْسِيِّ`. Shu yo'l bilan 321 so'zga jumla
+biriktirildi.
+
+Bu jumlalarning **o'zbekcha tarjimasi yo'q**, va bu ataylab: "gap ichida"
+mashqi jumlaning o'zini ko'rsatadi, tarjima kerak emas. "Jumla qurish" esa
+savol sifatida aynan o'zbekcha jumlani talab qiladi, shuning uchun bunday
+kartada u berilmaydi. Qoida `decks.test.ts` da: tarjima jumlasiz qolmasin
+(teskarisi ruxsat), va tarjimasiz jumla o'z so'zini albatta ichiga olsin.
+
+**Enterprise darsligidan jumla OLINMADI.** `example` maydoni 99% da bor,
+lekin ular skanerdan olingan OCR parchalari: *"kts cloudy amd windy"*,
+*"PRM TON ES ... bedroom downstairs"*. Qat'iy filtrdan keyin ham sifatsiz
+qoldi.
+
+Ingliz va rus tillari uchun jumlalar **Tatoeba**dan olinadi
+([scripts/add-sentences.py](scripts/add-sentences.py)) — odamlar yozgan,
+qisqa va tabiiy. Ular lug'at yozuvlarining ICHIGA qo'shilmaydi: alohida
+`sentences-{en,ru}.ts` xaritasi sifatida saqlanadi va `loadLanguageDeck`
+ularni jumlasiz kartalarga biriktiradi. Sabab — jumlalar boshqa manbadan
+keladi va o'z generatori bilan yangilanadi; ularni har yozuvga yozib
+qo'yish ikkala faylni qo'lda sinxron ushlashni talab qilardi.
+
+Jumla qamrovi: **5300+ / 7572** karta (ar 453, en 1559, ru 2585).
+
+Bahosi: `sentences-en` +15.6 KB gzip, `sentences-ru` +41 KB gzip. Ikkalasi
+ham TIL BO'LAGIDA — asosiy JS (~131 KB gzip) o'zgarmadi va foydalanuvchi
+faqat o'zi tanlagan tilnikini yuklaydi.
+
+### Kontent yangilanishi mavjud foydalanuvchilarga qanday yetadi
+
+`addMissingCards` faqat YANGI kartani qo'shadi, shuning uchun kontent
+yaxshilangani (yangi jumla, mavzu, daraja) ilovani allaqachon o'rnatganlarga
+yetib bormasdi. `syncCardContent` shu bo'shliqni yopadi: u faqat kontent
+maydonlarini ustiga yozadi va **SM-2 holatiga tegmaydi** (`interval`,
+`easeFactor`, `dueDate`, `repetitions`). Oddiy `bulkPut` foydalanuvchining
+oylar davomidagi takrorlash progressini nolga qaytarardi.
 
 Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
 normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini

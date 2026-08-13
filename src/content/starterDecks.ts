@@ -13,6 +13,29 @@ function merge(...decks: Deck[]): Deck {
 }
 
 /**
+ * Jumlasiz kartalarga tashqi jumla biriktiradi ("gap ichida" mashqi uchun).
+ *
+ * Jumlalar lug'atning O'ZIDA saqlanmaydi: ular boshqa manbadan (Tatoeba)
+ * keladi va alohida generator bilan yangilanadi. Ularni har bir karta
+ * yozuviga qo'shib qo'yish ikkala faylni ham qo'lda sinxron ushlashni
+ * talab qilardi.
+ *
+ * Mavjud jumla USTIGA YOZILMAYDI: qo'lda yozilganlarida tarjimasi ham bor
+ * va ular "jumla qurish" mashqiga xizmat qiladi.
+ */
+function withSentences(deck: Deck, sentences: Record<string, string>): Deck {
+  return LEVEL_ORDER.reduce(
+    (acc, level) => ({
+      ...acc,
+      [level]: deck[level].map((card) =>
+        card.sentence ? card : { ...card, sentence: sentences[card.word.toLowerCase()] },
+      ),
+    }),
+    {} as Deck,
+  )
+}
+
+/**
  * Til lug'atini DANGASA yuklaydi.
  *
  * Har til alohida bo'lakka (`import(...)`) chiqadi, shuning uchun asosiy
@@ -23,19 +46,21 @@ function merge(...decks: Deck[]): Deck {
 export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
   switch (lang) {
     case 'en': {
-      const [{ EN_DECK }, { EN_IMPORTED }] = await Promise.all([
+      const [{ EN_DECK }, { EN_IMPORTED }, { EN_SENTENCES }] = await Promise.all([
         import('./decks/en'),
         import('./decks/imported-en'),
+        import('./decks/sentences-en'),
       ])
-      return merge(EN_DECK, EN_IMPORTED)
+      return withSentences(merge(EN_DECK, EN_IMPORTED), EN_SENTENCES)
     }
     case 'ru': {
-      const [{ RU_DECK }, { RU_EXTRA }, { RU_DICT }] = await Promise.all([
+      const [{ RU_DECK }, { RU_EXTRA }, { RU_DICT }, { RU_SENTENCES }] = await Promise.all([
         import('./decks/ru'),
         import('./decks/ru-extra'),
         import('./decks/imported-ru'),
+        import('./decks/sentences-ru'),
       ])
-      return merge(RU_DECK, RU_EXTRA, RU_DICT)
+      return withSentences(merge(RU_DECK, RU_EXTRA, RU_DICT), RU_SENTENCES)
     }
     case 'ar': {
       const [{ AR_DECK }, { AR_IMPORTED }] = await Promise.all([

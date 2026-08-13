@@ -108,15 +108,28 @@ describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
     //
     // Chegara `\b` bilan emas: u faqat ASCII harflar bilan ishlaydi va
     // arab/kirill yozuvida hech qachon mos kelmasdi.
+    // Har karta uchun yangi `RegExp` yasash minglab jumlada juda sekin —
+    // shuning uchun oddiy qidiruv va bitta umumiy harf tekshiruvi
+    const isLetter = /[\p{L}\p{M}]/u
+    const standalone = (sentence: string, word: string): boolean => {
+      const haystack = sentence.toLowerCase()
+      const needle = word.toLowerCase()
+
+      for (let at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + 1)) {
+        const before = at > 0 ? haystack[at - 1] : ''
+        const after = haystack[at + needle.length] ?? ''
+        if (!isLetter.test(before) && !isLetter.test(after)) return true
+      }
+
+      return false
+    }
+
     all.forEach((card) => {
       const sentence = card.sentence?.trim()
       if (!sentence || card.sentenceTranslation?.trim()) return
 
-      const escaped = card.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const pattern = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'iu')
-
       expect(
-        pattern.test(sentence),
+        standalone(sentence, card.word),
         `"${card.word}" so'zi o'z jumlasida topilmadi: "${sentence}"`,
       ).toBe(true)
     })
