@@ -216,6 +216,28 @@ function importArabic() {
   console.log(`  jumla biriktirildi: ${withSentence} (${Math.round((withSentence / total) * 100)}%)`)
 }
 
+/**
+ * Darslikdagi SHAXS ISMLARI — lug'atga kirmasligi kerak.
+ *
+ * NEGA ALOHIDA RO'YXAT: manbada ularni ajratadigan belgi yo'q (`pos` maydoni
+ * 2300 yozuvdan 2129 tasida bo'sh). Tarjimaning bosh harfliligi ham yaramaydi:
+ * bir tomondan `nick → nik` kichik harf bilan yozilgan, ikkinchi tomondan
+ * `england → Angliya` kabi FOYDALI so'zlar ham bosh harfli.
+ *
+ * NEGA MUHIM: ismlar darslik mashqlarida doim qatnashadi, shuning uchun
+ * chastotasi juda yuqori (4.5–5.1) va chastota bo'yicha bo'linganda hammasi
+ * A1'ga — boshlovchining ilk darslariga tushadi. Daraja testida 9 savoldan
+ * biri "chris → Kris" bo'lib chiqqani shundan.
+ *
+ * Ro'yxat shu kitobga xos: yangi manba qo'shilsa qayta ko'rib chiqiladi.
+ */
+const PERSONAL_NAMES = new Set([
+  'alice', 'ann', 'anna', 'betty', 'bob', 'charles', 'chris', 'david', 'diana',
+  'emma', 'george', 'harry', 'helen', 'jack', 'james', 'jane', 'john', 'judy',
+  'julie', 'kate', 'laura', 'linda', 'mary', 'michael', 'mike', 'nick', 'paul',
+  'peter', 'robert', 'sam', 'sarah', 'steve', 'thomas', 'tom', 'william',
+])
+
 /* ------------------------------ Ingliz ------------------------------- */
 function importEnglish() {
   const t = taken('en.ts', normalizeCommon)
@@ -232,6 +254,7 @@ function importEnglish() {
     if (!word || !uz) { dropped++; continue }
     if (word === uz.toLowerCase()) { dropped++; continue }
     if (!/^[a-z][a-z' -]*$/.test(word)) { dropped++; continue }
+    if (PERSONAL_NAMES.has(word)) { dropped++; continue }
 
     const trKey = uz.toLowerCase()
     if (t.words.has(word) || seenWord.has(word)) { dropped++; continue }
