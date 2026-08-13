@@ -111,7 +111,7 @@ src/
 │   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise
 │   ├── decks/ru-extra.ts           # qo'lda tanlangan ruscha
 │   ├── decks/imported-ru.ts        # AVTO: Ru-Uz-Dictionary (ru.db)
-│   └── starterDecks.ts      # daraja tartibida yig'uvchi (STARTER_DECKS)
+│   └── starterDecks.ts      # loadLanguageDeck — tilni DANGASA yuklaydi
 └── test/setup.ts            # Vitest global sozlamalari
 ```
 
@@ -253,6 +253,8 @@ lug'at qo'shilgan:
 
 [scripts/import-vocab.mjs](scripts/import-vocab.mjs) manba JSON'larini
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
+Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~129 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
+
 Import qilingan so'zlarda **jumla yo'q** — "jumla qurish" mashqi ular uchun
 berilmaydi (qolgan 3 mashq ishlaydi).
 

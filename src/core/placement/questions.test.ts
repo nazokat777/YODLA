@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { DECKS } from '@/content/starterDecks'
+import { loadLanguageDeck } from '@/content/starterDecks'
 import { seededRandom } from '@/lib/random'
 import { buildPlacementQuiz } from './questions'
+
+// Lug'at dangasa yuklanadi — testda oldindan olamiz
+const DECKS = {
+  en: await loadLanguageDeck('en'),
+  ru: await loadLanguageDeck('ru'),
+  ar: await loadLanguageDeck('ar'),
+}
 
 describe('buildPlacementQuiz', () => {
   it('har darajadan 3 tadan savol beradi', () => {

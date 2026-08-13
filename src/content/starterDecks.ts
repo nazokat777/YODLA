@@ -1,49 +1,58 @@
 import { LEVEL_ORDER } from '@/core/config/levels'
 import type { NewCardRecordInput } from '@/core/db'
 import type { LanguageCode, LevelCode } from '@/core/types'
-import { AR_DECK } from './decks/ar'
-import { EN_DECK } from './decks/en'
-import { RU_DECK } from './decks/ru'
-import { RU_EXTRA } from './decks/ru-extra'
-import { RU_DICT } from './decks/imported-ru'
-import { AR_IMPORTED } from './decks/imported-ar'
-import { EN_IMPORTED } from './decks/imported-en'
 
-type Deck = Record<LevelCode, NewCardRecordInput[]>
+export type Deck = Record<LevelCode, NewCardRecordInput[]>
 
-/**
- * Qo'lda yozilgan to'plamga import qilingan lug'atni qo'shadi.
- *
- * Qo'lda yozilganlari OLDIN keladi (jumlasi bor — "jumla qurish" mashqi
- * shulardan boshlanadi). Import qilinganlarida jumla yo'q.
- */
-function withImported(base: Deck, imported: Deck): Deck {
+/** Bir nechta to'plamni daraja bo'yicha birlashtiradi */
+function merge(...decks: Deck[]): Deck {
   return LEVEL_ORDER.reduce(
-    (acc, level) => ({ ...acc, [level]: [...base[level], ...imported[level]] }),
+    (acc, level) => ({ ...acc, [level]: decks.flatMap((deck) => deck[level]) }),
     {} as Deck,
   )
 }
 
-/** Til → daraja → so'zlar. Daraja bo'yicha so'rovlar uchun ochiq qoldirilgan */
-export const DECKS: Record<LanguageCode, Deck> = {
-  en: withImported(EN_DECK, EN_IMPORTED),
-  ru: withImported(withImported(RU_DECK, RU_EXTRA), RU_DICT),
-  ar: withImported(AR_DECK, AR_IMPORTED),
+/**
+ * Til lug'atini DANGASA yuklaydi.
+ *
+ * Har til alohida bo'lakka (`import(...)`) chiqadi, shuning uchun asosiy
+ * JS fayliga ~7500 so'z pishirilmaydi: faqat foydalanuvchi TANLAGAN
+ * tilning lug'ati yuklanadi. Qo'lda yozilganlari OLDIN keladi (jumlasi
+ * bor — "jumla qurish" mashqi shulardan boshlanadi).
+ */
+export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
+  switch (lang) {
+    case 'en': {
+      const [{ EN_DECK }, { EN_IMPORTED }] = await Promise.all([
+        import('./decks/en'),
+        import('./decks/imported-en'),
+      ])
+      return merge(EN_DECK, EN_IMPORTED)
+    }
+    case 'ru': {
+      const [{ RU_DECK }, { RU_EXTRA }, { RU_DICT }] = await Promise.all([
+        import('./decks/ru'),
+        import('./decks/ru-extra'),
+        import('./decks/imported-ru'),
+      ])
+      return merge(RU_DECK, RU_EXTRA, RU_DICT)
+    }
+    case 'ar': {
+      const [{ AR_DECK }, { AR_IMPORTED }] = await Promise.all([
+        import('./decks/ar'),
+        import('./decks/imported-ar'),
+      ])
+      return merge(AR_DECK, AR_IMPORTED)
+    }
+  }
 }
 
 /** Bitta tilning barcha so'zlari — daraja tartibida (A1 → A2 → B1) */
-function flatten(deck: Deck): NewCardRecordInput[] {
+export function flatten(deck: Deck): NewCardRecordInput[] {
   return LEVEL_ORDER.flatMap((level) => deck[level])
 }
 
-/**
- * Bazaga yoziladigan boshlang'ich to'plamlar.
- *
- * Tartib dars uchun muhim emas (uni `pickLessonCards` aniqlaydi), lekin
- * daraja bo'yicha yig'ish faylni o'qishni osonlashtiradi.
- */
-export const STARTER_DECKS: Record<LanguageCode, NewCardRecordInput[]> = {
-  en: flatten(DECKS.en),
-  ru: flatten(DECKS.ru),
-  ar: flatten(DECKS.ar),
+/** Bazaga yoziladigan boshlang'ich to'plam (dangasa yuklanadi) */
+export async function loadStarterDeck(lang: LanguageCode): Promise<NewCardRecordInput[]> {
+  return flatten(await loadLanguageDeck(lang))
 }

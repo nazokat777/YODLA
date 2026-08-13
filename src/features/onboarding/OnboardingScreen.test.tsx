@@ -31,27 +31,31 @@ describe('OnboardingScreen — oqim', () => {
     expect(screen.getByRole('button', { name: /davom etish/i })).toBeDisabled()
   })
 
-  it('til tanlangach daraja testiga o‘tadi', () => {
+  it('til tanlangach daraja testiga o‘tadi', async () => {
     renderScreen()
     chooseEnglish()
 
-    expect(screen.getByTestId('placement-progress')).toHaveTextContent('1/9')
+    // Lug'at dangasa yuklanadi — savol tayyor bo'lguncha kutamiz
+    expect(await screen.findByTestId('placement-progress')).toHaveTextContent('1/9')
   })
 
-  it('testni o‘tkazib yuborsa daraja A1 bo‘ladi', () => {
+  it('testni o‘tkazib yuborsa daraja A1 bo‘ladi', async () => {
     renderScreen()
     chooseEnglish()
 
-    fireEvent.click(screen.getByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
 
     expect(useSettingsStore.getState().startingLevel).toBe('A1')
     // Keyingi qadam — kunlik maqsad
     expect(screen.getByText(/kunlik maqsad/i)).toBeInTheDocument()
   })
 
-  it('barcha savollarga javob berilgach maqsad qadamiga o‘tadi', () => {
+  it('barcha savollarga javob berilgach maqsad qadamiga o‘tadi', async () => {
     renderScreen()
     chooseEnglish()
+
+    // Birinchi savol yuklanguncha kutamiz
+    await screen.findByTestId('placement-progress')
 
     // Har savolda birinchi variantni tanlaymiz — natija muhim emas,
     // muhimi oqim oxirigacha borishi
@@ -63,10 +67,10 @@ describe('OnboardingScreen — oqim', () => {
     expect(screen.getByText(/kunlik maqsad/i)).toBeInTheDocument()
   })
 
-  it('kunlik maqsad tanlanadi va yakun qadamida ko‘rinadi', () => {
+  it('kunlik maqsad tanlanadi va yakun qadamida ko‘rinadi', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(screen.getByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
 
     fireEvent.click(screen.getByRole('button', { name: /yengil/i }))
     fireEvent.click(screen.getByRole('button', { name: /davom etish/i }))
@@ -75,20 +79,20 @@ describe('OnboardingScreen — oqim', () => {
     expect(screen.getByText(/tayyor/i)).toBeInTheDocument()
   })
 
-  it('maqsad qadamidan orqaga qaytish mumkin', () => {
+  it('maqsad qadamidan orqaga qaytish mumkin', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(screen.getByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
 
     fireEvent.click(screen.getByRole('button', { name: /orqaga/i }))
 
-    expect(screen.getByTestId('placement-progress')).toBeInTheDocument()
+    expect(await screen.findByTestId('placement-progress')).toBeInTheDocument()
   })
 
-  it('yakunda onboarding tugallangan deb belgilanadi', () => {
+  it('yakunda onboarding tugallangan deb belgilanadi', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(screen.getByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
     fireEvent.click(screen.getByRole('button', { name: /davom etish/i }))
 
     expect(useSettingsStore.getState().onboardingCompleted).toBe(false)

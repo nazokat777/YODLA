@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Mascot } from '@/components/ui/Mascot'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { SpeakButton } from '@/components/ui/SpeakButton'
-import { DECKS } from '@/content/starterDecks'
+import { loadLanguageDeck } from '@/content/starterDecks'
 import { LANGUAGES } from '@/core/config/languages'
 import { LEVEL_ORDER } from '@/core/config/levels'
-import { buildPlacementQuiz, scorePlacement } from '@/core/placement'
+import { buildPlacementQuiz, scorePlacement, type PlacementQuestion } from '@/core/placement'
 import type { LanguageCode, LevelCode } from '@/core/types'
 import { cn } from '@/lib/cn'
 
@@ -34,15 +34,35 @@ function emptyScore(): Record<LevelCode, number> {
  * Bu yerdan faqat bitta qiymat chiqadi: boshlang'ich daraja.
  */
 export function PlacementStep({ language, onDone }: PlacementStepProps) {
-  // Savollar bir marta yasaladi: har javobdan keyin qayta yasalsa,
-  // foydalanuvchi oldinga siljimasdi
-  const quiz = useMemo(() => buildPlacementQuiz(DECKS[language]), [language])
   const meta = LANGUAGES[language]
+
+  // Savollar lug'atdan yasaladi — lug'at dangasa yuklanadi. Bir marta
+  // yasaladi: har javobdan keyin qayta yasalsa, foydalanuvchi siljimasdi
+  const [quiz, setQuiz] = useState<PlacementQuestion[]>([])
+  useEffect(() => {
+    let cancelled = false
+    void loadLanguageDeck(language).then((deck) => {
+      if (!cancelled) setQuiz(buildPlacementQuiz(deck))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [language])
 
   const [index, setIndex] = useState(0)
   const [score, setScore] = useState<Record<LevelCode, number>>(emptyScore)
 
   const question = quiz[index]
+
+  // Lug'at hali yuklanmoqda
+  if (!question) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3">
+        <Mascot mood="thinking" size="md" />
+        <p className="text-ink-600">Yuklanmoqda…</p>
+      </div>
+    )
+  }
 
   function handleAnswer(choice: number) {
     const isCorrect = choice === question.correctIndex

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { addMissingCards } from '@/core/db'
-import { STARTER_DECKS } from '@/content/starterDecks'
+import { loadStarterDeck } from '@/content/starterDecks'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /**
@@ -16,9 +16,12 @@ export function useStarterDeck() {
   useEffect(() => {
     if (!learningLanguage) return
 
-    // Effekt sinxron emas — xatoni yutib yubormaslik uchun aniq ushlaymiz
-    addMissingCards(STARTER_DECKS[learningLanguage]).catch((error: unknown) => {
-      console.error("Boshlang'ich to'plamni yuklab bo'lmadi:", error)
-    })
+    // Lug'at dangasa yuklanadi (til bo'lagi), so'ng bazaga yoziladi.
+    // Xatoni yutib yubormaslik uchun aniq ushlaymiz.
+    loadStarterDeck(learningLanguage)
+      .then((deck) => addMissingCards(deck))
+      .catch((error: unknown) => {
+        console.error("Boshlang'ich to'plamni yuklab bo'lmadi:", error)
+      })
   }, [learningLanguage])
 }

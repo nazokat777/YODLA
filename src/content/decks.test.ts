@@ -5,9 +5,21 @@ import { transliterate } from '@/core/text/transliterate'
 import { normalizeAnswer } from '@/core/exercises/normalize'
 import { makeCardId } from '@/core/srs'
 import type { LanguageCode } from '@/core/types'
-import { DECKS, STARTER_DECKS } from './starterDecks'
+import { flatten, loadLanguageDeck } from './starterDecks'
 
 const LANGUAGE_CODES: LanguageCode[] = ['en', 'ru', 'ar']
+
+// Lug'at endi dangasa yuklanadi — testda barchasini oldindan olamiz
+const DECKS = {
+  en: await loadLanguageDeck('en'),
+  ru: await loadLanguageDeck('ru'),
+  ar: await loadLanguageDeck('ar'),
+}
+const STARTER_DECKS = {
+  en: flatten(DECKS.en),
+  ru: flatten(DECKS.ru),
+  ar: flatten(DECKS.ar),
+}
 
 describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
   const deck = DECKS[language]

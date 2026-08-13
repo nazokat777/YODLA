@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
-import { DECKS } from '@/content/starterDecks'
+import { loadLanguageDeck } from '@/content/starterDecks'
 import { getAllCards } from '@/core/db'
 import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
 import { loadGsap } from '@/lib/motion'
@@ -33,14 +33,25 @@ export function LearningPath() {
     [learningLanguage],
   )
 
+  // Mavzu tartibi lug'atdan olinadi — lug'at dangasa yuklanadi. Kelgunicha
+  // yo'l bo'sh tartib bilan chiziladi (buildUnits alifbo tartibiga tushadi)
+  const [topicOrder, setTopicOrder] = useState<string[]>([])
+  useEffect(() => {
+    if (!learningLanguage) return
+    let cancelled = false
+    void loadLanguageDeck(learningLanguage).then((deck) => {
+      if (!cancelled) setTopicOrder(topicOrderFromDeck(deck))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [learningLanguage])
+
   const units = useMemo(() => {
     if (!cards || !learningLanguage) return []
 
-    return buildUnits(cards, {
-      minLevel: startingLevel,
-      topicOrder: topicOrderFromDeck(DECKS[learningLanguage]),
-    })
-  }, [cards, learningLanguage, startingLevel])
+    return buildUnits(cards, { minLevel: startingLevel, topicOrder })
+  }, [cards, learningLanguage, startingLevel, topicOrder])
 
   const listRef = useRef<HTMLOListElement>(null)
 
