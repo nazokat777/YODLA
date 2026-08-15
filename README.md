@@ -562,10 +562,35 @@ ko'rinadi.
 
 ### Ishga tushirish
 
-1. Supabase → SQL Editor → [supabase/yodla-schema.sql](supabase/yodla-schema.sql) → RUN
-2. Vercel → Settings → Environment Variables:
-   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
-3. Qayta deploy
+1. [supabase.com](https://supabase.com) da loyiha yarating (bepul reja yetadi).
+2. **SQL Editor → New query** → [supabase/yodla-schema.sql](supabase/yodla-schema.sql)
+   ni to'liq joylang → **RUN**. Fayl idempotent — qayta ishga tushirsa ham
+   xato bermaydi.
+3. **Project Settings → API** dan ikkita qiymatni oling va `.env.local` ga
+   yozing:
+
+   ```
+   VITE_SUPABASE_URL=https://xxxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJ...
+   ```
+
+4. Sozlash to'g'riligini tekshiring:
+
+   ```bash
+   node scripts/check-supabase.mjs
+   ```
+
+   Skript jadval va funksiyalar borligini, kalit ishlashini VA anon kalit
+   bilan to'g'ridan-to'g'ri yozib bo'lmasligini tekshiradi. Ilovadagi xato
+   xabari sozlash paytida chalg'ituvchi ("internet yo'q bo'lishi mumkin"),
+   bu esa sababni aniq aytadi.
+
+5. Vercel → **Settings → Environment Variables** ga o'sha ikki qiymatni
+   qo'shing va qayta deploy qiling.
+
+> **`service_role` kalitini ISHLATMANG.** Faqat `anon` kalit kerak — u
+> brauzerga ketadi va ochiq bo'lishi ko'zda tutilgan. `service_role` esa
+> barcha himoyani chetlab o'tadi.
 
 ### Nega yozuv RPC orqali
 
@@ -577,6 +602,20 @@ funksiyasi orqali: u XP'ni kunlik **2000** bilan cheklaydi va sanani
 
 Bu mutlaq himoya emas — autentifikatsiyasiz uni qurib bo'lmaydi. Lekin
 cheksiz soxta natijani yopadi.
+
+### Nima OCHIQ ekanini bilib qo'ying
+
+Ilovada login yo'q, ya'ni serverda "bu so'rov kim tomonidan" degan savolga
+javob yo'q. Shuning uchun RLS faqat ikki holatni ajrata oladi: o'qish ochiq,
+yozish yopiq (faqat RPC). Buning oqibati:
+
+- reyting (ism + haftalik XP) — **ommaviy**, bu kutilgan;
+- do'stlik bog'lanishlari (`yodla_links`) va yuborilgan xabarlar
+  (`yodla_cheers`) ham **ommaviy o'qiladi** — kim kimni qo'shgani ko'rinadi.
+
+Ma'lumot taxallusli (6 belgilik kod + o'zi yozgan ism), lekin ilova ichidagi
+"faqat ism va XP yuboriladi" va'dasidan bu bir oz kengroq. Buni yopish uchun
+autentifikatsiya kerak bo'ladi — o'shanda RLS `auth.uid()` ga tayana oladi.
 
 ## Offline rejim (PWA)
 
