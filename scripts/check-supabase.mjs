@@ -108,22 +108,35 @@ for (const [name, body] of Object.entries(rpcs)) {
       holatlarini shu orqali ajratadi. Eski nusxa ishga tushirilgan bo'lsa,
       ilova jimgina noto'g'ri xabar ko'rsatardi.
 
-      Tekshiruv OpenAPI tavsifi orqali — yon ta'sirsiz (hech narsa yozilmaydi). */
+      Tekshiruv usuli: `yodla_add_friend` ni mavjud bo'lmagan (lekin TO'G'RI
+      formatdagi) ikki kod bilan chaqiramiz.
+        - yangi versiya: profil yo'qligini ko'rib `false` qaytaradi
+          → 200 va tanasi "false", HECH NARSA yozilmaydi;
+        - eski versiya: `void` qaytaradi → 204, va keraksiz bog'lanish yozadi.
+
+      OpenAPI tavsifi orqali qilib bo'lmadi: Supabase uni anon kalitga
+      bermaydi (401). */
+const GHOST = { me: 'ZZ9ZZ9', friend: 'ZZ8ZZ8' }
+
 try {
-  const res = await rest('')
-  if (!res.ok) {
-    console.log(`  · sxema versiyasini tekshirib bo'lmadi (${res.status}) — o'tkazib yuborildi`)
+  const res = await rest('rpc/yodla_add_friend', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_me: GHOST.me, p_friend: GHOST.friend }),
+  })
+
+  const body = (await res.text()).trim()
+
+  if (res.status === 204 || body === '') {
+    fail('Sxema ESKI versiya — supabase/yodla-schema.sql ni qaytadan RUN qiling')
+    console.log(`     (eski versiya ${GHOST.me}→${GHOST.friend} bog'lanishini yozib qo'ydi;`)
+    console.log("      yangi sxemani qo'llagach u o'z-o'zidan ahamiyatsiz bo'lib qoladi)")
+  } else if (body === 'false') {
+    ok("yangi sxema versiyasi (notanish kod rad etildi, yozuv qoldirilmadi)")
+  } else if (body === 'true') {
+    fail(`${GHOST.friend} kodli profil bor ekan — tekshiruvni o'tkazib bo'lmadi`)
   } else {
-    const spec = await res.json()
-    const paths = spec?.paths ?? {}
-
-    for (const name of ['yodla_add_friend', 'yodla_send_cheer']) {
-      const definition = JSON.stringify(paths[`/rpc/${name}`] ?? null)
-
-      if (definition === 'null') fail(`${name}() tavsifda yo'q`)
-      else if (/boolean/i.test(definition)) ok(`${name}() yangi versiya (boolean qaytaradi)`)
-      else fail(`${name}() ESKI versiya — sxemani qaytadan RUN qiling`)
-    }
+    console.log(`  · sxema versiyasi aniqlanmadi (javob: ${body.slice(0, 40)})`)
   }
 } catch (error) {
   console.log(`  · sxema versiyasi tekshirilmadi: ${error.message}`)
