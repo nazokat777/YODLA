@@ -33,9 +33,15 @@ export function LearningPath() {
     [learningLanguage],
   )
 
-  // Mavzu tartibi lug'atdan olinadi — lug'at dangasa yuklanadi. Kelgunicha
-  // yo'l bo'sh tartib bilan chiziladi (buildUnits alifbo tartibiga tushadi)
-  const [topicOrder, setTopicOrder] = useState<string[]>([])
+  /**
+   * Mavzu tartibi lug'atdan olinadi — lug'at dangasa yuklanadi.
+   * `null` — hali kelmagan.
+   *
+   * Kelgunicha yo'l CHIZILMAYDI: `buildUnits` tartibsiz qolganda alifboga
+   * tushadi va bo'limlar avval noto'g'ri ketma-ketlikda ko'rinib, keyin
+   * sakrab qayta saralanardi (arabchada "10-dars" "2-dars" dan oldin).
+   */
+  const [topicOrder, setTopicOrder] = useState<string[] | null>(null)
   useEffect(() => {
     if (!learningLanguage) return
     let cancelled = false
@@ -48,10 +54,16 @@ export function LearningPath() {
   }, [learningLanguage])
 
   const units = useMemo(() => {
-    if (!cards || !learningLanguage) return []
+    if (!cards || !learningLanguage || topicOrder === null) return []
 
     return buildUnits(cards, { minLevel: startingLevel, topicOrder })
   }, [cards, learningLanguage, startingLevel, topicOrder])
+
+  // Kartalar yoki mavzu tartibi hali yo'lda. Buni "bo'lim yo'q" dan
+  // farqlash kerak: birinchi ochilishda lug'at bazaga yozilayotgan bir-ikki
+  // soniya davomida yo'l butunlay g'oyib bo'lib turardi va keyin birdan
+  // paydo bo'lardi
+  const isLoading = cards === undefined || topicOrder === null
 
   const listRef = useRef<HTMLOListElement>(null)
 
@@ -98,6 +110,22 @@ export function LearningPath() {
       context?.revert()
     }
   }, [units.length])
+
+  if (isLoading) {
+    return (
+      <section data-testid="path-loading">
+        <h2 className="mb-3 font-bold">O'quv yo'li</h2>
+        <ol className="flex flex-col gap-3" aria-hidden="true">
+          {[0, 1, 2].map((row) => (
+            <li key={row} className={cn('flex items-center gap-3', row % 2 === 1 && 'ms-10')}>
+              <div className="h-14 w-14 animate-pulse rounded-full bg-ink-300/40" />
+              <div className="h-4 w-32 animate-pulse rounded bg-ink-300/40" />
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
 
   if (units.length === 0) return null
 

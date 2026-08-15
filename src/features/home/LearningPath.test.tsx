@@ -81,3 +81,33 @@ describe('LearningPath', () => {
     expect(unit).toBeVisible()
   })
 })
+
+describe('LearningPath — yuklanish holati', () => {
+  it('lug‘at kelgunicha ALIFBO tartibida chizilmaydi', async () => {
+    // Mavzu tartibi lug'atdan keladi va u dangasa yuklanadi. Tayyor
+    // bo'lmasidan chizilsa, bo'limlar avval alifbo bo'yicha ko'rinib,
+    // keyin sakrab qayta saralanardi — arabchada "10-dars" "2-dars" dan
+    // oldin turib qolardi.
+    await addMissingCards(WORDS)
+    renderPath()
+
+    // Yuklanayotgani BILINADI (bo'sh joy emas)
+    expect(await screen.findByTestId('path-loading')).toBeInTheDocument()
+
+    // Tayyor bo'lgach ro'yxat chiqadi
+    await waitFor(() => {
+      expect(screen.getByText('Salomlashish')).toBeInTheDocument()
+    })
+    expect(screen.queryByTestId('path-loading')).not.toBeInTheDocument()
+  })
+
+  it('karta umuman bo‘lmasa hech narsa ko‘rsatmaydi', async () => {
+    // Bo'sh holat — "yuklanmoqda" emas
+    const { container } = renderPath()
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('path-loading')).not.toBeInTheDocument()
+    })
+    expect(container.querySelector('section')).toBeNull()
+  })
+})
