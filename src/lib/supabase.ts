@@ -23,7 +23,10 @@ interface MinimalClient {
   from: (table: string) => {
     select: <T>(columns: string) => QueryBuilder<T>
   }
-  rpc: (name: string, params: Record<string, unknown>) => Promise<{ error: unknown }>
+  rpc: (
+    name: string,
+    params: Record<string, unknown>,
+  ) => Promise<{ data: unknown; error: unknown }>
 }
 
 let clientPromise: Promise<MinimalClient> | null = null
@@ -108,26 +111,46 @@ export async function fetchFriendCodes(myCode: string): Promise<string[]> {
   }
 }
 
-/** Do'st qo'shish. Muvaffaqiyat — `true` */
-export async function addFriend(myCode: string, friendCode: string): Promise<boolean> {
+/** Do'st qo'shish natijasi */
+export type AddFriendResult =
+  /** Qo'shildi (yoki allaqachon ro'yxatda edi) */
+  | 'added'
+  /** Bunday kodli foydalanuvchi yo'q */
+  | 'unknown-code'
+  /** Serverga yetib bo'lmadi */
+  | 'failed'
+
+/**
+ * Do'st qo'shish.
+ *
+ * Server `false` qaytarsa — kod hech kimga tegishli emas. Buni tarmoq
+ * xatosidan ajratish shart: foydalanuvchi kodni QO'LDA kiritadi va bitta
+ * harf adashishi mumkin, "internetni tekshiring" esa uni chalg'itardi.
+ */
+export async function addFriend(myCode: string, friendCode: string): Promise<AddFriendResult> {
   const client = await getClient()
-  if (!client) return false
+  if (!client) return 'failed'
 
   try {
-    const { error } = await client.rpc('yodla_add_friend', {
+    const { data, error } = await client.rpc('yodla_add_friend', {
       p_me: myCode,
       p_friend: friendCode,
     })
     if (error) throw error
 
-    return true
+    return data === false ? 'unknown-code' : 'added'
   } catch (error) {
     console.error('Do‘st qo‘shib bo‘lmadi:', error)
-    return false
+    return 'failed'
   }
 }
 
-/** Tayyor xabar yuborish. Muvaffaqiyat — `true` */
+/**
+ * Tayyor xabar yuborish.
+ *
+ * `false` — bugun shu xabar shu kishiga allaqachon yuborilgan (baza
+ * darajasidagi kunlik chegara) yoki yuborib bo'lmadi.
+ */
 export async function sendCheer(
   fromCode: string,
   toCode: string,
@@ -137,14 +160,15 @@ export async function sendCheer(
   if (!client) return false
 
   try {
-    const { error } = await client.rpc('yodla_send_cheer', {
+    const { data, error } = await client.rpc('yodla_send_cheer', {
       p_from: fromCode,
       p_to: toCode,
       p_kind: kind,
     })
     if (error) throw error
 
-    return true
+    // Server aynan shu holatni ajratadi: yangi yozuv qo'shilganmi
+    return data !== false
   } catch (error) {
     console.error('Xabar yuborib bo‘lmadi:', error)
     return false

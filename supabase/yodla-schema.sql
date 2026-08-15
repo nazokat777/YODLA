@@ -100,8 +100,11 @@ drop policy if exists yl_read on public.yodla_links;
 create policy yl_read on public.yodla_links for select to public using (true);
 
 -- Yozuv faqat RPC orqali (kod formati tekshiriladi)
+-- Qaytish turi o'zgargani uchun (pastdagi izohga qarang) avval tushiriladi
+drop function if exists public.yodla_add_friend(text, text);
+
 create or replace function public.yodla_add_friend(p_me text, p_friend text)
-returns void
+returns boolean
 language plpgsql security definer set search_path = public as $$
 begin
   if p_me !~ '^[A-Z0-9]{6}$' or p_friend !~ '^[A-Z0-9]{6}$' then
@@ -110,12 +113,21 @@ begin
 
   -- O'zini o'ziga qo'shish ma'nosiz
   if upper(p_me) = upper(p_friend) then
-    return;
+    return false;
+  end if;
+
+  -- NEGA MAVJUDLIK TEKSHIRILADI: kod qo'lda kiritiladi va bitta harf
+  -- adashsa, ilgari hech kimga tegishli bo'lmagan kodga bog'lanish yozilib,
+  -- ilova "Do'st qo'shildi" deb aldardi
+  if not exists (select 1 from public.yodla_profiles where code = upper(p_friend)) then
+    return false;
   end if;
 
   insert into public.yodla_links (follower, target_code)
   values (upper(p_me), upper(p_friend))
   on conflict do nothing;
+
+  return true;
 end $$;
 
 create or replace function public.yodla_remove_friend(p_me text, p_friend text)
@@ -152,9 +164,15 @@ alter table public.yodla_cheers enable row level security;
 drop policy if exists yc_read on public.yodla_cheers;
 create policy yc_read on public.yodla_cheers for select to public using (true);
 
+-- Qaytish turi `void` dan `boolean` ga o'zgardi, `create or replace` esa
+-- turni almashtira olmaydi — shuning uchun avval tushiriladi
+drop function if exists public.yodla_send_cheer(text, text, text);
+
 create or replace function public.yodla_send_cheer(p_from text, p_to text, p_kind text)
-returns void
+returns boolean
 language plpgsql security definer set search_path = public as $$
+declare
+  inserted int;
 begin
   if p_from !~ '^[A-Z0-9]{6}$' or p_to !~ '^[A-Z0-9]{6}$' then
     raise exception 'Kod formati notogri';
@@ -166,12 +184,18 @@ begin
   end if;
 
   if upper(p_from) = upper(p_to) then
-    return;
+    return false;
   end if;
 
   insert into public.yodla_cheers (from_code, to_code, kind)
   values (upper(p_from), upper(p_to), p_kind)
   on conflict do nothing;
+
+  -- NEGA BOOLEAN: `on conflict do nothing` xato ko'tarmaydi, ya'ni takroriy
+  -- xabar ham "muvaffaqiyat" bo'lib qaytardi va ilovadagi "bugun allaqachon
+  -- yuborilgan" xabari hech qachon ko'rinmasdi
+  get diagnostics inserted = row_count;
+  return inserted > 0;
 end $$;
 
 grant execute on function public.yodla_send_cheer(text, text, text) to anon, authenticated;

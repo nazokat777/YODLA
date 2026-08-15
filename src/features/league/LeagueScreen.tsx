@@ -165,10 +165,20 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
       return
     }
 
-    const added = await addFriend(myCode, code)
-    setAddMessage(added ? 'Do‘st qo‘shildi' : 'Qo‘shib bo‘lmadi — internetni tekshiring')
+    const result = await addFriend(myCode, code)
 
-    if (added) {
+    // Uch holat ataylab ajratilgan: kod qo'lda kiritiladi va bitta harf
+    // adashsa, "internetni tekshiring" foydalanuvchini noto'g'ri yo'ldan
+    // olib ketardi
+    setAddMessage(
+      {
+        added: 'Do‘st qo‘shildi',
+        'unknown-code': 'Bunday kod topilmadi — qaytadan tekshiring',
+        failed: 'Qo‘shib bo‘lmadi — internetni tekshiring',
+      }[result],
+    )
+
+    if (result === 'added') {
       setFriendCodes((current) => [...new Set([...current, code])])
       setCodeInput('')
     }

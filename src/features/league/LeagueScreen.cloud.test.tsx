@@ -55,7 +55,7 @@ beforeEach(() => {
   fetchWeeklyLeague.mockResolvedValue(ROWS)
   fetchFriendCodes.mockResolvedValue([])
   fetchCheers.mockResolvedValue([])
-  addFriend.mockResolvedValue(true)
+  addFriend.mockResolvedValue('added')
   sendCheer.mockResolvedValue(true)
 })
 
@@ -118,6 +118,47 @@ describe('LeagueScreen — backend ulangan', () => {
     await waitFor(() => {
       expect(addFriend).toHaveBeenCalledWith(MY_CODE, 'QR6ST7')
     })
+  })
+
+  it('mavjud bo‘lmagan kod TARMOQ XATOSIDAN ajratiladi', async () => {
+    // Kod qo'lda kiritiladi va bitta harf adashishi mumkin. "Internetni
+    // tekshiring" bunday holatda foydalanuvchini noto'g'ri yo'ldan olardi.
+    addFriend.mockResolvedValue('unknown-code')
+    renderScreen()
+    await screen.findByText('Dilnoza')
+
+    fireEvent.change(screen.getByLabelText(/do.stingizning kodi/i), {
+      target: { value: 'ZZ9ZZ9' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /qo.shish/i }))
+
+    expect(await screen.findByText(/bunday kod topilmadi/i)).toBeInTheDocument()
+  })
+
+  it('server yetib bo‘lmasa — internet haqida aytiladi', async () => {
+    addFriend.mockResolvedValue('failed')
+    renderScreen()
+    await screen.findByText('Dilnoza')
+
+    fireEvent.change(screen.getByLabelText(/do.stingizning kodi/i), {
+      target: { value: 'QR6ST7' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /qo.shish/i }))
+
+    expect(await screen.findByText(/internetni tekshiring/i)).toBeInTheDocument()
+  })
+
+  it('takroriy xabar "allaqachon yuborilgan" deb aytiladi', async () => {
+    // Baza kunlik chegara qo'yadi; ilgari bu holat serverdan ajratilmasdi
+    // va ekran har safar "Xabar yuborildi" deb turaverardi
+    sendCheer.mockResolvedValue(false)
+    renderScreen()
+    await screen.findByText('Dilnoza')
+
+    fireEvent.click(screen.getByRole('button', { name: /Boburga xabar yuborish/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /barakalla/i }))
+
+    expect(await screen.findByText(/allaqachon yuborilgan/i)).toBeInTheDocument()
   })
 
   it('o‘z kodini do‘st sifatida qo‘shib bo‘lmaydi', async () => {
