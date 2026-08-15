@@ -211,14 +211,23 @@ export function FeedbackBar({
         </div>
       )}
 
-      {exercise.card.mnemonic && (
-        <p className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink-600 italic">
-          💡 {exercise.card.mnemonic}
-        </p>
-      )}
-
-      {verdict !== 'correct' && !exercise.card.mnemonic && (
-        <MnemonicEditor cardId={exercise.card.id} word={exercise.card.word} />
+      {/*
+        Mnemonika faqat javobdan KEYIN ko'rinadi — mashq paytida u javobni
+        oshkor qilardi. To'g'ri javobda esa ekran 900 ms da o'tib ketadi,
+        shuning uchun u yerda tahrirlash taklif qilinmaydi.
+      */}
+      {verdict === 'correct' ? (
+        exercise.card.mnemonic && (
+          <p className="rounded-xl bg-white/70 px-3 py-2 text-sm text-ink-600 italic">
+            💡 {exercise.card.mnemonic}
+          </p>
+        )
+      ) : (
+        <MnemonicEditor
+          cardId={exercise.card.id}
+          word={exercise.card.word}
+          initialValue={exercise.card.mnemonic}
+        />
       )}
 
       <p className="text-xs font-semibold text-ink-600">
@@ -238,27 +247,52 @@ export function FeedbackBar({
 }
 
 /**
- * Mnemonika yozish (TZ 3.3 — Keyword Method).
+ * Mnemonika yozish va TAHRIRLASH (TZ 3.3 — Keyword Method).
  * "Bu so'zni nimaga o'xshatasan?" — o'zbekcha ohangdosh so'z + assotsiatsiya.
  */
-function MnemonicEditor({ cardId, word }: { cardId: string; word: string }) {
+function MnemonicEditor({
+  cardId,
+  word,
+  initialValue,
+}: {
+  cardId: string
+  word: string
+  initialValue?: string
+}) {
+  const [saved, setSaved] = useState(initialValue ?? '')
   const [isOpen, setIsOpen] = useState(false)
-  const [value, setValue] = useState('')
-  const [isSaved, setIsSaved] = useState(false)
+  const [value, setValue] = useState(initialValue ?? '')
 
   async function handleSave() {
-    if (value.trim().length === 0) return
+    const trimmed = value.trim()
+    if (trimmed.length === 0) return
 
     try {
-      await setMnemonic(cardId, value)
-      setIsSaved(true)
+      await setMnemonic(cardId, trimmed)
+      setSaved(trimmed)
+      setIsOpen(false)
     } catch (error) {
       console.error('Mnemonikani saqlab bo‘lmadi:', error)
     }
   }
 
-  if (isSaved) {
-    return <p className="text-sm font-semibold text-brand-700">💡 Assotsiatsiya saqlandi</p>
+  // Yozilgani bo'lsa — ko'rsatiladi va yoniga tahrirlash taklif qilinadi
+  if (!isOpen && saved) {
+    return (
+      <div className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2">
+        <p className="flex-1 text-sm text-ink-600 italic">💡 {saved}</p>
+        <button
+          type="button"
+          onClick={() => {
+            setValue(saved)
+            setIsOpen(true)
+          }}
+          className="tap-highlight-none min-h-11 shrink-0 text-sm font-semibold text-brand-700 underline underline-offset-4"
+        >
+          Tahrirlash
+        </button>
+      </div>
+    )
   }
 
   if (!isOpen) {
