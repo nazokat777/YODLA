@@ -11,5 +11,7 @@ export const PATHS = {
   review: '/review',
   stats: '/stats',
   profile: '/profile',
+  /** Foydalanuvchi yozgan mnemonik assotsiatsiyalar */
+  mnemonics: '/mnemonics',
   league: '/league',
 } as const

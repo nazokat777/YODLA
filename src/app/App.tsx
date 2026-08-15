@@ -9,6 +9,7 @@ import { useDailyMaintenance } from '@/hooks/useProgress'
 import { HomeScreen } from '@/features/home/HomeScreen'
 import { LeagueScreen } from '@/features/league/LeagueScreen'
 import { LessonScreen } from '@/features/lesson/LessonScreen'
+import { MnemonicsScreen } from '@/features/mnemonics/MnemonicsScreen'
 import { NotFoundScreen } from '@/features/misc/NotFoundScreen'
 import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen'
 import { ProfileScreen } from '@/features/profile/ProfileScreen'
@@ -67,6 +68,7 @@ export function App() {
           <Route path={PATHS.league} element={<LeagueScreen />} />
           <Route path={PATHS.stats} element={<StatsScreen />} />
           <Route path={PATHS.profile} element={<ProfileScreen />} />
+          <Route path={PATHS.mnemonics} element={<MnemonicsScreen />} />
         </Route>
 
         {/* --- Xatolik va yo'naltirishlar --- */}

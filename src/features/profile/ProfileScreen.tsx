@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { PATHS } from '@/app/paths'
 import { BadgeTile } from '@/components/ui/BadgeTile'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
@@ -163,6 +165,21 @@ export function ProfileScreen() {
             className="h-6 w-6 accent-brand-500"
           />
         </label>
+      </Panel>
+
+      <Panel>
+        <Link
+          to={PATHS.mnemonics}
+          className="tap-highlight-none flex min-h-11 items-center justify-between gap-4"
+        >
+          <span>
+            <span className="block font-bold">Assotsiatsiyalarim</span>
+            <span className="text-sm text-ink-600">
+              Esda saqlash uchun yozgan mnemonikalaringiz
+            </span>
+          </span>
+          <span aria-hidden="true">💡</span>
+        </Link>
       </Panel>
     </div>
   )
