@@ -336,8 +336,8 @@ kartada u berilmaydi. Qoida `decks.test.ts` da: tarjima jumlasiz qolmasin
 
 | Manba | Nima beradi | Sifat |
 | ----- | ----------- | ----- |
-| `enterprise-app/.../unit_*.json` | 2182 so'z + 583 **tarjimali** jumla | qo'lda yozilgan |
-| `enterprise-trainer/structured.json` | 888 so'z | skanerdan OCR |
+| `enterprise-app/.../unit_*.json` | 3298 so'z + 844 **tarjimali** jumla | qo'lda yozilgan |
+| `enterprise-trainer/structured.json` | 616 so'z | skanerdan OCR |
 
 App manbasi **ustun turadi**: to'qnashuvda o'sha qoladi
 ([import-enterprise-app.mjs](scripts/import-enterprise-app.mjs) OCR importidan
@@ -353,6 +353,18 @@ uchun yaraydi). Manbada so'z yasalish qoidalari ham shu maydonda uchraydi
 lekin ular OCR parchalari: *"kts cloudy amd windy"*, *"PRM TON ES ... bedroom
 downstairs"*.
 
+App manbasida uch xil ma'lumot bor: `vocabulary` (darsning o'z lug'ati,
+2026-08-15 da qo'shildi va eng sifatlisi), `wordFormation` (so'z yasalish
+juftlari) va `sentencePatterns` (tarjimali jumlalar).
+
+**O'zbekcha sizib chiqishi filtrlanadi.** Manbada grammatika qoidalari ham
+lug'at qatori sifatida yozilgan: `harakat so'raladi → vaqt ketma-ketligi`,
+`ko'rinish → What does she look like?`. Oddiy `^[a-z...]$` tekshiruvi ularni
+ushlamaydi, chunki o'zbekcha ham lotin alifbosida. Ishonchli belgilar: `g'`
+ingliz tilida umuman uchramaydi, `o'` faqat `o'clock`/`who's` da bo'ladi,
+`-moq` esa o'zbek fe'li. Shu bilan 28 ta soxta yozuv tashlandi.
+
+
 **Darslikdagi shaxs ismlari tashlanadi** (`PERSONAL_NAMES`). Ular mashqlarda
 doim qatnashgani uchun chastotasi yuqori va chastota bo'yicha bo'linganda
 hammasi A1'ga — boshlovchining ilk darslariga tushardi (`chris → Kris`).
@@ -366,7 +378,7 @@ ularni jumlasiz kartalarga biriktiradi. Sabab — jumlalar boshqa manbadan
 keladi va o'z generatori bilan yangilanadi; ularni har yozuvga yozib
 qo'yish ikkala faylni qo'lda sinxron ushlashni talab qilardi.
 
-Jumla qamrovi: **5600+ / 9156** karta (ar 453, en 2650, ru 2585).
+Jumla qamrovi: **6000+ / 9942** karta (ar 453, en 3100, ru 2551).
 
 Bahosi: `sentences-en` +20 KB gzip, `sentences-ru` +41 KB gzip. Ikkalasi
 ham TIL BO'LAGIDA — asosiy JS (~131 KB gzip) o'zgarmadi va foydalanuvchi
@@ -669,7 +681,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (9156 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (9942 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
 - [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
       + GSAP animatsiyalari

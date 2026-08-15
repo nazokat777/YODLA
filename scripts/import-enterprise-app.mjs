@@ -62,6 +62,28 @@ function stripLeadingParticle(word) {
   return word.replace(/^(?:an?|the|to) +/, '').trim()
 }
 
+/**
+ * "Inglizcha" maydonga O'ZBEKCHA matn tushib qolganmi.
+ *
+ * Manbada grammatika qoidalari ham lug'at qatori sifatida yozilgan:
+ * `harakat so'raladi → vaqt ketma-ketligi`, `ko'rinish → What does she
+ * look like?`. Ular tarjima emas va kartaga yaramaydi.
+ *
+ * Oddiy `^[a-z...]$` tekshiruvi ularni ushlamaydi — o'zbekcha ham lotin
+ * alifbosida. Ishonchli belgilar:
+ *   - `g'` ingliz tilida umuman uchramaydi;
+ *   - `o'` faqat `o'clock` va `who's` da uchraydi;
+ *   - `-moq` — o'zbek fe'lining noaniq shakli.
+ */
+const APOSTROPHE_OK = /(o'clock|^who's)$/
+
+function isUzbekLeak(word) {
+  if (word.includes("g'")) return true
+  if (word.includes("o'") && !APOSTROPHE_OK.test(word)) return true
+
+  return /moq$/.test(word)
+}
+
 /** So'z lug'atga yaroqlimi */
 function isUsableWord(word) {
   if (!CLEAN_WORD.test(word)) return false
@@ -157,6 +179,7 @@ for (const { data } of files) {
         // Katta harf — atoqli ot yoki qoida sarlavhasi ("play THE violin")
         if (raw !== lower) { dropped += 1; continue }
         if (!isUsableWord(word)) { dropped += 1; continue }
+        if (isUzbekLeak(word)) { dropped += 1; continue }
         if (isGrammarNote(uz)) { dropped += 1; continue }
         if (word === uz.toLowerCase()) { dropped += 1; continue }
         if (seenWord.has(word)) { dropped += 1; continue }
@@ -165,6 +188,32 @@ for (const { data } of files) {
         ordered.push({ word, uz, topic })
       }
     }
+  }
+
+  /*
+   * `vocabulary` — darslikning O'Z lug'at ro'yxati (2026-08-15 da qo'shildi).
+   * Shakli sodda: `{en, uz}`. `wordFormation` dan farqi — u so'z YASALISH
+   * qoidalari uchun, bu esa bevosita dars lug'ati, shuning uchun sifati
+   * yuqoriroq va qamrovi kengroq.
+   */
+  for (const item of data.vocabulary ?? []) {
+    const raw = (item.en ?? '').trim()
+    const uz = (item.uz ?? '').trim()
+    const lower = raw.toLowerCase()
+    const word = stripLeadingParticle(lower)
+
+    if (!raw || !uz) { dropped += 1; continue }
+    // Katta harf — atoqli ot ("China", "Big Ben"): joy va shaxs nomlari
+    // lug'at mashqi uchun yaramaydi
+    if (raw !== lower) { dropped += 1; continue }
+    if (!isUsableWord(word)) { dropped += 1; continue }
+    if (isUzbekLeak(word)) { dropped += 1; continue }
+    if (isGrammarNote(uz)) { dropped += 1; continue }
+    if (word === uz.toLowerCase()) { dropped += 1; continue }
+    if (seenWord.has(word)) { dropped += 1; continue }
+
+    seenWord.add(word)
+    ordered.push({ word, uz, topic })
   }
 }
 
