@@ -9,11 +9,9 @@ import {
   getCard,
   getDueCards,
   getLanguageStats,
-  getMnemonicCards,
   getNextDueDate,
   gradeCard,
   pruneRemovedCards,
-  setMnemonic,
   syncCardContent,
   type NewCardRecordInput,
 } from './cards.repo'
@@ -417,37 +415,3 @@ describe('pruneRemovedCards', () => {
   })
 })
 
-describe('getMnemonicCards', () => {
-  it('faqat mnemonikasi BOR kartalarni qaytaradi', async () => {
-    await addMissingCards(EN_WORDS, NOW)
-    await setMnemonic('en:water', 'vatanimda suv toza')
-
-    const cards = await getMnemonicCards('en')
-
-    expect(cards.map((card) => card.id)).toEqual(['en:water'])
-  })
-
-  it('boshqa tilning kartalarini aralashtirmaydi', async () => {
-    await addMissingCards([...EN_WORDS, ...RU_WORDS], NOW)
-    await setMnemonic('en:water', 'suv haqida')
-    await setMnemonic('ru:привет', 'salom haqida')
-
-    expect((await getMnemonicCards('ru')).map((card) => card.id)).toEqual(['ru:привет'])
-  })
-
-  it('so‘z bo‘yicha alifbo tartibida keladi', async () => {
-    await addMissingCards(EN_WORDS, NOW)
-    await setMnemonic('en:water', 'b')
-    await setMnemonic('en:book', 'a')
-
-    expect((await getMnemonicCards('en')).map((card) => card.word)).toEqual(['book', 'water'])
-  })
-
-  it('mnemonika o‘chirilgach ro‘yxatdan chiqadi', async () => {
-    await addMissingCards(EN_WORDS, NOW)
-    await setMnemonic('en:water', 'vaqtinchalik')
-    await setMnemonic('en:water', '')
-
-    expect(await getMnemonicCards('en')).toEqual([])
-  })
-})

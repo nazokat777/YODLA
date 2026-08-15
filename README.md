@@ -93,6 +93,7 @@ src/
 │   ├── review/              # SRS bo'yicha takrorlash
 │   ├── profile/             # statistika, nishonlar
 │   ├── league/              # haftalik leaderboard (Faza 7)
+│   ├── mnemonics/           # assotsiatsiyalarni boshqarish
 │   └── misc/                # 404
 │
 ├── stores/                  # Zustand do'konlari
@@ -466,6 +467,7 @@ kontentni qayta yuklash dublikat yaratmaydi va progressni o'chirmaydi
 | `/review`            | Takrorlash  | AppShell | onboarding kerak  |
 | `/league`            | Liga        | AppShell | onboarding kerak  |
 | `/profile`           | Profil      | AppShell | onboarding kerak  |
+| `/mnemonics`         | Assotsiatsiyalar | AppShell | onboarding kerak |
 | `/lesson/:lessonId?` | Dars        | Focus    | onboarding kerak  |
 | `*`                  | 404         | Focus    | —                 |
 

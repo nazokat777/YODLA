@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { Panel } from '@/components/ui/Panel'
-import { getAllCards, getMnemonicCards, setMnemonic, type CardRecord } from '@/core/db'
+import { getAllCards, setMnemonic } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { MnemonicRow } from './MnemonicRow'
 
@@ -24,35 +25,33 @@ const MAX_RESULTS = 50
 export function MnemonicsScreen() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
 
-  const [withMnemonic, setWithMnemonic] = useState<CardRecord[] | null>(null)
-  const [allCards, setAllCards] = useState<CardRecord[]>([])
   const [query, setQuery] = useState('')
 
-  useEffect(() => {
-    if (!learningLanguage) return
+  /*
+   * JONLI so'rov (bir martalik o'qish emas).
+   *
+   * Ilova birinchi ochilganda lug'at fonda bazaga yozilib turadi. Bir marta
+   * o'qilsa, ekran bo'sh ro'yxat bilan qolib ketardi va foydalanuvchi
+   * sahifani yangilamaguncha qidiruv hech nima topmasdi. Saqlash va
+   * o'chirishdan keyin ham ro'yxat o'zi yangilanadi.
+   */
+  const allCards = useLiveQuery(
+    () => (learningLanguage ? getAllCards(learningLanguage) : Promise.resolve([])),
+    [learningLanguage],
+  )
 
-    let cancelled = false
+  const withMnemonic = useMemo(() => {
+    if (!allCards) return null
 
-    void Promise.all([getMnemonicCards(learningLanguage), getAllCards(learningLanguage)])
-      .then(([mine, all]) => {
-        if (cancelled) return
-        setWithMnemonic(mine)
-        setAllCards(all)
-      })
-      .catch((error: unknown) => {
-        console.error('Assotsiatsiyalarni yuklab bo‘lmadi:', error)
-        if (!cancelled) setWithMnemonic([])
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [learningLanguage])
+    return allCards
+      .filter((card) => card.mnemonic?.trim())
+      .sort((a, b) => a.word.localeCompare(b.word))
+  }, [allCards])
 
   const trimmed = query.trim().toLowerCase()
 
   const matches = useMemo(() => {
-    if (!trimmed) return []
+    if (!trimmed || !allCards) return []
 
     return allCards.filter(
       (card) =>
@@ -61,28 +60,13 @@ export function MnemonicsScreen() {
     )
   }, [allCards, trimmed])
 
-  /** Bazaga yozib, ekrandagi ro'yxatni ham yangilaydi */
+  /** Bazaga yozadi; ro'yxatni jonli so'rov o'zi yangilaydi */
   async function persist(cardId: string, text: string) {
     try {
       await setMnemonic(cardId, text)
     } catch (error) {
       console.error('Assotsiatsiyani saqlab bo‘lmadi:', error)
-      return
     }
-
-    const apply = (card: CardRecord): CardRecord =>
-      card.id === cardId ? { ...card, mnemonic: text || undefined } : card
-
-    const updatedAll = allCards.map(apply)
-    setAllCards(updatedAll)
-
-    // Ro'yxat bazadan qayta so'ralmaydi — yangilangan kartalardan qayta
-    // yig'iladi, shunda ekran darhol javob beradi
-    setWithMnemonic(
-      updatedAll
-        .filter((card) => card.mnemonic?.trim())
-        .sort((a, b) => a.word.localeCompare(b.word)),
-    )
   }
 
   const shown = trimmed ? matches.slice(0, MAX_RESULTS) : (withMnemonic ?? [])

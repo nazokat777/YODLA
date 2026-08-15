@@ -209,22 +209,6 @@ export function getAllCards(language: LanguageCode): Promise<CardRecord[]> {
   return db.cards.where('language').equals(language).toArray()
 }
 
-/**
- * Mnemonikasi bor kartalar — "Assotsiatsiyalarim" ekrani uchun.
- *
- * Tartib so'z bo'yicha: ro'yxat barqaror bo'lishi kerak, aks holda har
- * ochilishda qatorlar joyini almashtirib, o'qishni qiyinlashtirardi.
- */
-export async function getMnemonicCards(language: LanguageCode): Promise<CardRecord[]> {
-  const cards = await db.cards
-    .where('language')
-    .equals(language)
-    .filter((card) => Boolean(card.mnemonic?.trim()))
-    .toArray()
-
-  return cards.sort((a, b) => a.word.localeCompare(b.word))
-}
-
 /** Bitta kartani id bo'yicha olish */
 export function getCard(cardId: string): Promise<CardRecord | undefined> {
   return db.cards.get(cardId)
