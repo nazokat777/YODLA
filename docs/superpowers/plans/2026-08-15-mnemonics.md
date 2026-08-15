@@ -1101,7 +1101,11 @@ git push
 - Mnemonika mashq paytida ko'rsatilmasligi → mavjud xulq, o'zgartirilmaydi ✓
 - Testlar (repo, FeedbackBar, ekran) → Task 1–5 ✓
 
-**2. Placeholder tekshiruvi:** har qadamda to'liq kod bor; "TODO"/"shunga o'xshash" yo'q. Task 3 Step 4 dagi shart (`ghost` varianti) muqobil kod bilan to'liq yozilgan.
+**2. Placeholder tekshiruvi:** har qadamda to'liq kod bor, taxminiy ko'rsatma yo'q.
+
+**Kodga solishtirib tekshirilgan ikki taxmin:**
+- `variant="ghost"` haqiqatan mavjud (`buttonStyles.ts:12`) — shartli muqobil olib tashlandi.
+- `ProfileScreen.test.tsx` **yo'q** ekan — Task 5 endi uni yaratadi (`MemoryRouter` bilan, chunki ekran `<Link>` ishlatadi).
 
 **3. Tip izchilligi:**
 - `getMnemonicCards(language): Promise<CardRecord[]>` — Task 1 da e'lon qilinib, Task 4 da shu nom bilan ishlatiladi ✓
