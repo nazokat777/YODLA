@@ -35,7 +35,13 @@ export function useLeagueSync(trigger: unknown) {
         xp: todayStat.xp,
         words: todayStat.cardIds.length,
       })
-    })()
+    })().catch((error: unknown) => {
+      // Xato ATAYLAB yutiladi, lekin `catch`siz qoldirib bo'lmaydi:
+      // `void` promise'ni ushlamaydi va rad etish "unhandled rejection"
+      // bo'lib chiqardi. Bazaga yoki tarmoqqa bog'liq nosozlik seansni
+      // to'xtatmasligi kerak — keyingi seansda qayta urinadi.
+      console.error('Liga natijasini yuborib bo‘lmadi:', error)
+    })
 
     return () => {
       cancelled = true
