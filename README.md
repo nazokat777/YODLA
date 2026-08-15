@@ -381,6 +381,19 @@ maydonlarini ustiga yozadi va **SM-2 holatiga tegmaydi** (`interval`,
 `easeFactor`, `dueDate`, `repetitions`). Oddiy `bulkPut` foydalanuvchining
 oylar davomidagi takrorlash progressini nolga qaytarardi.
 
+**Sinxronlash har ochilishda EMAS.** `syncCardContent` + `pruneRemovedCards`
+3600 kartada ~170 ms oladi va deyarli har safar hech narsa topmaydi — lug'at
+build artefakti, u faqat yangi versiya chiqqanda o'zgaradi. Shuning uchun
+lug'atning **barmoq izi** (`deckFingerprint`, FNV-1a, ~9 ms) `localStorage`
+da saqlanadi va mos kelsa ikkala qadam o'tkazib yuboriladi. O'lchangan
+natija: takroriy ochilish 280 ms → 100 ms.
+
+`addMissingCards` esa HAR DOIM ishlaydi — u xavfsizlik to'ri. Brauzer
+IndexedDB'ni tozalab `localStorage` ni qoldirishi mumkin; faqat barmoq iziga
+ishonsak, foydalanuvchi bo'sh ilova bilan qolardi. Sinab ko'rilgan: kartalar
+o'chirilib qayta yuklanganda 3603 tasi ham tiklandi.
+
+
 ### Rus lug'atidagi "ruscha sizib chiqishi"
 
 Manba ta'riflari ba'zan o'zbekcha emas, **ruscha sinonim** bo'ladi. U ham
