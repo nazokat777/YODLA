@@ -545,6 +545,10 @@ Kuchli effektlar yo'l va bosh sahifada; mashq siklida harakatlar
 
 ## Liga va maxfiylik
 
+> **Holat: JONLI.** Backend Supabase'da (Frankfurt) ishlayapti, kalitlar
+> Vercel'da `production` va `preview` uchun o'rnatilgan. Uchidan-uchiga
+> tekshirilgan: darsdagi XP qurilmadan bazaga borib, reytingda ko'rinadi.
+
 Haftalik reyting (Bronza → Kumush → Oltin → Olmos). **Tushirish yo'q** —
 daraja joriy haftaning ko'rsatkichi, jazo emas.
 
