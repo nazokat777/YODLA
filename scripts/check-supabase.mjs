@@ -102,7 +102,34 @@ for (const [name, body] of Object.entries(rpcs)) {
   }
 }
 
-/* 4. XAVFSIZLIK: anon kalit bilan TO'G'RIDAN-TO'G'RI yozib bo'lmasligi shart.
+/* 4. Sxema YANGI versiyasimi.
+      `yodla_add_friend` va `yodla_send_cheer` avval `void` qaytarardi; hozir
+      `boolean` — mijoz "bunday kod yo'q" va "bugun allaqachon yuborilgan"
+      holatlarini shu orqali ajratadi. Eski nusxa ishga tushirilgan bo'lsa,
+      ilova jimgina noto'g'ri xabar ko'rsatardi.
+
+      Tekshiruv OpenAPI tavsifi orqali — yon ta'sirsiz (hech narsa yozilmaydi). */
+try {
+  const res = await rest('')
+  if (!res.ok) {
+    console.log(`  · sxema versiyasini tekshirib bo'lmadi (${res.status}) — o'tkazib yuborildi`)
+  } else {
+    const spec = await res.json()
+    const paths = spec?.paths ?? {}
+
+    for (const name of ['yodla_add_friend', 'yodla_send_cheer']) {
+      const definition = JSON.stringify(paths[`/rpc/${name}`] ?? null)
+
+      if (definition === 'null') fail(`${name}() tavsifda yo'q`)
+      else if (/boolean/i.test(definition)) ok(`${name}() yangi versiya (boolean qaytaradi)`)
+      else fail(`${name}() ESKI versiya — sxemani qaytadan RUN qiling`)
+    }
+  }
+} catch (error) {
+  console.log(`  · sxema versiyasi tekshirilmadi: ${error.message}`)
+}
+
+/* 5. XAVFSIZLIK: anon kalit bilan TO'G'RIDAN-TO'G'RI yozib bo'lmasligi shart.
       Anon kalit ochiq (repo ham ochiq) — yozuv ochiq qolsa, xohlagan odam
       "million XP" yozib reytingni buzardi. */
 try {
