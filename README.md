@@ -61,6 +61,7 @@ src/
 │   │   ├── score.ts         # natijadan boshlang'ich darajani aniqlash
 │   │   └── questions.ts     # savollarni kontentdan yasash
 │   ├── text/transliterate.ts # notanish yozuvning o'qilishi
+│   ├── pronunciation/       # aytilgan so'zni kutilgani bilan solishtirish
 │   ├── srs/                 # SM-2 algoritmi — sof funksiyalar
 │   │   ├── constants.ts     # EF chegaralari, intervallar, o'tish bahosi
 │   │   ├── sm2.ts           # nextEaseFactor / nextInterval / reviewSrsState

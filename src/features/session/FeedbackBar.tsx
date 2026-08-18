@@ -6,6 +6,7 @@ import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
+import { PronounceButton } from '@/components/ui/PronounceButton'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 
 interface FeedbackBarProps {
@@ -140,6 +141,26 @@ export function FeedbackBar({
     <SpeakButton text={text} locale={language.speechLocale} />
   )
 
+  /**
+   * Javob satri uchun ikkala ovoz tugmasi.
+   *
+   * Tartib ataylab shunday: avval NAMUNANI eshitish, keyin O'ZI aytib
+   * ko'rish. Teskarisi mantiqsiz bo'lardi.
+   *
+   * Faqat javob satrida ishlatiladi: bitta panelda ikkita mikrofon tugmasi
+   * "qaysi birini aytishim kerak?" degan savolni tug'dirardi.
+   */
+  const audioButtons = (text: string) => (
+    <>
+      {speakButton(text)}
+      <PronounceButton
+        text={text}
+        locale={language.speechLocale}
+        language={language.code}
+      />
+    </>
+  )
+
   return (
     <div
       ref={panelRef}
@@ -193,7 +214,7 @@ export function FeedbackBar({
                 </p>
               )}
             </div>
-            {answer.isTarget && speakButton(answer.text)}
+            {answer.isTarget && audioButtons(answer.text)}
           </div>
 
           {context && (

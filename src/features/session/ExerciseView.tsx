@@ -5,6 +5,7 @@ import type { Exercise } from '@/core/exercises'
 import { cn } from '@/lib/cn'
 import { speak } from '@/lib/speech'
 import { ChoiceGrid } from './ChoiceGrid'
+import { PronounceButton } from '@/components/ui/PronounceButton'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { WordDisplay } from './WordDisplay'
 import type { ExerciseAnswerState } from './answerState'
@@ -42,7 +43,23 @@ export function ExerciseView(props: ExerciseViewProps) {
           <Panel className="flex min-h-32 flex-col items-center justify-center gap-2 text-center">
             <WordDisplay text={exercise.prompt} language={language} testId="exercise-prompt" />
             {/* So'zni o'qiy olmaslik — notanish yozuvda eng katta to'siq */}
-            <SpeakButton text={exercise.prompt} locale={language.speechLocale} size="lg" />
+            <div className="flex items-center gap-2">
+              <SpeakButton
+                text={exercise.prompt}
+                locale={language.speechLocale}
+                size="lg"
+              />
+              {/*
+                So'z bu yerda savolning O'ZI — uni aytib ko'rish javobni
+                (tarjimani) oshkor qilmaydi. Boshqa mashq turlarida bunday
+                emas, shuning uchun tugma faqat shu yerda.
+              */}
+              <PronounceButton
+                text={exercise.prompt}
+                locale={language.speechLocale}
+                language={language.code}
+              />
+            </div>
           </Panel>
           <p className="text-sm font-semibold text-ink-600">Bu so'z nimani anglatadi?</p>
           <ChoiceGrid

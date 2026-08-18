@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type { CardRecord } from '@/core/db'
 import type { Exercise } from '@/core/exercises'
+import * as recognition from '@/lib/recognition'
 import { FeedbackBar } from './FeedbackBar'
 
 const setMnemonic = vi.fn()
@@ -82,5 +83,17 @@ describe('FeedbackBar — mnemonika', () => {
 
     expect(screen.queryByText(/assotsiatsiya yozish/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /tahrirlash/i })).not.toBeInTheDocument()
+  })
+})
+
+describe('FeedbackBar — talaffuz', () => {
+  it('xato javobdan keyin talaffuzni tekshirish tugmasi chiqadi', () => {
+    vi.spyOn(recognition, 'isRecognitionSupported').mockReturnValue(true)
+
+    renderBar(makeCard())
+
+    expect(
+      screen.getByRole('button', { name: /talaffuzni tekshirish/i }),
+    ).toBeInTheDocument()
   })
 })
