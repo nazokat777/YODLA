@@ -14,8 +14,15 @@ describe('matchesSpoken', () => {
     expect(matchesSpoken('water', ['waiter', 'water'], 'en')).toBe(true)
   })
 
-  it('uzun so‘zda bitta harf farqiga yo‘l qo‘yadi', () => {
+  it('oxiridagi qo‘shimchani kechiradi', () => {
     expect(matchesSpoken('brother', ['brothers'], 'en')).toBe(true)
+    expect(matchesSpoken('watch', ['watches'], 'en')).toBe(true)
+  })
+
+  it('o‘rtasidagi tovush farqini kechirmaydi', () => {
+    // "waiter" ↔ "water" bir tahrir masofasida, lekin aynan shu farq bu
+    // mashq tutishi kerak bo'lgan talaffuz xatosi
+    expect(matchesSpoken('water', ['waiter'], 'en')).toBe(false)
   })
 
   it('mutlaqo boshqa so‘zda false', () => {
@@ -39,7 +46,11 @@ describe('matchesSpoken', () => {
   })
 
   it('qisqa so‘zda bitta harf farqi yetarli emas', () => {
-    // typoTolerance(3) === 0 — qisqa so'zda har harf ma'noni o'zgartiradi
     expect(matchesSpoken('cat', ['cut'], 'en')).toBe(false)
+  })
+
+  it('qisqa so‘zga qo‘shimcha ham kechirilmaydi', () => {
+    // Uch harfli so'zda qo'shimcha butunlay boshqa so'z bo'lishi mumkin
+    expect(matchesSpoken('car', ['card'], 'en')).toBe(false)
   })
 })
