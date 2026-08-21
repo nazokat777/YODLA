@@ -15,6 +15,7 @@ import { cancelSpeech } from '@/lib/speech'
 import { useHasVoice } from '@/hooks/useHasVoice'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
 import { useLeagueSync } from '@/hooks/useLeagueSync'
+import { usePushActivity } from '@/hooks/usePushActivity'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ExerciseView } from './ExerciseView'
 import { EMPTY_ANSWER, type ExerciseAnswerState } from './answerState'
@@ -87,6 +88,9 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   // Bugungi natija ligaga SEANS TUGAGANDA bir marta yuboriladi (rozilik
   // bo'lsa). Har javobda yuborish o'nlab ortiqcha so'rov bo'lardi.
   useLeagueSync(index >= queue.length ? 'finished' : 'running')
+
+  // Bugun mashq qilgan odamga kechqurun eslatma yuborilmasligi uchun
+  usePushActivity(index >= queue.length ? 'finished' : 'running')
 
   /**
    * Audio mashqlari faqat shu tilda HAQIQIY ovoz bo'lsa yaratiladi.

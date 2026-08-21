@@ -22,24 +22,28 @@ export function isPushSupported(): boolean {
 }
 
 /**
- * base64url → Uint8Array.
+ * base64url → ArrayBuffer.
  *
  * `applicationServerKey` aynan bayt massivini talab qiladi; satr berilsa
  * brauzer jimgina rad etadi.
  */
-function decodeKey(base64url: string): Uint8Array {
+function decodeKey(base64url: string): ArrayBuffer {
   const padded = base64url.padEnd(
     base64url.length + ((4 - (base64url.length % 4)) % 4),
     '=',
   )
   const binary = atob(padded.replace(/-/g, '+').replace(/_/g, '/'))
 
-  const bytes = new Uint8Array(binary.length)
+  // Aynan `ArrayBuffer` qaytariladi, `Uint8Array` emas: `subscribe`
+  // `BufferSource` kutadi va yangi TS kutubxonasida ular mos kelmaydi
+  const buffer = new ArrayBuffer(binary.length)
+  const bytes = new Uint8Array(buffer)
+
   for (let index = 0; index < binary.length; index += 1) {
     bytes[index] = binary.charCodeAt(index)
   }
 
-  return bytes
+  return buffer
 }
 
 export type PushResult =

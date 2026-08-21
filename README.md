@@ -103,11 +103,13 @@ src/
 ├── hooks/                   # umumiy React hook'lari
 │   ├── useDocumentDirection.ts  # <html dir="rtl"> boshqaruvi
 │   ├── useStarterDeck.ts        # boshlang'ich so'zlarni bazaga yozish
+│   ├── usePushActivity.ts       # "bugun mashq qildim" belgisi (eslatma uchun)
 │   └── useNowTick.ts            # vaqt o'tishini kuzatish (kun almashuvi)
 │
 ├── lib/                     # sof yordamchilar
 │   ├── cn.ts                # sinf nomlarini birlashtirish
 │   ├── date.ts              # startOfDay / addDays (DST'ga chidamli)
+│   ├── push.ts              # Web Push obunasi (yoqish/o'chirish)
 │   └── format.ts            # "6 kun", "ertaga" ko'rinishidagi matnlar
 ├── content/                 # o'quv kontenti
 │   ├── decks/en.ts ru.ts ar.ts  # qo'lda yozilgan (132/til, jumlalari bilan)
