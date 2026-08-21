@@ -69,6 +69,13 @@ export async function enablePush(hour: number): Promise<PushResult> {
 
     if (permission !== 'granted') return { status: 'denied' }
 
+    // `ready` service worker ro'yxatdan o'tmagan bo'lsa HECH QACHON hal
+    // bo'lmaydi — kalit abadiy "band" holatda qotib qolardi. Shuning uchun
+    // avval registratsiya BOR-YO'QLIGI tekshiriladi (dev rejimida u
+    // ataylab o'tkazib yuboriladi).
+    const existing = await navigator.serviceWorker.getRegistration()
+    if (!existing) return { status: 'unsupported' }
+
     const registration = await navigator.serviceWorker.ready
 
     const subscription = await registration.pushManager.subscribe({

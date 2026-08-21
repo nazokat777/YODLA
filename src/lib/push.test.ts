@@ -14,6 +14,7 @@ function installBrowser(permission: NotificationPermission = 'granted') {
   Object.defineProperty(navigator, 'serviceWorker', {
     configurable: true,
     value: {
+      getRegistration: vi.fn().mockResolvedValue({}),
       ready: Promise.resolve({ pushManager: { subscribe, getSubscription: vi.fn() } }),
     },
   })
@@ -72,6 +73,16 @@ describe('enablePush', () => {
   })
 
   it('brauzer qo‘llab-quvvatlamasa unsupported qaytaradi', async () => {
+    await expect(enablePush(19)).resolves.toEqual({ status: 'unsupported' })
+  })
+
+  it('service worker ro‘yxatdan o‘tmagan bo‘lsa unsupported qaytaradi', async () => {
+    installBrowser('granted')
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: { getRegistration: vi.fn().mockResolvedValue(undefined), ready: new Promise(() => {}) },
+    })
+
     await expect(enablePush(19)).resolves.toEqual({ status: 'unsupported' })
   })
 
