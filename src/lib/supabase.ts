@@ -199,3 +199,72 @@ export async function fetchCheers(myCode: string): Promise<ReceivedCheer[]> {
     return []
   }
 }
+
+/** Push obunasini saqlash (yangi yoki yangilangan) */
+export async function savePushSubscription(input: {
+  endpoint: string
+  p256dh: string
+  auth: string
+  hour: number
+  offsetMinutes: number
+}): Promise<boolean> {
+  const client = await getClient()
+  if (!client) return false
+
+  try {
+    const { data, error } = await client.rpc('yodla_save_push', {
+      p_endpoint: input.endpoint,
+      p_p256dh: input.p256dh,
+      p_auth: input.auth,
+      p_hour: input.hour,
+      p_offset: input.offsetMinutes,
+    })
+    if (error) throw error
+
+    return data !== false
+  } catch (error) {
+    console.error('Obunani saqlab bo‘lmadi:', error)
+    return false
+  }
+}
+
+/** Push obunasini o'chirish */
+export async function removePushSubscription(endpoint: string): Promise<boolean> {
+  const client = await getClient()
+  if (!client) return false
+
+  try {
+    const { error } = await client.rpc('yodla_remove_push', { p_endpoint: endpoint })
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Obunani o‘chirib bo‘lmadi:', error)
+    return false
+  }
+}
+
+/**
+ * "Bugun mashq qildim" belgisi.
+ *
+ * Ansiz cron bugun allaqachon mashq qilgan odamga ham eslatma yuborardi —
+ * bu eslatmani o'chirishga olib keladigan eng tez yo'l. Yuboriladigan
+ * yagona narsa — SANA (vaqtsiz).
+ */
+export async function touchPushActivity(endpoint: string, day: string): Promise<boolean> {
+  const client = await getClient()
+  if (!client) return false
+
+  try {
+    const { error } = await client.rpc('yodla_touch_push', {
+      p_endpoint: endpoint,
+      p_day: day,
+    })
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Faollik sanasini yuborib bo‘lmadi:', error)
+    return false
+  }
+}
