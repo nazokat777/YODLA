@@ -26,6 +26,15 @@ interface SettingsState {
   rtlInterface: boolean
   /** Javob feedback tovushlari (TZ 4: instant feedback) */
   soundEnabled: boolean
+  /** Eslatma soati (0..23), mahalliy vaqt */
+  reminderHour: number
+  /**
+   * Faol push obunasining manzili.
+   *
+   * Bu YAGONA identifikator: seans tugaganda "bugun mashq qildim" belgisi
+   * shu manzil bo'yicha yangilanadi.
+   */
+  pushEndpoint: string | null
 
   setLearningLanguage: (language: LanguageCode) => void
   setDailyGoalWords: (words: number) => void
@@ -35,6 +44,8 @@ interface SettingsState {
   completeOnboarding: () => void
   setRtlInterface: (enabled: boolean) => void
   setSoundEnabled: (enabled: boolean) => void
+  setReminderHour: (hour: number) => void
+  setPushEndpoint: (endpoint: string | null) => void
   /** Barcha sozlamalarni boshlang'ich holatga qaytarish (test/debug uchun) */
   reset: () => void
 }
@@ -48,6 +59,8 @@ const INITIAL = {
   onboardingCompleted: false,
   rtlInterface: false,
   soundEnabled: true,
+  reminderHour: 19,
+  pushEndpoint: null,
 } satisfies Partial<SettingsState>
 
 export const useSettingsStore = create<SettingsState>()(
@@ -75,6 +88,8 @@ export const useSettingsStore = create<SettingsState>()(
       completeOnboarding: () => set({ onboardingCompleted: true }),
       setRtlInterface: (rtlInterface) => set({ rtlInterface }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
+      setReminderHour: (reminderHour) => set({ reminderHour }),
+      setPushEndpoint: (pushEndpoint) => set({ pushEndpoint }),
       reset: () => set(INITIAL),
     }),
     {

@@ -8,6 +8,7 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { BADGES, levelTitle, MAX_STREAK_FREEZES, type BadgeStats } from '@/core/gamification'
 import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { ReminderSettings } from './ReminderSettings'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { getGlobalCardStats } from '@/core/db'
 import { cn } from '@/lib/cn'
@@ -166,6 +167,8 @@ export function ProfileScreen() {
           />
         </label>
       </Panel>
+
+      <ReminderSettings />
 
       <Panel>
         <Link
