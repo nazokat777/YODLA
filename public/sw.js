@@ -101,3 +101,64 @@ self.addEventListener('fetch', (event) => {
     request.mode === 'navigate' ? handleNavigation(request) : handleAsset(request),
   )
 })
+
+/**
+ * Kelgan push.
+ *
+ * Mazmun serverdan JSON bo'lib keladi, lekin unga TAYANIB BO'LMAYDI:
+ * ba'zi brauzerlar obunani tekshirish uchun bo'sh push yuboradi. Shuning
+ * uchun har maydonning zaxira qiymati bor.
+ */
+self.addEventListener('push', (event) => {
+  let payload = {}
+  try {
+    payload = event.data ? event.data.json() : {}
+  } catch {
+    // JSON emas — zaxira matn ishlatiladi
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title || 'YODLA', {
+      body: payload.body || 'Bugungi mashqni unutmang — 5 daqiqa yetarli!',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      lang: 'uz',
+      // Bir xil `tag`: eski o'qilmagan eslatma yangisi bilan ALMASHADI,
+      // ekranda o'nta bir xil bildirishnoma yig'ilib qolmaydi
+      tag: 'yodla-reminder',
+      data: { url: payload.url || '/review' },
+    }),
+  )
+})
+
+/**
+ * Bildirishnoma bosilganda.
+ *
+ * Ilova allaqachon ochiq bo'lsa YANGI oyna ochilmaydi — mavjudi
+ * fokuslanadi va kerakli manzilga o'tadi. Aks holda foydalanuvchida
+ * bir xil ilovaning bir nechta nusxasi to'planardi.
+ */
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+
+  const url = (event.notification.data && event.notification.data.url) || '/review'
+
+  event.waitUntil(
+    (async () => {
+      const clients = await self.clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+
+      for (const client of clients) {
+        if (new URL(client.url).origin === self.location.origin) {
+          await client.focus()
+          if ('navigate' in client) await client.navigate(url)
+          return
+        }
+      }
+
+      await self.clients.openWindow(url)
+    })(),
+  )
+})
