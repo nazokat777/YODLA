@@ -7,6 +7,7 @@ import * as supabase from '@/lib/supabase'
 
 beforeEach(() => {
   vi.spyOn(push, 'isPushSupported').mockReturnValue(true)
+  vi.spyOn(push, 'getActiveEndpoint').mockResolvedValue(null)
   // Bulut kalitlari testda bo'sh — sozlama ko'rinishi uchun yoqib qo'yamiz
   vi.spyOn(supabase, 'isCloudEnabled').mockReturnValue(true)
 })
@@ -54,5 +55,27 @@ describe('ReminderSettings', () => {
     fireEvent.change(screen.getByLabelText(/eslatma vaqti/i), { target: { value: '8' } })
 
     expect(useSettingsStore.getState().reminderHour).toBe(8)
+  })
+
+  it('brauzerda obuna qolmagan bo‘lsa kalit o‘zi o‘chadi', async () => {
+    useSettingsStore.setState({ pushEndpoint: 'https://push.example/eski' })
+    vi.spyOn(push, 'getActiveEndpoint').mockResolvedValue(null)
+
+    render(<ReminderSettings />)
+
+    await waitFor(() => {
+      expect(useSettingsStore.getState().pushEndpoint).toBeNull()
+    })
+  })
+
+  it('brauzer boshqa manzil bergan bo‘lsa saqlangani yangilanadi', async () => {
+    useSettingsStore.setState({ pushEndpoint: 'https://push.example/eski' })
+    vi.spyOn(push, 'getActiveEndpoint').mockResolvedValue('https://push.example/yangi')
+
+    render(<ReminderSettings />)
+
+    await waitFor(() => {
+      expect(useSettingsStore.getState().pushEndpoint).toBe('https://push.example/yangi')
+    })
   })
 })

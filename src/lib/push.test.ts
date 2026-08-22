@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { disablePush, enablePush, isPushSupported } from './push'
+import { disablePush, enablePush, getActiveEndpoint, isPushSupported } from './push'
 import * as supabase from './supabase'
 
 const subscribe = vi.fn()
@@ -107,5 +107,53 @@ describe('disablePush', () => {
     })
 
     await expect(disablePush()).resolves.toBe(false)
+  })
+})
+
+describe('getActiveEndpoint', () => {
+  it('haqiqiy obuna manzilini qaytaradi', async () => {
+    installBrowser('granted')
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        getRegistration: vi.fn().mockResolvedValue({}),
+        ready: Promise.resolve({
+          pushManager: {
+            subscribe,
+            getSubscription: vi.fn().mockResolvedValue({ endpoint: 'https://push.example/live' }),
+          },
+        }),
+      },
+    })
+
+    await expect(getActiveEndpoint()).resolves.toBe('https://push.example/live')
+  })
+
+  it('obuna yo‘q bo‘lsa null', async () => {
+    installBrowser('granted')
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        getRegistration: vi.fn().mockResolvedValue({}),
+        ready: Promise.resolve({
+          pushManager: { subscribe, getSubscription: vi.fn().mockResolvedValue(null) },
+        }),
+      },
+    })
+
+    await expect(getActiveEndpoint()).resolves.toBeNull()
+  })
+
+  it('service worker ro‘yxatdan o‘tmagan bo‘lsa qotib qolmaydi', async () => {
+    installBrowser('granted')
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        getRegistration: vi.fn().mockResolvedValue(undefined),
+        ready: new Promise(() => {}),
+      },
+    })
+
+    await expect(getActiveEndpoint()).resolves.toBeNull()
   })
 })

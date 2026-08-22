@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Panel } from '@/components/ui/Panel'
-import { disablePush, enablePush, isPushSupported } from '@/lib/push'
+import { disablePush, enablePush, getActiveEndpoint, isPushSupported } from '@/lib/push'
 import { isCloudEnabled } from '@/lib/supabase'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
@@ -21,6 +21,29 @@ export function ReminderSettings() {
 
   const [isBusy, setIsBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+
+  /*
+   * Saqlangan holatni BRAUZERDAGI haqiqiy obuna bilan solishtirish.
+   *
+   * Manzil eskirishi mumkin: foydalanuvchi brauzer sozlamalaridan ruxsatni
+   * bekor qilsa yoki sayt ma'lumotlarini tozalasa, bu ekran "eslatma
+   * yoqilgan" deb ko'rsatishda davom etardi — aslida esa hech nima
+   * kelmaydi. Yolg'on "yoqilgan" holat eng yomon variant: foydalanuvchi
+   * eslatma kutadi, kutgani kelmaydi va sababini bilmaydi.
+   */
+  useEffect(() => {
+    let cancelled = false
+
+    void getActiveEndpoint().then((endpoint) => {
+      if (cancelled) return
+
+      setPushEndpoint(endpoint)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [setPushEndpoint])
 
   async function toggle(next: boolean) {
     setIsBusy(true)
@@ -55,8 +78,17 @@ export function ReminderSettings() {
     setReminderHour(hour)
     if (!pushEndpoint) return
 
+    setMessage(null)
     const result = await enablePush(hour)
-    if (result.status === 'enabled') setPushEndpoint(result.endpoint)
+
+    if (result.status === 'enabled') {
+      setPushEndpoint(result.endpoint)
+      return
+    }
+
+    // Jimgina o'tkazib yuborish yaramaydi: ekranda yangi soat turadi,
+    // serverda esa eskisi qoladi — foydalanuvchi buni bilmasdi
+    setMessage('Yangi vaqtni saqlab bo‘lmadi — keyinroq urinib ko‘ring.')
   }
 
   // Shart hook'lardan KEYIN tekshiriladi: React hook'lari shartli

@@ -46,6 +46,43 @@ function decodeKey(base64url: string): ArrayBuffer {
   return buffer
 }
 
+/**
+ * Ro'yxatdan o'tgan service worker'ni xavfsiz olish.
+ *
+ * `navigator.serviceWorker.ready` registratsiya BO'LMASA hech qachon hal
+ * bo'lmaydi — uni to'g'ridan-to'g'ri kutgan har bir joy abadiy osilib
+ * qolardi. Shuning uchun avval `getRegistration()` so'raladi.
+ */
+async function getReadyRegistration(): Promise<ServiceWorkerRegistration | null> {
+  const existing = await navigator.serviceWorker.getRegistration()
+  if (!existing) return null
+
+  return navigator.serviceWorker.ready
+}
+
+/**
+ * Brauzerdagi HAQIQIY obuna manzili.
+ *
+ * Saqlangan manzil eskirishi mumkin: foydalanuvchi brauzer sozlamalaridan
+ * ruxsatni bekor qilsa yoki sayt ma'lumotlarini tozalasa, ilova "eslatma
+ * yoqilgan" deb ko'rsatishda davom etardi — aslida esa hech nima kelmaydi.
+ */
+export async function getActiveEndpoint(): Promise<string | null> {
+  if (!isPushSupported()) return null
+
+  try {
+    const registration = await getReadyRegistration()
+    if (!registration) return null
+
+    const subscription = await registration.pushManager.getSubscription()
+
+    return subscription?.endpoint ?? null
+  } catch (error) {
+    console.error('Obunani tekshirib bo‘lmadi:', error)
+    return null
+  }
+}
+
 export type PushResult =
   | { status: 'enabled'; endpoint: string }
   | { status: 'denied' }
@@ -69,14 +106,9 @@ export async function enablePush(hour: number): Promise<PushResult> {
 
     if (permission !== 'granted') return { status: 'denied' }
 
-    // `ready` service worker ro'yxatdan o'tmagan bo'lsa HECH QACHON hal
-    // bo'lmaydi — kalit abadiy "band" holatda qotib qolardi. Shuning uchun
-    // avval registratsiya BOR-YO'QLIGI tekshiriladi (dev rejimida u
-    // ataylab o'tkazib yuboriladi).
-    const existing = await navigator.serviceWorker.getRegistration()
-    if (!existing) return { status: 'unsupported' }
-
-    const registration = await navigator.serviceWorker.ready
+    // Dev rejimida service worker ataylab ro'yxatdan o'tkazilmaydi
+    const registration = await getReadyRegistration()
+    if (!registration) return { status: 'unsupported' }
 
     const subscription = await registration.pushManager.subscribe({
       // Brauzer talabi: har push KO'RINADIGAN bildirishnoma chiqarishi shart.
@@ -122,12 +154,9 @@ export async function disablePush(): Promise<boolean> {
   if (!isPushSupported()) return false
 
   try {
-    // `enablePush` dagi bilan bir xil sabab: registratsiya bo'lmasa
-    // `ready` HECH QACHON hal bo'lmaydi va kalit "band" holatda qolardi
-    const existing = await navigator.serviceWorker.getRegistration()
-    if (!existing) return false
+    const registration = await getReadyRegistration()
+    if (!registration) return false
 
-    const registration = await navigator.serviceWorker.ready
     const subscription = await registration.pushManager.getSubscription()
 
     if (!subscription) return true
