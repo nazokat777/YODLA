@@ -102,11 +102,33 @@ function collectWordDistractors(
  * davomi hisoblanadi, aks holda so'z o'rtasidan kesilardi.
  */
 function clozeBlank(sentence: string, word: string): string | null {
-  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const pattern = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'iu')
+  const bare = word.replace(ARABIC_MARKS, '')
+  if (bare.length === 0) return null
+
+  /*
+   * Har harf orasiga IXTIYORIY harakat qo'yiladi.
+   *
+   * Nega: lug'atda arabcha so'z harakatli yoziladi ("مَرْحَبًا"), jumlalarda
+   * esa odatda harakatsiz ("مرحبا"). Oddiy taqqoslashda ular mos kelmaydi
+   * va cloze mashqi arabcha kartalarning deyarli uchdan biriga umuman
+   * yaratilmasdi. Lotin va kirill matnida bunday belgilar uchramaydi,
+   * shuning uchun qo'shimcha ularga zarar qilmaydi.
+   */
+  const flexible = [...bare]
+    .map((letter) => letter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join(`${ARABIC_MARKS_CLASS}*`)
+
+  const pattern = new RegExp(
+    `(?<![\\p{L}\\p{M}])${flexible}${ARABIC_MARKS_CLASS}*(?![\\p{L}\\p{M}])`,
+    'iu',
+  )
 
   return pattern.test(sentence) ? sentence.replace(pattern, '___') : null
 }
+
+/** Arab harakalari va tatweel — `normalize.ts` dagi ro'yxatning o'zi */
+const ARABIC_MARKS_CLASS = '[\\u064B-\\u0652\\u0670\\u065F\\u0640]'
+const ARABIC_MARKS = new RegExp(ARABIC_MARKS_CLASS, 'g')
 
 /**
  * So'z harflarini aralashtiradi.

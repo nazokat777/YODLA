@@ -370,6 +370,26 @@ describe('generateExercise — gap ichida (cloze)', () => {
 
     expect(findCloze(mismatch, [mismatch, ...POOL])).toBeNull()
   })
+
+  it('arabcha harakatlar farq qilsa ham topiladi', () => {
+    // Lug'atda so'z harakatli, jumlada esa harakatsiz yoziladi — bu arab
+    // matnlarida odatiy hol va cloze mashqini to'sib qo'ymasligi kerak
+    const salam = makeCard({
+      id: 'ar:marhaban',
+      word: 'مَرْحَبًا',
+      translation: 'salom',
+      language: 'ar',
+      repetitions: 2,
+      sentence: 'مرحبا يا صديقي',
+      sentenceTranslation: 'Salom, do‘stim',
+    })
+
+    const arabicPool = POOL.map((card) => ({ ...card, language: 'ar' as const }))
+    const cloze = findCloze(salam, [salam, ...arabicPool])
+
+    expect(cloze).not.toBeNull()
+    expect(cloze!.prompt).toContain('___')
+  })
 })
 
 describe('generateExercise — harfma-harf (spelling)', () => {
