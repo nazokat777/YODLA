@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { enablePush, isPushSupported } from './push'
+import { disablePush, enablePush, isPushSupported } from './push'
 import * as supabase from './supabase'
 
 const subscribe = vi.fn()
@@ -91,5 +91,21 @@ describe('enablePush', () => {
     vi.spyOn(supabase, 'savePushSubscription').mockResolvedValue(false)
 
     await expect(enablePush(19)).resolves.toEqual({ status: 'failed' })
+  })
+})
+
+describe('disablePush', () => {
+  it('service worker ro‘yxatdan o‘tmagan bo‘lsa qotib qolmaydi', async () => {
+    installBrowser('granted')
+    Object.defineProperty(navigator, 'serviceWorker', {
+      configurable: true,
+      value: {
+        getRegistration: vi.fn().mockResolvedValue(undefined),
+        // `ready` hech qachon hal bo'lmaydi — test qotib qolsa, bu nuqson
+        ready: new Promise(() => {}),
+      },
+    })
+
+    await expect(disablePush()).resolves.toBe(false)
   })
 })

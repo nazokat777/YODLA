@@ -122,6 +122,11 @@ export async function disablePush(): Promise<boolean> {
   if (!isPushSupported()) return false
 
   try {
+    // `enablePush` dagi bilan bir xil sabab: registratsiya bo'lmasa
+    // `ready` HECH QACHON hal bo'lmaydi va kalit "band" holatda qolardi
+    const existing = await navigator.serviceWorker.getRegistration()
+    if (!existing) return false
+
     const registration = await navigator.serviceWorker.ready
     const subscription = await registration.pushManager.getSubscription()
 

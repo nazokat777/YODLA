@@ -90,7 +90,7 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   useLeagueSync(index >= queue.length ? 'finished' : 'running')
 
   // Bugun mashq qilgan odamga kechqurun eslatma yuborilmasligi uchun
-  usePushActivity(index >= queue.length ? 'finished' : 'running')
+  usePushActivity(index >= queue.length)
 
   /**
    * Audio mashqlari faqat shu tilda HAQIQIY ovoz bo'lsa yaratiladi.

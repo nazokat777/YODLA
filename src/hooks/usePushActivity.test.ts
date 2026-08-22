@@ -12,7 +12,16 @@ describe('usePushActivity', () => {
   it('obuna bo‘lmasa hech nima yubormaydi', () => {
     const touch = vi.spyOn(supabase, 'touchPushActivity').mockResolvedValue(true)
 
-    renderHook(() => usePushActivity('finished'))
+    renderHook(() => usePushActivity(true))
+
+    expect(touch).not.toHaveBeenCalled()
+  })
+
+  it('seans hali tugamagan bo‘lsa yubormaydi', () => {
+    useSettingsStore.setState({ pushEndpoint: 'https://push.example/abc' })
+    const touch = vi.spyOn(supabase, 'touchPushActivity').mockResolvedValue(true)
+
+    renderHook(() => usePushActivity(false))
 
     expect(touch).not.toHaveBeenCalled()
   })
@@ -21,7 +30,7 @@ describe('usePushActivity', () => {
     useSettingsStore.setState({ pushEndpoint: 'https://push.example/abc' })
     const touch = vi.spyOn(supabase, 'touchPushActivity').mockResolvedValue(true)
 
-    renderHook(() => usePushActivity('finished'))
+    renderHook(() => usePushActivity(true))
 
     await waitFor(() => {
       expect(touch).toHaveBeenCalledWith(
