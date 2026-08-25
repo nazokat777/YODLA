@@ -115,7 +115,7 @@ src/
 │   ├── decks/en.ts ru.ts ar.ts  # qo'lda yozilgan (132/til, jumlalari bilan)
 │   ├── decks/imported-{ar,en}.ts   # AVTO: Mabdaul qiroat + Enterprise (OCR)
 │   ├── decks/imported-en-app.ts    # AVTO: Enterprise app (qo'lda yozilgan, ustun)
-│   ├── decks/sentences-{en,ru}.ts  # AVTO: Tatoeba jumlalari
+│   ├── decks/sentences-{en,ru,ar}.ts # AVTO: Tatoeba jumlalari
 │   ├── decks/ru-extra.ts           # qo'lda tanlangan ruscha
 │   ├── decks/imported-ru.ts        # AVTO: Ru-Uz-Dictionary (ru.db)
 │   └── starterDecks.ts      # loadLanguageDeck — tilni DANGASA yuklaydi

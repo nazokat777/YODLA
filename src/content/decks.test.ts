@@ -110,10 +110,16 @@ describe.each(LANGUAGE_CODES)('%s to‘plami', (language) => {
     // arab/kirill yozuvida hech qachon mos kelmasdi.
     // Har karta uchun yangi `RegExp` yasash minglab jumlada juda sekin —
     // shuning uchun oddiy qidiruv va bitta umumiy harf tekshiruvi
+    // Harakatlar ikkala tomondan ham olib tashlanadi — `clozeBlank` dagi
+    // qoidaning o'zi. Lug'atda arabcha so'z harakatli ("مَرْحَبًا"), Tatoeba
+    // jumlalarida esa harakatsiz ("مرحبا") yoziladi; ilova ularni MOS deb
+    // biladi, shuning uchun bu test ham shunday hisoblashi kerak.
+    const marks = /[ً-ْٰٟـ]/g
     const isLetter = /[\p{L}\p{M}]/u
     const standalone = (sentence: string, word: string): boolean => {
-      const haystack = sentence.toLowerCase()
-      const needle = word.toLowerCase()
+      const haystack = sentence.toLowerCase().replace(marks, '')
+      const needle = word.toLowerCase().replace(marks, '')
+      if (needle.length === 0) return false
 
       for (let at = haystack.indexOf(needle); at >= 0; at = haystack.indexOf(needle, at + 1)) {
         const before = at > 0 ? haystack[at - 1] : ''

@@ -64,11 +64,12 @@ export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
       return withSentences(merge(RU_DECK, RU_EXTRA, RU_DICT), RU_SENTENCES)
     }
     case 'ar': {
-      const [{ AR_DECK }, { AR_IMPORTED }] = await Promise.all([
+      const [{ AR_DECK }, { AR_IMPORTED }, { AR_SENTENCES }] = await Promise.all([
         import('./decks/ar'),
         import('./decks/imported-ar'),
+        import('./decks/sentences-ar'),
       ])
-      return merge(AR_DECK, AR_IMPORTED)
+      return withSentences(merge(AR_DECK, AR_IMPORTED), AR_SENTENCES)
     }
   }
 }

@@ -26,6 +26,7 @@ kichraytirilgan va WebP (sifat 88) ga o'girilgan — 74 KB → 19 KB.
 | ---- | ----- | ---------- |
 | `src/content/decks/sentences-en.ts` | [Tatoeba](https://tatoeba.org) (eng) | CC-BY 2.0 FR |
 | `src/content/decks/sentences-ru.ts` | [Tatoeba](https://tatoeba.org) (rus) | CC-BY 2.0 FR |
+| `src/content/decks/sentences-ar.ts` | [Tatoeba](https://tatoeba.org) (ara) | CC-BY 2.0 FR |
 
 **CC-BY 2.0 FR** atributni talab qiladi — manba shu yerda va generator
 faylining sarlavhasida ko'rsatilgan.
@@ -33,10 +34,14 @@ faylining sarlavhasida ko'rsatilgan.
 **Qanday tayyorlangan:** `scripts/add-sentences.py` Tatoeba eksportini yuklab
 oladi va har so'zga eng qisqa mos jumlani biriktiradi (3–8 so'z, so'z aynan
 shu shaklda va alohida so'z sifatida uchraydi). Ingliz: 1559 jumla (so'zlarning
-96%), rus: 2584 (71%).
+96%), rus: 2584 (71%), arab: 862 (38%).
 
-Arab jumlalari Tatoeba'dan EMAS — ular Mabdaul qiroat darsliklarining o'z
-matnidan olingan (`scripts/import-vocab.mjs`).
+Arab tilida qidirish HARAKATSIZ shakl bo'yicha boradi: lug'atda so'z harakatli
+yoziladi ("مَرْحَبًا"), Tatoeba jumlalarida esa deyarli har doim harakatsiz
+("مرحبا"). Aynan taqqoslansa bironta ham moslik topilmasdi.
+
+Darsliklarning O'Z matnidan olingan arab jumlalari ham saqlanib qoladi
+(`scripts/import-vocab.mjs`) — ular ustiga yozilmaydi.
 
 ## O'zimiz yaratgan resurslar
 

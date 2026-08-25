@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Ingliz va rus so'zlariga "gap ichida" mashqi uchun jumla biriktiradi.
+"""Ingliz, rus va arab so'zlariga "gap ichida" mashqi uchun jumla biriktiradi.
 
 Manba: Tatoeba (tatoeba.org) — odamlar yozgan jumlalar to'plami, CC-BY 2.0 FR.
-Har til uchun alohida eksport yuklab olinadi (rus ~15 MB, ingliz ~25 MB).
+Har til uchun alohida eksport yuklab olinadi (rus ~15 MB, ingliz ~25 MB,
+arab ~5 MB).
 
 NEGA TATOEBA: Enterprise darsligidagi `example` maydonlari skanerdan olingan
 OCR parchalari edi ("kts cloudy amd windy") — ular mashq uchun yaroqsiz.
@@ -16,12 +17,17 @@ QOIDALAR:
   - bir so'zga eng qisqa jumla olinadi, atoqli otli variantlar (Tom, Mary —
     Tatoeba'da juda ko'p uchraydi) oxirgi navbatda.
 
-Natija: src/content/decks/sentences-{en,ru}.ts (repoga commit qilinadi).
-Ishga tushirish:  python scripts/add-sentences.py
+Arab tilida qidirish HARAKATSIZ shakl bo'yicha boradi: lug'atda so'z
+harakatli, Tatoeba jumlalarida esa deyarli har doim harakatsiz yoziladi.
+
+Natija: src/content/decks/sentences-{en,ru,ar}.ts (repoga commit qilinadi).
+Ishga tushirish:  python scripts/add-sentences.py       (hammasi)
+                  python scripts/add-sentences.py ar    (bittasi)
 """
 import bz2
 import os
 import re
+import sys
 import urllib.request
 
 BASE = 'https://downloads.tatoeba.org/exports/per_language'
@@ -35,6 +41,19 @@ CONFIG = {
         'letters': 'A-Za-z',
         'names': ('Tom', 'Mary', 'John'),
     },
+    'ar': {
+        'code': 'ara',
+        'const': 'AR_SENTENCES',
+        'decks': ['ar.ts', 'imported-ar.ts'],
+        'letters': 'ء-ي',
+        'names': ('توم', 'ماري'),
+        # Arab yozuvida lug'atdagi so'z HARAKATLI ("مَرْحَبًا"), Tatoeba
+        # jumlalari esa deyarli har doim HARAKATSIZ ("مرحبا"). Aynan
+        # taqqoslansa bironta ham moslik topilmasdi.
+        'strip': '[ً-ْٰٟـ]',
+        'end': '.!?؟',
+        'extra': '،؛',
+    },
     'ru': {
         'code': 'rus',
         'const': 'RU_SENTENCES',
@@ -45,13 +64,24 @@ CONFIG = {
 }
 
 
-def deck_words(files):
-    """Lug'at fayllaridagi barcha so'zlar (kichik harfda)."""
-    words = set()
+def deck_words(files, strip=None):
+    """Lug'at so'zlari: {qidiriladigan shakl: lug'atdagi asl shakl}.
+
+    Arab tilida ikkisi FARQ QILADI: qidirish harakatsiz shakl bo'yicha
+    boradi (jumlalarda harakat yo'q), natija fayli esa lug'atdagi harakatli
+    so'z bilan kalitlanishi kerak — ilova aynan shu bilan qidiradi.
+    """
+    words = {}
     for name in files:
         text = open(f'src/content/decks/{name}', encoding='utf-8').read()
         for m in re.finditer(r"word: (?:'([^']*)'|\"([^\"]*)\")", text):
-            words.add((m.group(1) or m.group(2)).lower())
+            original = (m.group(1) or m.group(2)).lower()
+            key = strip.sub('', original) if strip else original
+            if not key:
+                continue
+            # To'qnashuvda birinchisi qoladi: turli harakatli so'zlar bir xil
+            # harakatsiz shaklga ega bo'lishi mumkin ("kitob" va "kutub")
+            words.setdefault(key, original)
     return words
 
 
@@ -84,8 +114,13 @@ def standalone(sentence, word):
 
 
 def build(lang, cfg):
-    words = deck_words(cfg['decks'])
-    shape = re.compile(rf"^[{cfg['letters']}][{cfg['letters']} ,'’-]*[.!?]$")
+    words = deck_words(cfg['decks'], re.compile(cfg['strip']) if cfg.get('strip') else None)
+    end = cfg.get('end', '.!?')
+    extra = cfg.get('extra', '')
+    strip = re.compile(cfg['strip']) if cfg.get('strip') else None
+    shape = re.compile(
+        rf"^[{cfg['letters']}][{cfg['letters']}{cfg.get('strip_chars', '')}{extra} ,'’-]*[{end}]$"
+    )
 
     best = {}
     with bz2.open(download(cfg['code']), 'rt', encoding='utf-8') as fh:
@@ -103,7 +138,9 @@ def build(lang, cfg):
 
             has_name = any(n in sentence for n in cfg['names'])
             for token in tokens:
-                w = token.lower().strip("'’-")
+                w = token.lower().strip("'’-،؛")
+                if strip:
+                    w = strip.sub('', w)
                 if w not in words:
                     continue
                 # Afzallik: atoqli otsiz, so'ng qisqaroq
@@ -111,8 +148,13 @@ def build(lang, cfg):
                 if w not in best or key < best[w][0]:
                     best[w] = (key, sentence)
 
-    # Yakuniy tekshiruv: so'z jumlada haqiqatan alohida turibdimi
-    pairs = {w: s for w, (_, s) in best.items() if standalone(s, w)}
+    # Yakuniy tekshiruv: so'z jumlada haqiqatan alohida turibdimi.
+    # Kalit LUG'ATDAGI shaklga qaytariladi — ilova shu bilan qidiradi.
+    pairs = {
+        words[w]: s
+        for w, (_, s) in best.items()
+        if standalone(strip.sub('', s) if strip else s, w)
+    }
     dropped = len(best) - len(pairs)
 
     body = ''.join(
@@ -139,5 +181,11 @@ def esc(value):
     return f'"{value}"' if "'" in value else f"'{value}'"
 
 
+# Til nomi berilsa faqat o'sha qayta quriladi:
+#   python scripts/add-sentences.py ar
+only = sys.argv[1:]
+
 for lang, cfg in CONFIG.items():
+    if only and lang not in only:
+        continue
     build(lang, cfg)
