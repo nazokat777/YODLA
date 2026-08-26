@@ -409,6 +409,27 @@ IndexedDB'ni tozalab `localStorage` ni qoldirishi mumkin; faqat barmoq iziga
 ishonsak, foydalanuvchi bo'sh ilova bilan qolardi. Sinab ko'rilgan: kartalar
 o'chirilib qayta yuklanganda 3603 tasi ham tiklandi.
 
+### Lug'at qachon UMUMAN yuklanmaydi
+
+Barmoq izi qimmat qadamlarni o'tkazib yuborardi, lekin **lug'atning o'zi
+baribir yuklanardi** — uni hisoblash uchun kerak edi. O'lchov: bu har
+ochilishda ~106 ms JS bajarish + ~91 ms baza o'qish, telefonda 3-5 barobar
+ko'p. Ustiga bosh ekran (`LearningPath`) lug'atni FAQAT mavzular tartibini
+olish uchun ikkinchi marta yuklardi.
+
+Yechim — build belgisi (`__DECK_BUILD_ID__`, `vite.config.ts` da `define`).
+Lug'at build artefakti bo'lgani uchun u faqat yangi versiya bilan o'zgaradi:
+
+1. belgi o'sha VA `countCards(language) > 0` bo'lsa — hech nima yuklanmaydi;
+2. aks holda lug'at yuklanadi, bazaga yoziladi va **mavzular tartibi
+   keshlanadi** (`topicOrderCache`) — bosh ekran uni lug'atsiz oladi.
+
+Karta sonini tekshirish majburiy: u yuqoridagi xavfsizlik to'rini saqlaydi.
+
+O'lchangan natija (production build, brauzer): birinchi ochilishda 4 ta
+lug'at bo'lagi (120 kB), **ikkinchi ochilishda 0 ta**. Yangi versiya
+chiqqanda belgi o'zgaradi va kontent bir marta yangilanadi.
+
 
 ### Rus lug'atidagi "ruscha sizib chiqishi"
 
@@ -460,6 +481,17 @@ va natija `dueDate` bo'yicha tartiblangan holda keladi.
 Kartaning `id` si **aniq** (`en:hello`), tasodifiy UUID emas — shu tufayli
 kontentni qayta yuklash dublikat yaratmaydi va progressni o'chirmaydi
 (`addMissingCards` idempotent).
+
+`interval` va `totalReviews` ham indekslangan (3-versiya). Ular nishonlar
+uchun kerakli uchta sonni — "jami", "o'rganilgan", "mustahkam" — yozuvlarni
+O'QIMASDAN sanashga imkon beradi. Ilgari `getGlobalCardStats` butun jadvalni
+xotiraga ko'chirardi va bu **har seans oxirida** bajarilardi
+(`finalizeSession` nishonlarni qayta hisoblaydi); bir necha til
+o'rganayotgan foydalanuvchida bu 10 000 dan ortiq yozuv degani edi.
+
+Xuddi shu sababdan bosh ekran kartalarni **bir marta** o'qiydi va ularni
+ham statistikaga, ham o'quv yo'liga beradi: ilgari ikkala qism jadvalni
+alohida skanerlardi.
 
 ## Marshrutlar
 
