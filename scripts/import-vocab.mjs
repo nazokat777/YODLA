@@ -77,41 +77,86 @@ function taken(file, normalizer) {
 
 /* -------------------- arab jumlasi (cloze uchun) -------------------- */
 
+/** Ikkala tomon uchun BIR XIL bo'luvchi — aks holda sonlar noto'g'ri taqqoslanardi */
+const SENTENCE_SPLIT = /[.؟?!\n]+/
+
+function splitSentences(text) {
+  return String(text ?? '')
+    .split(SENTENCE_SPLIT)
+    .map((part) => part.trim())
+    .filter(Boolean)
+}
+
 /**
- * Dars matnidan so'z QATNASHGAN jumlani ajratib oladi.
+ * Juft ishonchlimi.
  *
- * Manba raqamli va toza (OCR emas), jumlalar esa darslik uslubida qisqa:
- * "هَذَا كِتَابٌ." Shu sababli ular "gap ichida" mashqi uchun juda mos.
+ * "Mos" deb topilgan darsda ham bo'linish adashishi mumkin, shuning uchun
+ * har juft alohida tekshiriladi. Noto'g'ri juftlangan tarjima
+ * foydalanuvchiga NOTO'G'RI MA'NO o'rgatadi — bu tarjimasiz qolishdan
+ * ancha yomon.
+ */
+function pairIsSafe(arabic, uzbek) {
+  if (!uzbek) return false
+  // O'zbekcha tomonda arab harfi — bo'linish siljib ketgani belgisi
+  if (/[؀-ۿ]/.test(uzbek)) return false
+
+  const ratio = uzbek.length / arabic.length
+  return ratio >= 0.3 && ratio <= 4
+}
+
+/**
+ * Dars uchun arabcha↔o'zbekcha jumla juftlari.
  *
- * Chegara `\b` bilan emas, Unicode sinflari bilan qaraladi: `\b` faqat
+ * Jumlalar soni teng bo'lmasa TARJIMA UMUMAN OLINMAYDI: tarjimasi bor 52
+ * darsdan 13 tasida sonlar farq qiladi (24/15, 15/20) va ularni indeks
+ * bo'yicha juftlash ma'nolarni aralashtirib yuborardi.
+ */
+function lessonPairs(lesson) {
+  const arabic = splitSentences(lesson.reading)
+  const uzbek = splitSentences(lesson.translation)
+
+  const aligned = uzbek.length > 0 && arabic.length === uzbek.length
+
+  return arabic.map((sentence, index) => ({
+    sentence,
+    translation: aligned && pairIsSafe(sentence, uzbek[index]) ? uzbek[index] : null,
+  }))
+}
+
+/**
+ * So'z qatnashgan eng qisqa jumlani (va bo'lsa tarjimasini) tanlaydi.
+ *
+ * Chegara `b` bilan emas, Unicode sinflari bilan qaraladi: `b` faqat
  * ASCII harflarga tayanadi va arab yozuvida hech qachon mos kelmaydi.
  * `\p{M}` — harakatlar, ular so'zning davomi.
  */
-function sentenceForWord(word, reading) {
-  if (!reading) return null
-
+function pickSentence(word, pairs) {
   const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
   const boundary = new RegExp(`(?<![\\p{L}\\p{M}])${escaped}(?![\\p{L}\\p{M}])`, 'u')
 
-  const candidates = reading
-    .split(/[.؟!\n]+/)
-    .map((part) => part.trim())
-    .filter((part) => {
-      if (!boundary.test(part)) return false
+  const candidates = pairs.filter((pair) => {
+    if (!boundary.test(pair.sentence)) return false
 
-      const words = part.split(/\s+/)
-      // Juda qisqa jumlada bo'sh joydan keyin kontekst qolmaydi; juda
-      // uzunini telefon ekranida o'qish qiyin
-      if (words.length < 2 || words.length > 9) return false
+    const words = pair.sentence.split(/\s+/)
+    // Juda qisqa jumlada bo'sh joydan keyin kontekst qolmaydi; juda
+    // uzunini telefon ekranida o'qish qiyin
+    if (words.length < 2 || words.length > 9) return false
 
-      // Transliteratsiya jadvaliga sig'masa, o'qilishida notanish belgi qolardi
-      return arabicIsClean(part)
-    })
+    // Transliteratsiya jadvaliga sig'masa, o'qilishida notanish belgi qolardi
+    return arabicIsClean(pair.sentence)
+  })
 
   if (candidates.length === 0) return null
 
-  // Eng qisqasi — bo'sh joy va uning konteksti bir qarashda ko'rinadi
-  candidates.sort((a, b) => a.length - b.length)
+  // Tarjimasi BORI afzal — u "jumla qurish" mashqini ochadi; teng bo'lsa
+  // qisqarog'i, chunki bo'sh joy va konteksti bir qarashda ko'rinadi
+  candidates.sort((a, b) => {
+    if (Boolean(b.translation) !== Boolean(a.translation)) {
+      return b.translation ? 1 : -1
+    }
+    return a.sentence.length - b.sentence.length
+  })
+
   return candidates[0]
 }
 
@@ -135,6 +180,9 @@ function toTs(constName, lang, buckets) {
         // Jumla bo'lsa "gap ichida" mashqi ishlaydi. Tarjimasi yo'q —
         // "jumla qurish" uchun u shart, shuning uchun bu tur berilmaydi.
         (w.sentence ? `      sentence: ${esc(w.sentence)},\n` : '') +
+        (w.sentenceTranslation
+          ? `      sentenceTranslation: ${esc(w.sentenceTranslation)},\n`
+          : '') +
         '    },\n'
     }
     body += '  ],\n'
@@ -222,6 +270,9 @@ function importArabic() {
     const level = LEVEL_BY_BOOK[Math.min(bookOf[index], LEVEL_BY_BOOK.length - 1)]
     const topic = `Qiroat ${bookNumber}-kitob ${lesson.num}-dars`
 
+    // Dars matni va uning o'zbekcha tarjimasi bir marta juftlanadi
+    const pairs = lessonPairs(lesson)
+
     for (const v of lesson.vocab ?? []) {
       const word = (v.ar ?? '').trim()
       const uz = stripCrossReference((v.uz ?? '').trim())
@@ -241,8 +292,16 @@ function importArabic() {
       seenWord.add(word)
       seenNorm.add(norm)
       seenTr.add(trKey)
-      // Dars matnida shu so'z qatnashgan jumla bo'lsa — "gap ichida" mashqi
-      buckets[level].push({ word, uz, topic, sentence: sentenceForWord(word, lesson.reading) })
+      // Jumla bo'lsa — "gap ichida" mashqi; tarjimasi ham bo'lsa
+      // "jumla qurish" ham ochiladi
+      const picked = pickSentence(word, pairs)
+      buckets[level].push({
+        word,
+        uz,
+        topic,
+        sentence: picked?.sentence,
+        sentenceTranslation: picked?.translation ?? undefined,
+      })
     }
   }
 

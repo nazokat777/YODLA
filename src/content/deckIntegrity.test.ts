@@ -120,6 +120,29 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(wrong.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
   })
 
+  it('jumla tarjimasi ishonchli ko‘rinadi', async () => {
+    const cards = await allCards(language)
+    const pairs = cards.filter((card) => card.sentence && card.sentenceTranslation)
+
+    // Tarjimada arab yoki kirill harfi — juftlash siljib ketgani belgisi
+    const foreign = pairs.filter(
+      (card) =>
+        ARABIC.test(card.sentenceTranslation ?? '') ||
+        CYRILLIC.test(card.sentenceTranslation ?? ''),
+    )
+    expect(foreign.map((card) => card.word)).toEqual([])
+
+    // Uzunliklar nisbati aqlli chegarada: besh barobar farq juftlash
+    // xatosidan boshqa narsa emas
+    const skewed = pairs.filter((card) => {
+      const ratio = (card.sentenceTranslation ?? '').length / (card.sentence ?? '').length
+      return ratio < 0.2 || ratio > 5
+    })
+    expect(
+      skewed.map((card) => `${card.sentence} → ${card.sentenceTranslation}`),
+    ).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)
