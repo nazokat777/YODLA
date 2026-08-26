@@ -143,6 +143,23 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     ).toEqual([])
   })
 
+  it('tarjima o‘rniga darslik jadvali tushmagan', async () => {
+    const cards = await allCards(language)
+
+    const bad = cards.filter((card) => {
+      const text = card.translation.trim()
+
+      // `pencil sharpeners → "sharp + -en + -er"` — so'z yasalish jadvali
+      if (/ \+ /.test(text)) return true
+
+      // `cheaper → "the cheapest"` — daraja jadvali; tarjima o'rnida
+      // inglizcha shakl turibdi va karta hech nima o'rgatmaydi
+      return /^the\s/i.test(text)
+    })
+
+    expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)

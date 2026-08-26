@@ -76,6 +76,12 @@ function isGrammarNote(text) {
   return (
     isTranscription(text) ||
     isAllCaps(text) ||
+    // So'z YASALISH jadvali: `pencil sharpeners → "sharp + -en + -er"`,
+    // `notebooks → "note + book"`. O'zbekcha tarjimada " + " uchramaydi.
+    / \+ /.test(text) ||
+    // Daraja jadvali: `cheaper → "the cheapest"`, `taller → "the tallest"`.
+    // Tarjima o'rnida inglizcha shakl turibdi — karta hech nima o'rgatmaydi.
+    /^the\s/i.test(lower) ||
     text.includes('→') ||
     text.includes('->') ||
     text.startsWith('-') ||
@@ -176,11 +182,30 @@ function taken(file) {
 
 /* ------------------------------ o'qish ------------------------------ */
 
+/**
+ * Tartiblash kaliti.
+ *
+ * "Bir tarjima — bitta so'z" qoidasi tufayli TARTIB muhim: bir xil ma'noli
+ * ikki so'zdan BIRINCHI kelgani qoladi, ikkinchisi tashlanadi.
+ *
+ * Kitobning kirish qismi (muqova, titul varaq, mundarija — `order` 1 dan
+ * kichik) DARS EMAS, lekin u ro'yxat boshida turgani uchun o'zining
+ * tasodifiy so'zlari bilan asosiy lug'atni siqib chiqarardi:
+ * muqovadagi `illustrator → rassom` 1-darsdagi `artist → rassom` ni
+ * yo'q qilgan edi. Shuning uchun kirish qismi ENG OXIRIGA suriladi —
+ * so'zlari baribir qo'shiladi, faqat bahsda yutqazadi.
+ */
+function lessonRank(data) {
+  const order = data.order ?? data.unit
+
+  return order < 1 ? Number.MAX_SAFE_INTEGER + order : order
+}
+
 const files = readdirSync(SRC)
   .filter((name) => /^unit_\d+\.json$/.test(name))
   .map((name) => ({ name, data: JSON.parse(readFileSync(`${SRC}/${name}`, 'utf8')) }))
   // Kitob tartibi — `order` maydoni (qo'shimcha epizodlar 3.5 kabi kasr oladi)
-  .sort((a, b) => (a.data.order ?? a.data.unit) - (b.data.order ?? b.data.unit))
+  .sort((a, b) => lessonRank(a.data) - lessonRank(b.data))
 
 /** Jumlalar: inglizcha → o'zbekcha */
 const sentences = []
