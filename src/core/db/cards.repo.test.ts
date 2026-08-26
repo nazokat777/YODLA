@@ -8,6 +8,7 @@ import {
   getAllCards,
   getCard,
   getDueCards,
+  getGlobalCardStats,
   getLanguageStats,
   getNextDueDate,
   gradeCard,
@@ -415,3 +416,36 @@ describe('pruneRemovedCards', () => {
   })
 })
 
+describe('getGlobalCardStats', () => {
+  it('barcha tillar bo‘yicha sanaydi', async () => {
+    await addMissingCards(
+      [
+        { word: 'water', translation: 'suv', language: 'en' },
+        { word: 'bread', translation: 'non', language: 'en' },
+        { word: 'вода', translation: 'suv-ru', language: 'ru' },
+      ],
+      NOW,
+    )
+
+    // Bittasi mashq qilingan, bittasi mustahkam yodlangan
+    const [first, second] = await getAllCards('en')
+    await db.cards.update(first.id, { totalReviews: 3, interval: 2 })
+    await db.cards.update(second.id, { totalReviews: 9, interval: 30 })
+
+    await expect(getGlobalCardStats()).resolves.toEqual({
+      total: 3,
+      learned: 2,
+      mature: 1,
+    })
+  })
+
+  it('bo‘sh bazada nollar qaytaradi', async () => {
+    await clearAllCards()
+
+    await expect(getGlobalCardStats()).resolves.toEqual({
+      total: 0,
+      learned: 0,
+      mature: 0,
+    })
+  })
+})

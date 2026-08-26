@@ -32,6 +32,23 @@ export class PolyglotDatabase extends Dexie {
       dailyStats: 'day',
       profile: 'id',
     })
+
+    /*
+     * `interval` va `totalReviews` uchun indekslar.
+     *
+     * Nishonlar uchun kerakli uchta son ("o'rganilgan", "mustahkam",
+     * "jami") ilgari BUTUN jadvalni xotiraga ko'chirib hisoblanardi — va
+     * bu har seans oxirida bajarilardi. Indeks bilan ular yozuvlarni
+     * o'qimasdan sanaladi.
+     *
+     * Dexie mavjud ma'lumotni bir marta qayta indekslaydi; kartalar va
+     * takrorlash progressi saqlanib qoladi.
+     */
+    this.version(3).stores({
+      cards: 'id, language, dueDate, interval, totalReviews, [language+dueDate]',
+      dailyStats: 'day',
+      profile: 'id',
+    })
   }
 }
 

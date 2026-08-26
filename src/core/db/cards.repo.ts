@@ -337,17 +337,21 @@ export async function getGlobalCardStats(): Promise<{
   /** Mustahkam yodlangan so'zlar (interval ≥ 21 kun) */
   mature: number
 }> {
-  const cards = await db.cards.toArray()
+  /*
+   * Uchala son INDEKS bo'yicha sanaladi — yozuvlar o'qilmaydi.
+   *
+   * Ilgari bu yerda butun jadval xotiraga ko'chirilardi va bu HAR SEANS
+   * OXIRIDA bajarilardi (`finalizeSession` nishonlarni qayta hisoblaydi).
+   * Bir necha til o'rganayotgan foydalanuvchida bu 10 000 dan ortiq
+   * yozuvni o'qish degani edi.
+   */
+  const [total, learned, mature] = await Promise.all([
+    db.cards.count(),
+    db.cards.where('totalReviews').above(0).count(),
+    db.cards.where('interval').aboveOrEqual(MATURE_INTERVAL_DAYS).count(),
+  ])
 
-  let learned = 0
-  let mature = 0
-
-  for (const card of cards) {
-    if (card.totalReviews > 0) learned += 1
-    if (card.interval >= MATURE_INTERVAL_DAYS) mature += 1
-  }
-
-  return { total: cards.length, learned, mature }
+  return { total, learned, mature }
 }
 
 /** Barcha kartalarni o'chirish (testlar va "progressni tozalash" uchun) */
