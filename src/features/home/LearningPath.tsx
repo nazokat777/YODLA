@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
 import { loadLanguageDeck } from '@/content/starterDecks'
+import { readTopicOrder, saveTopicOrder } from '@/content/topicOrderCache'
 import { getAllCards } from '@/core/db'
 import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
 import { loadGsap } from '@/lib/motion'
@@ -44,9 +45,29 @@ export function LearningPath() {
   const [topicOrder, setTopicOrder] = useState<string[] | null>(null)
   useEffect(() => {
     if (!learningLanguage) return
+
+    /*
+     * Avval KESH. Tartib lug'at bazaga yozilayotganda saqlab qo'yiladi,
+     * shuning uchun odatda shu yerda topiladi va butun lug'atni (inglizchada
+     * ~700 kB JS) qayta yuklash kerak bo'lmaydi.
+     *
+     * Kesh bo'sh bo'lishi mumkin: yangi versiya endi chiqqan yoki
+     * foydalanuvchi tilni endi almashtirgan. Unda lug'at yuklanadi va
+     * natija keyingi safar uchun saqlanadi.
+     */
+    const cached = readTopicOrder(learningLanguage)
+    if (cached) {
+      setTopicOrder(cached)
+      return
+    }
+
     let cancelled = false
     void loadLanguageDeck(learningLanguage).then((deck) => {
-      if (!cancelled) setTopicOrder(topicOrderFromDeck(deck))
+      if (cancelled) return
+
+      const order = topicOrderFromDeck(deck)
+      saveTopicOrder(learningLanguage, order)
+      setTopicOrder(order)
     })
     return () => {
       cancelled = true

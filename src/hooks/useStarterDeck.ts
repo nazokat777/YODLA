@@ -1,12 +1,17 @@
 import { useEffect } from 'react'
-import { addMissingCards, pruneRemovedCards, syncCardContent } from '@/core/db'
-import { loadStarterDeck } from '@/content/starterDecks'
+import { addMissingCards, countCards, pruneRemovedCards, syncCardContent } from '@/core/db'
+import { flatten, loadLanguageDeck } from '@/content/starterDecks'
 import { deckFingerprint } from '@/content/fingerprint'
+import { saveTopicOrder } from '@/content/topicOrderCache'
+import { topicOrderFromDeck } from '@/core/path'
 import type { LanguageCode } from '@/core/types'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /** Oxirgi sinxronlangan lug'at barmoq izi shu kalitda saqlanadi */
 const syncKey = (language: LanguageCode) => `polyglotpro:deck-sync:${language}`
+
+/** Lug'at oxirgi marta qaysi build bilan tekshirilgani */
+const buildKey = (language: LanguageCode) => `polyglotpro:deck-build:${language}`
 
 /**
  * Tanlangan til uchun boshlang'ich so'zlar to'plamini bazaga yozadi.
@@ -21,14 +26,7 @@ const syncKey = (language: LanguageCode) => `polyglotpro:deck-sync:${language}`
  * ilovani yangi o'rnatganlarga yetib borardi; uchinchisisiz esa sifatsiz
  * so'zlar (masalan darslikdagi shaxs ismlari) eski bazalarda qolib ketardi.
  *
- * 2 va 3-qadamlar FAQAT kontent o'zgarganda bajariladi. O'lchov: 3600 kartada
- * ular ~170 ms oladi va deyarli har safar hech narsa topmaydi — lug'at build
- * artefakti, u faqat yangi versiya chiqqanda o'zgaradi. Barmoq izini
- * hisoblash esa ~9 ms.
- *
- * 1-qadam HAR DOIM bajariladi: u xavfsizlik to'ri. Brauzer IndexedDB'ni
- * tozalab, localStorage'ni qoldirishi mumkin — o'shanda barmoq iziga
- * ishonib qolsak, foydalanuvchi bo'sh ilova bilan qolardi.
+ * 2 va 3-qadamlar FAQAT kontent o'zgarganda bajariladi (barmoq izi bo'yicha).
  *
  * Barcha qadamlar idempotent — effekt bir necha marta ishga tushsa ham
  * (React StrictMode ikki marta chaqiradi) dublikat yaratilmaydi va
@@ -40,24 +38,60 @@ export function useStarterDeck() {
   useEffect(() => {
     if (!learningLanguage) return
 
-    // Lug'at dangasa yuklanadi (til bo'lagi), so'ng bazaga yoziladi.
-    // Xatoni yutib yubormaslik uchun aniq ushlaymiz.
-    loadStarterDeck(learningLanguage)
-      .then(async (deck) => {
+    let cancelled = false
+
+    void (async () => {
+      try {
+        /*
+         * TEZ YO'L: hech nima qilish shart emasmi.
+         *
+         * Lug'at build artefakti — u faqat yangi versiya chiqqanda
+         * o'zgaradi. Shuning uchun build belgisi o'sha bo'lsa VA bazada
+         * kartalar tursa, 700 kB lik lug'at bo'lagini yuklash ham,
+         * mingta kartani bazadan so'rash ham keraksiz. O'lchov: bu ish
+         * har ochilishda ~200 ms olardi (telefonda ancha ko'p) va deyarli
+         * har safar hech narsa topmasdi.
+         *
+         * Karta sonini tekshirish MAJBURIY: brauzer IndexedDB'ni tozalab,
+         * localStorage'ni qoldirishi mumkin — faqat belgiga ishonsak,
+         * foydalanuvchi bo'sh ilova bilan qolardi.
+         */
+        const checkedBuild = localStorage.getItem(buildKey(learningLanguage))
+        if (checkedBuild === __DECK_BUILD_ID__) {
+          const existing = await countCards(learningLanguage)
+          if (existing > 0 || cancelled) return
+        }
+
+        // Lug'at dangasa yuklanadi (til bo'lagi), so'ng bazaga yoziladi
+        const levels = await loadLanguageDeck(learningLanguage)
+        if (cancelled) return
+
+        // Bosh ekrandagi o'quv yo'li mavzular tartibini shu yerdan oladi —
+        // aks holda u lug'atni O'ZI qaytadan yuklardi
+        saveTopicOrder(learningLanguage, topicOrderFromDeck(levels))
+
+        const deck = flatten(levels)
+
         await addMissingCards(deck)
 
         const fingerprint = deckFingerprint(deck)
-        if (localStorage.getItem(syncKey(learningLanguage)) === fingerprint) return
+        if (localStorage.getItem(syncKey(learningLanguage)) !== fingerprint) {
+          await syncCardContent(deck)
+          await pruneRemovedCards(learningLanguage, deck)
 
-        await syncCardContent(deck)
-        await pruneRemovedCards(learningLanguage, deck)
+          // Belgi FAQAT muvaffaqiyatdan keyin qo'yiladi: sinxronlash yarim
+          // yo'lda uzilsa, keyingi ochilishda qaytadan urinilsin
+          localStorage.setItem(syncKey(learningLanguage), fingerprint)
+        }
 
-        // Belgi FAQAT muvaffaqiyatdan keyin qo'yiladi: sinxronlash yarim
-        // yo'lda uzilsa, keyingi ochilishda qaytadan urinilsin
-        localStorage.setItem(syncKey(learningLanguage), fingerprint)
-      })
-      .catch((error: unknown) => {
+        localStorage.setItem(buildKey(learningLanguage), __DECK_BUILD_ID__)
+      } catch (error) {
         console.error("Boshlang'ich to'plamni yuklab bo'lmadi:", error)
-      })
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
   }, [learningLanguage])
 }

@@ -204,6 +204,18 @@ export async function getNextDueDate(
   return next?.dueDate ?? null
 }
 
+/**
+ * Shu tildagi kartalar SONI.
+ *
+ * `getAllCards().length` dan farqi — yozuvlar o'qilmaydi, faqat indeks
+ * bo'yicha sanaladi. Ilova ochilishida "baza bo'shmi" degan savolga
+ * javob berish uchun ishlatiladi, u yerda mingta kartani xotiraga
+ * ko'chirish ortiqcha bo'lardi.
+ */
+export function countCards(language: LanguageCode): Promise<number> {
+  return db.cards.where('language').equals(language).count()
+}
+
 /** Shu tildagi barcha kartalar */
 export function getAllCards(language: LanguageCode): Promise<CardRecord[]> {
   return db.cards.where('language').equals(language).toArray()

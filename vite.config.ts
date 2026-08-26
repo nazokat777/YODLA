@@ -5,7 +5,20 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
 // Vite konfiguratsiyasi: React + Tailwind v4 + Vitest
+/*
+ * Build belgisi.
+ *
+ * Lug'at BUILD ARTEFAKTI: u faqat yangi versiya chiqqanda o'zgaradi.
+ * Shu belgi tufayli ilova har ochilganda 700 kB lik lug'at bo'lagini
+ * yuklab, 4000 ta kartani bazadan so'rashi shart emas — o'lchov bo'yicha
+ * bu har safar ~200 ms (telefonda ancha ko'p) behuda ish edi.
+ */
+const DECK_BUILD_ID = String(Date.now())
+
 export default defineConfig({
+  define: {
+    __DECK_BUILD_ID__: JSON.stringify(DECK_BUILD_ID),
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
