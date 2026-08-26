@@ -159,10 +159,27 @@ export async function pruneRemovedCards(
 }
 
 /**
+ * Karta kamida bir marta mashq qilinganmi.
+ *
+ * `repetitions > 0` EMAS: xato javobdan keyin u nolga qaytadi, lekin karta
+ * yangi bo'lib qolmaydi.
+ */
+function isSeen(card: CardRecord): boolean {
+  return card.totalReviews > 0
+}
+
+/**
  * Takrorlash muddati yetgan kartalar — eng "kechikkani" birinchi bo'lib.
  *
+ * FAQAT ILGARI KO'RILGAN kartalar (`totalReviews > 0`). Yangi so'zlar bu
+ * yerga tushmaydi: ular DARSDA o'rganiladi. Ilgari ular ham qaytarilardi va
+ * natijada bir so'z ikki joyda chiqardi, yangi o'rnatgan foydalanuvchi esa
+ * bosh ekranda "4440 ta so'z unutish arafasida" degan yozuvni ko'rardi —
+ * hech qachon ko'rmagan so'zlari haqida.
+ *
  * `[language+dueDate]` qo'shma indeksi bo'yicha oraliq skan qilinadi,
- * shuning uchun natija dueDate bo'yicha o'sish tartibida keladi.
+ * shuning uchun natija dueDate bo'yicha o'sish tartibida keladi; `limit`
+ * FILTRDAN keyin qo'llanadi, ya'ni kerakli soni to'lgach skan to'xtaydi.
  */
 export async function getDueCards(
   language: LanguageCode,
@@ -172,6 +189,7 @@ export async function getDueCards(
   const collection = db.cards
     .where('[language+dueDate]')
     .between([language, Dexie.minKey], [language, now], true, true)
+    .filter(isSeen)
 
   return limit === undefined ? collection.toArray() : collection.limit(limit).toArray()
 }
@@ -184,6 +202,7 @@ export function countDueCards(
   return db.cards
     .where('[language+dueDate]')
     .between([language, Dexie.minKey], [language, now], true, true)
+    .filter(isSeen)
     .count()
 }
 
@@ -199,6 +218,7 @@ export async function getNextDueDate(
   const next = await db.cards
     .where('[language+dueDate]')
     .between([language, now], [language, Dexie.maxKey], false, true)
+    .filter(isSeen)
     .first()
 
   return next?.dueDate ?? null
@@ -304,7 +324,8 @@ export function computeLanguageStats(
   const stats: LanguageStats = { total: cards.length, due: 0, fresh: 0, learning: 0, mature: 0 }
 
   for (const card of cards) {
-    if (card.dueDate <= now) stats.due += 1
+    // "Takrorlash" faqat KO'RILGAN kartalar haqida — yangilari `fresh` da
+    if (card.dueDate <= now && isSeen(card)) stats.due += 1
 
     // "fresh" — hech qachon ko'rilmagan. `repetitions === 0` emas, chunki
     // xato javobdan keyin repetitions nolga qaytadi, lekin karta yangi emas.

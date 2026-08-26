@@ -86,10 +86,23 @@ describe('HomeScreen — geymifikatsiya', () => {
 
   it('takrorlanadigan kartalar sonini ko‘rsatadi', async () => {
     await addMissingCards(WORDS, Date.now() - 60_000)
+    // Takrorlash navbatiga faqat KO'RILGAN kartalar tushadi
+    const { db } = await import('@/core/db/db')
+    await db.cards.toCollection().modify({ totalReviews: 1 })
 
     renderScreen()
 
     expect(await screen.findByText(/2 ta so.z unutish arafasida/i)).toBeInTheDocument()
+  })
+
+  it('YANGI so‘zlar takrorlash sifatida ko‘rsatilmaydi', async () => {
+    // Hech qachon ko'rilmagan so'zni "unutish arafasida" deb ko'rsatish
+    // yangi foydalanuvchini bekorga qo'rqitardi (4440 ta so'z)
+    await addMissingCards(WORDS, Date.now() - 60_000)
+
+    renderScreen()
+
+    expect(await screen.findByText(/takrorlanadigan so.z yo.q/i)).toBeInTheDocument()
   })
 })
 

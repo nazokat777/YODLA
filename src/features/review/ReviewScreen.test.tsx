@@ -15,9 +15,17 @@ const EN_WORDS: NewCardRecordInput[] = [
 const PAST = () => Date.now() - 60_000
 const FUTURE = () => Date.now() + 86_400_000
 
-/** Kartalarni "muddati yetgan" holatda joylash */
+/**
+ * Kartalarni "muddati yetgan" holatda joylash.
+ *
+ * `totalReviews` ATAYLAB nolga teng emas: takrorlash navbatiga faqat
+ * ILGARI KO'RILGAN kartalar tushadi (yangi so'zlar darsda o'rganiladi).
+ */
 async function seed(words = EN_WORDS) {
   await addMissingCards(words, PAST())
+
+  const ids = words.map((word) => `${word.language}:${word.word.toLowerCase()}`)
+  await Promise.all(ids.map((id) => db.cards.update(id, { totalReviews: 1 })))
 }
 
 /** Faqat bitta karta navbatda qolsin — qolganlari kelajakka suriladi */
@@ -106,7 +114,9 @@ describe('ReviewScreen — mashq oqimi', () => {
       // Tanib olish (oson tur) to'g'ri bajarilsa — baho 4
       expect(card?.repetitions).toBe(1)
       expect(card?.easeFactor).toBe(2.5)
-      expect(card?.totalReviews).toBe(1)
+      // `seed()` kartani "ko'rilgan" qilib qo'yadi (aks holda u takrorlash
+      // navbatiga tushmasdi), shuning uchun bittasi ustiga qo'shiladi
+      expect(card?.totalReviews).toBe(2)
     })
   })
 

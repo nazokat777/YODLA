@@ -98,11 +98,13 @@ describe('addMissingCards', () => {
 })
 
 describe('getDueCards / countDueCards', () => {
-  it('yangi kartalar darhol takrorlashga tayyor', async () => {
+  it('YANGI kartalar takrorlashga tushmaydi', async () => {
+    // Takrorlash — unutishdan oldin qaytarish. Hech qachon ko'rilmagan
+    // so'zni "takrorlash" mumkin emas: u DARSDA o'rganiladi.
     await addMissingCards(EN_WORDS, NOW)
 
-    expect(await countDueCards('en', NOW)).toBe(3)
-    expect(await getDueCards('en', NOW)).toHaveLength(3)
+    expect(await countDueCards('en', NOW)).toBe(0)
+    expect(await getDueCards('en', NOW)).toHaveLength(0)
   })
 
   it('baholangan karta navbatdan chiqadi', async () => {
@@ -111,8 +113,8 @@ describe('getDueCards / countDueCards', () => {
 
     const due = await getDueCards('en', NOW)
 
-    expect(due).toHaveLength(2)
-    expect(due.map((card) => card.id)).not.toContain('en:hello')
+    // Ko'rilgan, lekin muddati hali yetmagan
+    expect(due).toHaveLength(0)
   })
 
   it('ertasi kuni karta yana navbatga qaytadi', async () => {
@@ -121,33 +123,41 @@ describe('getDueCards / countDueCards', () => {
 
     const tomorrow = addDays(startOfDay(NOW), 1)
 
-    expect(await countDueCards('en', tomorrow)).toBe(3)
+    // Faqat KO'RILGANI qaytadi — qolgan ikkitasi hamon yangi
+    expect(await countDueCards('en', tomorrow)).toBe(1)
   })
 
   it('faqat tanlangan tildagi kartalarni qaytaradi', async () => {
     await addMissingCards([...EN_WORDS, ...RU_WORDS], NOW)
+    await gradeCard('en:hello', 4, NOW)
+    await gradeCard('ru:привет', 4, NOW)
 
-    expect(await countDueCards('en', NOW)).toBe(3)
-    expect(await countDueCards('ru', NOW)).toBe(1)
-    expect(await countDueCards('ar', NOW)).toBe(0)
+    const later = addDays(NOW, 30)
+
+    expect(await countDueCards('en', later)).toBe(1)
+    expect(await countDueCards('ru', later)).toBe(1)
+    expect(await countDueCards('ar', later)).toBe(0)
   })
 
   it('eng kechikkan karta birinchi bo‘lib keladi', async () => {
     await addMissingCards(EN_WORDS, NOW)
-    // "hello" ni uzoq muddatga, "water" ni qisqa muddatga surib qo'yamiz
     await gradeCard('en:hello', 5, NOW) // 1 kun
     await gradeCard('en:water', 5, NOW) // 1 kun
     await gradeCard('en:water', 5, addDays(NOW, 1)) // 6 kun
 
     const due = await getDueCards('en', addDays(NOW, 30))
 
-    expect(due.map((card) => card.id)).toEqual(['en:book', 'en:hello', 'en:water'])
+    // "book" umuman ko'rilmagan — ro'yxatda yo'q
+    expect(due.map((card) => card.id)).toEqual(['en:hello', 'en:water'])
   })
 
   it('limit natijani cheklaydi', async () => {
     await addMissingCards(EN_WORDS, NOW)
+    await gradeCard('en:hello', 4, NOW)
+    await gradeCard('en:water', 4, NOW)
+    await gradeCard('en:book', 4, NOW)
 
-    expect(await getDueCards('en', NOW, 2)).toHaveLength(2)
+    expect(await getDueCards('en', addDays(NOW, 30), 2)).toHaveLength(2)
   })
 })
 
@@ -234,7 +244,8 @@ describe('getLanguageStats', () => {
     expect(stats.mature).toBe(1) // hello (38 kun)
     expect(stats.learning).toBe(1) // water
     expect(stats.fresh).toBe(1) // book
-    expect(stats.due).toBe(1) // faqat book hozir tayyor
+    // "book" hech qachon ko'rilmagan — u `fresh`, takrorlash navbatida emas
+    expect(stats.due).toBe(0)
   })
 })
 
@@ -260,16 +271,20 @@ describe('getNextDueDate', () => {
 
   it('eng yaqin kelajakdagi muddatni tanlaydi', async () => {
     await addMissingCards(EN_WORDS, NOW)
-    await db.cards.update('en:book', { dueDate: addDays(startOfDay(NOW), 5) })
-    await db.cards.update('en:hello', { dueDate: addDays(startOfDay(NOW), 2) })
-    await db.cards.update('en:water', { dueDate: addDays(startOfDay(NOW), 9) })
+    // Uchalasi ham KO'RILGAN — aks holda ular takrorlash navbatiga kirmaydi
+    await db.cards.update('en:book', { dueDate: addDays(startOfDay(NOW), 5), totalReviews: 1 })
+    await db.cards.update('en:hello', { dueDate: addDays(startOfDay(NOW), 2), totalReviews: 1 })
+    await db.cards.update('en:water', { dueDate: addDays(startOfDay(NOW), 9), totalReviews: 1 })
 
     expect(await getNextDueDate('en', NOW)).toBe(addDays(startOfDay(NOW), 2))
   })
 
   it('boshqa tilning kartalarini hisobga olmaydi', async () => {
     await addMissingCards(RU_WORDS, NOW)
-    await db.cards.update('ru:привет', { dueDate: addDays(startOfDay(NOW), 3) })
+    await db.cards.update('ru:привет', {
+      dueDate: addDays(startOfDay(NOW), 3),
+      totalReviews: 1,
+    })
 
     expect(await getNextDueDate('en', NOW)).toBeNull()
     expect(await getNextDueDate('ru', NOW)).toBe(addDays(startOfDay(NOW), 3))
