@@ -62,6 +62,35 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(duplicates).toEqual([])
   })
 
+  it('tarjima o‘rniga transkripsiya tushmagan', async () => {
+    const cards = await allCards(language)
+
+    // Manbada ba'zi so'zlarga ma'no o'rniga talaffuz qo'yilgan
+    // (`you'll → "/juːl/"`). Bunday karta hech nima o'rgatmaydi va eng
+    // yomoni — boshqa savollarda chalg'ituvchi variant bo'lib chiqadi.
+    const ipa = /[ˈˌːɪəʊæʌɜɒθðʃʒŋ]/
+    const bad = cards.filter((card) => {
+      const text = card.translation.trim()
+      return (text.startsWith('/') && text.endsWith('/')) || ipa.test(text)
+    })
+
+    expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
+  it('tarjima butunlay bosh harfda emas', async () => {
+    const cards = await allCards(language)
+
+    // Grammatika jadvallarining ustun yorlig'i tarjima maydoniga tushib
+    // qolardi: `wish to → "RASMIY"`, `skidded → "D IKKILANADI"`.
+    // O'zbekcha tarjima hech qachon butunlay bosh harfda yozilmaydi.
+    const bad = cards.filter((card) => {
+      const letters = card.translation.replace(/[^\p{L}]/gu, '')
+      return letters.length >= 3 && letters === letters.toUpperCase()
+    })
+
+    expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)

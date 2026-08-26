@@ -56,11 +56,26 @@ function isTranscription(text) {
   )
 }
 
+/**
+ * Butunlay BOSH HARFDA yozilgan yozuvlar.
+ *
+ * Manbadagi grammatika jadvallarida ustun yorlig'i tarjima maydoniga
+ * tushib qolgan: `wish to → "RASMIY"`, `want to → "ODDIY"`,
+ * `skidded → "D IKKILANADI"`. O'zbekcha tarjima hech qachon butunlay
+ * bosh harfda yozilmaydi, shuning uchun bu belgi ishonchli.
+ */
+function isAllCaps(text) {
+  const letters = text.replace(/[^\p{L}]/gu, '')
+
+  return letters.length >= 3 && letters === letters.toUpperCase()
+}
+
 function isGrammarNote(text) {
   const lower = text.toLowerCase()
 
   return (
     isTranscription(text) ||
+    isAllCaps(text) ||
     text.includes('→') ||
     text.includes('->') ||
     text.startsWith('-') ||
