@@ -3189,13 +3189,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
-      word: 'يَجِبُ عَلَيْكَ أَنْ تَقْرَأَ دَرْسَكَ',
-      translation: "darsingni o'qish senga shart",
-      language: 'ar',
-      topic: 'Qiroat 1-kitob 41-dars',
-      level: 'A1',
-    },
-    {
       word: 'عَمٌّ',
       translation: 'amaki (otaning akasi/ukasi)',
       language: 'ar',
@@ -3751,20 +3744,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'الْمَدْرَسَةُ الْحُسَيْنِيَّةُ',
       translation: 'Husayniya madrasasi',
-      language: 'ar',
-      topic: 'Qiroat 1-kitob 48-dars',
-      level: 'A1',
-    },
-    {
-      word: 'أَنَا الَّذِي أُعَلِّمُ هَذَا التِّلْمِيذَ',
-      translation: "bu o'quvchini men o'qitaman",
-      language: 'ar',
-      topic: 'Qiroat 1-kitob 48-dars',
-      level: 'A1',
-    },
-    {
-      word: 'أَنَا الَّتِي خِطْتُ هَذَا اللِّبَاسَ',
-      translation: 'bu kiyimni men tikdim',
       language: 'ar',
       topic: 'Qiroat 1-kitob 48-dars',
       level: 'A1',
@@ -5608,13 +5587,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'فَرَأَى كُلَّ مَا حَصَلَ',
-      translation: "yuz bergan hodisaning barchasini ko'rdi",
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 19-dars',
-      level: 'A2',
-    },
-    {
       word: 'كَيْفَ',
       translation: 'qanday',
       language: 'ar',
@@ -6300,14 +6272,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Qiroat 2-kitob 28-dars',
       level: 'A2',
-    },
-    {
-      word: 'فِي أَقَلَّ مِنْ سَاعَةٍ',
-      translation: 'bir soatdan ozda',
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 28-dars',
-      level: 'A2',
-      sentence: 'فِي أَقَلَّ مِنْ سَاعَةٍ',
     },
     {
       word: 'بَدَلَ',
@@ -7255,13 +7219,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       sentence: 'فَصَارَتْ تَتْبَعُهُ وَتُطَارِدُهُ',
     },
     {
-      word: 'لَا يَلْوِي عَلَى شَيْءٍ',
-      translation: 'biror narsaga qaramasdan',
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 37-dars',
-      level: 'A2',
-    },
-    {
       word: 'قَتِيلَ حُمْقِهَا',
       translation: "ahmoqlar o'limidek",
       language: 'ar',
@@ -7839,13 +7796,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'مَا فِي هَذِهِ الْجَرَّةِ',
-      translation: "bu ko'zaning ichidagi narsa",
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 46-dars',
-      level: 'A2',
-    },
-    {
       word: 'غَلَاءٌ',
       translation: "qimmatlamog'i",
       language: 'ar',
@@ -8336,13 +8286,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'بَرِّيَّةٌ',
       translation: "cho'l, dasht, sahro",
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 52-dars',
-      level: 'A2',
-    },
-    {
-      word: 'لَيْسَ لَهُ قُوَّةٌ تُذْكَرُ',
-      translation: "uning aytarlik kuchi yo'q",
       language: 'ar',
       topic: 'Qiroat 2-kitob 52-dars',
       level: 'A2',
@@ -9053,14 +8996,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'فَعَاشَ بِهَا مَا عَاشَ',
-      translation: 'taqdirga bitilgan umrni yashadi',
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 59-dars',
-      level: 'A2',
-      sentence: 'فَعَاشَ بِهَا مَا عَاشَ ثُمَّ هَرِمَ فَلَمْ يَسْتَطِعْ صَيْدًا',
-    },
-    {
       word: 'اِصْطَحَبَا',
       translation: "ikkovi yo'ldosh va hamroh bo'ldi",
       language: 'ar',
@@ -9126,13 +9061,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'قُمْنَا لِذَلِكَ الْخَبَرِ وَقَعَدْنَا',
-      translation: "alg'ov-dalg'ov bo'lib ketdik",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 1-dars',
-      level: 'B1',
-    },
-    {
       word: 'مُسْتَعِدٌّ',
       translation: "tayyor, hozir bo'lmoq",
       language: 'ar',
@@ -9149,13 +9077,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'أَنْ أَحُلَّ',
       translation: 'echmoq',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 1-dars',
-      level: 'B1',
-    },
-    {
-      word: 'لِمَا نَزَلَ بِي مِنَ الكَآبَةِ',
-      translation: "yetgan g'amginlik",
       language: 'ar',
       topic: 'Qiroat 3-kitob 1-dars',
       level: 'B1',
@@ -9367,13 +9288,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'وَأَيَّ حُبٍّ',
       translation: 'sevganda qandoq',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 2-dars',
-      level: 'B1',
-    },
-    {
-      word: 'لَمْ يَتَيَسَّرْ لَنَا اللِّقَاءُ',
-      translation: 'uchrashish nasib etmasa',
       language: 'ar',
       topic: 'Qiroat 3-kitob 2-dars',
       level: 'B1',
@@ -10190,13 +10104,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'لِمَا هُمْ فِيهِ مِنَ الجُوعِ',
-      translation: 'ulardagi ochlik sabab',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 11-dars',
-      level: 'B1',
-    },
-    {
       word: 'عُلالَةٌ',
       translation: 'ovunchoq',
       language: 'ar',
@@ -10353,13 +10260,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'فَارْجِي',
       translation: 'umid qilgin',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 12-dars',
-      level: 'B1',
-    },
-    {
-      word: 'إِذا جِئْتُ بِما جِئْتُ',
-      translation: "qo'lga tushgan narsani olib kelganimda",
       language: 'ar',
       topic: 'Qiroat 3-kitob 12-dars',
       level: 'B1',
@@ -10585,13 +10485,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'وَقَدْ طَعَنَ فِي السِّنِّ',
-      translation: "uni yoshi ulg'ayganini aybladi",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 15-dars',
-      level: 'B1',
-    },
-    {
       word: 'مُتَعَجِّبًا',
       translation: 'taajjublangan holda',
       language: 'ar',
@@ -10615,13 +10508,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'زِهْ',
       translation: "ajablanganda aytiladi (forscha so'z)",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 15-dars',
-      level: 'B1',
-    },
-    {
-      word: 'مَا أَعْجَلَ مَا أَثْمَرَ هَذا النَّخْلَ',
-      translation: 'ushbu xurmo muncha tez hosil berdi',
       language: 'ar',
       topic: 'Qiroat 3-kitob 15-dars',
       level: 'B1',
@@ -10864,14 +10750,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'بِما صارَ إِلَيْهِ رَأْيُهُمْ',
-      translation: "fikrlari jam bo'lgan narsa",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 19-dars',
-      level: 'B1',
-      sentence: 'ثُمَّ إِنَّهُمْ تَوَجَّهُوا إِلَيْهِ وَأَخْبَرُوهُ بِما صارَ إِلَيْهِ رَأْيُهُمْ',
-    },
-    {
       word: 'كَفَافٌ',
       translation: 'yetgulik, kifoya qilgulik',
       language: 'ar',
@@ -10938,13 +10816,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'مُقْبِلاً',
       translation: 'kelayotganini',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 19-dars',
-      level: 'B1',
-    },
-    {
-      word: 'مَكَّنَ الثَّعالِبِ مِنْ فَرِيسَتِهِمْ',
-      translation: "tulkilar ovlarini yeyish imkoniga ega bo'ldi",
       language: 'ar',
       topic: 'Qiroat 3-kitob 19-dars',
       level: 'B1',
@@ -11522,13 +11393,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'لَمْ تُعَرِّجْ عَلَى شَيْءٍ',
-      translation: "biror narsaga qayrilib qo'ymadi",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 25-dars',
-      level: 'B1',
-    },
-    {
       word: 'تَفْرِيطٌ',
       translation: "e'tiborsizlik",
       language: 'ar',
@@ -11876,22 +11740,8 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'مَنْ هُوَ أَسَنُّ مِنْكَ',
-      translation: "sendan yoshi ulug'roq",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 28-dars',
-      level: 'B1',
-    },
-    {
       word: 'لافِظٌ',
       translation: "so'zlovchi",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 28-dars',
-      level: 'B1',
-    },
-    {
-      word: 'مَنْ هُوَ أَحَقُّ مِنْكَ',
-      translation: 'sizdan haqliroq',
       language: 'ar',
       topic: 'Qiroat 3-kitob 28-dars',
       level: 'B1',
@@ -12278,13 +12128,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'لَوْ لَمْ تُذَكِّرْنِي لَما تَذَكَّرْتُ',
-      translation: 'agar menga eslatmasang men ham eslamas ekanman',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 31-dars',
-      level: 'B1',
-    },
-    {
       word: 'أَصْفَرُ قاتِمٌ',
       translation: "to'q, tim sariq",
       language: 'ar',
@@ -12467,13 +12310,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'لا تَعْتَدِي',
       translation: 'hujum qilmaydi',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 32-dars',
-      level: 'B1',
-    },
-    {
-      word: 'إِذا لَمْ يُعْتَدَ عَلَيْهَا',
-      translation: 'agar unga hujum qilinmasa',
       language: 'ar',
       topic: 'Qiroat 3-kitob 32-dars',
       level: 'B1',
@@ -12667,13 +12503,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'الْقِيامُ بِما يَأْمُرُنِي بِهِ',
-      translation: 'menga buyurgan narsani bajarish',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 35-dars',
-      level: 'B1',
-    },
-    {
       word: 'عَلَى السَّعَةِ والْخِصْبِ',
       translation: "kenglik va mo'l-ko'llik",
       language: 'ar',
@@ -12816,13 +12645,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'نَهَبُ',
       translation: 'topshiramiz',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 36-dars',
-      level: 'B1',
-    },
-    {
-      word: 'فَقَدْ طِبْتُ بِذَلِكَ نَفْسًا',
-      translation: "bunga chin ko'ngildan ko'ndim",
       language: 'ar',
       topic: 'Qiroat 3-kitob 36-dars',
       level: 'B1',
@@ -13287,13 +13109,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'مَعَاذَ اللهِ',
       translation: 'Alloh saqlasin',
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 39-dars',
-      level: 'B1',
-    },
-    {
-      word: 'أَوْقَعَكَ فِي هَذا الْحالِ',
-      translation: 'seni shu holatga soldi',
       language: 'ar',
       topic: 'Qiroat 3-kitob 39-dars',
       level: 'B1',
@@ -14998,13 +14813,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 52-dars',
       level: 'B1',
       sentence: 'وَكانَ كَلامُهُ هَذا عَلَى سَبِيلِ الْمَزْحِ',
-    },
-    {
-      word: 'فَما عَسَى أَنْ يَكُونَ',
-      translation: "ehtimol, biror narsa bo'ldimi?",
-      language: 'ar',
-      topic: 'Qiroat 3-kitob 52-dars',
-      level: 'B1',
     },
     {
       word: 'وَقَدِ انْقَضَى الأَجَلُ',

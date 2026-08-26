@@ -168,6 +168,22 @@ function stripCrossReference(text) {
     .trim()
 }
 
+/**
+ * Lug'at yozuvi emas, JUMLA.
+ *
+ * Darslikda gap namunalari ham so'zlar ro'yxatida uchraydi:
+ * `يَجِبُ عَلَيْكَ أَنْ تَقْرَأَ دَرْسَكَ` ("darsingni o'qishing kerak").
+ * Ular "eslab yozish" mashqida yozib bo'lmaydigan karta hosil qiladi —
+ * foydalanuvchi butun gapni harakatlari bilan terishi kerak bo'lardi.
+ *
+ * Chegara ATAYLAB 4 ta so'z: uch so'zli yozuvlar aralash bo'ladi
+ * (`مِئَةٌ وَخَمْسَةَ عَشَرَ` — "115", haqiqiy lug'at), to'rttadan boshlab esa
+ * ular istisnosiz gap.
+ */
+function isSentence(word) {
+  return word.trim().split(/\s+/).length >= 4
+}
+
 /* ------------------------------- Arab -------------------------------- */
 function importArabic() {
   const t = taken('ar.ts', normalizeArabic)
@@ -212,6 +228,7 @@ function importArabic() {
       if (!word || !uz) { dropped++; continue }
       if (uz.toLowerCase() === word.toLowerCase()) { dropped++; continue }
       if (!arabicIsClean(word)) { dropped++; continue }
+      if (isSentence(word)) { dropped++; continue }
 
       const norm = normalizeArabic(word)
       const trKey = uz.toLowerCase()
