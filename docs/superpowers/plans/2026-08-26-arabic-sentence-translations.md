@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
+**Holat:** ✅ **BAJARILGAN.** Arabcha "jumla qurish" 132 → 253 karta.
+
 **Goal:** Arabcha kartalarga "jumla qurish" mashqini ochish — darslikning o'z o'zbekcha tarjimasidan.
 
 **Architecture:** `scripts/import-vocab.mjs` ichida dars matni va uning tarjimasi bir xil qoida bilan jumlalarga bo'linadi; sonlar teng bo'lgan darslarda juftlar indeks bo'yicha biriktiriladi. So'zga jumla tanlanganda tarjimasi ham birga olinadi.

@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** Mikrofonni haqiqiy ovoz bilan sinash foydalanuvchida qoldi.
+
 **Goal:** Foydalanuvchi so'zni mikrofonga aytadi, ilova uni tanidimi yoki yo'qmi darhol ko'rsatadi.
 
 **Architecture:** Uch mustaqil qatlam — brauzer API qobig'i (`src/lib/recognition.ts`, Reactsiz), sof taqqoslash (`src/core/pronunciation/match.ts`, brauzersiz sinaladi) va ko'rinish (`PronounceButton.tsx`). Tugma mavjud 🔊 `SpeakButton` yonida turadi.

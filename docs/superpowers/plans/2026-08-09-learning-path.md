@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** O'quv yo'li bosh ekranda.
+
 **Goal:** Bosh sahifada bo'limlar zanjiri, bo'limga bog'langan dars va GSAP xoreografiyasi.
 
 **Architecture:** Bo'limlar `core/path/units.ts` dagi sof funksiya bilan kartalardan hisoblanadi (yangi ma'lumot saqlanmaydi). UI shu ro'yxatni chizadi va mavjud `/lesson/:lessonId` marshrutiga bog'lanadi. Animatsiya alohida qatlam: `src/lib/motion.ts` GSAP'ni dangasa yuklaydi va harakat kamaytirilganda `null` qaytaradi.

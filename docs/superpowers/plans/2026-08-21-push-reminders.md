@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ⚠️ **KOD BAJARILGAN, DEPLOY QOLDI.** Qadamlar: `docs/DEPLOY-PUSH.md`.
+
 **Goal:** Foydalanuvchi o'zi tanlagan soatda telefoniga eslatma keladi — ilova yopiq bo'lsa ham.
 
 **Architecture:** Haqiqiy Web Push. Obuna Supabase jadvalida saqlanadi, `pg_cron` har soatda Edge Function'ni chaqiradi, u o'sha mintaqada belgilangan soat bo'lgan va bugun mashq qilmagan obunachilarga push yuboradi. Mijoz tomonda: `src/lib/push.ts` (qobiq), `public/sw.js` (ishlovchilar), Profil ekranida sozlama.

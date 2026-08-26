@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** Uch mashq turi ishlaydi: gap ichida, harfma-harf, juft topish.
+
 **Goal:** Duolingo uslubidagi uch yangi mashq turini qo'shish — gap ichida (`cloze`), harfma-harf (`spelling`), juft topish (`matching`).
 
 **Architecture:** Mavjud sof yadro (`generateExercise` + `checkExercise`, `Exercise` union) ustiga quriladi. Cloze va spelling mavjud bir-kartali oqimda ishlaydi (javob → `checkExercise` → `FeedbackBar`). Matching ko'p-kartali — `SessionRunner` da alohida tarmoq bir mashqda 5 kartani baholaydi.

@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** Offline production build'da tekshirilgan.
+
 **Goal:** Ilovani telefonga o'rnatiladigan va internetsiz ishlaydigan qilish.
 
 **Architecture:** Uch mustaqil bo'lak — ikonkalar (Node `zlib` bilan yasalgan PNG artefaktlar), manifest, va qo'lda yozilgan service worker. Registratsiya `src/lib/pwa.ts` dagi sof funksiya orqali boshqariladi, shuning uchun qaror mantig'i test qilinadi.

@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** Onboarding va daraja testi ishlaydi.
+
 **Goal:** Onboardingni to'rt qadamga kengaytirish — til, daraja testi, kunlik maqsad, birinchi dars — va darslarni aniqlangan darajadan boshlash.
 
 **Architecture:** Daraja testi sof funksiyalar ustiga quriladi: savollar kontentdan yasaladi (`buildPlacementQuiz`), natija `scorePlacement` bilan hisoblanadi. Ikkalasi ham bazaga tegmaydi. Natija `useSettingsStore.startingLevel` ga yoziladi va `pickLessonCards` ning yangi `minLevel` argumenti orqali darslarga ta'sir qiladi. Onboarding bitta marshrut ichida qadamlarga bo'linadi.

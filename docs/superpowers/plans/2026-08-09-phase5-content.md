@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Holat:** ✅ **BAJARILGAN.** Kontent import qilindi va bir necha marta tozalandi.
+
 **Goal:** Har til uchun ~100 so'zlik kontent qo'shish (A1/A2/B1) va darslarni daraja tartibida berish.
 
 **Architecture:** Kontent tilma-til fayllarga bo'linadi (`src/content/decks/*.ts`), `starterDecks.ts` ularni daraja tartibida bitta massivga yig'adi va mavjud `STARTER_DECKS` eksportini o'zgarishsiz saqlaydi. Dars tartibi `LessonScreen` ichidagi inline sortdan `core/lesson/order.ts` sof funksiyasiga ko'chiriladi va daraja mezonini oladi. Baza sxemasi o'zgarmaydi.
