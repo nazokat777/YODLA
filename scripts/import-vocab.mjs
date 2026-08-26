@@ -152,6 +152,22 @@ function toTs(constName, lang, buckets) {
   )
 }
 
+/**
+ * Tarjimadagi HAVOLANI olib tashlash.
+ *
+ * Darslikda ba'zi so'zlar boshqasiga yo'naltiriladi:
+ * `كَذَاكَ → "= كَذَلِكَ shuningdek"`. Tarjima maydonida arab harflari
+ * qolsa, "eslab yozish" mashqida foydalanuvchidan ularni ham yozish
+ * talab qilinardi — bu esa imkonsiz.
+ */
+function stripCrossReference(text) {
+  return text
+    .replace(/^=\s*/, '')
+    .replace(/[؀-ۿݐ-ݿ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 /* ------------------------------- Arab -------------------------------- */
 function importArabic() {
   const t = taken('ar.ts', normalizeArabic)
@@ -192,7 +208,7 @@ function importArabic() {
 
     for (const v of lesson.vocab ?? []) {
       const word = (v.ar ?? '').trim()
-      const uz = (v.uz ?? '').trim()
+      const uz = stripCrossReference((v.uz ?? '').trim())
       if (!word || !uz) { dropped++; continue }
       if (uz.toLowerCase() === word.toLowerCase()) { dropped++; continue }
       if (!arabicIsClean(word)) { dropped++; continue }

@@ -17,6 +17,10 @@ import type { LanguageCode } from '@/core/types'
 
 const LANGUAGES: LanguageCode[] = ['en', 'ru', 'ar']
 
+const ARABIC = /\p{Script=Arabic}/u
+const CYRILLIC = /\p{Script=Cyrillic}/u
+const LATIN = /\p{Script=Latin}/u
+
 /** Bir tildagi barcha kartalar, daraja bo'yicha yassilangan */
 async function allCards(language: LanguageCode) {
   const deck = await loadLanguageDeck(language)
@@ -89,6 +93,31 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     })
 
     expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
+  it("so'z o'rganilayotgan tilning yozuvida", async () => {
+    const cards = await allCards(language)
+
+    const expected =
+      language === 'ar' ? ARABIC : language === 'ru' ? CYRILLIC : LATIN
+
+    const wrong = cards.filter((card) => !expected.test(card.word))
+
+    expect(wrong.map((card) => card.word)).toEqual([])
+  })
+
+  it('tarjimada begona yozuv qolmagan', async () => {
+    const cards = await allCards(language)
+
+    // Tarjima o'zbekcha — lotin yozuvida. Arab yoki kirill harfi manba
+    // chalkashganini bildiradi: darslikdagi havola tarjima maydoniga
+    // tushib qolardi (`كَذَاكَ → "= كَذَلِكَ shuningdek"`) va "eslab yozish"
+    // mashqida foydalanuvchidan uni ham yozish talab qilinardi.
+    const wrong = cards.filter(
+      (card) => ARABIC.test(card.translation) || CYRILLIC.test(card.translation),
+    )
+
+    expect(wrong.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
   })
 
   it('hamma karta shu tilga tegishli', async () => {
