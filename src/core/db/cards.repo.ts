@@ -291,16 +291,16 @@ export interface LanguageStats {
 }
 
 /**
- * Statistika bitta o'qishda hisoblanadi.
- * Kartalar soni MVP miqyosida (yuzlab) — xotirada sanash indeks bo'yicha
- * bir necha marta so'rov yuborishdan arzonroq.
+ * Statistika XOTIRADAGI kartalardan hisoblanadi.
+ *
+ * Alohida sof funksiya, chunki bosh ekran kartalarni O'QUV YO'LI uchun
+ * baribir o'qiydi. Ilgari `getLanguageStats` ularni ikkinchi marta
+ * o'qirdi — bitta ekran uchun butun jadval ikki marta skanerlanardi.
  */
-export async function getLanguageStats(
-  language: LanguageCode,
+export function computeLanguageStats(
+  cards: CardRecord[],
   now: number = Date.now(),
-): Promise<LanguageStats> {
-  const cards = await getAllCards(language)
-
+): LanguageStats {
   const stats: LanguageStats = { total: cards.length, due: 0, fresh: 0, learning: 0, mature: 0 }
 
   for (const card of cards) {
@@ -314,6 +314,14 @@ export async function getLanguageStats(
   }
 
   return stats
+}
+
+/** Statistika — kartalarni o'zi o'qib hisoblaydi */
+export async function getLanguageStats(
+  language: LanguageCode,
+  now: number = Date.now(),
+): Promise<LanguageStats> {
+  return computeLanguageStats(await getAllCards(language), now)
 }
 
 /**

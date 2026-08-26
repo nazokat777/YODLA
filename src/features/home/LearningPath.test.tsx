@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
+import { addMissingCards, db, getAllCards, type NewCardRecordInput } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { LearningPath } from './LearningPath'
 
@@ -11,13 +11,16 @@ const WORDS: NewCardRecordInput[] = [
   { word: 'airport', translation: 'aeroport', language: 'en', topic: 'Sayohat', level: 'A2' },
 ]
 
-function renderPath() {
+/** Kartalarni bosh ekran o'qiydi — testda ham shu yo'l takrorlanadi */
+async function renderPath() {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
 
+  const cards = await getAllCards('en')
+
   return render(
     <MemoryRouter>
-      <LearningPath />
+      <LearningPath cards={cards} />
     </MemoryRouter>,
   )
 }
@@ -29,7 +32,7 @@ describe('LearningPath', () => {
 
   it('bo‘limlarni ko‘rsatadi', async () => {
     await addMissingCards(WORDS)
-    renderPath()
+    await renderPath()
 
     expect(await screen.findByText('Salomlashish')).toBeInTheDocument()
     expect(screen.getByText('Oila')).toBeInTheDocument()
@@ -38,7 +41,7 @@ describe('LearningPath', () => {
 
   it('joriy bo‘lim darsga havola qiladi', async () => {
     await addMissingCards(WORDS)
-    renderPath()
+    await renderPath()
 
     const link = await screen.findByRole('link', { name: /salomlashish/i })
 
@@ -47,7 +50,7 @@ describe('LearningPath', () => {
 
   it('qulflangan bo‘lim havola emas va aria-disabled', async () => {
     await addMissingCards(WORDS)
-    renderPath()
+    await renderPath()
 
     // Birinchi bo'lim joriy; keyingilari qulflangan
     const locked = await screen.findByTestId('unit-a1-oila')
@@ -60,7 +63,7 @@ describe('LearningPath', () => {
     await addMissingCards(WORDS)
     await db.cards.update('en:hello', { totalReviews: 2 })
 
-    renderPath()
+    await renderPath()
 
     await waitFor(() => {
       expect(screen.getByTestId('unit-a1-salomlashish')).toHaveAttribute(
@@ -74,7 +77,7 @@ describe('LearningPath', () => {
     // jsdom'da GSAP ishlamaydi — bu test "animatsiya bezak" qoidasini
     // avtomatik qo'riqlaydi
     await addMissingCards(WORDS)
-    renderPath()
+    await renderPath()
 
     const unit = await screen.findByTestId('unit-a1-salomlashish')
 
@@ -89,7 +92,7 @@ describe('LearningPath — yuklanish holati', () => {
     // keyin sakrab qayta saralanardi — arabchada "10-dars" "2-dars" dan
     // oldin turib qolardi.
     await addMissingCards(WORDS)
-    renderPath()
+    await renderPath()
 
     // Yuklanayotgani BILINADI (bo'sh joy emas)
     expect(await screen.findByTestId('path-loading')).toBeInTheDocument()
@@ -103,7 +106,7 @@ describe('LearningPath — yuklanish holati', () => {
 
   it('karta umuman bo‘lmasa hech narsa ko‘rsatmaydi', async () => {
     // Bo'sh holat — "yuklanmoqda" emas
-    const { container } = renderPath()
+    const { container } = await renderPath()
 
     await waitFor(() => {
       expect(screen.queryByTestId('path-loading')).not.toBeInTheDocument()

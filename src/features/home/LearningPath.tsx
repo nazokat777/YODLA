@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
 import { loadLanguageDeck } from '@/content/starterDecks'
 import { readTopicOrder, saveTopicOrder } from '@/content/topicOrderCache'
-import { getAllCards } from '@/core/db'
+import type { CardRecord } from '@/core/db'
 import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
 import { loadGsap } from '@/lib/motion'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -25,14 +24,20 @@ const CIRCLE = {
  * (`core/path/units.ts`). Shuning uchun dars tugagach ro'yxat o'zi
  * yangilanadi: `useLiveQuery` bazadagi o'zgarishni sezadi.
  */
-export function LearningPath() {
+interface LearningPathProps {
+  /**
+   * Shu tildagi kartalar. `undefined` — hali yuklanmoqda.
+   *
+   * Kartalarni bosh ekran O'QIYDI va shu yerga uzatadi: u ularni
+   * statistika uchun baribir o'qiydi, ikkinchi so'rov esa bitta ekran
+   * uchun butun jadvalni ikki marta skanerlardi.
+   */
+  cards: CardRecord[] | undefined
+}
+
+export function LearningPath({ cards }: LearningPathProps) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const startingLevel = useSettingsStore((s) => s.startingLevel)
-
-  const cards = useLiveQuery(
-    () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
-    [learningLanguage],
-  )
 
   /**
    * Mavzu tartibi lug'atdan olinadi — lug'at dangasa yuklanadi.

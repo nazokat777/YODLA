@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { PATHS } from '@/app/paths'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
@@ -6,7 +7,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
-import { getLanguageStats, getNextDueDate } from '@/core/db'
+import { computeLanguageStats, getAllCards, getNextDueDate } from '@/core/db'
 import { levelTitle } from '@/core/gamification'
 import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
@@ -32,9 +33,20 @@ export function HomeScreen() {
   const now = useNowTick()
   const progress = useProgress()
 
-  const stats = useLiveQuery(
-    () => (learningLanguage ? getLanguageStats(learningLanguage, now) : undefined),
-    [learningLanguage, now],
+  /*
+   * Kartalar BIR MARTA o'qiladi va ikki joyda ishlatiladi: statistika
+   * uchun ham, o'quv yo'li uchun ham. Ilgari ularni ikkala qism alohida
+   * o'qirdi — bitta ekran uchun butun jadval (4000+ yozuv) ikki marta
+   * skanerlanardi.
+   */
+  const cards = useLiveQuery(
+    () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
+    [learningLanguage],
+  )
+
+  const stats = useMemo(
+    () => (cards ? computeLanguageStats(cards, now) : undefined),
+    [cards, now],
   )
 
   const nextDueAt = useLiveQuery(
@@ -149,7 +161,7 @@ export function HomeScreen() {
         </LinkButton>
       </Panel>
 
-      <LearningPath />
+      <LearningPath cards={cards} />
 
       <section>
         <h2 className="mb-2 font-bold">Lug'at holati</h2>
