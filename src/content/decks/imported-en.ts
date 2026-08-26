@@ -3085,6 +3085,13 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
+      word: 'biscuits',
+      translation: 'pechene',
+      language: 'en',
+      topic: 'Enterprise B1-3',
+      level: 'B1',
+    },
+    {
       word: 'shines',
       translation: 'porlaydi',
       language: 'en',
@@ -3116,7 +3123,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'paragraphs',
       translation: 'paragraflar',
       language: 'en',
-      topic: 'Enterprise B1-3',
+      topic: 'Enterprise B1-4',
       level: 'B1',
     },
     {
@@ -3256,7 +3263,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'pizzas',
       translation: 'pizzalar',
       language: 'en',
-      topic: 'Enterprise B1-4',
+      topic: 'Enterprise B1-5',
       level: 'B1',
     },
     {
@@ -3396,7 +3403,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'opposites',
       translation: 'qarama-qarshiliklar',
       language: 'en',
-      topic: 'Enterprise B1-5',
+      topic: 'Enterprise B1-6',
       level: 'B1',
     },
     {
@@ -3536,7 +3543,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'gorillas',
       translation: 'gorillalar',
       language: 'en',
-      topic: 'Enterprise B1-6',
+      topic: 'Enterprise B1-7',
       level: 'B1',
     },
     {
@@ -3676,7 +3683,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'kirsty',
       translation: 'kirsti',
       language: 'en',
-      topic: 'Enterprise B1-7',
+      topic: 'Enterprise B1-8',
       level: 'B1',
     },
     {
@@ -3816,7 +3823,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'cassettes',
       translation: 'kassetalar',
       language: 'en',
-      topic: 'Enterprise B1-8',
+      topic: 'Enterprise B1-9',
       level: 'B1',
     },
     {
@@ -3956,7 +3963,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'cots',
       translation: 'karyolalar',
       language: 'en',
-      topic: 'Enterprise B1-9',
+      topic: 'Enterprise B1-10',
       level: 'B1',
     },
     {
@@ -4096,7 +4103,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'seers',
       translation: "ko'ruvchilar",
       language: 'en',
-      topic: 'Enterprise B1-10',
+      topic: 'Enterprise B1-11',
       level: 'B1',
     },
     {

@@ -154,7 +154,10 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
 
       // `cheaper → "the cheapest"` — daraja jadvali; tarjima o'rnida
       // inglizcha shakl turibdi va karta hech nima o'rgatmaydi
-      return /^the\s/i.test(text)
+      if (/^the\s/i.test(text)) return true
+
+      // `too tight → "aksi: loose"` — ma'no emas, boshqa so'zga havola
+      return /^(aksi|teskari)\s*:/i.test(text)
     })
 
     expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])

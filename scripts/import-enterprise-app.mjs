@@ -98,6 +98,9 @@ const JUNK_WORDS = new Set([
   'nimadir',
   'sutemizuvchilarda',
   'jumped',
+  'egalik olmoshi',
+  'qila olmaydi',
+  'sotib ololmaydi',
 ])
 
 /**
@@ -118,6 +121,9 @@ function isGrammarNote(text) {
     // Daraja jadvali: `cheaper → "the cheapest"`, `taller → "the tallest"`.
     // Tarjima o'rnida inglizcha shakl turibdi — karta hech nima o'rgatmaydi.
     /^the\s/i.test(lower) ||
+    // Qarama-qarshilik izohi: `too tight → "aksi: loose"`. Bu ma'no emas,
+    // boshqa so'zga havola — ustiga havola INGLIZCHA.
+    /^(aksi|teskari)\s*:/.test(lower) ||
     text.includes('→') ||
     text.includes('->') ||
     text.startsWith('-') ||

@@ -4385,6 +4385,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 1-dars',
       level: 'A2',
       sentence: 'وَهِيَ تُحِبُّ فَرِيدًا مَحَبَّةً شَدِيدَةً',
+      sentenceTranslation: "U, Faridni qattiq muhabbat bilan yaxshi ko'radi",
     },
     {
       word: 'مَخْزَنٌ',
@@ -4393,6 +4394,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 1-dars',
       level: 'A2',
       sentence: 'وَلَهُ مَخْزَنٌ كَبِيرٌ',
+      sentenceTranslation: "Uning katta do'koni bor",
     },
     {
       word: 'طُولُ اليَوْمِ',
@@ -4415,6 +4417,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 1-dars',
       level: 'A2',
       sentence: 'وَأَمَّا وَالِدَتُهُ فَهِيَ تَشْتَغِلُ بِإِدَارَةِ أُمُورِ البَيْتِ',
+      sentenceTranslation: "Ammo Faridning onasi uy ishlarini idora qilish bilan shug'ullanadi",
     },
     {
       word: 'لَمْ يَتَعَلَّمْ بَعْدُ',
@@ -4423,6 +4426,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 1-dars',
       level: 'A2',
       sentence: 'وَهُوَ لَمْ يَتَعَلَّمْ بَعْدُ شَيْئًا',
+      sentenceTranslation: "U, hanuz hech narsani ta'lim olmagan",
     },
     {
       word: 'شَيْءٌ',
@@ -4597,6 +4601,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 4-dars',
       level: 'A2',
       sentence: 'الفَصْلُ الَّذِي يَتَعَلَّمُ فِيهِ عَبْدُ الكَرِيمِ حُجْرَةٌ غَيْرُ كَبِيرَةٍ',
+      sentenceTranslation: "Abdulkarimning ta'lim oladigan sinfi uncha katta bo'lmagan bir xonadir",
     },
     {
       word: 'عِدَّةٌ',
@@ -5182,6 +5187,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 11-dars',
       level: 'A2',
       sentence: 'فَإِذَا هَدَّدَ النَّائِمَ خَطَرٌ مَا نَبَّهَتْهُ سَرِيعًا',
+      sentenceTranslation: 'Uxlovchiga biror xatar tahdid solsa tezda uni ogohlantiradi',
     },
     {
       word: 'سَرِيعٌ',
@@ -5232,6 +5238,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 12-dars',
       level: 'A2',
       sentence: 'وَقَالَ هَذَا حِصْرِمٌ رَأَيْتُهُ فِي حَلَبٍ',
+      sentenceTranslation: "Bu pishmagan uzumdir, men uni Halab shahrida ko'rgandim, desa",
     },
     {
       word: 'حَلَب',
@@ -5254,6 +5261,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 12-dars',
       level: 'A2',
       sentence: 'فَرَاحَ مِثْلَمَا أَتَى وَجَوْفُهُ فِي لَهَبٍ',
+      sentenceTranslation: "Qanday kelgan bo'lsa qorni shunday lovillagan holda qaytdi",
     },
     {
       word: 'قَفَصٌ',
@@ -5290,6 +5298,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 13-dars',
       level: 'A2',
       sentence: 'فَيَخْرُجُ وَيَقْعُدُ عَلَى رَأْسِ القَفَصِ أَوْ يَطِيرُ حَوْلَ البَيْتِ',
+      sentenceTranslation: "Undan chiqib, qafasni boshiga o'tirar yoki uy atrofida uchar edi",
     },
     {
       word: 'بِمَا أَنَّهَا',
@@ -5319,6 +5328,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 13-dars',
       level: 'A2',
       sentence: 'وَكَانَتْ تَفْتَحُ لَهُ القَفَصَ حِينًا بَعْدَ حِينٍ',
+      sentenceTranslation: 'Qafasni vaqti-vaqti bilan ochib turar edi',
     },
     {
       word: 'حُزْنٌ',
@@ -6401,6 +6411,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 28-dars',
       level: 'A2',
       sentence: 'وَلِمَاذَا لَا يَكْتُبُ كُلُّ النَّاسِ تِلْغُرَافَاتٍ بَدَلَ الْمَكَاتِيبِ',
+      sentenceTranslation: "- Nega hamma insonlar maktublar o'rniga telegramma yozmaydilar",
     },
     {
       word: 'أُجْرَةٌ',
@@ -7467,6 +7478,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 39-dars',
       level: 'A2',
       sentence: 'اِصْطَدْتُ دُبًّا',
+      sentenceTranslation: 'Ayiqni ovladim - Men ayiqni ovladim',
     },
     {
       word: 'جِيءْ بِهِ',
@@ -7475,6 +7487,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 39-dars',
       level: 'A2',
       sentence: 'جِيءْ بِهِ هُنَا',
+      sentenceTranslation: '- U bilan bu erga kel',
     },
     {
       word: 'كَلْبَةٌ',
@@ -8140,6 +8153,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'مَنْ عَلَّمَ النَّحْلَةَ أَنْ تَجْنِيَ مِنَ الزَّهْرِ الْعَسَلْ',
+      sentenceTranslation: "Shoxlar qasri kabi, unga tosh qo'ymasdan",
     },
     {
       word: 'بِلَا كَلَلٍ',
@@ -8155,6 +8169,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'مَنْ عَلَّمَ الْبُلْبُلَ أَنْ يَتْلُو أَطَايِبَ الْغِنَا',
+      sentenceTranslation: 'Qish kunlariga tayyorlanib, uni malolsiz jamlaydi',
     },
     {
       word: 'كُلُّ خَاطِرٍ',
@@ -8170,6 +8185,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'يُطْرِبُ كُلَّ خَاطِرٍ بِكُلِّ لَحْنٍ حَسَنَا',
+      sentenceTranslation: "Kim bulbulga, chiroyli kuylarni kuylashni o'rgatdi",
     },
     {
       word: 'لِحِيْنِهِ',
@@ -8178,6 +8194,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'تَخْزِنُهُ فِي وَكْرِهَا لِحِيْنِهِ عَلَى انْتِظَامْ',
+      sentenceTranslation: "Kim chumolini yozda taom yig'ishga yo'lladi",
     },
     {
       word: 'مُرْشِدٌ',
@@ -8186,6 +8203,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'وَهُوَ لِكُلِّ مُرْشِدٌ لِكُلِّ خَيْرٍ أَبَدَا',
+      sentenceTranslation: "Alloh unga o'rgatdi va uni yo'lladi",
     },
     {
       word: 'آمِلًا',
@@ -8194,6 +8212,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'فَاطْلُبْ إِلَيْهِ آمِلًا مَا خَابَ مَنْ لَهُ أَمَلْ',
+      sentenceTranslation: "Sen Allohdan orzularingni so'ragin, kim so'rasa orzusi bekor ketmaydi",
     },
     {
       word: 'مَا خَابَ',
@@ -8202,6 +8221,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 49-dars',
       level: 'A2',
       sentence: 'فَاطْلُبْ إِلَيْهِ آمِلًا مَا خَابَ مَنْ لَهُ أَمَلْ',
+      sentenceTranslation: "Sen Allohdan orzularingni so'ragin, kim so'rasa orzusi bekor ketmaydi",
     },
     {
       word: 'لِتُحْضِرَ',
@@ -8626,6 +8646,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 2-kitob 54-dars',
       level: 'A2',
       sentence: 'كَانَ الْغُرَابُ فِي الزَّمَانِ الْخَالِي يَمْشِي عَلَى رِجْلَيْهِ بِاعْتِدَالِ',
+      sentenceTranslation: "Qarg'a Bir mag'rur qarg'a bor edi (ushbu) zamonda, u ikki oyog'i bilan qiyinchliksiz yurardi",
     },
     {
       word: 'أَعْرَابِيٌّ',
@@ -9776,6 +9797,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 7-dars',
       level: 'B1',
       sentence: 'وَقُوَّتُهُ يُضْرَبُ بِهَا الْمَثَلُ',
+      sentenceTranslation: 'Uning ikki elkasi orasida qalin yoli bor va badanining boshqa joylarida sigirning yungi kabi silliq va qisqa yungi bor',
     },
     {
       word: 'لِبْدَةٌ',
@@ -9784,6 +9806,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 7-dars',
       level: 'B1',
       sentence: 'وَلَيْسَ لَهَا لِبْدَةٌ مِثْلُهُ',
+      sentenceTranslation: "U erkak sherdan jussasi kichikroq, harakatchan va jahli tezroq bo'ladi",
     },
     {
       word: 'طُولٌ',
@@ -9841,6 +9864,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 7-dars',
       level: 'B1',
       sentence: 'وَلَهُ زَمْجَرَةٌ مُزْعِجَةٌ جِدًّا تَهْتَزُّ لَهَا الغَابَاتُ وَالآكَامُ',
+      sentenceTranslation: "U insonlardan faqatgina kunduzi qo'rqadi, kechasi esa botir, qo'rqmas bo'ladi",
     },
     {
       word: 'عَرِينٌ',
@@ -14715,6 +14739,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 50-dars',
       level: 'B1',
       sentence: 'وَأَفْضَلُ ما اشْتَغَلْتَ بِهِ كِتابٌ جَلِيلٌ نَفْعُهُ حُلْوُ الْمَذاقِ',
+      sentenceTranslation: "Sen mashg'ul bo'lgan narsalarning eng afzali kitobdir, Uning ta'mi totli, o'zi ko'p nafdir",
     },
     {
       word: 'السُّوقَةُ',
@@ -14751,6 +14776,7 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Qiroat 3-kitob 50-dars',
       level: 'B1',
       sentence: 'إِذا حُمِلَ النِّضارُ عَلَى نِياقٍ فَأَيُّ الْفَخْرِ يُحْسَبُ لِلنِّياقِ',
+      sentenceTranslation: 'Agar yuklansa sof tillo tuyaga, Faxr hisoblanmas bu unga',
     },
     {
       word: 'نَاقَةٌ',
