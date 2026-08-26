@@ -244,7 +244,7 @@ eng ko'p uchraydigan klaviatura xatosi — bitta tahrir deb sanaladi.
 
 ## Kontent va darajalar
 
-Har til uchun **102 so'z**, CEFR bo'yicha: A1 42, A2 35, B1 25
+Har til uchun **132 so'z**, CEFR bo'yicha: A1 52, A2 45, B1 35
 ([src/content/decks](src/content/decks)). Uch to'plam bir xil tushunchalarni
 qamraydi — foydalanuvchi tilni almashtirganda o'sha mavzular ketma-ketligini
 ko'radi.
@@ -316,15 +316,17 @@ lug'at qo'shilgan:
 
 | Til | Manba | So'z |
 | --- | ----- | ---- |
-| Arab | Mabdaul qiroat / Madina (169 dars) | +2161 |
-| Ingliz | Enterprise 1 | +1486 |
-| Rus | Ru-Uz-Dictionary + qo'lda | +3411 +118 |
+| Arab | Mabdaul qiroat / Madina (169 dars) | +2134 |
+| Ingliz | Enterprise app + trainer | +3713 +592 |
+| Rus | Ru-Uz-Dictionary + qo'lda | +3353 +118 |
+
+Jami **10 306** karta: arab 2266, ingliz 4437, rus 3603.
 
 Daraja **chastota bo'yicha**: ingliz Enterprise `freq`, rus OpenSubtitles ru_50k. Ko'p ishlatiladigan so'z pastroq darajada (30% A1 / 35% A2 / 35% B1). Arab — Madina kitob tartibida.
 
 [scripts/import-vocab.mjs](scripts/import-vocab.mjs) manba JSON'larini
 o'qib `decks/imported-{ar,en}.ts` yaratadi (natija repoga commit qilinadi).
-Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~129 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
+Lug'at **dangasa yuklanadi** (`loadLanguageDeck`): har til alohida bo'lakka chiqadi, asosiy JS ~135 KB gzip qoladi va faqat tanlangan til lug'ati yuklanadi.
 
 ### Jumlalar va "gap ichida" mashqi
 
@@ -334,8 +336,9 @@ va "gap ichida" berilmaydi (qolgan 5 mashq ishlayveradi).
 Istisno — **arab tili**: Mabdaul qiroat manbasida har darsning matni bor va
 u toza raqamli yozuv (OCR emas). Skript so'z **aynan** qatnashgan eng qisqa
 jumlani ajratib oladi (2–9 so'z, transliteratsiya jadvaliga sig'adigan) —
-`هَذَا كِتَابٌ`, `اُقْعُدْ عَلَى الْكُرْسِيِّ`. Shu yo'l bilan 321 so'zga jumla
-biriktirildi.
+`هَذَا كِتَابٌ`, `اُقْعُدْ عَلَى الْكُرْسِيِّ`. Shu yo'l bilan 318 so'zga jumla
+biriktirildi, ulardan 147 tasiga darslikning O'Z o'zbekcha tarjimasi ham
+qo'shildi ("jumla qurish" mashqi shulardan ochiladi).
 
 Bu jumlalarning **o'zbekcha tarjimasi yo'q**, va bu ataylab: "gap ichida"
 mashqi jumlaning o'zini ko'rsatadi, tarjima kerak emas. "Jumla qurish" esa
@@ -347,8 +350,8 @@ kartada u berilmaydi. Qoida `decks.test.ts` da: tarjima jumlasiz qolmasin
 
 | Manba | Nima beradi | Sifat |
 | ----- | ----------- | ----- |
-| `enterprise-app/.../unit_*.json` | 3298 so'z + 844 **tarjimali** jumla | qo'lda yozilgan |
-| `enterprise-trainer/structured.json` | 616 so'z | skanerdan OCR |
+| `enterprise-app/.../unit_*.json` | 3713 so'z + 959 **tarjimali** jumla | qo'lda yozilgan |
+| `enterprise-trainer/structured.json` | 592 so'z | skanerdan OCR |
 
 App manbasi **ustun turadi**: to'qnashuvda o'sha qoladi
 ([import-enterprise-app.mjs](scripts/import-enterprise-app.mjs) OCR importidan
@@ -389,10 +392,11 @@ ularni jumlasiz kartalarga biriktiradi. Sabab — jumlalar boshqa manbadan
 keladi va o'z generatori bilan yangilanadi; ularni har yozuvga yozib
 qo'yish ikkala faylni qo'lda sinxron ushlashni talab qilardi.
 
-Jumla qamrovi: **6000+ / 9942** karta (ar 453, en 3100, ru 2551).
+Jumla qamrovi: **6613 / 10 306** karta (ar 1046, en 3015, ru 2552).
+Arabchaga Tatoeba jumlalari qo'shilgach qamrov 453 dan uch barobar oshdi.
 
 Bahosi: `sentences-en` +20 KB gzip, `sentences-ru` +41 KB gzip. Ikkalasi
-ham TIL BO'LAGIDA — asosiy JS (~131 KB gzip) o'zgarmadi va foydalanuvchi
+ham TIL BO'LAGIDA — asosiy JS (~135 KB gzip) o'zgarmadi va foydalanuvchi
 faqat o'zi tanlagan tilnikini yuklaydi.
 
 ### Kontent yangilanishi mavjud foydalanuvchilarga qanday yetadi
@@ -461,7 +465,7 @@ tashlandi.
 Skript qo'lda yozilgan so'zlar bilan **to'qnashuvchi** (so'z, tarjima yoki
 normallashtirilgan shakl) importlarni tashlaydi va sifat qoidalarini
 (noyob tarjima, toza transliteratsiya) `decks.test.ts` bilan bir xil
-qo'llaydi. Tashlangan: arab 1294, ingliz 1412 (app manbasi ustun bo'lgani uchun).
+qo'llaydi. Tashlangan: arab 1321, ingliz 2108 (app manbasi ustun bo'lgani uchun).
 
 ## Daraja testi (onboarding)
 
