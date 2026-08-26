@@ -398,7 +398,8 @@ function CheerPicker({
           type="button"
           onClick={onClose}
           aria-label="Yopish"
-          className="tap-highlight-none text-xl text-ink-600"
+          // 44×44 — barmoq uchun eng kichik ishonchli o'lcham
+          className="tap-highlight-none -me-2 flex h-11 w-11 items-center justify-center rounded-full text-xl text-ink-600"
         >
           ✕
         </button>

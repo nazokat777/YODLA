@@ -75,7 +75,13 @@ export function LessonScreen() {
           type="button"
           onClick={() => navigate(PATHS.home)}
           aria-label="Darsdan chiqish"
-          className="tap-highlight-none text-2xl text-ink-600"
+          /*
+           * 44×44 — barmoq uchun eng kichik ishonchli o'lcham.
+           * Ilgari tugma faqat ✕ belgisining o'zi edi (20×32) va uni
+           * telefonda birinchi urinishda bosish qiyin bo'lardi. Bu esa
+           * darsdan chiqishning YAGONA yo'li.
+           */
+          className="tap-highlight-none -ms-2 flex h-11 w-11 items-center justify-center rounded-full text-2xl text-ink-600"
         >
           ✕
         </button>
