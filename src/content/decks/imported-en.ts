@@ -2026,6 +2026,13 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
+      word: 'jumped',
+      translation: 'sakrab tushdi',
+      language: 'en',
+      topic: 'Enterprise A2-6',
+      level: 'A2',
+    },
+    {
       word: 'poland',
       translation: 'Polsha',
       language: 'en',
@@ -2085,7 +2092,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'leo',
       translation: 'arslon',
       language: 'en',
-      topic: 'Enterprise A2-6',
+      topic: 'Enterprise A2-7',
       level: 'A2',
     },
     {
@@ -2225,7 +2232,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'mississippi',
       translation: 'Missisipi',
       language: 'en',
-      topic: 'Enterprise A2-7',
+      topic: 'Enterprise A2-8',
       level: 'A2',
     },
     {
@@ -2365,7 +2372,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'sang',
       translation: 'kuyladi',
       language: 'en',
-      topic: 'Enterprise A2-8',
+      topic: 'Enterprise A2-9',
       level: 'A2',
     },
     {
@@ -2505,7 +2512,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'clips',
       translation: 'kliplar',
       language: 'en',
-      topic: 'Enterprise A2-9',
+      topic: 'Enterprise A2-10',
       level: 'A2',
     },
     {
@@ -2645,7 +2652,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'bees',
       translation: 'asalarilar',
       language: 'en',
-      topic: 'Enterprise A2-10',
+      topic: 'Enterprise A2-11',
       level: 'A2',
     },
     {

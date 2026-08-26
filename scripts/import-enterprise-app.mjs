@@ -30,12 +30,6 @@ const SRC = 'D:/Enterprise/enterprise-app/assets/content/enterprise1'
 const CLEAN_WORD = /^[a-z][a-z' -]*$/
 
 /**
- * Tarjima o'rniga GRAMMATIKA IZOHI yozilgan yozuvlar.
- *
- * Manbada so'z yasalish qoidalari ham shu maydonda uchraydi:
- * `studied → "Y → I + ED"`, `buying → "o'zgarmaydi"`. Ular lug'at emas.
- */
-/**
  * Tarjima o'rniga TRANSKRIPSIYA yozilgan yozuvlar.
  *
  * Manbada ba'zi so'zlarga ma'no o'rniga talaffuz qo'yilgan:
@@ -70,6 +64,48 @@ function isAllCaps(text) {
   return letters.length >= 3 && letters === letters.toUpperCase()
 }
 
+/**
+ * QO'LDA TEKSHIRILGAN axlat ro'yxati.
+ *
+ * Bularda `word` va `translation` maydonlari almashib ketgan yoki
+ * grammatika jadvalining katagi lug'at bo'lib tushgan:
+ *   `ism → "What's your name?"`, `savol gapda → "Are there any chairs?"`
+ *
+ * NEGA RO'YXAT, EVRISTIKA EMAS: "tarjima inglizchami" degan avtomatik
+ * tekshiruv to'g'ri kartalarni ham o'chirardi — `kennel → "it uyi"` da
+ * "it" o'zbekcha KUCHUK, lekin har qanday inglizcha naqshga mos keladi.
+ * Ro'yxat 22 ta nomzod qo'lda o'qib chiqilgandan keyin tuzilgan.
+ */
+const JUNK_WORDS = new Set([
+  // Maydonlari almashgan
+  'ism',
+  'yosh',
+  'kasb',
+  'xarakter',
+  'oila soni',
+  'juft narsa',
+  'restoranda buyurtma',
+  // Grammatika jadvali kataklari
+  'tasdiq gapda',
+  'inkor gapda',
+  'savol gapda',
+  'oddiy fe\'l',
+  'yordamchi fe\'l',
+  'kelasi zamon',
+  'artiklsiz',
+  'buyurtma',
+  'orqa tomonida',
+  'nimadir',
+  'sutemizuvchilarda',
+  'jumped',
+])
+
+/**
+ * Tarjima o'rniga GRAMMATIKA IZOHI yozilgan yozuvlar.
+ *
+ * Manbada so'z yasalish qoidalari ham shu maydonda uchraydi:
+ * `studied → "Y → I + ED"`, `buying → "o'zgarmaydi"`. Ular lug'at emas.
+ */
 function isGrammarNote(text) {
   const lower = text.toLowerCase()
 
@@ -245,6 +281,7 @@ for (const { data } of files) {
         if (isGrammarNote(uz)) { dropped += 1; continue }
         if (word === uz.toLowerCase()) { dropped += 1; continue }
         if (seenWord.has(word)) { dropped += 1; continue }
+        if (JUNK_WORDS.has(word)) { dropped += 1; continue }
 
         seenWord.add(word)
         ordered.push({ word, uz, topic })
@@ -273,6 +310,7 @@ for (const { data } of files) {
     if (isGrammarNote(uz)) { dropped += 1; continue }
     if (word === uz.toLowerCase()) { dropped += 1; continue }
     if (seenWord.has(word)) { dropped += 1; continue }
+    if (JUNK_WORDS.has(word)) { dropped += 1; continue }
 
     seenWord.add(word)
     ordered.push({ word, uz, topic })
