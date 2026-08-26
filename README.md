@@ -158,6 +158,13 @@ Uchta ongli qaror (kodda ham izohlangan):
 3. **Xato javob berilgan karta shu seansning oxiriga qaytariladi** — bazadagi
    `dueDate` baribir 1 kun bo'lib qoladi, lekin darhol qayta eslab chaqirish
    (retrieval practice) ancha samarali.
+4. **Takrorlashga faqat KO'RILGAN kartalar tushadi** (`totalReviews > 0`).
+   Yangi so'zlar darsda o'rganiladi — o'quv yo'li orqali. Ilgari yangi kartalar
+   ham navbatga kirardi va bir so'z ikki joyda chiqardi; yangi o'rnatgan
+   foydalanuvchi esa bosh ekranda "4440 ta so'z unutish arafasida" degan
+   yozuvni ko'rardi — hech qachon ko'rmagan so'zlari haqida. Takrorlash —
+   unutishdan oldin qaytarish; hech qachon bilinmagan so'zni takrorlab
+   bo'lmaydi.
 
 ## Mashqlar (retrieval practice)
 
