@@ -35,10 +35,32 @@ const CLEAN_WORD = /^[a-z][a-z' -]*$/
  * Manbada so'z yasalish qoidalari ham shu maydonda uchraydi:
  * `studied → "Y → I + ED"`, `buying → "o'zgarmaydi"`. Ular lug'at emas.
  */
+/**
+ * Tarjima o'rniga TRANSKRIPSIYA yozilgan yozuvlar.
+ *
+ * Manbada ba'zi so'zlarga ma'no o'rniga talaffuz qo'yilgan:
+ * `you'll → "/juːl/"`. Bunday karta hech nima o'rgatmaydi va eng yomoni —
+ * u boshqa savollarda CHALG'ITUVCHI variant bo'lib chiqadi
+ * ("abbey" savolining variantlari orasida "/juːl/" turardi).
+ *
+ * IPA belgilari lotin alifbosida uchramaydi, shuning uchun ular bo'yicha
+ * aniqlash ishonchli.
+ */
+function isTranscription(text) {
+  const trimmed = text.trim()
+
+  return (
+    (trimmed.startsWith('/') && trimmed.endsWith('/')) ||
+    (trimmed.startsWith('[') && trimmed.endsWith(']')) ||
+    /[ˈˌːɪəʊæʌɜɒθðʃʒŋ]/.test(trimmed)
+  )
+}
+
 function isGrammarNote(text) {
   const lower = text.toLowerCase()
 
   return (
+    isTranscription(text) ||
     text.includes('→') ||
     text.includes('->') ||
     text.startsWith('-') ||
