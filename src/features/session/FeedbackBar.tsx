@@ -33,7 +33,7 @@ const TONE = {
     title: 'Deyarli!',
     icon: '✍️',
     panel: 'border-flame-500 bg-flame-500/10',
-    text: 'text-flame-600',
+    text: 'text-flame-700',
   },
   wrong: {
     title: 'Keyingi safar bo‘ladi',
@@ -188,7 +188,7 @@ export function FeedbackBar({
       </div>
 
       {goalJustCompleted && (
-        <p className="rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-bold text-flame-600">
+        <p className="rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-bold text-flame-700">
           🎯 Kunlik maqsad bajarildi!
         </p>
       )}

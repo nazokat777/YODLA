@@ -140,7 +140,7 @@ export function HomeScreen() {
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-bold">Bugun takrorlash</h2>
           {dueCount > 0 && (
-            <span className="rounded-full bg-brand-500 px-2.5 py-0.5 text-sm font-bold text-white">
+            <span className="rounded-full bg-brand-700 px-2.5 py-0.5 text-sm font-bold text-white">
               {dueCount}
             </span>
           )}
@@ -167,7 +167,7 @@ export function HomeScreen() {
         <h2 className="mb-2 font-bold">Lug'at holati</h2>
         <div className="grid grid-cols-3 gap-2">
           <StatTile label="Yangi" value={stats?.fresh} accent="text-ink-600" />
-          <StatTile label="O'rganilmoqda" value={stats?.learning} accent="text-flame-600" />
+          <StatTile label="O'rganilmoqda" value={stats?.learning} accent="text-flame-700" />
           <StatTile label="Mustahkam" value={stats?.mature} accent="text-brand-600" />
         </div>
       </section>
@@ -181,8 +181,8 @@ function cnStreak(atRisk: boolean): string {
   return [
     'flex items-center gap-1 rounded-full px-3 py-1.5 font-bold',
     atRisk
-      ? 'bg-flame-500/25 text-flame-600 ring-2 ring-flame-500'
-      : 'bg-flame-500/10 text-flame-600',
+      ? 'bg-flame-500/25 text-flame-700 ring-2 ring-flame-500'
+      : 'bg-flame-500/10 text-flame-700',
   ].join(' ')
 }
 

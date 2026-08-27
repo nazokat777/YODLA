@@ -11,8 +11,8 @@ import { cn } from '@/lib/cn'
 
 /** Holatga qarab doira uslubi */
 const CIRCLE = {
-  completed: 'bg-brand-500 text-white shadow-[0_4px_0_0] shadow-brand-700',
-  current: 'bg-brand-500 text-white ring-4 ring-brand-300 shadow-[0_4px_0_0] shadow-brand-700',
+  completed: 'bg-brand-700 text-white shadow-[0_4px_0_0] shadow-brand-800',
+  current: 'bg-brand-700 text-white ring-4 ring-brand-300 shadow-[0_4px_0_0] shadow-brand-800',
   skipped: 'border-2 border-brand-300 bg-brand-50 text-brand-700',
   locked: 'bg-ink-300/40 text-ink-600',
 } as const

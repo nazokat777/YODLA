@@ -49,7 +49,7 @@ export function ProfileScreen() {
       {progress && (
         <Panel>
           <div className="flex items-center gap-3">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-500 text-xl font-extrabold text-white">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-700 text-xl font-extrabold text-white">
               {progress.level.level}
             </div>
             <div className="flex-1">
@@ -80,7 +80,7 @@ export function ProfileScreen() {
             />
           </div>
           {progress.streak.atRisk && (
-            <p className="mt-3 rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-semibold text-flame-600">
+            <p className="mt-3 rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-semibold text-flame-700">
               Bugun hali mashq qilmadingiz — ketma-ketlik uzilib qolishi mumkin.
             </p>
           )}

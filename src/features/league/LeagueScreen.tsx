@@ -228,7 +228,7 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
       {!isCloudEnabled() && (
         <Panel className="border-flame-500 bg-flame-500/10">
-          <p className="text-sm font-semibold text-flame-600">
+          <p className="text-sm font-semibold text-flame-700">
             Lokal rejim: reyting server ulangach ishlaydi.
           </p>
           <p className="mt-1 text-xs text-ink-600">
@@ -280,7 +280,7 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
             aria-pressed={view === option}
             className={cn(
               'tap-highlight-none flex-1 rounded-xl px-2 py-2 text-sm font-bold transition-colors',
-              view === option ? 'bg-brand-500 text-white' : 'text-ink-600 hover:bg-brand-50',
+              view === option ? 'bg-brand-700 text-white' : 'text-ink-600 hover:bg-brand-50',
             )}
           >
             {option === 'all' ? 'Hammasi' : "Do'stlar"}

@@ -40,7 +40,7 @@ export function StatsScreen() {
       <h1 className="text-2xl font-extrabold">Statistika</h1>
 
       <div className="grid grid-cols-3 gap-2">
-        <Tile label="Streak" value={progress?.streak.current ?? 0} accent="text-flame-600" />
+        <Tile label="Streak" value={progress?.streak.current ?? 0} accent="text-flame-700" />
         <Tile label="Haftalik XP" value={weekXp} accent="text-brand-600" />
         <Tile label="Jami XP" value={progress?.profile.totalXp ?? 0} accent="text-ink-900" />
       </div>
@@ -122,7 +122,7 @@ function WeekComparison({ current, previous }: { current: number; previous: numb
         <span
           data-testid="week-diff"
           className={
-            difference >= 0 ? 'font-extrabold text-brand-700' : 'font-extrabold text-flame-600'
+            difference >= 0 ? 'font-extrabold text-brand-700' : 'font-extrabold text-flame-700'
           }
         >
           {difference >= 0 ? '+' : ''}

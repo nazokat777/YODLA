@@ -41,7 +41,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             aria-label={lang.name}
             className={cn(
               'tap-highlight-none flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-sm font-bold transition-colors',
-              isActive ? 'bg-brand-500 text-white' : 'text-ink-600 hover:bg-brand-50',
+              isActive ? 'bg-brand-700 text-white' : 'text-ink-600 hover:bg-brand-50',
             )}
           >
             <LanguageBadge language={lang} size="sm" active={isActive} />

@@ -54,7 +54,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
           {summary.xpEarned > 0 && (
             <p
               data-testid="session-xp"
-              className="mt-3 inline-block rounded-full bg-brand-500 px-4 py-1.5 text-lg font-extrabold text-white"
+              className="mt-3 inline-block rounded-full bg-brand-700 px-4 py-1.5 text-lg font-extrabold text-white"
             >
               +<span data-celebrate="xp">{summary.xpEarned}</span> XP
             </p>
@@ -62,7 +62,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
 
           <div className="mt-4 grid grid-cols-3 gap-2" data-celebrate="stats">
             <Stat label="To‘g‘ri" value={summary.correct} accent="text-brand-600" />
-            <Stat label="Deyarli" value={summary.almost} accent="text-flame-600" />
+            <Stat label="Deyarli" value={summary.almost} accent="text-flame-700" />
             <Stat label="O‘rganildi" value={summary.wrong} accent="text-ink-600" />
           </div>
         </div>

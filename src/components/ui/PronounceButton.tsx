@@ -100,7 +100,7 @@ export function PronounceButton({
         className={cn(
           'tap-highlight-none flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl transition-colors',
           isListening
-            ? 'animate-pulse bg-flame-500/20 text-flame-600'
+            ? 'animate-pulse bg-flame-500/20 text-flame-700'
             : 'text-ink-600 hover:bg-brand-50 hover:text-brand-700',
           blocked && 'opacity-40',
         )}
@@ -109,7 +109,7 @@ export function PronounceButton({
       </button>
 
       {isListening && (
-        <span className="text-xs font-semibold text-flame-600">Tinglayapman…</span>
+        <span className="text-xs font-semibold text-flame-700">Tinglayapman…</span>
       )}
 
       {/*
