@@ -45,6 +45,17 @@ describe('isPushSupported', () => {
     expect(isPushSupported()).toBe(false)
   })
 
+  it('VAPID kaliti berilmagan muhitda false', async () => {
+    installBrowser()
+    vi.stubEnv('VITE_VAPID_PUBLIC_KEY', '')
+
+    // Modul kalitni yuklanishda o'qiydi — yangi nusxa kerak
+    vi.resetModules()
+    const fresh = await import('./push')
+
+    expect(fresh.isPushSupported()).toBe(false)
+  })
+
   it('hammasi bor bo‘lsa true', () => {
     installBrowser()
     expect(isPushSupported()).toBe(true)

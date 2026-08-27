@@ -10,9 +10,17 @@ import { removePushSubscription, savePushSubscription } from './supabase'
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 
-/** Brauzerda push uchun kerakli hamma narsa bormi */
+/**
+ * Push uchun kerakli hamma narsa bormi.
+ *
+ * VAPID kaliti ham SHU YERDA tekshiriladi. Aks holda kalit berilmagan
+ * muhitda (masalan Vercel'ga env qo'shilmaganda) sozlama ko'rinardi,
+ * lekin har bosishda "yoqib bo'lmadi" deb javob berardi — bosilganda
+ * hech nima qilmaydigan tugma foydalanuvchini chalg'itadi.
+ */
 export function isPushSupported(): boolean {
   return (
+    Boolean(VAPID_PUBLIC_KEY) &&
     typeof window !== 'undefined' &&
     'Notification' in window &&
     'PushManager' in window &&
@@ -96,7 +104,10 @@ export type PushResult =
  * ruxsat oynasini faqat foydalanuvchi harakatidan keyin ochadi.
  */
 export async function enablePush(hour: number): Promise<PushResult> {
-  if (!isPushSupported() || !VAPID_PUBLIC_KEY) return { status: 'unsupported' }
+  // Kalit alohida o'zgaruvchiga olinadi: `isPushSupported()` uni tekshiradi,
+  // lekin TypeScript funksiya chegarasidan o'tib tor qila olmaydi
+  const key = VAPID_PUBLIC_KEY
+  if (!isPushSupported() || !key) return { status: 'unsupported' }
 
   try {
     const permission =
@@ -115,7 +126,7 @@ export async function enablePush(hour: number): Promise<PushResult> {
       // Shu sababli "bugun mashq qilganlarni o'tkazib yuborish" mijozda
       // emas, SERVERDA hal qilinadi.
       userVisibleOnly: true,
-      applicationServerKey: decodeKey(VAPID_PUBLIC_KEY),
+      applicationServerKey: decodeKey(key),
     })
 
     const json = subscription.toJSON() as {

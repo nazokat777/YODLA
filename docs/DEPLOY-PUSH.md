@@ -14,6 +14,9 @@ turibdi (u `.gitignore` da — repoga tushmaydi).
   Shu qiymatni **Vercel** ga ham qo'shing: Settings → Environment
   Variables → `VITE_VAPID_PUBLIC_KEY`. Ochiq kalit maxfiy emas — u
   brauzerga baribir yetib boradi.
+
+  **Bu qadamsiz eslatma sozlamasi umuman ko'rinmaydi** — bu ataylab:
+  ishlamaydigan tugmani ko'rsatishdan ko'ra, uni yashirgan ma'qul.
 - **Maxfiy kalit** → faqat 3-bo'limdagi Supabase secrets ichiga.
   **Repoga hech qachon commit qilmang.** Secrets o'rnatilgandan keyin
   `vapid-keys.local` faylini o'chirib tashlashingiz mumkin.

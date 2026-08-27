@@ -44,6 +44,13 @@ export default defineConfig({
     env: {
       VITE_SUPABASE_URL: '',
       VITE_SUPABASE_ANON_KEY: '',
+      /*
+       * VAPID kaliti ham PIN QILINADI — u faqat `.env.local` da bo'ladi.
+       * Aks holda push testlari mashinaga bog'liq bo'lardi: kaliti bor
+       * dasturchida o'tib, toza klonda yiqilardi. Qiymat haqiqiy emas,
+       * faqat `decodeKey` uchun to'g'ri shakldagi base64url.
+       */
+      VITE_VAPID_PUBLIC_KEY: 'BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     },
   },
 })
