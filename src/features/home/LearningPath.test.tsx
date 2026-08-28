@@ -58,6 +58,12 @@ describe('LearningPath', () => {
 
     expect(locked).toHaveAttribute('aria-disabled', 'true')
     expect(screen.queryByRole('link', { name: /oila/i })).not.toBeInTheDocument()
+
+    // Klaviatura bilan yuradigan foydalanuvchi uchun: lug'atda 400 dan
+    // ortiq bo'lim bor, ularning deyarli hammasi qulflangan. Ular fokus
+    // olaversa, pastdagi navigatsiyaga yetib borish uchun yuzlab marta
+    // Tab bosishga to'g'ri kelardi — hech biri hech nima qilmaydi.
+    expect(locked).not.toHaveAttribute('tabindex')
   })
 
   it('tugallangan bo‘limni belgilaydi', async () => {

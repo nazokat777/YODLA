@@ -213,7 +213,10 @@ function UnitCircle({ unit }: { unit: PathUnit }) {
         data-state={unit.state}
         role="button"
         aria-disabled="true"
-        tabIndex={0}
+        // FOKUS OLMAYDI: yo'lda 400 dan ortiq bo'lim bor va ularning
+        // deyarli hammasi qulflangan. Har biri fokus olsa, klaviatura
+        // yoki ekran o'quvchisi bilan yuradigan foydalanuvchi hech nima
+        // qilmaydigan yuzlab to'xtashdan o'tishi kerak bo'lardi.
         aria-label={label}
         className={className}
       >
