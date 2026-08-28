@@ -169,44 +169,6 @@ function isSeen(card: CardRecord): boolean {
 }
 
 /**
- * Takrorlash muddati yetgan kartalar — eng "kechikkani" birinchi bo'lib.
- *
- * FAQAT ILGARI KO'RILGAN kartalar (`totalReviews > 0`). Yangi so'zlar bu
- * yerga tushmaydi: ular DARSDA o'rganiladi. Ilgari ular ham qaytarilardi va
- * natijada bir so'z ikki joyda chiqardi, yangi o'rnatgan foydalanuvchi esa
- * bosh ekranda "4440 ta so'z unutish arafasida" degan yozuvni ko'rardi —
- * hech qachon ko'rmagan so'zlari haqida.
- *
- * `[language+dueDate]` qo'shma indeksi bo'yicha oraliq skan qilinadi,
- * shuning uchun natija dueDate bo'yicha o'sish tartibida keladi; `limit`
- * FILTRDAN keyin qo'llanadi, ya'ni kerakli soni to'lgach skan to'xtaydi.
- */
-export async function getDueCards(
-  language: LanguageCode,
-  now: number = Date.now(),
-  limit?: number,
-): Promise<CardRecord[]> {
-  const collection = db.cards
-    .where('[language+dueDate]')
-    .between([language, Dexie.minKey], [language, now], true, true)
-    .filter(isSeen)
-
-  return limit === undefined ? collection.toArray() : collection.limit(limit).toArray()
-}
-
-/** Takrorlash muddati yetgan kartalar soni */
-export function countDueCards(
-  language: LanguageCode,
-  now: number = Date.now(),
-): Promise<number> {
-  return db.cards
-    .where('[language+dueDate]')
-    .between([language, Dexie.minKey], [language, now], true, true)
-    .filter(isSeen)
-    .count()
-}
-
-/**
  * Keyingi takrorlash vaqti (hozirdan keyingi eng yaqin `dueDate`).
  * Takrorlanadigan karta qolmaganda "yana qachon kelish kerak" deb
  * ko'rsatish uchun. Kartalar tugagan bo'lsa `null`.
