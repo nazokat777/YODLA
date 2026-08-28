@@ -15,6 +15,8 @@ import type { LanguageCode } from '@/core/types'
  * Bu testlar aynan shu jimgina buzilishlarni tutadi.
  */
 
+import { MAX_UNIT_WORDS } from './chunkTopics'
+
 const LANGUAGES: LanguageCode[] = ['en', 'ru', 'ar']
 
 const ARABIC = /\p{Script=Arabic}/u
@@ -161,6 +163,24 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     })
 
     expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
+  it('hech bir bo‘lim 20 so‘zdan katta emas', async () => {
+    const cards = await allCards(language)
+
+    const counts = new Map<string, number>()
+    for (const card of cards) {
+      if (!card.topic || !card.level) continue
+      const key = `${card.level}|${card.topic}`
+      counts.set(key, (counts.get(key) ?? 0) + 1)
+    }
+
+    // O'quv yo'lida bir vaqtda BITTA bo'lim ochiq. Darslikdan kelgan
+    // mavzular esa bob hajmida (269 so'zgacha) edi — keyingi bo'lim
+    // ochilishi uchun ularning hammasini ko'rish kerak bo'lardi.
+    const oversized = [...counts.entries()].filter(([, count]) => count > MAX_UNIT_WORDS)
+
+    expect(oversized).toEqual([])
   })
 
   it('hamma karta shu tilga tegishli', async () => {

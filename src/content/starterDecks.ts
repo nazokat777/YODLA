@@ -1,6 +1,7 @@
 import { LEVEL_ORDER } from '@/core/config/levels'
 import type { NewCardRecordInput } from '@/core/db'
 import type { LanguageCode, LevelCode } from '@/core/types'
+import { chunkLargeTopics } from './chunkTopics'
 
 export type Deck = Record<LevelCode, NewCardRecordInput[]>
 
@@ -36,6 +37,20 @@ function withSentences(deck: Deck, sentences: Record<string, string>): Deck {
 }
 
 /**
+ * Har darajada katta mavzularni qismlarga bo'ladi.
+ *
+ * Daraja bo'yicha ALOHIDA: bitta mavzu ikki darajada uchrashi mumkin
+ * ("Enterprise 5-unit" A1 da ham, A2 da ham bor) va o'quv yo'lida ular
+ * ikki xil bo'lim — shuning uchun qismlar ham alohida sanaladi.
+ */
+function chunkTopics(deck: Deck): Deck {
+  return LEVEL_ORDER.reduce(
+    (acc, level) => ({ ...acc, [level]: chunkLargeTopics(deck[level]) }),
+    {} as Deck,
+  )
+}
+
+/**
  * Til lug'atini DANGASA yuklaydi.
  *
  * Har til alohida bo'lakka (`import(...)`) chiqadi, shuning uchun asosiy
@@ -52,7 +67,7 @@ export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
         import('./decks/imported-en'),
         import('./decks/sentences-en'),
       ])
-      return withSentences(merge(EN_DECK, EN_APP, EN_IMPORTED), EN_SENTENCES)
+      return chunkTopics(withSentences(merge(EN_DECK, EN_APP, EN_IMPORTED), EN_SENTENCES))
     }
     case 'ru': {
       const [{ RU_DECK }, { RU_EXTRA }, { RU_DICT }, { RU_SENTENCES }] = await Promise.all([
@@ -61,7 +76,7 @@ export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
         import('./decks/imported-ru'),
         import('./decks/sentences-ru'),
       ])
-      return withSentences(merge(RU_DECK, RU_EXTRA, RU_DICT), RU_SENTENCES)
+      return chunkTopics(withSentences(merge(RU_DECK, RU_EXTRA, RU_DICT), RU_SENTENCES))
     }
     case 'ar': {
       const [{ AR_DECK }, { AR_IMPORTED }, { AR_SENTENCES }] = await Promise.all([
@@ -69,7 +84,7 @@ export async function loadLanguageDeck(lang: LanguageCode): Promise<Deck> {
         import('./decks/imported-ar'),
         import('./decks/sentences-ar'),
       ])
-      return withSentences(merge(AR_DECK, AR_IMPORTED), AR_SENTENCES)
+      return chunkTopics(withSentences(merge(AR_DECK, AR_IMPORTED), AR_SENTENCES))
     }
   }
 }
