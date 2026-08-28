@@ -194,12 +194,24 @@ describe('LeagueScreen — backend ulangan', () => {
     expect(await screen.findByText(/sizga xabarlar/i)).toBeInTheDocument()
   })
 
-  it('server javob bermasa — sabab aytiladi, ekran buzilmaydi', async () => {
+  it('server javob bermasa — SERVER aybdorligi aytiladi', async () => {
+    // Qurilma onlayn: sabab internetda emas, serverda. Ilgari ikkala
+    // holat ham "internet yo'q bo'lishi mumkin" deb ko'rsatilardi va
+    // interneti bor odam bekorga ulanishini tekshirib yurardi.
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
     fetchWeeklyLeague.mockResolvedValue(null)
     renderScreen()
 
-    expect(await screen.findByText(/reytingni olib bo.lmadi/i)).toBeInTheDocument()
+    expect(await screen.findByText(/serveri javob bermadi/i)).toBeInTheDocument()
     // O'z natijasi baribir ko'rinadi
     expect(screen.getByTestId('my-tier')).toBeInTheDocument()
+  })
+
+  it('qurilma oflayn bo‘lsa — INTERNET aybdorligi aytiladi', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    fetchWeeklyLeague.mockResolvedValue(null)
+    renderScreen()
+
+    expect(await screen.findByText(/internet yo.q/i)).toBeInTheDocument()
   })
 })

@@ -241,7 +241,15 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
       {isCloudEnabled() && !isLoading && rows === null && (
         <Panel className="text-sm text-ink-600">
-          Reytingni olib bo'lmadi — internet yo'q bo'lishi mumkin. Natijangiz saqlangan.
+          {/*
+            Ikki sabab AJRATILADI: qurilma oflaynmi yoki server javob
+            bermayaptimi. Ilgari ikkalasi ham "internet yo'q bo'lishi
+            mumkin" deb ko'rsatilardi va internet bor odam bekorga
+            ulanishini tekshirib yurardi.
+          */}
+          {navigator.onLine
+            ? 'Reyting serveri javob bermadi. Natijangiz saqlangan — keyinroq o‘zi qo‘shiladi.'
+            : 'Internet yo‘q. Natijangiz saqlangan — ulanish tiklanganda yuboriladi.'}
         </Panel>
       )}
 

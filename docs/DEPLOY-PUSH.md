@@ -3,6 +3,30 @@
 Bu qadamlarni **siz** bajarasiz: ular Supabase akkauntingizga kirishni
 talab qiladi.
 
+## 0. Supabase loyihasi (AVVAL SHU)
+
+> **2026-08-26 holati:** eski loyiha (`gexoravwgbbynzjdvzpa`) **mavjud emas**
+> — DNS uni topmayapti, ya'ni u o'chirilgan. Liga backendi ham shu bilan
+> ishlamay qolgan.
+
+Yangi loyiha ochilgach, uning `URL` va `anon` kalitini quyidagi joylarga
+yozing:
+
+- `.env.local` → `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- Vercel → Settings → Environment Variables → o'sha ikkitasi
+
+So'ng **ikkala** sxemani ham qo'ying (ikkalasi ham idempotent):
+
+| fayl | nima uchun |
+| ---- | ---------- |
+| `supabase/yodla-schema.sql` | liga (reyting, do'stlar, xabarlar) |
+| `supabase/yodla-push-schema.sql` | push eslatmalar |
+
+Tekshirish:
+
+    node scripts/check-supabase.mjs      # liga
+    node scripts/check-push-backend.mjs  # eslatmalar
+
 ## 1. VAPID kalitlari
 
     node scripts/generate-vapid.mjs
@@ -38,7 +62,7 @@ Supabase CLI kerak:
 
     npm i -g supabase
     supabase login
-    supabase link --project-ref gexoravwgbbynzjdvzpa
+    supabase link --project-ref <PROJECT_REF>
     supabase secrets set VAPID_PUBLIC_KEY=<ochiq> VAPID_PRIVATE_KEY=<maxfiy> VAPID_SUBJECT=mailto:<pochtangiz>
     supabase functions deploy send-reminders
 
@@ -65,7 +89,7 @@ select cron.schedule(
   '0 * * * *',
   $$
   select net.http_post(
-    url     := 'https://gexoravwgbbynzjdvzpa.supabase.co/functions/v1/send-reminders',
+    url     := 'https://<PROJECT_REF>.supabase.co/functions/v1/send-reminders',
     headers := jsonb_build_object(
       'Content-Type',  'application/json',
       'Authorization', 'Bearer <ANON_KEY>'
