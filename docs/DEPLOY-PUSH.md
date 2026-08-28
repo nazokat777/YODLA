@@ -48,6 +48,10 @@ turibdi (u `.gitignore` da — repoga tushmaydi).
 
   **Bu qadamsiz eslatma sozlamasi umuman ko'rinmaydi** — bu ataylab:
   ishlamaydigan tugmani ko'rsatishdan ko'ra, uni yashirgan ma'qul.
+  Supabase kalitlari yo'q bo'lsa ham xuddi shunday yashiriladi.
+  "Bu brauzer qo'llab-quvvatlamaydi" degan xabar esa FAQAT brauzer
+  haqiqatan ko'tara olmaganda chiqadi (eski Safari, bosh ekranga
+  qo'shilmagan iPhone) — bizning sozlamamiz yetishmagani uchun emas.
 - **Maxfiy kalit** → faqat 3-bo'limdagi Supabase secrets ichiga.
   **Repoga hech qachon commit qilmang.** Secrets o'rnatilgandan keyin
   `vapid-keys.local` faylini o'chirib tashlashingiz mumkin.

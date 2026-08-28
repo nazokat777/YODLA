@@ -7,6 +7,8 @@ import * as supabase from '@/lib/supabase'
 
 beforeEach(() => {
   vi.spyOn(push, 'isPushSupported').mockReturnValue(true)
+  vi.spyOn(push, 'isPushConfigured').mockReturnValue(true)
+  vi.spyOn(push, 'isBrowserPushCapable').mockReturnValue(true)
   vi.spyOn(push, 'getActiveEndpoint').mockResolvedValue(null)
   // Bulut kalitlari testda bo'sh — sozlama ko'rinishi uchun yoqib qo'yamiz
   vi.spyOn(supabase, 'isCloudEnabled').mockReturnValue(true)
@@ -17,12 +19,31 @@ afterEach(() => {
 })
 
 describe('ReminderSettings', () => {
-  it('qo‘llab-quvvatlanmasa tushuntirish ko‘rsatadi', () => {
-    vi.spyOn(push, 'isPushSupported').mockReturnValue(false)
+  it('BRAUZER qo‘llab-quvvatlamasa tushuntirish ko‘rsatadi', () => {
+    vi.spyOn(push, 'isBrowserPushCapable').mockReturnValue(false)
 
     render(<ReminderSettings />)
 
     expect(screen.getByText(/qo‘llab-quvvatlamaydi/i)).toBeInTheDocument()
+  })
+
+  it('kalit sozlanmagan bo‘lsa HECH NIMA ko‘rsatmaydi', () => {
+    // Brauzer o'zi qobiliyatli, lekin ilovada VAPID kaliti yo'q.
+    // Ilgari bunda "bu brauzer qo'llab-quvvatlamaydi" deb YOLG'ON
+    // aytilardi va iPhone maslahati berilardi — Android Chrome'da ham.
+    vi.spyOn(push, 'isPushConfigured').mockReturnValue(false)
+
+    const { container } = render(<ReminderSettings />)
+
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('bulut o‘chiq bo‘lsa ham HECH NIMA ko‘rsatmaydi', () => {
+    vi.spyOn(supabase, 'isCloudEnabled').mockReturnValue(false)
+
+    const { container } = render(<ReminderSettings />)
+
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('yoqilganda obuna saqlanadi va manzil eslab qolinadi', async () => {

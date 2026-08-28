@@ -11,22 +11,34 @@ import { removePushSubscription, savePushSubscription } from './supabase'
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 
 /**
- * Push uchun kerakli hamma narsa bormi.
+ * ILOVADA push sozlanganmi (VAPID ochiq kaliti bor).
  *
- * VAPID kaliti ham SHU YERDA tekshiriladi. Aks holda kalit berilmagan
- * muhitda (masalan Vercel'ga env qo'shilmaganda) sozlama ko'rinardi,
- * lekin har bosishda "yoqib bo'lmadi" deb javob berardi — bosilganda
+ * Kalit berilmagan muhitda (masalan Vercel'ga env qo'shilmaganda) sozlama
+ * ko'rinsa, har bosishda "yoqib bo'lmadi" deb javob berardi — bosilganda
  * hech nima qilmaydigan tugma foydalanuvchini chalg'itadi.
+ *
+ * Bu BRAUZER qobiliyatidan alohida tekshiriladi: sabablar boshqa, demak
+ * foydalanuvchiga aytiladigan gap ham boshqa. Kalit yo'qligi — BIZNING
+ * sozlamamiz, foydalanuvchining qurilmasi aybdor emas.
  */
-export function isPushSupported(): boolean {
+export function isPushConfigured(): boolean {
+  return Boolean(VAPID_PUBLIC_KEY)
+}
+
+/** BRAUZER push'ni ko'tara oladimi (iOS'da bosh ekranga qo'shilgan bo'lsa) */
+export function isBrowserPushCapable(): boolean {
   return (
-    Boolean(VAPID_PUBLIC_KEY) &&
     typeof window !== 'undefined' &&
     'Notification' in window &&
     'PushManager' in window &&
     typeof navigator !== 'undefined' &&
     'serviceWorker' in navigator
   )
+}
+
+/** Push uchun kerakli hamma narsa bormi */
+export function isPushSupported(): boolean {
+  return isPushConfigured() && isBrowserPushCapable()
 }
 
 /**

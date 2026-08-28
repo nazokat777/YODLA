@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Panel } from '@/components/ui/Panel'
-import { disablePush, enablePush, getActiveEndpoint, isPushSupported } from '@/lib/push'
+import {
+  disablePush,
+  enablePush,
+  getActiveEndpoint,
+  isBrowserPushCapable,
+  isPushConfigured,
+} from '@/lib/push'
 import { isCloudEnabled } from '@/lib/supabase'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
@@ -91,9 +97,17 @@ export function ReminderSettings() {
     setMessage('Yangi vaqtni saqlab bo‘lmadi — keyinroq urinib ko‘ring.')
   }
 
-  // Shart hook'lardan KEYIN tekshiriladi: React hook'lari shartli
+  // Shartlar hook'lardan KEYIN tekshiriladi: React hook'lari shartli
   // chaqirilmasligi kerak
-  if (!isCloudEnabled() || !isPushSupported()) {
+
+  // Ilovaning O'ZIDA eslatma yo'q (VAPID kaliti yoki bulut sozlanmagan) —
+  // bu foydalanuvchiga aytiladigan gap emas, shuning uchun bo'lim umuman
+  // ko'rsatilmaydi. Ilgari bunda "bu brauzer qo'llab-quvvatlamaydi" deb
+  // yolg'on aytilar va Android'da ham iPhone maslahati berilardi.
+  if (!isPushConfigured() || !isCloudEnabled()) return null
+
+  // Bu esa haqiqatan qurilmaga bog'liq — va maslahat ham foydali
+  if (!isBrowserPushCapable()) {
     return (
       <Panel className="text-sm text-ink-600">
         <p className="font-bold text-ink-900">Kunlik eslatma</p>
