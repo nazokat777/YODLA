@@ -44,6 +44,10 @@ async function getClient(): Promise<MinimalClient | null> {
   try {
     return await clientPromise
   } catch (error) {
+    // KESHNI TOZALAYMIZ: rad etilgan va'da o'rnida qolsa, keyingi har bir
+    // chaqiruv o'sha eski xatoni qaytaraverardi va liga seans oxirigacha
+    // o'lik bo'lardi — tarmoq tiklangan bo'lsa ham
+    clientPromise = null
     console.error('Supabase yuklanmadi:', error)
     return null
   }
