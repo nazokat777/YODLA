@@ -67,13 +67,28 @@ export function LearningPath({ cards }: LearningPathProps) {
     }
 
     let cancelled = false
-    void loadLanguageDeck(learningLanguage).then((deck) => {
-      if (cancelled) return
+    void loadLanguageDeck(learningLanguage)
+      .then((deck) => {
+        if (cancelled) return
 
-      const order = topicOrderFromDeck(deck)
-      saveTopicOrder(learningLanguage, order)
-      setTopicOrder(order)
-    })
+        const order = topicOrderFromDeck(deck)
+        saveTopicOrder(learningLanguage, order)
+        setTopicOrder(order)
+      })
+      .catch((error: unknown) => {
+        /*
+         * Lug'at bo'lagi yuklanmasligi MUMKIN: yangi versiya chiqqach eski
+         * sahifada bo'lak nomi o'zgargan bo'ladi, yoki foydalanuvchi
+         * oflaynda tilni almashtirgan va o'sha til keshda yo'q.
+         *
+         * `.catch` bo'lmasa `topicOrder` abadiy `null` qolardi va butun
+         * o'quv yo'li "yuklanmoqda" holatida qotib qolardi — ya'ni darsni
+         * boshlash imkoniyati yo'qolardi. Bo'sh tartib esa yo'lni ALIFBO
+         * bo'yicha chizadi: tartib ideal emas, lekin ekran ishlaydi.
+         */
+        console.error('Mavzular tartibini yuklab bo‘lmadi:', error)
+        if (!cancelled) setTopicOrder([])
+      })
     return () => {
       cancelled = true
     }

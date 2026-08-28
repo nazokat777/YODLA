@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, getAllCards, type NewCardRecordInput } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import * as starterDecks from '@/content/starterDecks'
 import { LearningPath } from './LearningPath'
 
 const WORDS: NewCardRecordInput[] = [
@@ -112,5 +113,19 @@ describe('LearningPath — yuklanish holati', () => {
       expect(screen.queryByTestId('path-loading')).not.toBeInTheDocument()
     })
     expect(container.querySelector('section')).toBeNull()
+  })
+
+  it('lug‘at bo‘lagi yuklanmasa ham yo‘l chiziladi', async () => {
+    // Yangi versiya chiqqach eski sahifada bo'lak nomi o'zgaradi; oflaynda
+    // til almashtirilganda ham shu bo'ladi. Ilgari bunda `topicOrder`
+    // abadiy `null` qolib, yo'l "yuklanmoqda" holatida qotardi.
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(starterDecks, 'loadLanguageDeck').mockRejectedValue(new Error('chunk yo‘q'))
+
+    await addMissingCards(WORDS)
+    await renderPath()
+
+    expect(await screen.findByText('Oila')).toBeInTheDocument()
+    expect(screen.getByText('Salomlashish')).toBeInTheDocument()
   })
 })
