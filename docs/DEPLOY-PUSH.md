@@ -5,9 +5,16 @@ talab qiladi.
 
 ## 0. Supabase loyihasi (AVVAL SHU)
 
-> **2026-08-26 holati:** eski loyiha (`gexoravwgbbynzjdvzpa`) **mavjud emas**
-> — DNS uni topmayapti, ya'ni u o'chirilgan. Liga backendi ham shu bilan
-> ishlamay qolgan.
+> **2026-08-26 holati:** eski loyiha (`gexoravwgbbynzjdvzpa`) manzili DNS'da
+> topilmayapti, ya'ni backend ishlamayapti (liga ham, eslatma ham).
+> **Avval Supabase boshqaruv panelini oching** — loyiha ikki holatda
+> bo'lishi mumkin:
+>
+> - **To'xtatilgan (Paused)** → *Restore* bosing. URL va kalitlar
+>   O'ZGARMAYDI, ya'ni quyidagi env qadamlari SHART EMAS; to'g'ridan-to'g'ri
+>   tekshirishga o'ting.
+> - **Ro'yxatda yo'q** → yangi loyiha oching va quyidagi qadamlarni to'liq
+>   bajaring.
 
 Yangi loyiha ochilgach, uning `URL` va `anon` kalitini quyidagi joylarga
 yozing:
