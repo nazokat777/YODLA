@@ -29,6 +29,8 @@ export function LessonScreen() {
   const [cards, setCards] = useState<CardRecord[] | null>(null)
   const [pool, setPool] = useState<CardRecord[]>([])
   const [summary, setSummary] = useState<SessionSummary | null>(null)
+  /** So'ralgan bo'lim umuman mavjud emas (eskirgan havola) */
+  const [isMissingUnit, setIsMissingUnit] = useState(false)
   /** Qiymati o'zgarganda yangi dars yuklanadi */
   const [lessonKey, setLessonKey] = useState(0)
 
@@ -38,6 +40,7 @@ export function LessonScreen() {
     let cancelled = false
     setCards(null)
     setSummary(null)
+    setIsMissingUnit(false)
 
     getAllCards(learningLanguage)
       .then((all) => {
@@ -50,6 +53,11 @@ export function LessonScreen() {
               card.level && card.topic ? unitIdOf(card.level, card.topic) === lessonId : false,
             )
           : all
+
+        // Bo'lim so'ralgan, lekin unga hech bir karta tushmadi — holbuki
+        // tilda kartalar bor. Ya'ni bo'lim YO'Q (eskirgan xatcho'p yoki
+        // yangilanishdan keyin nomi o'zgargan mavzu), lug'at bo'sh emas.
+        setIsMissingUnit(Boolean(lessonId) && scope.length === 0 && all.length > 0)
 
         setPool(scope)
         // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
@@ -90,7 +98,19 @@ export function LessonScreen() {
 
       {cards === null && <Panel className="text-ink-600">Yuklanmoqda…</Panel>}
 
-      {cards !== null && cards.length === 0 && (
+      {cards !== null && cards.length === 0 && isMissingUnit && (
+        <div className="flex flex-col gap-3">
+          <Panel className="text-center text-ink-600">
+            Bu bo‘lim topilmadi. U yangilanishdan keyin boshqa nom olgan
+            bo‘lishi mumkin — o‘quv yo‘lidan qaytadan tanlang.
+          </Panel>
+          <LinkButton to={PATHS.home} block>
+            Bosh sahifaga
+          </LinkButton>
+        </div>
+      )}
+
+      {cards !== null && cards.length === 0 && !isMissingUnit && (
         <Panel className="text-center text-ink-600">
           Bu tilda hali so‘z yo‘q.
         </Panel>

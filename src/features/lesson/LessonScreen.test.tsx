@@ -43,8 +43,21 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/3')
   })
 
-  it('noto‘g‘ri bo‘lim id sida bo‘sh holat', async () => {
+  it('yo‘q bo‘lim id sida "so‘z yo‘q" DEMAYDI', async () => {
     renderLesson('/lesson/yoq-bunday-bolim')
+
+    // Lug'atda 3 ta so'z bor. Eski xabar ("Bu tilda hali so'z yo'q")
+    // yolg'on edi va foydalanuvchida "ilova hamma so'zimni yo'qotdi"
+    // degan taassurot qoldirardi. Bunday havola eskirgan xatcho'p yoki
+    // yangilanishdan keyin nomi o'zgargan bo'lim bo'lishi mumkin.
+    expect(await screen.findByText(/bo.lim topilmadi/i)).toBeInTheDocument()
+    expect(screen.queryByText(/hali so.z yo.q/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /bosh sahifa/i })).toBeInTheDocument()
+  })
+
+  it('lug‘at butunlay bo‘sh bo‘lsa boshqa xabar', async () => {
+    await db.cards.clear()
+    renderLesson('/lesson')
 
     expect(await screen.findByText(/hali so.z yo.q/i)).toBeInTheDocument()
   })

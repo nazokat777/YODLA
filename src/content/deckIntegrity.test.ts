@@ -15,6 +15,7 @@ import type { LanguageCode } from '@/core/types'
  * Bu testlar aynan shu jimgina buzilishlarni tutadi.
  */
 
+import { unitIdOf } from '@/core/path'
 import { MAX_UNIT_WORDS } from './chunkTopics'
 
 const LANGUAGES: LanguageCode[] = ['en', 'ru', 'ar']
@@ -181,6 +182,27 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     const oversized = [...counts.entries()].filter(([, count]) => count > MAX_UNIT_WORDS)
 
     expect(oversized).toEqual([])
+  })
+
+  it('bo‘lim id lari noyob', async () => {
+    const cards = await allCards(language)
+
+    const byId = new Map<string, Set<string>>()
+    for (const card of cards) {
+      if (!card.level || !card.topic) continue
+      const id = unitIdOf(card.level, card.topic)
+      byId.set(id, (byId.get(id) ?? new Set()).add(card.topic))
+    }
+
+    // Id mavzu nomidan slug bilan yasaladi, ya'ni tinish belgilari
+    // bilan farq qiladigan ikki mavzu BITTA id ga tushishi mumkin.
+    // Unda `buildUnits` ularni jimgina bitta bo'limga qo'shib yuborardi,
+    // dars ekrani esa ikkalasining so'zlarini aralashtirib berardi.
+    const collisions = [...byId.entries()]
+      .filter(([, topics]) => topics.size > 1)
+      .map(([id, topics]) => `${id}: ${[...topics].join(' | ')}`)
+
+    expect(collisions).toEqual([])
   })
 
   it('hamma karta shu tilga tegishli', async () => {
