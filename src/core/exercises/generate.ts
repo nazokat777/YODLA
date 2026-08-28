@@ -1,6 +1,7 @@
 import type { CardRecord } from '@/core/db'
 import type { ExerciseType } from '@/core/types'
 import { shuffle, type RandomSource } from '@/lib/random'
+import { normalizeAnswer } from './normalize'
 import { MAX_CHOICES, type Exercise, type MatchingPair } from './types'
 
 /**
@@ -42,14 +43,16 @@ function collectDistractors(
   pool: readonly CardRecord[],
   random: RandomSource,
 ): string[] {
-  const seen = new Set([card.translation.toLowerCase()])
+  // Tarjimalar o'zbekcha (lotin): `'en'` shu yerda "lotin yozuvi uchun
+  // umumiy tozalash" degani — tutuq belgisi variantlari va tinish belgilari
+  const seen = new Set([optionKey(card.translation, 'en')])
   const sameTopic: string[] = []
   const otherTopic: string[] = []
 
   for (const candidate of pool) {
     if (candidate.id === card.id) continue
 
-    const key = candidate.translation.toLowerCase()
+    const key = optionKey(candidate.translation, 'en')
     if (seen.has(key)) continue
     seen.add(key)
 
@@ -65,19 +68,32 @@ function collectDistractors(
  * `collectDistractors` bilan bir xil mantiq, faqat `word` maydonini yig'adi:
  * gap ichidagi variantlar o'rganilayotgan tilda bo'lishi kerak.
  */
+/**
+ * Variantlarni taqqoslash kaliti.
+ *
+ * `toLowerCase()` YETARLI EMAS: lug'atda `dining table` va `dining-table`,
+ * `open air` va `open-air` kabi juftlar bor. Ular bitta savolda birga
+ * chiqsa, foydalanuvchi TO'G'RI javobni tanlab ham xato oladi — ikkala
+ * variant ham to'g'ri ko'rinadi. Shuning uchun defis va tinish belgilari
+ * ham tekislanadi.
+ */
+function optionKey(text: string, language: CardRecord['language']): string {
+  return normalizeAnswer(text.replace(/-/g, ' '), language)
+}
+
 function collectWordDistractors(
   card: CardRecord,
   pool: readonly CardRecord[],
   random: RandomSource,
 ): string[] {
-  const seen = new Set([card.word.toLowerCase()])
+  const seen = new Set([optionKey(card.word, card.language)])
   const sameTopic: string[] = []
   const otherTopic: string[] = []
 
   for (const candidate of pool) {
     if (candidate.id === card.id) continue
 
-    const key = candidate.word.toLowerCase()
+    const key = optionKey(candidate.word, card.language)
     if (seen.has(key)) continue
     seen.add(key)
 

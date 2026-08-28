@@ -351,6 +351,33 @@ describe('generateExercise — gap ichida (cloze)', () => {
     expect(cloze!.options).not.toContain('suv')
   })
 
+  it('DEFIS bilan farq qiladigan so‘z variantga TUSHMAYDI', () => {
+    // Lug'atda haqiqatan shunday juftlar bor: `dining table` va
+    // `dining-table`, `open air` va `open-air`. Ular variantlar ro'yxatida
+    // birga chiqsa, savolga to'g'ri javob berib bo'lmaydi — ikkalasi ham
+    // to'g'ri ko'rinadi, lekin bittasi xato deb belgilanadi.
+    const table = makeCard({
+      id: 'en:dining-table',
+      word: 'dining table',
+      translation: 'ovqat stoli',
+      topic: 'Uy',
+      repetitions: 2,
+      sentence: 'We bought a dining table',
+      sentenceTranslation: 'Biz ovqat stoli sotib oldik',
+    })
+    const twin = makeCard({
+      id: 'en:dining-table-2',
+      word: 'dining-table',
+      translation: 'stol',
+      topic: 'Uy',
+    })
+
+    const cloze = findCloze(table, [table, twin, ...POOL])
+
+    expect(cloze).not.toBeNull()
+    expect(cloze!.options).not.toContain('dining-table')
+  })
+
   it('jumlasiz kartada cloze yaratilmaydi', () => {
     const noSentence = makeCard({ id: 'en:water', word: 'water', repetitions: 2 })
 
