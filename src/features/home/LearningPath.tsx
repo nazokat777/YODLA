@@ -36,6 +36,8 @@ interface LearningPathProps {
 }
 
 export function LearningPath({ cards }: LearningPathProps) {
+  /** Joriy bo'lim — ochilishda shu joyga suriladi */
+  const currentRef = useRef<HTMLLIElement>(null)
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const startingLevel = useSettingsStore((s) => s.startingLevel)
 
@@ -152,6 +154,21 @@ export function LearningPath({ cards }: LearningPathProps) {
     }
   }, [units.length])
 
+  useEffect(() => {
+    const target = currentRef.current
+    if (!target) return
+
+    // Faqat EKRANDAN PASTDA bo'lsa suriladi. Yangi foydalanuvchida joriy
+    // bo'lim birinchi o'rinda turadi va uni markazga tortish streak,
+    // kunlik maqsad va "bugun takrorlash" kartalarini ekrandan chiqarib
+    // yuborardi — ular esa aynan bosh ekranning maqsadi.
+    const { top } = target.getBoundingClientRect()
+    if (top <= window.innerHeight) return
+
+    // `auto`: ochilishdagi uzoq animatsiya kutish bo'lib tuyuladi
+    target.scrollIntoView({ block: 'center', behavior: 'auto' })
+  }, [units])
+
   if (isLoading) {
     return (
       <section data-testid="path-loading">
@@ -176,7 +193,12 @@ export function LearningPath({ cards }: LearningPathProps) {
 
       <ol ref={listRef} className="flex flex-col gap-3">
         {units.map((unit, index) => (
-          <li key={unit.id} data-unit className="flex items-center gap-3">
+          <li
+            key={unit.id}
+            data-unit
+            ref={unit.state === 'current' ? currentRef : undefined}
+            className="flex items-center gap-3"
+          >
             {/* Zigzag: har ikkinchi bo'lim biroz siljiydi */}
             <div className={cn('flex items-center gap-3', index % 2 === 1 && 'ms-10')}>
               <UnitCircle unit={unit} />

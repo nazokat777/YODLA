@@ -66,6 +66,44 @@ describe('LearningPath', () => {
     expect(locked).not.toHaveAttribute('tabindex')
   })
 
+  it('joriy bo‘lim ekrandan pastda bo‘lsa unga SURILADI', async () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    // Yo'l ekrandan ancha pastda boshlanadi
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: 5000,
+      bottom: 5064,
+    } as DOMRect)
+
+    await addMissingCards(WORDS)
+    await renderPath()
+
+    // Lug'at kattalashgani sayin yo'l 20 000 pikselga cho'ziladi.
+    // Foydalanuvchi 60-bo'limda bo'lsa, har ochilishda o'z joyini
+    // qidirib skroll qilishga majbur bo'lardi.
+    await waitFor(() => {
+      expect(scrollIntoView).toHaveBeenCalled()
+    })
+  })
+
+  it('joriy bo‘lim ekranda ko‘rinib tursa SURILMAYDI', async () => {
+    const scrollIntoView = vi.fn()
+    Element.prototype.scrollIntoView = scrollIntoView
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockReturnValue({
+      top: 120,
+      bottom: 184,
+    } as DOMRect)
+
+    await addMissingCards(WORDS)
+    await renderPath()
+
+    // Yangi foydalanuvchida joriy bo'lim birinchi o'rinda. Uni markazga
+    // tortish streak va kunlik maqsad kartalarini yuqoriga surib
+    // yuborardi — holbuki bosh ekranning maqsadi aynan shular
+    await screen.findByTestId('unit-a1-salomlashish')
+    expect(scrollIntoView).not.toHaveBeenCalled()
+  })
+
   it('tugallangan bo‘limni belgilaydi', async () => {
     await addMissingCards(WORDS)
     await db.cards.update('en:hello', { totalReviews: 2 })
