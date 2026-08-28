@@ -4,7 +4,8 @@ import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { getAllCards, getDueCards, getNextDueDate, type CardRecord } from '@/core/db'
+import { getAllCards, getNextDueDate, type CardRecord } from '@/core/db'
+import { pickDueCards } from '@/core/srs'
 import { formatTimeUntil } from '@/lib/format'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
@@ -49,15 +50,14 @@ export function ReviewScreen() {
     setSummary(null)
     setErrorMessage(null)
 
-    // `pool` — chalg'ituvchi variantlar manbai. Muddati yetgan kartalar
-    // kam bo'lishi mumkin, shuning uchun butun lug'atdan olinadi.
-    Promise.all([
-      getDueCards(learningLanguage, Date.now(), SESSION_LIMIT),
-      getAllCards(learningLanguage),
-    ])
-      .then(([due, all]) => {
+    // Lug'at BIR MARTA o'qiladi: u ham chalg'ituvchi variantlar manbai
+    // (`pool`), ham navbatning o'zi shundan hisoblanadi. Ilgari ikki
+    // alohida so'rov bor edi va ikkalasi ham o'sha 4400 yozuvni diskdan
+    // ko'chirardi.
+    getAllCards(learningLanguage)
+      .then((all) => {
         if (cancelled) return
-        setCards(due)
+        setCards(pickDueCards(all, Date.now(), SESSION_LIMIT))
         setPool(all)
       })
       .catch((error: unknown) => {
