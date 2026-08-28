@@ -504,6 +504,21 @@ Xuddi shu sababdan bosh ekran kartalarni **bir marta** o'qiydi va ularni
 ham statistikaga, ham o'quv yo'liga beradi: ilgari ikkala qism jadvalni
 alohida skanerlardi.
 
+### Ma'lumot yo'qolishidan himoya
+
+Brauzer disk to'lganda IndexedDB'ni **ogohlantirishsiz o'chirib
+yuborishi** mumkin (eviction). Bizda esa butun o'quv tarixi — interval,
+easeFactor, streak — faqat shu yerda va zaxirasi yo'q.
+
+Shuning uchun `navigator.storage.persist()` so'raladi
+([lib/storage.ts](src/lib/storage.ts)). Ruxsat berilgan saytning
+ma'lumoti faqat foydalanuvchi O'ZI o'chirgandagina ketadi.
+
+So'rov ilova ochilishida EMAS, **birinchi seans tugagach** yuboriladi:
+Firefox bu so'rovda ruxsat oynasini ko'rsatadi va uni hali hech nima
+qilmagan odamga chiqarish tushunarsiz bo'lardi. Bir marta so'raladi —
+rad javobidan keyin qayta-qayta so'rash bezor qiladi.
+
 ## Marshrutlar
 
 | Yo'l                 | Ekran       | Qobiq    | Himoya            |

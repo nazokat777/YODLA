@@ -12,6 +12,7 @@ import {
 } from '@/core/exercises'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
+import { requestPersistentStorage } from '@/lib/storage'
 import { useHasVoice } from '@/hooks/useHasVoice'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
 import { useLeagueSync } from '@/hooks/useLeagueSync'
@@ -127,6 +128,16 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
     if (finishedRef.current || index < queue.length) return
 
     finishedRef.current = true
+
+    /*
+     * Progress endi haqiqiy qiymatga ega — brauzerdan uni SAQLAB QOLISHNI
+     * so'raymiz. Brauzer disk to'lganda IndexedDB'ni ogohlantirishsiz
+     * o'chirib yuborishi mumkin, bizda esa butun o'quv tarixi faqat shu
+     * yerda. Ilova ochilishida emas, aynan shu yerda so'raladi: Firefox
+     * ruxsat oynasini ko'rsatadi va uni hali hech nima qilmagan odamga
+     * chiqarish tushunarsiz bo'lardi.
+     */
+    void requestPersistentStorage()
 
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
       .then(({ newlyUnlocked }) => onFinish({ ...summary, newBadges: newlyUnlocked }))
