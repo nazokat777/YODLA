@@ -39,11 +39,27 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
   // Savollar lug'atdan yasaladi — lug'at dangasa yuklanadi. Bir marta
   // yasaladi: har javobdan keyin qayta yasalsa, foydalanuvchi siljimasdi
   const [quiz, setQuiz] = useState<PlacementQuestion[]>([])
+  /** Lug'at yuklanmadi — testni o'tkazib yuborishdan boshqa yo'l yo'q */
+  const [failed, setFailed] = useState(false)
+
   useEffect(() => {
     let cancelled = false
-    void loadLanguageDeck(language).then((deck) => {
-      if (!cancelled) setQuiz(buildPlacementQuiz(deck))
-    })
+
+    void loadLanguageDeck(language)
+      .then((deck) => {
+        if (!cancelled) setQuiz(buildPlacementQuiz(deck))
+      })
+      .catch((error: unknown) => {
+        /*
+         * Tarmoq uzilsa yoki yangi versiya chiqib bo'lak nomi o'zgarsa,
+         * lug'at yuklanmaydi. `.catch` bo'lmasa ekran abadiy
+         * "Yuklanmoqda…" da qolardi — yangi foydalanuvchi onboardingdan
+         * UMUMAN o'ta olmasdi va ilova ishga tushmasdi.
+         */
+        console.error('Daraja testini yuklab bo‘lmadi:', error)
+        if (!cancelled) setFailed(true)
+      })
+
     return () => {
       cancelled = true
     }
@@ -53,6 +69,22 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
   const [score, setScore] = useState<Record<LevelCode, number>>(emptyScore)
 
   const question = quiz[index]
+
+  // Lug'at yuklanmadi — foydalanuvchi tuzoqda qolmasligi kerak
+  if (failed) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+        <Mascot mood="thinking" size="md" />
+        <p className="text-ink-600">
+          Daraja testini yuklab bo‘lmadi. Boshlang‘ich darajadan
+          boshlayveramiz — keyin Profilda o‘zgartirsangiz bo‘ladi.
+        </p>
+        <Button block size="lg" onClick={() => onDone('A1')}>
+          Davom etish
+        </Button>
+      </div>
+    )
+  }
 
   // Lug'at hali yuklanmoqda
   if (!question) {

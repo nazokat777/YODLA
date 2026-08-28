@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import * as starterDecks from '@/content/starterDecks'
 import { OnboardingScreen } from './OnboardingScreen'
 
 function renderScreen() {
@@ -100,5 +101,21 @@ describe('OnboardingScreen — oqim', () => {
     fireEvent.click(screen.getByRole('button', { name: /birinchi darsni boshlash/i }))
 
     expect(useSettingsStore.getState().onboardingCompleted).toBe(true)
+  })
+
+  it('lug‘at yuklanmasa ham onboarding TUGATILADI', async () => {
+    // Tarmoq uzilsa yoki yangi versiya chiqib bo'lak nomi o'zgarsa, daraja
+    // testi yuklanmaydi. Ilgari ekran abadiy "Yuklanmoqda…" da qolardi va
+    // yangi foydalanuvchi ilovaga UMUMAN kira olmasdi.
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(starterDecks, 'loadLanguageDeck').mockRejectedValue(new Error('chunk yo‘q'))
+
+    renderScreen()
+    chooseEnglish()
+
+    fireEvent.click(await screen.findByRole('button', { name: /davom etish/i }))
+
+    // Daraja testisiz ham keyingi qadamga o'tildi
+    expect(useSettingsStore.getState().startingLevel).toBe('A1')
   })
 })
