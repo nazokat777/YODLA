@@ -324,6 +324,10 @@ function ClozeView({
         correctIndex={exercise.correctIndex}
         selectedIndex={answer.choiceIndex}
         revealed={revealed}
+        // Bu yerda variantlar O'RGANILAYOTGAN tilda (boshqa mashqlarda
+        // ular o'zbekcha tarjima) — arabchada ular o'ngdan chapga
+        dir={language.dir}
+        lang={language.code}
         onSelect={(choiceIndex) => {
           // Tanib olish kabi: variant tanlash o'zi javob berish hisoblanadi
           const chosen = { ...answer, choiceIndex }

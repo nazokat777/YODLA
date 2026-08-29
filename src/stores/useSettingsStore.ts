@@ -23,7 +23,6 @@ interface SettingsState {
   /** Onboarding tugallanganmi */
   onboardingCompleted: boolean
   /** Arab tili uchun interfeysni ham RTL qilish */
-  rtlInterface: boolean
   /** Javob feedback tovushlari (TZ 4: instant feedback) */
   soundEnabled: boolean
   /** Eslatma soati (0..23), mahalliy vaqt */
@@ -42,7 +41,6 @@ interface SettingsState {
   /** Ligaga qo'shilish: kod yaratiladi va ism saqlanadi */
   joinLeague: (name: string) => void
   completeOnboarding: () => void
-  setRtlInterface: (enabled: boolean) => void
   setSoundEnabled: (enabled: boolean) => void
   setReminderHour: (hour: number) => void
   setPushEndpoint: (endpoint: string | null) => void
@@ -57,7 +55,6 @@ const INITIAL = {
   leagueCode: null,
   leagueName: '',
   onboardingCompleted: false,
-  rtlInterface: false,
   soundEnabled: true,
   reminderHour: 19,
   pushEndpoint: null,
@@ -68,12 +65,19 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       ...INITIAL,
 
-      setLearningLanguage: (learningLanguage) =>
-        set({
-          learningLanguage,
-          // Arab tili tanlanganda interfeys ham o'ngdan-chapga o'tadi
-          rtlInterface: learningLanguage === 'ar',
-        }),
+      /*
+       * INTERFEYS YO'NALISHI O'ZGARMAYDI.
+       *
+       * Ilgari arab tili tanlanganda butun sahifa RTL bo'lardi. Lekin
+       * interfeys matni har doim O'ZBEKCHA — lotin yozuvi, chapdan
+       * o'ngga. Sahifani teskari o'girish o'zbekcha jumlalarni buzardi:
+       * "Bu so'z nimani anglatadi?" ekranda "?Bu so'z nimani anglatadi"
+       * bo'lib chiqardi va ilova buzilgandek ko'rinardi.
+       *
+       * Arabchaning o'zi (so'z, jumla, variantlar) alohida `dir` bilan
+       * belgilanadi — bu allaqachon har bir komponentda bor.
+       */
+      setLearningLanguage: (learningLanguage) => set({ learningLanguage }),
 
       setDailyGoalWords: (dailyGoalWords) => set({ dailyGoalWords }),
       setStartingLevel: (startingLevel) => set({ startingLevel }),
@@ -86,7 +90,6 @@ export const useSettingsStore = create<SettingsState>()(
           leagueCode: state.leagueCode ?? generateCode(),
         })),
       completeOnboarding: () => set({ onboardingCompleted: true }),
-      setRtlInterface: (rtlInterface) => set({ rtlInterface }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
       setReminderHour: (reminderHour) => set({ reminderHour }),
       setPushEndpoint: (pushEndpoint) => set({ pushEndpoint }),

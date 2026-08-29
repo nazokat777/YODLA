@@ -8,6 +8,15 @@ interface ChoiceGridProps {
   /** Javob berilgandan keyin to'g'ri/xato ranglar ko'rsatiladi */
   revealed: boolean
   onSelect: (index: number) => void
+  /**
+   * Variantlar matnining yozuv yo'nalishi.
+   *
+   * Sukut — `ltr`: ko'p mashqlarda variantlar O'ZBEKCHA tarjimalar.
+   * "Gap ichida" mashqida esa ular o'rganilayotgan tilda, shuning uchun
+   * u yerda arabcha uchun `rtl` uzatiladi.
+   */
+  dir?: 'ltr' | 'rtl'
+  lang?: string
 }
 
 /** Variantning javobdan keyingi holati */
@@ -45,9 +54,11 @@ export function ChoiceGrid({
   selectedIndex,
   revealed,
   onSelect,
+  dir = 'ltr',
+  lang,
 }: ChoiceGridProps) {
   return (
-    <ul className="flex flex-col gap-2">
+    <ul dir={dir} lang={lang} className="flex flex-col gap-2">
       {options.map((option, index) => {
         const isSelected = selectedIndex === index
         const isCorrect = index === correctIndex

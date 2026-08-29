@@ -3,7 +3,6 @@ import { PATHS } from '@/app/paths'
 import { RequireOnboarding } from '@/app/guards/RequireOnboarding'
 import { AppShell } from '@/app/layouts/AppShell'
 import { FocusLayout } from '@/app/layouts/FocusLayout'
-import { useDocumentDirection } from '@/hooks/useDocumentDirection'
 import { useStarterDeck } from '@/hooks/useStarterDeck'
 import { useDailyMaintenance } from '@/hooks/useProgress'
 import { HomeScreen } from '@/features/home/HomeScreen'
@@ -24,8 +23,6 @@ import { ReviewScreen } from '@/features/review/ReviewScreen'
  *  - FocusLayout → chalg'itmaydigan ekranlar (onboarding, dars)
  */
 export function App() {
-  // Arab tili tanlanganda <html dir="rtl"> o'rnatiladi
-  useDocumentDirection()
   // Tanlangan til uchun boshlang'ich so'zlar bazaga yoziladi (idempotent)
   useStarterDeck()
   // Streak muzlatishi va bosqich mukofotlari (kun almashganda ham qayta ishlaydi)

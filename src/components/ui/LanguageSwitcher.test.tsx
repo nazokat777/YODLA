@@ -35,12 +35,17 @@ describe('LanguageSwitcher', () => {
     expect(useSettingsStore.getState().learningLanguage).toBe('ru')
   })
 
-  it('arab tili tanlanganda RTL interfeys yoqiladi', () => {
+  it('arab tili tanlanganda INTERFEYS teskari o‘girilmaydi', () => {
     render(<LanguageSwitcher />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Arab tili' }))
 
     expect(useSettingsStore.getState().learningLanguage).toBe('ar')
-    expect(useSettingsStore.getState().rtlInterface).toBe(true)
+
+    // Interfeys matni HAR DOIM o'zbekcha — lotin yozuvi, chapdan o'ngga.
+    // Butun sahifani RTL qilish o'zbekcha jumlalarni buzardi: savol
+    // belgisi chap tomonga o'tib, "?Bu so'z nimani anglatadi" bo'lardi.
+    // Arabchaning o'zi alohida `dir` bilan belgilanadi.
+    expect(document.documentElement.dir).not.toBe('rtl')
   })
 })
