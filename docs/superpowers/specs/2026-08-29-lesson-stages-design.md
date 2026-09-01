@@ -102,6 +102,13 @@ So'z ikkinchi va uchinchi marta chiqqanda:
 ichida uch marta ko'rgan — bu uzoq muddatli xotira dalili emas. SM-2
 kunlar oralig'iga mo'ljallangan, daqiqalarga emas.
 
+**Juft topish (`matching`) ham shu qoidaga bo'ysunadi.** U bitta mashqda
+bir nechta kartani baholaydi (`handleMatchingComplete`), ya'ni seansda
+allaqachon baholangan so'zni ikkinchi marta baholab yuborishi mumkin.
+Har bir `cardId` uchun ham o'sha "birinchi javob" tekshiruvi qo'llanadi:
+baholanmagani jadvalga yoziladi, qolganlari faqat XP va aniqlikka
+kiradi.
+
 ### 4. Navbat uzunligi chegarasi
 
 Xato javob qadamni navbat oxiriga qayta qo'shadi (mavjud xatti-harakat,
