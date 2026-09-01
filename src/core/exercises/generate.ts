@@ -29,6 +29,15 @@ export interface GenerateExerciseOptions {
   pool: readonly CardRecord[]
   /** TTS mavjudmi — yo'q bo'lsa "eshitib tushunish" turi yaratilmaydi */
   allowAudio: boolean
+  /**
+   * Shu so'z seans ichida nechanchi marta chiqyapti (0 dan).
+   *
+   * Zinapoya `repetitions + stage` ga qaraydi, ya'ni qiyinlik SEANS
+   * ICHIDA ko'tariladi. Kartaning o'z `repetitions` iga tegilmaydi:
+   * u SM-2 jadvaliga tegishli va bir necha daqiqalik mashqdan
+   * o'zgarmasligi kerak.
+   */
+  stage?: number
   random?: RandomSource
 }
 
@@ -265,10 +274,11 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
  * (u har doim mumkin).
  */
 export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType {
-  const { card, random = Math.random } = options
+  const { card, stage = 0, random = Math.random } = options
+  const effectiveRepetitions = card.repetitions + stage
 
   for (const step of DIFFICULTY_LADDER) {
-    if (card.repetitions < step.minRepetitions) continue
+    if (effectiveRepetitions < step.minRepetitions) continue
 
     const available = step.types.filter((type) => isTypeAvailable(type, options))
     if (available.length === 0) continue
@@ -286,9 +296,11 @@ export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType
  * testlarda to'liq oldindan aytiladi.
  */
 export function generateExercise(options: GenerateExerciseOptions): Exercise {
-  const { card, pool, random = Math.random } = options
+  const { card, pool, stage = 0, random = Math.random } = options
   const type = pickExerciseType({ ...options, random })
-  const id = `${card.id}:${type}`
+  // Bosqich ham kiradi: bir karta seansda bir necha marta chiqadi va id
+  // takrorlansa React eski mashq holatini yangisiga olib o'tardi
+  const id = `${card.id}:${type}:${stage}`
 
   switch (type) {
     case 'recognition': {

@@ -102,6 +102,36 @@ describe('pickExerciseType — adaptiv qiyinlik', () => {
       ),
     ).toBe(true)
   })
+
+  it('bosqich qiyinlikni KO‘TARADI — yangi so‘z ham xilma-xil chiqadi', () => {
+    // Yangi so'zning `repetitions` i 0, ya'ni zinapoyada faqat
+    // "tanib olish" ochiq. Shu sababli birinchi darsdagi HAMMA savol
+    // bir xil bo'lardi. Bosqich shu cheklovni seans ichida ochadi.
+    const card = makeCard({ repetitions: 0 })
+
+    const types = SEEDS.map((seed) =>
+      pickExerciseType({
+        card,
+        pool: POOL,
+        allowAudio: true,
+        stage: 2,
+        random: seededRandom(seed),
+      }),
+    )
+
+    expect(types.every((type) => type === 'recognition')).toBe(false)
+  })
+
+  it('bosqich berilmasa xatti-harakat O‘ZGARMAYDI', () => {
+    const type = pickExerciseType({
+      card: makeCard({ repetitions: 0 }),
+      pool: POOL,
+      allowAudio: true,
+      random: seededRandom(1),
+    })
+
+    expect(type).toBe('recognition')
+  })
 })
 
 describe('pickExerciseType — mavjud bo‘lmagan turlarni chetlab o‘tish', () => {
@@ -583,5 +613,31 @@ describe('generateExercise — cloze lotin bo‘lmagan yozuvlarda', () => {
     const pool = [tea, makeCard({ id: 'ru:hleb', word: 'хлеб', translation: 'non', language: 'ru' })]
 
     expect(findCloze(tea, pool)).toBeNull()
+  })
+})
+
+describe('mashq identifikatori', () => {
+  it('bosqichni ham o‘z ichiga oladi', () => {
+    // Bir karta seansda bir necha marta chiqadi. Id bir xil qolsa,
+    // React eski mashqni qayta ishlatib, kiritilgan javob va fokus
+    // yangi savolga o'tib ketardi.
+    const card = makeCard({ repetitions: 0 })
+
+    const first = generateExercise({
+      card,
+      pool: POOL,
+      allowAudio: false,
+      stage: 0,
+      random: seededRandom(1),
+    })
+    const second = generateExercise({
+      card,
+      pool: POOL,
+      allowAudio: false,
+      stage: 1,
+      random: seededRandom(1),
+    })
+
+    expect(first.id).not.toBe(second.id)
   })
 })
