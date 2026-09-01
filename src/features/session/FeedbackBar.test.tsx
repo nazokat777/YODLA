@@ -34,12 +34,16 @@ function exerciseFor(card: CardRecord): Exercise {
   return { id: 'x', type: 'recall', card, prompt: card.translation, answer: card.word }
 }
 
-function renderBar(card: CardRecord, verdict: 'correct' | 'wrong' = 'wrong') {
+function renderBar(
+  card: CardRecord,
+  verdict: 'correct' | 'wrong' = 'wrong',
+  nextIntervalDays: number | null = 1,
+) {
   return render(
     <FeedbackBar
       exercise={exerciseFor(card)}
       verdict={verdict}
-      nextIntervalDays={1}
+      nextIntervalDays={nextIntervalDays}
       xpGained={2}
       goalJustCompleted={false}
       onContinue={() => {}}
@@ -95,5 +99,16 @@ describe('FeedbackBar — talaffuz', () => {
     expect(
       screen.getByRole('button', { name: /talaffuzni tekshirish/i }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('jadval o‘zgarmagan javob', () => {
+  it('"keyingi takrorlash" YOZILMAYDI', () => {
+    // So'z shu seansda ikkinchi marta chiqqan — bu mashq, jadval esa
+    // birinchi javobda allaqachon belgilangan. "Keyingi takrorlash: 6 kun"
+    // deb yozish yolg'on bo'lardi: hech narsa o'zgarmadi.
+    renderBar(makeCard(), 'correct', null)
+
+    expect(screen.queryByText(/keyingi takrorlash/i)).not.toBeInTheDocument()
   })
 })

@@ -12,8 +12,14 @@ import { SpeakButton } from '@/components/ui/SpeakButton'
 interface FeedbackBarProps {
   exercise: Exercise
   verdict: AnswerVerdict
-  /** Javobdan keyingi yangi interval (kunlarda) — "keyingi ko'rish" ma'lumoti */
-  nextIntervalDays: number
+  /**
+   * Javobdan keyingi yangi interval (kunlarda).
+   *
+   * `null` — jadval bu javobda O'ZGARMADI (so'z shu seansda ikkinchi
+   * marta chiqqan). Unda qator umuman chizilmaydi: o'zgarmagan muddatni
+   * "keyingi takrorlash" deb ko'rsatish foydalanuvchini chalg'itardi.
+   */
+  nextIntervalDays: number | null
   /** Shu javob uchun berilgan XP */
   xpGained: number
   /** Kunlik maqsad aynan shu javob bilan bajarildimi */
@@ -251,9 +257,11 @@ export function FeedbackBar({
         />
       )}
 
-      <p className="text-xs font-semibold text-ink-600">
-        Keyingi takrorlash: {formatInterval(nextIntervalDays)}
-      </p>
+      {nextIntervalDays !== null && (
+        <p className="text-xs font-semibold text-ink-600">
+          Keyingi takrorlash: {formatInterval(nextIntervalDays)}
+        </p>
+      )}
 
       <Button
         block
