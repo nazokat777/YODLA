@@ -10,6 +10,7 @@ import {
   type AnswerVerdict,
   type Exercise,
 } from '@/core/exercises'
+import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
 import { requestPersistentStorage } from '@/lib/storage'
@@ -58,6 +59,14 @@ interface SessionRunnerProps {
   cards: CardRecord[]
   /** Chalg'ituvchi variantlar manbai — odatda o'sha tildagi barcha kartalar */
   pool: CardRecord[]
+  /**
+   * Har karta seansda necha marta chiqishi. Sukut — bir marta.
+   *
+   * Dars ekrani yangi so'zlarga 3 beradi (so'z shu darsning O'ZIDA
+   * mustahkamlanadi), takrorlash ekrani esa hech nima uzatmaydi — u
+   * yerda maqsad o'rgatish emas, tekshirish.
+   */
+  stagesFor?: (card: CardRecord) => number
   onFinish: (summary: SessionSummary) => void
 }
 
@@ -68,16 +77,16 @@ interface SessionRunnerProps {
  * Takrorlash (`/review`) va dars (`/lesson`) ekranlari shu bir komponentni
  * ishlatadi — farq faqat kartalar qayerdan olinishida.
  */
-export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
+export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
 
-  const [queue, setQueue] = useState<CardRecord[]>(cards)
+  const [queue, setQueue] = useState<LessonStep[]>(() => buildLessonQueue(cards, stagesFor))
   const [index, setIndex] = useState(0)
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [answer, setAnswer] = useState<ExerciseAnswerState>(EMPTY_ANSWER)
   const [verdict, setVerdict] = useState<AnswerVerdict | null>(null)
-  const [nextIntervalDays, setNextIntervalDays] = useState(1)
+  const [nextIntervalDays, setNextIntervalDays] = useState<number | null>(1)
   const [updatedCard, setUpdatedCard] = useState<CardRecord | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -107,13 +116,13 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
 
   // Navbatdagi karta o'zgarganda yangi mashq yaratiladi
   useEffect(() => {
-    const card = queue[index]
-    if (!card) {
+    const step = queue[index]
+    if (!step) {
       setExercise(null)
       return
     }
 
-    setExercise(generateExercise({ card, pool, allowAudio }))
+    setExercise(generateExercise({ card: step.card, pool, allowAudio, stage: step.stage }))
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)
     setErrorMessage(null)
@@ -123,6 +132,15 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   useEffect(() => cancelSpeech, [])
 
   // Seans tugadi — nishonlar qayta hisoblanadi va hisobot bir marta yuboriladi
+  /**
+   * Shu seansda SM-2 jadvali allaqachon yangilangan kartalar.
+   *
+   * So'z ikkinchi va uchinchi marta chiqqanda javob XP va aniqlikka
+   * kiradi, lekin jadvalga tegmaydi: ikki daqiqa ichida uch marta
+   * "esladim" deb hisoblash intervalni asossiz uzaytirardi.
+   */
+  const gradedRef = useRef(new Set<string>())
+
   const finishedRef = useRef(false)
   useEffect(() => {
     if (finishedRef.current || index < queue.length) return
@@ -204,7 +222,11 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
 
     setIsSaving(true)
     try {
-      const saved = await gradeCard(exercise.card.id, grade)
+      const cardId = exercise.card.id
+      const isFirstAnswer = !gradedRef.current.has(cardId)
+
+      const saved = isFirstAnswer ? await gradeCard(cardId, grade) : null
+      if (isFirstAnswer) gradedRef.current.add(cardId)
 
       // Geymifikatsiya ALOHIDA yoziladi va o'z xatosini o'zi yutadi:
       // XP yozilmasa ham takrorlash progressi saqlanib qolishi kerak
@@ -222,8 +244,8 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
         console.error('XP ni yozib bo‘lmadi:', error)
       }
 
-      setUpdatedCard(saved)
-      setNextIntervalDays(saved.interval)
+      setUpdatedCard(saved ?? exercise.card)
+      setNextIntervalDays(saved ? saved.interval : null)
       setVerdict(result)
       setLastXpGained(xpGained)
       setGoalJustCompleted(goalCompleted)
@@ -255,15 +277,17 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
   const handleContinue = useCallback(() => {
     // Xato javob berilgan karta shu seansning oxiriga qaytariladi:
     // darhol qayta eslab chaqirish (retrieval practice) samaraliroq.
-    // Navbatga bazadan qaytgan YANGILANGAN yozuv qo'shiladi — shunda
-    // keyingi mashq turi ham yangi `repetitions` ga qarab tanlanadi.
-    if (verdict === 'wrong' && updatedCard) {
-      const repeated = updatedCard
-      setQueue((current) => [...current, repeated])
+    // Bosqich O'SHANDAYLIGICHA qoladi — foydalanuvchi uni hali o'tmadi,
+    // keyingisiga ko'tarish qiyinlikni asossiz oshirardi.
+    if (verdict === 'wrong') {
+      const failed = queue[index]
+      if (failed && queue.length < MAX_LESSON_STEPS) {
+        setQueue((current) => [...current, failed])
+      }
     }
 
     setIndex((current) => current + 1)
-  }, [verdict, updatedCard])
+  }, [verdict, queue, index])
 
   /**
    * Juft topish yakunlandi — bir mashqda BIR NECHTA karta baholanadi.
@@ -286,12 +310,18 @@ export function SessionRunner({ cards, pool, onFinish }: SessionRunnerProps) {
       let xpTotal = 0
 
       for (const { cardId, verdict } of results) {
-        try {
-          await gradeCard(cardId, verdict === 'correct' ? 4 : 2)
-        } catch (error) {
-          // Bittasi saqlanmasa ham qolganlari yoziladi — butun juftlikni
-          // bekor qilish foydalanuvchining mehnatini yo'qqa chiqarardi
-          console.error('Juftlik bahosini saqlab bo‘lmadi:', error)
+        // Juft topish bir mashqda bir nechta kartani baholaydi, ya'ni
+        // seansda allaqachon baholangan so'zni ikkinchi marta baholab
+        // yuborishi mumkin — shuning uchun shu yerda ham tekshiriladi
+        if (!gradedRef.current.has(cardId)) {
+          gradedRef.current.add(cardId)
+          try {
+            await gradeCard(cardId, verdict === 'correct' ? 4 : 2)
+          } catch (error) {
+            // Bittasi saqlanmasa ham qolganlari yoziladi — butun juftlikni
+            // bekor qilish foydalanuvchining mehnatini yo'qqa chiqarardi
+            console.error('Juftlik bahosini saqlab bo‘lmadi:', error)
+          }
         }
 
         try {

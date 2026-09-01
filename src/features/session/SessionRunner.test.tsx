@@ -158,3 +158,90 @@ describe('SessionRunner — audio mashqlari', () => {
     vi.unstubAllGlobals()
   })
 })
+
+describe('SessionRunner — bosqichlar', () => {
+  /**
+   * Ekrandagi mashqqa javob beradi.
+   *
+   * Tur oldindan noma'lum — aynan shu sinovning MAQSADI mashq turining
+   * o'zgarishi. Shuning uchun ikkala shakl ham qo'llab-quvvatlanadi:
+   * variantli (tanlash o'zi javob) va matnli ("Tekshirish" tugmasi).
+   */
+  async function answerCurrent(): Promise<void> {
+    const choices = screen.queryAllByRole('button', { pressed: false })
+    if (choices.length > 0) {
+      fireEvent.click(choices[0])
+      return
+    }
+
+    const input = screen.getByRole('textbox', { name: /javob/i })
+    fireEvent.change(input, { target: { value: 'javob' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Tekshirish' }))
+  }
+
+  it('bir so‘z UCH marta chiqadi, lekin BIR marta baholanadi', async () => {
+    // `Math.random` 0.9 juft topishni tanlardi; bu yerda oddiy mashqlar kerak
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    render(
+      <SessionRunner
+        cards={[CARDS[0]]}
+        pool={CARDS}
+        stagesFor={() => 3}
+        onFinish={() => {}}
+      />,
+    )
+
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/3')
+
+    for (let step = 0; step < 3; step += 1) {
+      await answerCurrent()
+
+      // Javob to'g'ri bo'lsa "Davom etish", xato bo'lsa "Tushunarli"
+      const next = await screen.findByRole('button', {
+        name: /davom etish|tushunarli/i,
+      })
+      fireEvent.click(next)
+    }
+
+    // SM-2 jadvali FAQAT birinchi javobda yangilanadi. Aks holda bitta
+    // darsdan keyin interval 1 → 6 → 15 kunga sakrardi — holbuki so'z
+    // ikki daqiqada uch marta ko'rilgan, bu uzoq xotira dalili emas.
+    expect(gradeCard).toHaveBeenCalledTimes(1)
+
+    // XP esa har javob uchun beriladi — mashq ham mehnat
+    expect(recordAnswer).toHaveBeenCalledTimes(3)
+  })
+
+  it('bosqich oshgani sayin mashq TURI o‘zgaradi', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    render(
+      <SessionRunner
+        cards={[CARDS[0]]}
+        pool={CARDS}
+        stagesFor={() => 3}
+        onFinish={() => {}}
+      />,
+    )
+
+    await screen.findByTestId('session-progress')
+
+    const seen = new Set<string>()
+
+    for (let step = 0; step < 3; step += 1) {
+      // Variantli mashqda tugmalar, matnlida kiritish maydoni bo'ladi —
+      // shakl o'zi turni ajratib beradi
+      seen.add(screen.queryAllByRole('button', { pressed: false }).length > 0 ? 'tanlash' : 'yozish')
+
+      await answerCurrent()
+      fireEvent.click(
+        await screen.findByRole('button', { name: /davom etish|tushunarli/i }),
+      )
+    }
+
+    // Ilgari uchala savol ham bir xil edi: yangi so'zning `repetitions` i
+    // 0 bo'lgani uchun zinapoyada faqat "tanib olish" ochiq edi
+    expect(seen.size).toBeGreaterThan(1)
+  })
+})
