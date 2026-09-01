@@ -129,6 +129,11 @@ export function ReviewScreen() {
 
   return (
     <div className="flex min-h-[70vh] flex-col">
+      {/*
+        `stagesFor` UZATILMAYDI — takrorlashda har so'z bir marta chiqadi.
+        Bu yerda maqsad o'rgatish emas, tekshirish: bir so'zni ketma-ket
+        uch marta so'rash SM-2 o'lchovini buzardi.
+      */}
       <SessionRunner key={sessionKey} cards={cards} pool={pool} onFinish={handleFinish} />
     </div>
   )

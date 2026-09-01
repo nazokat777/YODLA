@@ -87,7 +87,6 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   const [answer, setAnswer] = useState<ExerciseAnswerState>(EMPTY_ANSWER)
   const [verdict, setVerdict] = useState<AnswerVerdict | null>(null)
   const [nextIntervalDays, setNextIntervalDays] = useState<number | null>(1)
-  const [updatedCard, setUpdatedCard] = useState<CardRecord | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [summary, setSummary] = useState<SessionSummary>(EMPTY_SUMMARY)
@@ -244,7 +243,6 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         console.error('XP ni yozib bo‘lmadi:', error)
       }
 
-      setUpdatedCard(saved ?? exercise.card)
       setNextIntervalDays(saved ? saved.interval : null)
       setVerdict(result)
       setLastXpGained(xpGained)

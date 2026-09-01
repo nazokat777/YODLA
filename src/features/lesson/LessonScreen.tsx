@@ -12,7 +12,22 @@ import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /** Bir darsda nechta so'z beriladi */
-const LESSON_SIZE = 5
+/**
+ * Bir darsdagi TURLI so'zlar soni.
+ *
+ * 5 emas 4: har so'z endi uch bosqichda chiqadi (4 × 3 = 12 savol).
+ * Til tanlash ekranidagi "kuniga 5 daqiqa" va'dasiga shu mos keladi.
+ */
+const LESSON_SIZE = 4
+
+/**
+ * Yangi so'z darsning O'ZIDA mustahkamlanadi — uch marta, har safar
+ * qiyinroq turda. Allaqachon ko'rilgan so'z bir marta chiqadi: u
+ * takrorlash jadvali bo'yicha baribir qaytadi.
+ */
+function lessonStages(card: CardRecord): number {
+  return card.totalReviews === 0 ? 3 : 1
+}
 
 /**
  * Dars ekrani (TZ 6.3): yangi so'zlarni o'rganish.
@@ -117,7 +132,13 @@ export function LessonScreen() {
       )}
 
       {cards !== null && cards.length > 0 && summary === null && (
-        <SessionRunner key={lessonKey} cards={cards} pool={pool} onFinish={handleFinish} />
+        <SessionRunner
+          key={lessonKey}
+          cards={cards}
+          pool={pool}
+          stagesFor={lessonStages}
+          onFinish={handleFinish}
+        />
       )}
 
       {summary !== null && (
