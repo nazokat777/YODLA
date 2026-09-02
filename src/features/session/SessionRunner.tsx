@@ -11,6 +11,7 @@ import {
   type Exercise,
 } from '@/core/exercises'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
+import { loadGsap } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
 import { requestPersistentStorage } from '@/lib/storage'
@@ -126,6 +127,46 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     setVerdict(null)
     setErrorMessage(null)
   }, [queue, index, pool, allowAudio])
+
+  /*
+   * Yangi savol pastdan siljib chiqadi.
+   *
+   * Usiz savollar bir-birining ustiga jimgina almashardi va yangi savol
+   * kelgani sezilmasdi — ayniqsa turi bir xil bo'lganda.
+   *
+   * OPACITY ATAYLAB YO'Q: fon tabda yoki to'xtatilgan `rAF` da savol
+   * ko'rinmas bo'lib qolardi. Siljish yarim yo'lda to'xtasa ham matn
+   * o'qilaveradi.
+   */
+  const stageRef = useRef<HTMLDivElement>(null)
+
+  // Faqat mashq ALMASHGANDA — obyektning o'zi qayta yaratilganda emas
+  const exerciseId = exercise?.id
+
+  useEffect(() => {
+    if (!exerciseId) return
+
+    let cancelled = false
+    let context: { revert: () => void } | null = null
+
+    void loadGsap().then((gsap) => {
+      if (!gsap || cancelled || !stageRef.current) return
+
+      context = gsap.context(() => {
+        gsap.from(stageRef.current, {
+          y: 16,
+          duration: 0.25,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        })
+      }, stageRef)
+    })
+
+    return () => {
+      cancelled = true
+      context?.revert()
+    }
+  }, [exerciseId])
 
   // Ekrandan chiqilganda o'qish to'xtatiladi
   useEffect(() => cancelSpeech, [])
@@ -415,13 +456,15 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         </p>
       )}
 
-      <ExerciseView
-        exercise={exercise}
-        answer={answer}
-        onAnswerChange={setAnswer}
-        revealed={verdict !== null}
-        onSubmit={(submitted) => void handleSubmit(submitted)}
-      />
+      <div ref={stageRef}>
+        <ExerciseView
+          exercise={exercise}
+          answer={answer}
+          onAnswerChange={setAnswer}
+          revealed={verdict !== null}
+          onSubmit={(submitted) => void handleSubmit(submitted)}
+        />
+      </div>
 
       <div className="mt-auto pt-2">
         {verdict === null ? (

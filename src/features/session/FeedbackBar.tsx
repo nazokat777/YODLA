@@ -7,6 +7,7 @@ import { transliterate } from '@/core/text/transliterate'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
 import { PronounceButton } from '@/components/ui/PronounceButton'
+import { Mascot } from '@/components/ui/Mascot'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 
 interface FeedbackBarProps {
@@ -178,6 +179,13 @@ export function FeedbackBar({
       )}
     >
       <div className="flex items-center gap-2">
+        {/*
+          Maskot javobdan KEYIN chiqadi, savol ekranida emas: u yerda joy
+          tor va personaj diqqatni savolning o'zidan tortib olardi.
+          Xatoda quvnoq maskot masxara qilayotgandek tuyulardi — shuning
+          uchun u o'ylanib turadi.
+        */}
+        <Mascot mood={verdict === 'wrong' ? 'thinking' : 'happy'} size="sm" className="-my-2" />
         <span aria-hidden="true" className="text-2xl">
           {tone.icon}
         </span>
