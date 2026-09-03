@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, getCard, type NewCardRecordInput } from '@/core/db'
-import { XP_PER_VERDICT } from '@/core/gamification'
+import { PERFECT_SESSION_BONUS_XP, XP_PER_VERDICT } from '@/core/gamification'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReviewScreen } from './ReviewScreen'
 
@@ -380,8 +380,12 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await answerRecognition('correct')
     fireEvent.click(await screen.findByRole('button', { name: /davom etish/i }))
 
+    // Seans bitta xatosiz tugadi — javob XP siga benuqson bonusi qo'shiladi
     expect(await screen.findByTestId('session-xp')).toHaveTextContent(
-      `+${XP_PER_VERDICT.correct} XP`,
+      `+${XP_PER_VERDICT.correct + PERFECT_SESSION_BONUS_XP} XP`,
+    )
+    expect(screen.getByTestId('perfect-bonus')).toHaveTextContent(
+      `+${PERFECT_SESSION_BONUS_XP} XP`,
     )
     // Birinchi o'rganilgan so'z uchun nishon
     expect(await screen.findByText(/yangi nishon/i)).toBeInTheDocument()

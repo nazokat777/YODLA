@@ -7,6 +7,7 @@ import {
   DAILY_GOAL_BONUS_XP,
   levelFromXp,
   newlyUnlockedBadgeIds,
+  PERFECT_SESSION_BONUS_XP,
   xpForAnswer,
   type BadgeStats,
   type StreakResult,
@@ -59,6 +60,13 @@ export interface RecordAnswerInput {
   verdict: AnswerVerdict
   /** Foydalanuvchi tanlagan kunlik maqsad (so'z) */
   dailyGoalWords: number
+  /**
+   * Qo'shimcha XP (kombo bonusi).
+   *
+   * Alohida yozuv qilinmaydi, aynan shu tranzaksiyaga qo'shiladi: ikki
+   * yozuv orasida ilova yopilsa bonus yo'qolardi.
+   */
+  bonusXp?: number
   now?: number
 }
 
@@ -83,6 +91,7 @@ export async function recordAnswer({
   cardId,
   verdict,
   dailyGoalWords,
+  bonusXp = 0,
   now = Date.now(),
 }: RecordAnswerInput): Promise<RecordAnswerResult> {
   const day = startOfDay(now)
@@ -102,7 +111,7 @@ export async function recordAnswer({
     const goalJustCompleted =
       !wasGoalReached && !daily.goalBonusAwarded && daily.cardIds.length >= dailyGoalWords
 
-    const xpGained = baseXp + (goalJustCompleted ? DAILY_GOAL_BONUS_XP : 0)
+    const xpGained = baseXp + bonusXp + (goalJustCompleted ? DAILY_GOAL_BONUS_XP : 0)
     if (goalJustCompleted) daily.goalBonusAwarded = true
 
     daily.xp += xpGained
@@ -157,6 +166,31 @@ export async function runDailyMaintenance(now: number = Date.now()): Promise<Pro
 
     await db.profile.put(updated)
     return updated
+  })
+}
+
+/**
+ * Profil va bugungi kunga qo'shimcha XP yozadi. Berilgan XP ni qaytaradi.
+ *
+ * Seans yakunidagi bonuslar uchun: ular bitta javobga bog'liq emas,
+ * shuning uchun `recordAnswer` ga sig'maydi.
+ */
+async function awardBonusXp(amount: number, now: number): Promise<number> {
+  if (amount <= 0) return 0
+
+  const day = startOfDay(now)
+
+  return db.transaction('rw', db.dailyStats, db.profile, async () => {
+    const daily = (await db.dailyStats.get(day)) ?? createDailyStat(day)
+    const profile = (await db.profile.get('me')) ?? createProfile()
+
+    daily.xp += amount
+    profile.totalXp += amount
+
+    await db.dailyStats.put(daily)
+    await db.profile.put(profile)
+
+    return amount
   })
 }
 
@@ -222,9 +256,16 @@ export async function finalizeSession({
   answered,
   wrong,
   now = Date.now(),
-}: FinalizeSessionInput): Promise<{ newlyUnlocked: string[] }> {
-  if (answered > 0 && wrong === 0) {
+}: FinalizeSessionInput): Promise<{ newlyUnlocked: string[]; perfectBonusXp: number }> {
+  // Benuqson seans: nishon uchun sanaladi VA XP bonusi beriladi.
+  // 15 — kunlik maqsad bonusidan (20) kichik: kunlik odat
+  // benuqsonlikdan muhimroq.
+  const isPerfect = answered > 0 && wrong === 0
+  let perfectBonusXp = 0
+
+  if (isPerfect) {
     await recordPerfectSession()
+    perfectBonusXp = await awardBonusXp(PERFECT_SESSION_BONUS_XP, now)
   }
 
   const cards = await getGlobalCardStats()
@@ -241,7 +282,7 @@ export async function finalizeSession({
     now,
   )
 
-  return { newlyUnlocked }
+  return { newlyUnlocked, perfectBonusXp }
 }
 
 /** Bosh ekran va profil uchun yig'ma ko'rsatkichlar */

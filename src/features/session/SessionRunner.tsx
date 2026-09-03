@@ -11,6 +11,7 @@ import {
   type Exercise,
 } from '@/core/exercises'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
+import { comboBonusXp, nextCombo } from '@/core/gamification'
 import { loadGsap } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
@@ -34,6 +35,8 @@ export interface SessionSummary {
   wrong: number
   /** Seansda to'plangan XP (kunlik maqsad bonusi bilan) */
   xpEarned: number
+  /** Benuqson seans uchun berilgan bonus (0 — benuqson emas) */
+  perfectBonusXp: number
   /** Shu seansda ochilgan nishonlar id lari */
   newBadges: string[]
 }
@@ -52,6 +55,7 @@ const EMPTY_SUMMARY: SessionSummary = {
   almost: 0,
   wrong: 0,
   xpEarned: 0,
+  perfectBonusXp: 0,
   newBadges: [],
 }
 
@@ -94,6 +98,8 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   /** Oxirgi javob uchun berilgan XP — feedbackda ko'rsatiladi */
   const [lastXpGained, setLastXpGained] = useState(0)
   const [goalJustCompleted, setGoalJustCompleted] = useState(false)
+  /** Ketma-ket to'g'ri javoblar — seans ichidagi holat, saqlanmaydi */
+  const [combo, setCombo] = useState(0)
 
   // Bugungi natija ligaga SEANS TUGAGANDA bir marta yuboriladi (rozilik
   // bo'lsa). Har javobda yuborish o'nlab ortiqcha so'rov bo'lardi.
@@ -198,7 +204,16 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     void requestPersistentStorage()
 
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
-      .then(({ newlyUnlocked }) => onFinish({ ...summary, newBadges: newlyUnlocked }))
+      .then(({ newlyUnlocked, perfectBonusXp }) =>
+        onFinish({
+          ...summary,
+          // Benuqson bonusi bazaga `finalizeSession` da yozildi — yakun
+          // ekranidagi son bilan haqiqiy XP mos kelishi uchun bu yerda ham
+          xpEarned: summary.xpEarned + perfectBonusXp,
+          perfectBonusXp,
+          newBadges: newlyUnlocked,
+        }),
+      )
       .catch((error: unknown) => {
         // Nishonlarni hisoblab bo'lmasa ham seans yakuni ko'rsatiladi:
         // geymifikatsiya o'quv jarayonini to'sib qo'ymasligi kerak
@@ -260,6 +275,11 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     const result = checkExercise(exercise, toAnswerValue(exercise, given))
     const grade = deriveGrade(exercise, result)
 
+    // Kombo javob YOZILISHIDAN oldin hisoblanadi: bonus aynan shu
+    // javobning XP siga qo'shiladi va bitta tranzaksiyada saqlanadi
+    const streak = nextCombo(combo, result)
+    setCombo(streak)
+
     setIsSaving(true)
     try {
       const cardId = exercise.card.id
@@ -277,6 +297,7 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
           cardId: exercise.card.id,
           verdict: result,
           dailyGoalWords,
+          bonusXp: comboBonusXp(streak),
         })
         xpGained = progress.xpGained
         goalCompleted = progress.goalJustCompleted
@@ -310,7 +331,7 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
       setIsSaving(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercise, canSubmit, isSaving, verdict, answer, soundEnabled, dailyGoalWords])
+  }, [exercise, canSubmit, isSaving, verdict, answer, soundEnabled, dailyGoalWords, combo])
 
   /** Feedback'dan keyin keyingi mashqqa o'tish */
   const handleContinue = useCallback(() => {
@@ -445,6 +466,19 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
           {progressValue}/{queue.length}
         </span>
+
+        {/*
+          Kombo 2 dan boshlab ko'rinadi: "🔥 1" har to'g'ri javobdan keyin
+          chiqib, shovqinga aylanardi va hech nima anglatmasdi.
+        */}
+        {combo >= 2 && (
+          <span
+            data-testid="combo"
+            className="shrink-0 rounded-full bg-flame-500/15 px-2.5 py-1 text-sm font-extrabold text-flame-700"
+          >
+            🔥 {combo}
+          </span>
+        )}
       </div>
 
       {errorMessage && (

@@ -245,3 +245,16 @@ describe('SessionRunner — bosqichlar', () => {
     expect(seen.size).toBeGreaterThan(1)
   })
 })
+
+describe('SessionRunner — kombo', () => {
+  it('BIRINCHI to‘g‘ri javobdan keyin ko‘rinmaydi', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    await screen.findByTestId('session-progress')
+
+    // "🔥 1" har javobdan keyin chiqib, shovqinga aylanardi
+    expect(screen.queryByTestId('combo')).not.toBeInTheDocument()
+  })
+})

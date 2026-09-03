@@ -16,6 +16,15 @@ export const XP_PER_VERDICT: Record<AnswerVerdict, number> = {
 /** Kunlik maqsadga yetganda bir marta beriladigan bonus */
 export const DAILY_GOAL_BONUS_XP = 20
 
+/**
+ * Seans bitta ham xatosiz tugaganda beriladigan bonus.
+ *
+ * Kunlik maqsad bonusidan (20) KICHIK: har kuni kelish odati
+ * benuqsonlikdan muhimroq. Aks holda foydalanuvchi oson so'zlarni qayta
+ * takrorlab, qiyinlaridan qochishga undalardi.
+ */
+export const PERFECT_SESSION_BONUS_XP = 15
+
 /** Bitta javob uchun XP */
 export function xpForAnswer(verdict: AnswerVerdict): number {
   return XP_PER_VERDICT[verdict]

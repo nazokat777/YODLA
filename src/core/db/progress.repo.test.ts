@@ -1,9 +1,14 @@
 import { describe, expect, it } from 'vitest'
 import { addDays, startOfDay } from '@/lib/date'
-import { DAILY_GOAL_BONUS_XP, XP_PER_VERDICT } from '@/core/gamification'
+import {
+  DAILY_GOAL_BONUS_XP,
+  PERFECT_SESSION_BONUS_XP,
+  XP_PER_VERDICT,
+} from '@/core/gamification'
 import { db } from './db'
 import {
   ensureProfile,
+  finalizeSession,
   getDailyStat,
   getProgressSnapshot,
   getRecentDailyStats,
@@ -258,5 +263,38 @@ describe('syncBadges', () => {
     const result = await syncBadges(baseStats, NOW)
 
     expect(result.unlocked).toContain('perfect-session')
+  })
+})
+
+describe('kombo va benuqson bonusi', () => {
+  it('kombo bonusi javob XP siga QO‘SHILADI', async () => {
+    const withoutBonus = await recordAnswer({
+      cardId: 'en:a',
+      verdict: 'correct',
+      dailyGoalWords: 999,
+    })
+    const withBonus = await recordAnswer({
+      cardId: 'en:b',
+      verdict: 'correct',
+      dailyGoalWords: 999,
+      bonusXp: 5,
+    })
+
+    expect(withBonus.xpGained).toBe(withoutBonus.xpGained + 5)
+  })
+
+  it('benuqson seans qo‘shimcha XP beradi', async () => {
+    const before = (await getDailyStat()).xp
+
+    const result = await finalizeSession({ answered: 4, wrong: 0 })
+
+    expect(result.perfectBonusXp).toBe(PERFECT_SESSION_BONUS_XP)
+    expect((await getDailyStat()).xp).toBe(before + PERFECT_SESSION_BONUS_XP)
+  })
+
+  it('bitta xato bo‘lsa bonus YO‘Q', async () => {
+    const result = await finalizeSession({ answered: 4, wrong: 1 })
+
+    expect(result.perfectBonusXp).toBe(0)
   })
 })

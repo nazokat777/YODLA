@@ -60,6 +60,15 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
             </p>
           )}
 
+          {summary.perfectBonusXp > 0 && (
+            <p
+              data-testid="perfect-bonus"
+              className="mt-2 text-sm font-bold text-flame-700"
+            >
+              ⭐ Benuqson dars — +{summary.perfectBonusXp} XP
+            </p>
+          )}
+
           <div className="mt-4 grid grid-cols-3 gap-2" data-celebrate="stats">
             <Stat label="To‘g‘ri" value={summary.correct} accent="text-brand-600" />
             <Stat label="Deyarli" value={summary.almost} accent="text-flame-700" />

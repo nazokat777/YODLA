@@ -8,6 +8,7 @@ const SUMMARY: SessionSummary = {
   correct: 7,
   almost: 2,
   wrong: 1,
+  perfectBonusXp: 0,
   xpEarned: 84,
   newBadges: [],
 }
