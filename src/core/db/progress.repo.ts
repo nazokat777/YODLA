@@ -135,7 +135,7 @@ export async function runDailyMaintenance(now: number = Date.now()): Promise<Pro
   await ensureProfile()
   const activeDays = await getActiveDays()
 
-  return db.transaction('rw', db.profile, async () => {
+  const updated = await db.transaction('rw', db.profile, async () => {
     const profile = (await db.profile.get('me')) ?? createProfile()
 
     const freeze = applyStreakFreeze({
@@ -167,6 +167,19 @@ export async function runDailyMaintenance(now: number = Date.now()): Promise<Pro
     await db.profile.put(updated)
     return updated
   })
+
+  /*
+   * NISHONLARNI HAM QAYTA HISOBLAYMIZ.
+   *
+   * Ilgari nishonlar faqat `finalizeSession` da ochilardi — ya'ni dars
+   * TUGATILGANDA. Bola darsni yarim tashlab ketsa (ilovani shunchaki
+   * yopadi), sharti bajarilgan nishon ochilmasdan qolardi: profilda
+   * "1 / 1" to'lgan, lekin KULRANG nishon turardi va bu buzuq
+   * ko'rinardi. `syncBadges` idempotent, har ochilishda xavfsiz.
+   */
+  await refreshBadges(now)
+
+  return updated
 }
 
 /**
@@ -246,6 +259,30 @@ export interface FinalizeSessionInput {
 }
 
 /**
+ * Hozirgi progressdan nishonlarni qayta hisoblaydi.
+ *
+ * Kerakli sonlarni uch manbadan yig'adi (kartalar, kunlik statistika,
+ * profil) — chaqiruvchi ularning hammasini bilishi shart emas.
+ */
+export async function refreshBadges(
+  now: number = Date.now(),
+): Promise<{ newlyUnlocked: string[] }> {
+  const cards = await getGlobalCardStats()
+  const snapshot = await getProgressSnapshot(now)
+
+  return syncBadges(
+    {
+      learnedWords: cards.learned,
+      matureWords: cards.mature,
+      currentStreak: snapshot.streak.current,
+      longestStreak: snapshot.longestStreak,
+      totalAnswers: snapshot.daily.answered,
+    },
+    now,
+  )
+}
+
+/**
  * Seans yakuni: benuqson seansni belgilash va nishonlarni qayta hisoblash.
  *
  * Komponent o'rniga shu yerda yig'ilgan, chunki bu bir necha manbadan
@@ -268,19 +305,7 @@ export async function finalizeSession({
     perfectBonusXp = await awardBonusXp(PERFECT_SESSION_BONUS_XP, now)
   }
 
-  const cards = await getGlobalCardStats()
-  const snapshot = await getProgressSnapshot(now)
-
-  const { newlyUnlocked } = await syncBadges(
-    {
-      learnedWords: cards.learned,
-      matureWords: cards.mature,
-      currentStreak: snapshot.streak.current,
-      longestStreak: snapshot.longestStreak,
-      totalAnswers: snapshot.daily.answered,
-    },
-    now,
-  )
+  const { newlyUnlocked } = await refreshBadges(now)
 
   return { newlyUnlocked, perfectBonusXp }
 }

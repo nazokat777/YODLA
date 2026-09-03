@@ -5,6 +5,7 @@ import {
   PERFECT_SESSION_BONUS_XP,
   XP_PER_VERDICT,
 } from '@/core/gamification'
+import { addMissingCards, gradeCard } from './cards.repo'
 import { db } from './db'
 import {
   ensureProfile,
@@ -296,5 +297,25 @@ describe('kombo va benuqson bonusi', () => {
     const result = await finalizeSession({ answered: 4, wrong: 1 })
 
     expect(result.perfectBonusXp).toBe(0)
+  })
+})
+
+describe('nishonlar seansdan tashqarida ham ochiladi', () => {
+  it('shart bajarilgan bo‘lsa ilova ochilishida ochiladi', async () => {
+    // Foydalanuvchi darsni YARIM TASHLAB ketgan bo'lishi mumkin —
+    // bola ilovani shunchaki yopadi. Unda `finalizeSession` chaqirilmaydi
+    // va nishon ochilmasdan qolardi: profilda "1 / 1" to'lgan, lekin
+    // kulrang nishon turardi va bu buzuq ko'rinardi.
+    // Nishonlar KARTALAR progressidan hisoblanadi, javoblar sonidan emas
+    await addMissingCards([{ word: 'hello', translation: 'salom', language: 'en' }])
+    await gradeCard('en:hello', 5)
+
+    const before = await ensureProfile()
+    expect(before.unlockedBadges).toEqual([])
+
+    await runDailyMaintenance()
+
+    const after = await ensureProfile()
+    expect(after.unlockedBadges.length).toBeGreaterThan(0)
   })
 })
