@@ -92,7 +92,7 @@ function WeeklyChart({ series }: { series: DayPoint[] }) {
 
 function Tile({ label, value, accent }: { label: string; value: number; accent: string }) {
   return (
-    <Panel className="p-3 text-center">
+    <Panel padding="sm" className="text-center">
       <p className={`text-2xl font-extrabold ${accent}`}>{value}</p>
       <p className="mt-0.5 text-xs text-ink-600">{label}</p>
     </Panel>

@@ -197,9 +197,9 @@ function StatTile({
   accent: string
 }) {
   return (
-    // `px-2` (`p-3` emas): uch ustunli tarmoqda 375 px li ekranda
+    // Kichik bo'shliq: uch ustunli tarmoqda 375 px li ekranda
     // "O'rganilmoqda" yorlig'i 4 px ga sig'may, kesilib qolardi
-    <Panel className="px-2 py-3 text-center">
+    <Panel padding="sm" className="text-center">
       <p className={`text-2xl font-extrabold ${accent}`}>{value ?? '—'}</p>
       <p className="mt-0.5 text-xs text-ink-600">{label}</p>
     </Panel>
