@@ -205,6 +205,49 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(collisions).toEqual([])
   })
 
+  it('qo‘lda topilgan buzuq so‘zlar qaytib kelmagan', async () => {
+    const cards = await allCards(language)
+
+    // Manba OCR bilan olingan va unda mavjud bo'lmagan so'zlar bor.
+    // Ularni avtomatik aniqlab bo'lmadi (bir belgilik farq evristikasi
+    // 245 ta haqiqiy so'zni ham belgiladi), shuning uchun ro'yxat QO'LDA
+    // tekshirilgan. Import qayta ishga tushirilganda ular jimgina
+    // qaytib kelmasligi uchun shu test turadi.
+    const known = ['itt', 'thet']
+
+    const found = cards.filter((card) => known.includes(card.word.toLowerCase()))
+
+    expect(found.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
+  it('tarjimada ma’nosiz omonim raqami qolmagan', async () => {
+    const cards = await allCards(language)
+
+    // `mushuk (2)` kabi: darslikda omonimni ajratish uchun qo'yilgan
+    // raqam, lekin ikkinchi so'z lug'atga tushmagan — ya'ni raqam hech
+    // nimani ajratmaydi. SONLARDA raqam qoladi: `olti (6)` foydali.
+    const NUMERAL_WORDS = new Set([
+      'bir', 'ikki', 'uch', 'besh', 'olti', 'yetti', 'sakkiz', 'yigirma',
+      'qirq', 'ellik', 'oltmish', 'yetmish', 'sakson', 'yuz', 'ming', 'million',
+    ])
+    // Tutuq belgisi turlicha yozilishi mumkin — solishtirishdan oldin tekislanadi
+    const plain = (text: string) => text.toLowerCase().replace(/[‘’ʻʼ`]/g, "'")
+    const NUMERAL_WITH_APOSTROPHE = ["to'rt", "to'qqiz", "o'n", "o'ttiz", "to'qson"]
+
+    const bad = cards.filter((card) => {
+      const match = /^(.*?)\s*\(\d+\)$/.exec(card.translation.trim())
+      if (!match) return false
+
+      const words = plain(match[1]).split(/\s+/)
+
+      return !words.some(
+        (word) => NUMERAL_WORDS.has(word) || NUMERAL_WITH_APOSTROPHE.includes(word),
+      )
+    })
+
+    expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)

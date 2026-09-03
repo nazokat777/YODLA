@@ -209,11 +209,45 @@ function toTs(constName, lang, buckets) {
  * talab qilinardi — bu esa imkonsiz.
  */
 function stripCrossReference(text) {
-  return text
-    .replace(/^=\s*/, '')
-    .replace(/[؀-ۿݐ-ݿ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  return stripHomonymIndex(
+    text
+      .replace(/^=\s*/, '')
+      .replace(/[؀-ۿݐ-ݿ]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  )
+}
+
+/** O'zbekcha son nomlari (qiymati emas — faqat "bu son" belgisi) */
+const NUMERAL_WORDS = new Set([
+  'bir', 'ikki', 'uch', "to'rt", 'besh', 'olti', 'yetti', 'sakkiz', "to'qqiz",
+  "o'n", 'yigirma', "o'ttiz", 'qirq', 'ellik', 'oltmish', 'yetmish', 'sakson',
+  "to'qson", 'yuz', 'ming', 'million',
+])
+
+/**
+ * Manbadagi omonim raqamini olib tashlaydi: `mushuk (2)` → `mushuk`.
+ *
+ * Darslikda bir xil yozilgan ikki so'zni ajratish uchun raqam qo'yilgan,
+ * lekin ikkinchisi bizning lug'atga tushmagan — ya'ni raqam hech nimani
+ * ajratmaydi va ekranda buzuq variant bo'lib ko'rinadi.
+ *
+ * SONLAR TEGILMAYDI: `olti (6)` dagi raqam omonim belgisi emas, sonning
+ * qiymati va u o'rganuvchiga yordam beradi.
+ *
+ * Qiymatni SOLISHTIRMAYMIZ, faqat matnda son nomi bor-yo'qligini
+ * qaraymiz: qo'shma sonlar ham bor (`bir yuz o'n besh (115)`) va ularni
+ * hisoblab chiqish uchun to'liq son tahlilchisi kerak bo'lardi.
+ */
+function stripHomonymIndex(text) {
+  const match = /^(.*?)\s*\((\d+)\)$/.exec(text)
+  if (!match) return text
+
+  const [, base] = match
+  const words = base.toLowerCase().split(/\s+/)
+  if (words.some((word) => NUMERAL_WORDS.has(word))) return text
+
+  return base.trim()
 }
 
 /**
@@ -337,6 +371,23 @@ const PERSONAL_NAMES = new Set([
 ])
 
 /* ------------------------------ Ingliz ------------------------------- */
+/**
+ * QO'LDA TEKSHIRILGAN chiqindi so'zlar.
+ *
+ * Manba OCR bilan olingan, shuning uchun unda mavjud bo'lmagan so'zlar
+ * uchraydi. Bularni avtomatik aniqlab bo'lmaydi — lug'at kerak bo'lardi.
+ *
+ * `itt` (`it`) va `thet` (`that`) — ikkalasining ham tarjimasi "u".
+ * Ularni qoldirish bolaga MAVJUD BO'LMAGAN so'zni o'rgatardi.
+ *
+ * UMUMIY QOIDA YOZIB BO'LMADI. Sinab ko'rildi: "ishonchli lug'atdagi
+ * so'zdan bir belgi bilan farq qiladi" — 366 ta qisqa so'zdan 245 tasi
+ * belgilandi va deyarli hammasi haqiqiy so'zlar edi (`works`/`work`,
+ * `living`/`loving`, `weeks`/`week`). Inglizchada bir belgilik farq
+ * normal hodisa; ishonchli aniqlash uchun to'liq lug'at kerak.
+ */
+const EN_JUNK_WORDS = new Set(['itt', 'thet'])
+
 function importEnglish() {
   // Qo'lda yozilgan deck VA Enterprise app importi — ikkalasi ham ustun
   // turadi. App manbasi qo'lda yozilgan, bu esa skanerdan OCR bilan olingan:
@@ -366,6 +417,7 @@ function importEnglish() {
     if (word === uz.toLowerCase()) { dropped++; continue }
     if (!/^[a-z][a-z' -]*$/.test(word)) { dropped++; continue }
     if (PERSONAL_NAMES.has(word)) { dropped++; continue }
+    if (EN_JUNK_WORDS.has(word)) { dropped++; continue }
 
     const trKey = uz.toLowerCase()
     if (t.words.has(word) || seenWord.has(word)) { dropped++; continue }
