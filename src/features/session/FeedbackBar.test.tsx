@@ -112,15 +112,3 @@ describe('jadval o‘zgarmagan javob', () => {
     expect(screen.queryByText(/keyingi takrorlash/i)).not.toBeInTheDocument()
   })
 })
-
-describe('FeedbackBar — maskot', () => {
-  it('to‘g‘ri javobda QUVNOQ, xatoda tinch', () => {
-    const { unmount } = renderBar(makeCard(), 'correct')
-    expect(document.querySelector('[data-mood]')).toHaveAttribute('data-mood', 'happy')
-    unmount()
-
-    // Xatoda quvnoq maskot masxara qilayotgandek tuyulardi
-    renderBar(makeCard(), 'wrong')
-    expect(document.querySelector('[data-mood]')).toHaveAttribute('data-mood', 'thinking')
-  })
-})

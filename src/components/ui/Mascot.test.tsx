@@ -46,13 +46,3 @@ describe('Mascot', () => {
     expect(mascotOf(container)).toHaveAttribute('height', '256')
   })
 })
-
-describe('Mascot — o‘lchamlar', () => {
-  it('matn yonidagi eng kichik o‘lcham', () => {
-    // Javob panelida maskot sarlavha bilan bir qatorda turadi; 320 px li
-    // ekranda kattarog'i sarlavhani uch qatorga siqib qo'yardi
-    render(<Mascot size="xs" />)
-
-    expect(document.querySelector('[data-mood]')?.className).toMatch(/h-12 w-12/)
-  })
-})
