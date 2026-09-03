@@ -93,6 +93,46 @@ def download(code):
     return path
 
 
+# Bolalar ilovasiga mos kelmaydigan mavzular.
+#
+# Tatoeba — kattalar uchun umumiy korpus, unda spirtli ichimlik, qurol,
+# o'lim va jinsiy mavzudagi jumlalar bor. Ular tasodifiy tanlanib,
+# bola "I am drunk" yoki "Buy a gun" ni mashq qilib o'tirardi.
+#
+# TOKEN bo'yicha solishtiriladi, `re` bilan emas: `` kirill harflarida
+# ishlamaydi (shu fayldagi `standalone` ham aynan shu sababdan qo'lda
+# yozilgan), va o'zak bo'yicha qidirish `whiskers` ni `whisky` deb,
+# `вина` (ayb) ni `вино` (may) deb belgilardi.
+UNSUITABLE = {
+    # inglizcha
+    'sex', 'sexy', 'gay', 'lesbian', 'naked', 'nude', 'virgin', 'pregnant',
+    'drunk', 'beer', 'wine', 'vodka', 'whisky', 'whiskey', 'alcohol',
+    'cigarette', 'cigarettes', 'smoking', 'smoked',
+    'gun', 'guns', 'weapon', 'weapons', 'bomb', 'bombs',
+    'kill', 'kills', 'killed', 'killer', 'murder', 'murdered', 'suicide', 'corpse',
+    'drug', 'drugs', 'cocaine', 'heroin', 'marijuana',
+    'idiot', 'stupid', 'damn',
+    # ruscha
+    'гей', 'гея', 'гею', 'геем', 'геи', 'геев', 'лесбиянка', 'секс', 'сексом',
+    'голый', 'голая', 'голым', 'нагота', 'наготу', 'девственница', 'беременна',
+    'пьян', 'пьяный', 'пьяная', 'пьяного', 'пиво', 'пива', 'пивом',
+    'вино', 'вина́', 'вином', 'вине', 'водка', 'водки', 'водку',
+    'сигарета', 'сигареты', 'сигарету', 'курит', 'курить', 'алкоголь',
+    'пистолет', 'пистолета', 'оружие', 'оружия', 'бомба', 'бомбы',
+    'убил', 'убила', 'убить', 'убийца', 'убийство', 'труп', 'самоубийство',
+    'наркотик', 'наркотики', 'кокаин', 'героин',
+    'идиот', 'дурак', 'дура',
+}
+
+
+def unsuitable(sentence):
+    """Jumlada bolalar ilovasiga mos kelmaydigan so'z bormi."""
+    for token in re.split(r'[^\w]+', sentence.lower(), flags=re.UNICODE):
+        if token in UNSUITABLE:
+            return True
+    return False
+
+
 def standalone(sentence, word):
     """So'z jumlada ALOHIDA so'z sifatida turibdimi.
 
@@ -130,6 +170,8 @@ def build(lang, cfg):
                 continue
             sentence = parts[2].strip()
             if not shape.match(sentence):
+                continue
+            if unsuitable(sentence):
                 continue
 
             tokens = sentence[:-1].replace(',', ' ').split()
