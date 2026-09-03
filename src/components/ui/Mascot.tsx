@@ -6,11 +6,18 @@ export type MascotMood = 'idle' | 'happy' | 'thinking' | 'celebrating'
 
 interface MascotProps {
   mood?: MascotMood
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
   className?: string
 }
 
-const SIZES = { sm: 'h-16 w-16', md: 'h-24 w-24', lg: 'h-32 w-32' } as const
+/**
+ * `xs` — matn yonida turadigan o'lcham.
+ *
+ * 320 px li ekranda javob panelidagi qator maskot (64 px), ikonka, sarlavha
+ * va XP dan iborat. `sm` bilan sarlavhaga 97 px qolib, u uch qatorga
+ * o'ralib ketardi.
+ */
+const SIZES = { xs: 'h-12 w-12', sm: 'h-16 w-16', md: 'h-24 w-24', lg: 'h-32 w-32' } as const
 
 /**
  * Ilova personaji — feya (3D render).

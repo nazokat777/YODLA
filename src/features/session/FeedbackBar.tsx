@@ -185,7 +185,11 @@ export function FeedbackBar({
           Xatoda quvnoq maskot masxara qilayotgandek tuyulardi — shuning
           uchun u o'ylanib turadi.
         */}
-        <Mascot mood={verdict === 'wrong' ? 'thinking' : 'happy'} size="sm" className="-my-2" />
+        <Mascot
+          mood={verdict === 'wrong' ? 'thinking' : 'happy'}
+          size="xs"
+          className="-my-1 shrink-0"
+        />
         <span aria-hidden="true" className="text-2xl">
           {tone.icon}
         </span>
