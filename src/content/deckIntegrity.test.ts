@@ -275,6 +275,38 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(found.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
   })
 
+  it('tarjimalar NOYOB — ikki bir xil variant chiqmaydi', async () => {
+    const cards = await allCards(language)
+
+    /*
+     * Daraja testi (`core/placement/questions.ts`) chalg'ituvchilarni
+     * BUTUN to'plamdan oladi va to'g'ri javobni aynan tenglik bilan
+     * chiqarib tashlaydi. Ikki karta bir xil tarjimaga ega bo'lsa,
+     * savolda IKKI BIR XIL variant chiqib, faqat bittasi to'g'ri deb
+     * belgilanardi — va bu yangi foydalanuvchi ko'radigan BIRINCHI
+     * ekran.
+     *
+     * Kod izohi shu qoidaga tayanadi, lekin uni hech nima tekshirmasdi.
+     *
+     * Tutuq belgisi tekislanadi: `do'st` va `do‘st` matn sifatida
+     * boshqa, ekranda esa bir xil.
+     */
+    const plain = (text: string) =>
+      text.toLowerCase().replace(/[‘’ʻʼ`]/g, "'").replace(/\s+/g, ' ').trim()
+
+    const byText = new Map<string, string[]>()
+    for (const card of cards) {
+      const key = plain(card.translation)
+      byText.set(key, [...(byText.get(key) ?? []), card.word])
+    }
+
+    const collisions = [...byText.entries()]
+      .filter(([, words]) => words.length > 1)
+      .map(([text, words]) => `${text}: ${words.join(', ')}`)
+
+    expect(collisions).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)

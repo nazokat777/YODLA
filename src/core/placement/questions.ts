@@ -40,8 +40,13 @@ export function buildPlacementQuiz(
 
     return chosen.map((card) => {
       // Chalg'ituvchilar butun to'plamdan olinadi: shu tildagi boshqa
-      // so'zlar eng ishonchli chalg'ituvchi bo'ladi (tarjimalar noyob —
-      // buni kontent testi kafolatlaydi)
+      // so'zlar eng ishonchli chalg'ituvchi bo'ladi.
+      //
+      // To'g'ri javob AYNAN TENGLIK bilan chiqarib tashlanadi, ya'ni bu
+      // tarjimalar noyobligiga tayanadi. Shu shartni
+      // `deckIntegrity.test.ts` dagi "tarjimalar NOYOB" testi uchala til
+      // uchun tekshiradi — usiz savolda ikki bir xil variant chiqishi
+      // mumkin edi.
       const distractors = shuffle(
         everyTranslation.filter((translation) => translation !== card.translation),
         random,
