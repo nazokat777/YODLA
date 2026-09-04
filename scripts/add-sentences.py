@@ -99,6 +99,10 @@ def download(code):
 # o'lim va jinsiy mavzudagi jumlalar bor. Ular tasodifiy tanlanib,
 # bola "I am drunk" yoki "Buy a gun" ni mashq qilib o'tirardi.
 #
+# ARABCHA ATAYLAB YO'Q: arab kursi Qiroat darsligiga asoslangan va
+# diniy matn uning MAZMUNI. Ro'yxatda faqat lotin va kirill tokenlari
+# bor, shuning uchun arabcha jumlalar filtrga umuman tushmaydi.
+#
 # TOKEN bo'yicha solishtiriladi, `re` bilan emas: `` kirill harflarida
 # ishlamaydi (shu fayldagi `standalone` ham aynan shu sababdan qo'lda
 # yozilgan), va o'zak bo'yicha qidirish `whiskers` ni `whisky` deb,
@@ -112,6 +116,13 @@ UNSUITABLE = {
     'kill', 'kills', 'killed', 'killer', 'murder', 'murdered', 'suicide', 'corpse',
     'drug', 'drugs', 'cocaine', 'heroin', 'marijuana',
     'idiot', 'stupid', 'damn',
+    # o'lim
+    'die', 'dies', 'died', 'dying', 'dead', 'death', 'deaths', 'grave', 'funeral',
+    # din — Tatoeba tasodifiy diniy jumlalar beradi ("Hannah is a Reform
+    # Jew", "I'm at church"). Ular dars materiali emas va o'zbek oilalari
+    # uchun begona kontekst.
+    'god', 'jesus', 'christ', 'church', 'muslim', 'christian', 'jew', 'jews',
+    'jewish', 'priest', 'pray', 'prayer', 'bible', 'quran',
     # ruscha
     'гей', 'гея', 'гею', 'геем', 'геи', 'геев', 'лесбиянка', 'секс', 'сексом',
     'голый', 'голая', 'голым', 'нагота', 'наготу', 'девственница', 'беременна',
@@ -122,6 +133,11 @@ UNSUITABLE = {
     'убил', 'убила', 'убить', 'убийца', 'убийство', 'труп', 'самоубийство',
     'наркотик', 'наркотики', 'кокаин', 'героин',
     'идиот', 'дурак', 'дура',
+    'умер', 'умерла', 'умереть', 'умирает', 'смерть', 'смерти', 'мёртв',
+    'мертвый', 'мёртвый', 'могила', 'похороны',
+    'бог', 'бога', 'богу', 'боже', 'богом', 'иисус', 'христос', 'церковь',
+    'церкви', 'мусульманин', 'христианин', 'еврей', 'еврейка', 'проповедник',
+    'молитва', 'молиться', 'библия', 'коран',
 }
 
 

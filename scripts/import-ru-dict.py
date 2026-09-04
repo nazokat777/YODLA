@@ -160,6 +160,19 @@ def taken():
     return words, trans, norms
 
 
+# Bolalar ilovasiga mos kelmaydigan so'zlar.
+#
+# Manba kattalar uchun umumiy lug'at. Bola `гей` yoki `оружие` kartasini
+# ko'rishi kerak emas — bu til bilimi masalasi emas, auditoriya masalasi.
+UNSUITABLE_WORDS = {
+    'гей', 'лесбиянка', 'секс', 'голый', 'голая', 'нагота', 'девственница',
+    'пьяный', 'пьяная', 'пиво', 'вино', 'водка', 'сигарета', 'алкоголь',
+    'курить', 'наркотик', 'кокаин', 'героин',
+    'оружие', 'пистолет', 'бомба', 'пуля', 'убить', 'убийца', 'убийство',
+    'труп', 'самоубийство', 'идиот', 'дурак', 'дура',
+}
+
+
 def main():
     if not os.path.exists(DB_PATH):
         print('ru.db yuklanmoqda…')
@@ -174,6 +187,9 @@ def main():
 
     for word, meaning in c.execute('select word, meaning from WORDS'):
         if not re.match(r'^[а-яё]{3,14}$', word or ''):
+            dropped += 1
+            continue
+        if word.lower() in UNSUITABLE_WORDS:
             dropped += 1
             continue
         uz = extract(word, meaning or '')

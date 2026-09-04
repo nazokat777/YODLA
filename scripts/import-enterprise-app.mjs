@@ -76,6 +76,20 @@ function isAllCaps(text) {
  * "it" o'zbekcha KUCHUK, lekin har qanday inglizcha naqshga mos keladi.
  * Ro'yxat 22 ta nomzod qo'lda o'qib chiqilgandan keyin tuzilgan.
  */
+// Bolalar ilovasiga mos kelmaydigan so'zlar.
+//
+// Manba kattalar uchun umumiy lug'at. Bola `sex` yoki `gun` kartasini
+// ko'rishi kerak emas — bu til bilimi masalasi emas, auditoriya masalasi.
+const UNSUITABLE_WORDS = new Set([
+  'sex', 'sexy', 'gay', 'lesbian', 'naked', 'nude', 'virgin', 'pregnant',
+  'drunk', 'beer', 'wine', 'vodka', 'whisky', 'whiskey', 'alcohol',
+  'cigarette', 'cigarettes', 'smoking', 'smoke',
+  'gun', 'guns', 'weapon', 'weapons', 'bomb', 'bombs', 'bullet', 'bullets',
+  'kill', 'kills', 'killed', 'killer', 'murder', 'murderer', 'suicide', 'corpse',
+  'drug', 'drugs', 'cocaine', 'heroin', 'marijuana',
+  'idiot', 'stupid', 'damn',
+])
+
 const JUNK_WORDS = new Set([
   // Maydonlari almashgan
   'ism',
@@ -287,7 +301,7 @@ for (const { data } of files) {
         if (isGrammarNote(uz)) { dropped += 1; continue }
         if (word === uz.toLowerCase()) { dropped += 1; continue }
         if (seenWord.has(word)) { dropped += 1; continue }
-        if (JUNK_WORDS.has(word)) { dropped += 1; continue }
+        if (JUNK_WORDS.has(word) || UNSUITABLE_WORDS.has(word)) { dropped += 1; continue }
 
         seenWord.add(word)
         ordered.push({ word, uz, topic })
@@ -316,7 +330,7 @@ for (const { data } of files) {
     if (isGrammarNote(uz)) { dropped += 1; continue }
     if (word === uz.toLowerCase()) { dropped += 1; continue }
     if (seenWord.has(word)) { dropped += 1; continue }
-    if (JUNK_WORDS.has(word)) { dropped += 1; continue }
+    if (JUNK_WORDS.has(word) || UNSUITABLE_WORDS.has(word)) { dropped += 1; continue }
 
     seenWord.add(word)
     ordered.push({ word, uz, topic })

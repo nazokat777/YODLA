@@ -388,6 +388,20 @@ const PERSONAL_NAMES = new Set([
  */
 const EN_JUNK_WORDS = new Set(['itt', 'thet'])
 
+// Bolalar ilovasiga mos kelmaydigan so'zlar.
+//
+// Manba kattalar uchun umumiy lug'at. Bola `sex` yoki `gun` kartasini
+// ko'rishi kerak emas — bu til bilimi masalasi emas, auditoriya masalasi.
+const UNSUITABLE_WORDS = new Set([
+  'sex', 'sexy', 'gay', 'lesbian', 'naked', 'nude', 'virgin', 'pregnant',
+  'drunk', 'beer', 'wine', 'vodka', 'whisky', 'whiskey', 'alcohol',
+  'cigarette', 'cigarettes', 'smoking', 'smoke',
+  'gun', 'guns', 'weapon', 'weapons', 'bomb', 'bombs', 'bullet', 'bullets',
+  'kill', 'kills', 'killed', 'killer', 'murder', 'murderer', 'suicide', 'corpse',
+  'drug', 'drugs', 'cocaine', 'heroin', 'marijuana',
+  'idiot', 'stupid', 'damn',
+])
+
 function importEnglish() {
   // Qo'lda yozilgan deck VA Enterprise app importi — ikkalasi ham ustun
   // turadi. App manbasi qo'lda yozilgan, bu esa skanerdan OCR bilan olingan:
@@ -417,7 +431,7 @@ function importEnglish() {
     if (word === uz.toLowerCase()) { dropped++; continue }
     if (!/^[a-z][a-z' -]*$/.test(word)) { dropped++; continue }
     if (PERSONAL_NAMES.has(word)) { dropped++; continue }
-    if (EN_JUNK_WORDS.has(word)) { dropped++; continue }
+    if (EN_JUNK_WORDS.has(word) || UNSUITABLE_WORDS.has(word)) { dropped++; continue }
 
     const trKey = uz.toLowerCase()
     if (t.words.has(word) || seenWord.has(word)) { dropped++; continue }

@@ -248,6 +248,33 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(bad.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
   })
 
+  it('bolalarga mos kelmaydigan so‘z yo‘q', async () => {
+    const cards = await allCards(language)
+
+    /*
+     * Manba lug'atlari KATTALAR uchun. Bola `sex`, `gun` yoki `гей`
+     * kartasini ko'rishi kerak emas — bu til bilimi masalasi emas,
+     * auditoriya masalasi.
+     *
+     * Ro'yxat import skriptlaridagi `UNSUITABLE_WORDS` ning aksi. Import
+     * qayta ishga tushirilganda ular jimgina qaytib kelmasligi uchun shu
+     * test turadi.
+     *
+     * ARABCHA yo'q: u Qiroat darsligidan olingan, umumiy lug'atdan emas.
+     */
+    const blocked = [
+      'sex', 'gay', 'naked', 'drunk', 'beer', 'wine', 'vodka', 'alcohol',
+      'cigarette', 'smoking', 'smoke', 'gun', 'guns', 'weapon', 'bomb',
+      'kill', 'killer', 'murder', 'suicide', 'drug', 'drugs', 'idiot', 'stupid',
+      'гей', 'голый', 'нагота', 'секс', 'пьяный', 'пиво', 'вино', 'водка',
+      'оружие', 'пистолет', 'убийца', 'наркотик', 'идиот', 'дурак',
+    ]
+
+    const found = cards.filter((card) => blocked.includes(card.word.toLowerCase()))
+
+    expect(found.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)

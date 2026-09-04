@@ -6188,13 +6188,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       sentenceTranslation: "U oson o'rganadi, chunki juda aqlli.",
     },
     {
-      word: 'stupid',
-      translation: 'ahmoq',
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
-    },
-    {
       word: 'hard-working',
       translation: 'mehnatkash',
       language: 'en',
@@ -6872,15 +6865,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
-      word: 'smoke',
-      translation: 'chekmoq',
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
-      sentence: 'What is coming out of the engine? — Smoke.',
-      sentenceTranslation: 'Dvigateldan nima chiqyapti? — Tutun.',
-    },
-    {
       word: 'wake up',
       translation: "uyg'otmoq",
       language: 'en',
@@ -7330,13 +7314,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'belong to',
       translation: "...ga tegishli bo'lmoq",
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
-    },
-    {
-      word: 'sex',
-      translation: "jinsi (erkak/urg'ochi)",
       language: 'en',
       topic: 'Enterprise 4-unit: Like Father, like Son',
       level: 'A1',
@@ -8693,17 +8670,17 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
       level: 'A1',
     },
-  ],
-  A2: [
     {
       word: 'before',
       translation: 'oldin',
       language: 'en',
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
-      level: 'A2',
+      level: 'A1',
       sentence: 'We have studied similar humans before.',
       sentenceTranslation: "Biz ilgari shunga o'xshash odamlarni o'rganganmiz.",
     },
+  ],
+  A2: [
     {
       word: 'there',
       translation: 'u yerda; bor',
@@ -14401,15 +14378,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'wine',
-      translation: 'vino',
-      language: 'en',
-      topic: 'Enterprise 8-unit: Enjoy your Meal',
-      level: 'A2',
-      sentence: 'Is there any wine? Are there any eggs?',
-      sentenceTranslation: 'Vino bormi? Tuxum bormi?',
-    },
-    {
       word: 'soup',
       translation: "sho'rva",
       language: 'en',
@@ -15953,20 +15921,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'hurt themselves',
       translation: "o'zlik olmoshi bilan",
-      language: 'en',
-      topic: 'Enterprise 905-unit: The Expedition — Episode 1: The Waterfall',
-      level: 'A2',
-    },
-    {
-      word: 'kill',
-      translation: "o'ldirmoq",
-      language: 'en',
-      topic: 'Enterprise 905-unit: The Expedition — Episode 1: The Waterfall',
-      level: 'A2',
-    },
-    {
-      word: 'killer',
-      translation: 'qotil',
       language: 'en',
       topic: 'Enterprise 905-unit: The Expedition — Episode 1: The Waterfall',
       level: 'A2',
@@ -18491,22 +18445,15 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Enterprise 11-unit: All's Well that Ends Well",
       level: 'A2',
     },
-  ],
-  B1: [
     {
       word: 'crash',
       translation: 'taraqlash, qulash ovozi',
       language: 'en',
       topic: "Enterprise 11-unit: All's Well that Ends Well",
-      level: 'B1',
+      level: 'A2',
     },
-    {
-      word: 'gun',
-      translation: 'qurol',
-      language: 'en',
-      topic: "Enterprise 11-unit: All's Well that Ends Well",
-      level: 'B1',
-    },
+  ],
+  B1: [
     {
       word: 'earthquake',
       translation: 'zilzila',
@@ -23088,15 +23035,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'beer',
-      translation: 'pivo',
-      language: 'en',
-      topic: 'Enterprise 15-unit: Take a Break',
-      level: 'B1',
-      sentence: 'Brazilians like eating with their friends. Finns like drinking beer.',
-      sentenceTranslation: "Braziliyaliklar do'stlari bilan ovqatlanishni yaxshi ko'radi. Finlar pivo ichishni yaxshi ko'radi.",
-    },
-    {
       word: 'tour group',
       translation: 'ekskursiya guruhi',
       language: 'en',
@@ -24583,13 +24521,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'smoking',
-      translation: 'chekish',
-      language: 'en',
-      topic: "Enterprise 972-unit: Word List (unit bo'yicha so'zlar)",
-      level: 'B1',
-    },
-    {
       word: 'falafel',
       translation: 'falafel (arab taomi)',
       language: 'en',
@@ -25533,6 +25464,13 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'bonfire',
       translation: 'katta gulxan',
+      language: 'en',
+      topic: 'Enterprise 974-unit: Culture Clips (madaniyat lavhalari)',
+      level: 'B1',
+    },
+    {
+      word: 'fool',
+      translation: 'ahmoq',
       language: 'en',
       topic: 'Enterprise 974-unit: Culture Clips (madaniyat lavhalari)',
       level: 'B1',
