@@ -8670,17 +8670,17 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
       level: 'A1',
     },
+  ],
+  A2: [
     {
       word: 'before',
       translation: 'oldin',
       language: 'en',
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
-      level: 'A1',
+      level: 'A2',
       sentence: 'We have studied similar humans before.',
       sentenceTranslation: "Biz ilgari shunga o'xshash odamlarni o'rganganmiz.",
     },
-  ],
-  A2: [
     {
       word: 'there',
       translation: 'u yerda; bor',
@@ -18438,22 +18438,22 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Enterprise 11-unit: All's Well that Ends Well",
       level: 'A2',
     },
+  ],
+  B1: [
     {
       word: 'luckily',
       translation: "omadga ko'ra",
       language: 'en',
       topic: "Enterprise 11-unit: All's Well that Ends Well",
-      level: 'A2',
+      level: 'B1',
     },
     {
       word: 'crash',
       translation: 'taraqlash, qulash ovozi',
       language: 'en',
       topic: "Enterprise 11-unit: All's Well that Ends Well",
-      level: 'A2',
+      level: 'B1',
     },
-  ],
-  B1: [
     {
       word: 'earthquake',
       translation: 'zilzila',
@@ -19401,13 +19401,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'gift',
       translation: "sovg'a",
-      language: 'en',
-      topic: 'Enterprise 12-unit: See New Places, Meet New Faces',
-      level: 'B1',
-    },
-    {
-      word: 'pub',
-      translation: 'pab (ingliz ichimlik joyi)',
       language: 'en',
       topic: 'Enterprise 12-unit: See New Places, Meet New Faces',
       level: 'B1',
@@ -23023,13 +23016,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'entertaining',
       translation: 'maroqli, qiziqarli',
-      language: 'en',
-      topic: 'Enterprise 15-unit: Take a Break',
-      level: 'B1',
-    },
-    {
-      word: 'brewery',
-      translation: 'pivo zavodi',
       language: 'en',
       topic: 'Enterprise 15-unit: Take a Break',
       level: 'B1',

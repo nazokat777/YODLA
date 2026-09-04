@@ -400,6 +400,10 @@ const UNSUITABLE_WORDS = new Set([
   'kill', 'kills', 'killed', 'killer', 'murder', 'murderer', 'suicide', 'corpse',
   'drug', 'drugs', 'cocaine', 'heroin', 'marijuana',
   'idiot', 'stupid', 'damn',
+  'brewery', 'brewer', 'cig', 'cigar', 'tobacco', 'virgo',
+  'drunken', 'drunkard', 'booze', 'pub', 'bar',
+  'corpse', 'remains', 'grave', 'coffin',
+  'rifle', 'pistol', 'shoot', 'shooting', 'stab',
 ])
 
 function importEnglish() {

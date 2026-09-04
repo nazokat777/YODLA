@@ -3698,13 +3698,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
-      word: 'гроб',
-      translation: 'tobut',
-      language: 'ru',
-      topic: "Ruscha lug'at A1-27",
-      level: 'A1',
-    },
-    {
       word: 'проявить',
       translation: "ko'rsatmoq",
       language: 'ru',
@@ -3770,13 +3763,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'четвертый',
       translation: "to'rtinchi",
-      language: 'ru',
-      topic: "Ruscha lug'at A1-28",
-      level: 'A1',
-    },
-    {
-      word: 'останки',
-      translation: 'jasad',
       language: 'ru',
       topic: "Ruscha lug'at A1-28",
       level: 'A1',
@@ -4185,13 +4171,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
       translation: 'tiqinlanmoq',
       language: 'ru',
       topic: "Ruscha lug'at A1-30",
-      level: 'A1',
-    },
-    {
-      word: 'застрелить',
-      translation: 'zelit',
-      language: 'ru',
-      topic: "Ruscha lug'at A1-31",
       level: 'A1',
     },
     {
@@ -5359,13 +5338,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'рыбка',
       translation: 'baliqcha',
-      language: 'ru',
-      topic: "Ruscha lug'at A1-39",
-      level: 'A1',
-    },
-    {
-      word: 'могила',
-      translation: "go'r",
       language: 'ru',
       topic: "Ruscha lug'at A1-39",
       level: 'A1',
@@ -11015,13 +10987,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'зарезать',
-      translation: "so'ymoq",
-      language: 'ru',
-      topic: "Ruscha lug'at A2-29",
-      level: 'A2',
-    },
-    {
       word: 'знающий',
       translation: 'bilarmon',
       language: 'ru',
@@ -11904,13 +11869,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'убийственный',
-      translation: "o'ldiradigan",
-      language: 'ru',
-      topic: "Ruscha lug'at A2-35",
-      level: 'A2',
-    },
-    {
       word: 'храниться',
       translation: 'saqlanmoq',
       language: 'ru',
@@ -11983,13 +11941,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'припев',
       translation: 'naqorat',
-      language: 'ru',
-      topic: "Ruscha lug'at A2-36",
-      level: 'A2',
-    },
-    {
-      word: 'угробить',
-      translation: "o'ldirmoq",
       language: 'ru',
       topic: "Ruscha lug'at A2-36",
       level: 'A2',
@@ -15595,13 +15546,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'курево',
-      translation: 'tamaki',
-      language: 'ru',
-      topic: "Ruscha lug'at B1-3",
-      level: 'B1',
-    },
-    {
       word: 'плетеный',
       translation: "o'rma",
       language: 'ru',
@@ -15688,13 +15632,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'вздорный',
       translation: 'tantiq',
-      language: 'ru',
-      topic: "Ruscha lug'at B1-4",
-      level: 'B1',
-    },
-    {
-      word: 'нетрезвый',
-      translation: 'mast',
       language: 'ru',
       topic: "Ruscha lug'at B1-4",
       level: 'B1',
@@ -19902,13 +19839,6 @@ export const RU_DICT: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'пра',
       translation: 'ibtidoiylikni',
-      language: 'ru',
-      topic: "Ruscha lug'at B1-34",
-      level: 'B1',
-    },
-    {
-      word: 'догола',
-      translation: "qip-yalang'och",
       language: 'ru',
       topic: "Ruscha lug'at B1-34",
       level: 'B1',
