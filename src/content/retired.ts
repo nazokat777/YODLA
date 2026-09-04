@@ -3,6 +3,10 @@ import { db } from '@/core/db'
 /**
  * Lug'atdan MAQSADLI ravishda chiqarilgan kartalar.
  *
+ * Ikki sabab bor: nomaqbul kontent va BUZUQ kontent. Ikkalasiga ham bir
+ * xil mantiq amal qiladi — bola so'zni bir marta ko'rgani uni abadiy
+ * qoldirish sababi emas.
+ *
  * NEGA ALOHIDA RO'YXAT: `pruneRemovedCards` faqat hali ko'rilmagan
  * kartalarni o'chiradi — foydalanuvchining oylab to'plagan progressini
  * yo'q qilmaslik uchun. Bu to'g'ri qoida, lekin NOMAQBUL KONTENT uchun
@@ -10,8 +14,8 @@ import { db } from '@/core/db'
  * uni abadiy qoldirish sababi emas.
  *
  * Shuning uchun bu ro'yxatdagi kartalar SHARTSIZ o'chiriladi. Yo'qotilgan
- * narsa — 30 ta so'zning takrorlash jadvali; yutuq — ilova bolaga
- * mos bo'lib qolishi.
+ * narsa — bir necha o'nlab so'zning takrorlash jadvali; yutuq — ilova
+ * bolaga mos va to'g'ri bo'lib qolishi.
  *
  * Ro'yxat 2026-08-29 da to'ldirildi. Manba lug'atlari KATTALAR uchun
  * tuzilgan (Tatoeba, umumiy ruscha-o'zbekcha lug'at), shuning uchun
@@ -56,6 +60,18 @@ export const RETIRED_CARD_IDS: readonly string[] = [
   'ru:нагота',
   // Haqorat
   'en:stupid',
+  /*
+   * BUZUQ so'zlar — nomaqbul emas, shunchaki mavjud emas.
+   *
+   * `itt` — `it` ning OCR buzilishi (tarjimasi ham "u"). Uni qoldirish
+   * bolaga ingliz tilida yo'q so'zni o'rgatardi.
+   *
+   * `هِرٌّ` tarjimasi `mushuk (2)` edi: darslikdagi omonim raqami, lekin
+   * ikkinchi so'z lug'atga tushmagan — raqam hech nimani ajratmasdi.
+   * So'zning o'zi qo'lda yozilgan dekada `mushuk` sifatida bor.
+   */
+  'en:itt',
+  'ar:هِرٌّ',
 ]
 
 /**

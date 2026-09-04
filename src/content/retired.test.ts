@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { addMissingCards, db, gradeCard, getAllCards } from '@/core/db'
+import type { LanguageCode } from '@/core/types'
+import { makeCardId } from '@/core/srs'
+import { flatten, loadLanguageDeck } from './starterDecks'
 import { RETIRED_CARD_IDS, removeRetiredCards } from './retired'
 
 describe('removeRetiredCards', () => {
@@ -28,4 +31,28 @@ describe('removeRetiredCards', () => {
       expect(id).toBe(id.toLowerCase())
     }
   })
+})
+
+describe('ro‘yxat lug‘at bilan ZID EMAS', () => {
+  it.each(['en', 'ru', 'ar'] as LanguageCode[])(
+    '%s — chiqarilgan so‘z lug‘atga qaytmagan',
+    async (language) => {
+      /*
+       * Agar chiqarilgan so'z lug'atga qaytarilsa, ilova uni har
+       * ochilishda qo'shib, darhol o'chirardi — foydalanuvchi so'zni
+       * hech qachon ko'rmasdi va sababi hech qayerda ko'rinmasdi.
+       *
+       * Bu test ikkisidan birini tanlashga majbur qiladi: yo so'z
+       * lug'atda, yo ro'yxatda.
+       */
+      const cards = flatten(await loadLanguageDeck(language))
+      const retired = new Set(RETIRED_CARD_IDS)
+
+      const conflicts = cards.filter((card) =>
+        retired.has(makeCardId(card.language, card.word)),
+      )
+
+      expect(conflicts.map((card) => card.word)).toEqual([])
+    },
+  )
 })
