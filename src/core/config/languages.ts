@@ -34,7 +34,15 @@ export const LANGUAGES: Record<LanguageCode, LanguageMeta> = {
 /** Tanlash ekranlarida aylanish uchun massiv ko'rinishi */
 export const LANGUAGE_LIST: LanguageMeta[] = Object.values(LANGUAGES)
 
-/** Berilgan kod haqiqiy til kodimi? (saqlangan ma'lumotni tekshirish uchun) */
+/**
+ * Berilgan kod haqiqiy til kodimi? (saqlangan ma'lumotni tekshirish uchun)
+ *
+ * `in` EMAS, `Object.hasOwn`: `in` prototip zanjirini ham qaraydi, ya'ni
+ * `'toString' in LANGUAGES` — rost. Buzilgan sozlama shunday qiymat
+ * saqlagan bo'lsa, u tekshiruvdan o'tib ketardi va keyin
+ * `LANGUAGES['toString'].dir` `undefined` berib, xato ancha uzoqda
+ * chiqardi.
+ */
 export function isLanguageCode(value: unknown): value is LanguageCode {
-  return typeof value === 'string' && value in LANGUAGES
+  return typeof value === 'string' && Object.hasOwn(LANGUAGES, value)
 }
