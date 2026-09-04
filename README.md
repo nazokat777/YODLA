@@ -53,7 +53,7 @@ src/
 ├── core/                    # domen yadrosi (UI'ga bog'liq emas)
 │   ├── types/               # Card, Grade, ExerciseType, LanguageCode
 │   ├── config/
-│   │   ├── languages.ts     # tillar ro'yxati + RTL/TTS metama'lumoti
+│   │   ├── languages.ts     # tillar ro'yxati + yozuv yo'nalishi va TTS lokali
 │   │   └── levels.ts        # LEVEL_ORDER (A1→A2→B1) + levelRank
 │   ├── lesson/order.ts      # pickLessonCards — darsga qaysi so'z chiqadi
 │   ├── path/units.ts        # o'quv yo'li bo'limlari (kartalardan hisoblanadi)
@@ -101,7 +101,6 @@ src/
 │   └── useSettingsStore.ts  # til, kunlik maqsad, onboarding holati
 │
 ├── hooks/                   # umumiy React hook'lari
-│   ├── useDocumentDirection.ts  # <html dir="rtl"> boshqaruvi
 │   ├── useStarterDeck.ts        # boshlang'ich so'zlarni bazaga yozish
 │   ├── usePushActivity.ts       # "bugun mashq qildim" belgisi (eslatma uchun)
 │   └── useNowTick.ts            # vaqt o'tishini kuzatish (kun almashuvi)
@@ -188,6 +187,36 @@ Qiyinlik [generate.ts](src/core/exercises/generate.ts) dagi zina bo'yicha
 avtomatik oshadi (Flow nazariyasi). Tur mavjud bo'lmasa — audio yo'q, jumla
 yozilmagan, lug'at kichik yoki so'z arab yozuvida — bir pog'ona pastga
 tushiladi. Generator hech qachon "hech narsa" qaytarmaydi.
+
+### Bosqichlar: bir so'z, bir necha savol
+
+Zina `repetitions` ga qarasa, YANGI so'z uchun faqat `recognition` ochiq
+bo'lardi — ya'ni birinchi darsdagi hamma savol bir xil chiqardi.
+
+Shuning uchun zina `repetitions + stage` ga qaraydi, bunda `stage` — so'z
+SEANS ICHIDA nechanchi marta chiqayotgani
+([queue.ts](src/core/lesson/queue.ts)):
+
+```
+dars = 4 ta yangi so'z × 3 bosqich = 12 savol
+A₀ B₀ C₀ D₀ | A₁ B₁ C₁ D₁ | A₂ B₂ C₂ D₂
+```
+
+Tartib **aylanma**: bir so'zning takrorlari yonma-yon turmaydi, aks holda
+javobni oldingi ekrandan nusxa ko'chirish mumkin bo'lardi.
+
+Ikki qoida buzilmaydi:
+
+- **SM-2 jadvali faqat BIRINCHI javobda yangilanadi.** Aks holda bitta
+  darsdan keyin interval 1 → 6 → 15 kunga sakrardi — ikki daqiqada
+  berilgan uchta javob asosida. Keyingilari XP va aniqlikka kiradi.
+  `matching` bir vaqtda bir necha kartani baholagani uchun u yerda ham
+  alohida qo'riqchi bor.
+- **Kartaning o'z `repetitions` iga tegilmaydi** — `stage` alohida
+  parametr sifatida uzatiladi.
+
+Takrorlash seansida (`/review`) bosqich yo'q: u yerda maqsad o'rgatish
+emas, tekshirish.
 
 Ikki turning o'z sharti bor:
 
@@ -316,9 +345,9 @@ lug'at qo'shilgan:
 
 | Til | Manba | So'z |
 | --- | ----- | ---- |
-| Arab | Mabdaul qiroat / Madina (169 dars) | +2134 |
-| Ingliz | Enterprise app + trainer | +3713 +592 |
-| Rus | Ru-Uz-Dictionary + qo'lda | +3353 +118 |
+| Arab | Mabdaul qiroat / Madina (169 dars) | +2133 |
+| Ingliz | Enterprise app + trainer | +3703 +587 |
+| Rus | Ru-Uz-Dictionary + qo'lda | +3338 +118 |
 
 Jami **10 306** karta: arab 2266, ingliz 4437, rus 3603.
 
@@ -538,8 +567,20 @@ rad javobidan keyin qayta-qayta so'rash bezor qiladi.
 
 ## RTL (arab tili)
 
-Arab tili tanlanganda `useDocumentDirection` hook'i `<html dir="rtl">` o'rnatadi.
-Shuning uchun uslublarda **yo'nalishga bog'liq** utilitalarni ishlatmang:
+**Interfeys HECH QACHON teskari o'girilmaydi.** Ilgari arab tili tanlanganda
+butun sahifa `dir="rtl"` bo'lardi, lekin interfeys matni har doim
+o'zbekcha — lotin yozuvi, chapdan o'ngga. Sahifani o'girish o'zbekcha
+jumlalarni buzardi: "Bu so'z nimani anglatadi?" ekranda
+"?Bu so'z nimani anglatadi" bo'lib chiqardi.
+
+O'ngdan chapga faqat **arabcha matnning o'zi** yoziladi — har komponentda
+alohida `dir={language.dir}` bilan (`WordDisplay`, `ExerciseView`,
+`MatchingView`, `FeedbackBar`, `MnemonicRow`). "Gap ichida" mashqida
+variantlar ham o'rganilayotgan tilda, shuning uchun `ChoiceGrid` `dir`
+propini oladi.
+
+Shunga qaramay uslublarda **yo'nalishga bog'liq** utilitalarni
+ishlatmang — element ichida `dir="rtl"` bo'lishi mumkin:
 
 | ❌ Ishlatmang   | ✅ Ishlating    |
 | --------------- | --------------- |
@@ -567,6 +608,24 @@ takrorlash "20 so'z" maqsadini bajarmaydi.
 **XP:** to'g'ri 10, imlo xatosi 7, **xato ham 2** — TZ 4 dagi "xatoda
 jazolamaslik" tamoyili. Kunlik maqsad bajarilganda bir marta +20 bonus.
 Daraja egri chizig'i kvadratik: 2-daraja 100 XP, 3-daraja 300, 4-daraja 600.
+
+**Kombo** — ketma-ket to'g'ri javoblar. Har 5-chisida +5 XP, ekranda 2 dan
+boshlab ko'rinadi ("🔥 1" har javobdan keyin chiqib shovqinga aylanardi).
+Imlo xatosi (`almost`) komboni **buzmaydi**: u bitta harf bilan adashilgan
+TO'G'RI javob, va o'nlik komboni shu uchun yo'qotish yozishdan qo'rqitardi.
+Kombo bazaga yozilmaydi — u seans ichidagi holat; saqlansa streak bilan
+chalkashardi (streak kunlar bilan, kombo javoblar bilan o'lchanadi).
+
+**Benuqson dars** — bitta ham xatosiz tugatilsa +15 XP. Kunlik maqsad
+bonusidan (20) ataylab kichik: har kuni kelish odati benuqsonlikdan
+muhimroq, aks holda foydalanuvchi oson so'zlarni qayta takrorlab,
+qiyinlaridan qochishga undalardi.
+
+**YURAKLAR YO'Q — va bu ataylab.** Xato SM-2 uchun ma'lumot, jazo emas:
+uni jazolash bolani taxmin qilishdan qo'rqitib, algoritmga noto'g'ri
+signal berardi. Duolingoda yuraklar monetizatsiya vositasi; bu yerda ular
+faqat "ilova yopildi" degani bo'lardi. O'yin hissi FAQAT mukofot tomonidan
+quriladi.
 
 **Nishonlar sof funksiyalar bilan aniqlanadi** va har safar qayta
 tekshiriladi — shuning uchun keyinchalik qo'shilgan nishon eski yutuqlar
