@@ -22,7 +22,6 @@ interface SettingsState {
   leagueName: string
   /** Onboarding tugallanganmi */
   onboardingCompleted: boolean
-  /** Arab tili uchun interfeysni ham RTL qilish */
   /** Javob feedback tovushlari (TZ 4: instant feedback) */
   soundEnabled: boolean
   /** Eslatma soati (0..23), mahalliy vaqt */
