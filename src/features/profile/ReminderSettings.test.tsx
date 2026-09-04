@@ -6,7 +6,6 @@ import * as push from '@/lib/push'
 import * as supabase from '@/lib/supabase'
 
 beforeEach(() => {
-  vi.spyOn(push, 'isPushSupported').mockReturnValue(true)
   vi.spyOn(push, 'isPushConfigured').mockReturnValue(true)
   vi.spyOn(push, 'isBrowserPushCapable').mockReturnValue(true)
   vi.spyOn(push, 'getActiveEndpoint').mockResolvedValue(null)

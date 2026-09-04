@@ -343,8 +343,3 @@ export async function getProgressSnapshot(now: number = Date.now()): Promise<Pro
   }
 }
 
-/** Testlar va "progressni tozalash" uchun */
-export async function clearProgress(): Promise<void> {
-  await db.dailyStats.clear()
-  await db.profile.clear()
-}
