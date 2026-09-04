@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { addMissingCards, countCards, pruneRemovedCards, syncCardContent } from '@/core/db'
 import { flatten, loadLanguageDeck } from '@/content/starterDecks'
 import { deckFingerprint } from '@/content/fingerprint'
+import { removeRetiredCards } from '@/content/retired'
 import { saveTopicOrder } from '@/content/topicOrderCache'
 import { topicOrderFromDeck } from '@/core/path'
 import type { LanguageCode } from '@/core/types'
@@ -56,6 +57,17 @@ export function useStarterDeck() {
          * localStorage'ni qoldirishi mumkin — faqat belgiga ishonsak,
          * foydalanuvchi bo'sh ilova bilan qolardi.
          */
+        /*
+         * Chiqarilgan kartalar TEZ YO'LDAN OLDIN o'chiriladi.
+         *
+         * Ular `pruneRemovedCards` ga tayanolmaydi: u o'rganilgan
+         * kartaga tegmaydi, nomaqbul kontent esa o'rganilgan bo'lsa ham
+         * qolmasligi kerak. Amal arzon (birlamchi kalit bo'yicha) va
+         * idempotent.
+         */
+        await removeRetiredCards()
+        if (cancelled) return
+
         const checkedBuild = localStorage.getItem(buildKey(learningLanguage))
         if (checkedBuild === __DECK_BUILD_ID__) {
           const existing = await countCards(learningLanguage)
