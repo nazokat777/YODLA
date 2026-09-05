@@ -803,7 +803,11 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (9942 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (10 275 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
 - [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
       + GSAP animatsiyalari
+- [x] **Faza 8** — talaffuz tekshiruvi (mikrofon) + push eslatmalar
+      (backend kutilmoqda, [docs/DEPLOY-PUSH.md](docs/DEPLOY-PUSH.md))
+- [x] **Faza 9** — dars bosqichlari (bir so'z, bir necha savol), kombo va
+      benuqson bonusi, kontent filtri (bolalarga moslik)

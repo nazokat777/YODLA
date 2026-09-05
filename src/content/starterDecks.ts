@@ -54,7 +54,7 @@ function chunkTopics(deck: Deck): Deck {
  * Til lug'atini DANGASA yuklaydi.
  *
  * Har til alohida bo'lakka (`import(...)`) chiqadi, shuning uchun asosiy
- * JS fayliga ~7500 so'z pishirilmaydi: faqat foydalanuvchi TANLAGAN
+ * JS fayliga 10 000 dan ortiq so'z pishirilmaydi: faqat foydalanuvchi TANLAGAN
  * tilning lug'ati yuklanadi. Qo'lda yozilganlari OLDIN keladi (jumlasi
  * bor — "jumla qurish" mashqi shulardan boshlanadi).
  */
