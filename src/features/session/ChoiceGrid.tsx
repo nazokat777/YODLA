@@ -105,7 +105,14 @@ export function ChoiceGrid({
    * Variantlar ketma-ket chiqadi — ko'z ularni birma-bir "o'qiydi".
    * Jami 4 × 0.03 + 0.2 = 0.32 s, lekin BIRINCHI variant darhol o'z
    * joyida: kutish sezilmaydi.
+   *
+   * BOG'LIQLIK — matn, massiv EMAS: `options` har renderda yangi massiv
+   * bo'lib keladi va bog'liqlik sifatida ishlatilsa animatsiya javob
+   * berilganda ham qayta ishga tushardi — variantlar feedback paytida
+   * ikkinchi marta "sakrab" chiqardi.
    */
+  const optionsKey = options.join('|')
+
   useEffect(() => {
     let revert = () => {}
     let cancelled = false
@@ -130,7 +137,8 @@ export function ChoiceGrid({
       cancelled = true
       revert()
     }
-  }, [options])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionsKey])
 
   return (
     <ul ref={listRef} dir={dir} lang={lang} className="flex flex-col gap-2">

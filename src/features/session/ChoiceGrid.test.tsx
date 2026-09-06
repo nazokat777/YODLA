@@ -1,7 +1,26 @@
 import { describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import * as motion from '@/lib/motion'
 import { ChoiceGrid } from './ChoiceGrid'
+
+/*
+ * Harakat qatlami mock qilinadi: GSAP jsdom'da yuklanmaydi, lekin
+ * preset NECHA MARTA chaqirilgani tekshirilishi kerak.
+ */
+vi.mock('@/lib/motion', async (importOriginal) => {
+  const actual = await importOriginal<typeof motion>()
+
+  return {
+    ...actual,
+    withMotion: vi.fn(async (scope: Element | null, fn: (gsap: unknown) => void) => {
+      if (scope) fn({})
+      return () => {}
+    }),
+    enterStagger: vi.fn(),
+    pressBounce: vi.fn(),
+    shake: vi.fn(),
+  }
+})
 
 describe('ChoiceGrid', () => {
   it('sukut bo‘yicha variantlar CHAPDAN o‘ngga', () => {
@@ -104,5 +123,43 @@ describe('ChoiceGrid — harakat bezak', () => {
 
     expect(onSelect).toHaveBeenCalledWith(0)
     expect(first).toBeVisible()
+  })
+})
+
+describe('ChoiceGrid — kirish animatsiyasi', () => {
+  it('javob berilganda QAYTA ishga tushmaydi', async () => {
+    /*
+     * `options` har renderda yangi massiv bo'lib keladi. U bog'liqlik
+     * sifatida ishlatilganda animatsiya javob berilganda ham qayta
+     * ishga tushardi — variantlar feedback paytida ikkinchi marta
+     * "sakrab" chiqardi.
+     */
+    vi.mocked(motion.enterStagger).mockClear()
+
+    const { rerender } = render(
+      <ChoiceGrid
+        options={['suv', 'non']}
+        correctIndex={0}
+        selectedIndex={null}
+        revealed={false}
+        onSelect={() => {}}
+      />,
+    )
+
+    await waitFor(() => {
+      expect(motion.enterStagger).toHaveBeenCalledTimes(1)
+    })
+
+    rerender(
+      <ChoiceGrid
+        options={['suv', 'non']}
+        correctIndex={0}
+        selectedIndex={0}
+        revealed
+        onSelect={() => {}}
+      />,
+    )
+
+    expect(motion.enterStagger).toHaveBeenCalledTimes(1)
   })
 })
