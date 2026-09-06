@@ -30,19 +30,19 @@ interface FeedbackBarProps {
 /** Har natija uchun sarlavha va ranglar */
 const TONE = {
   correct: {
-    title: "To'g'ri!",
+    title: 'Perfect!',
     icon: '✅',
     panel: 'border-brand-500 bg-brand-50',
     text: 'text-brand-700',
   },
   almost: {
-    title: 'Deyarli!',
+    title: 'Almost!',
     icon: '✍️',
     panel: 'border-flame-500 bg-flame-500/10',
     text: 'text-flame-700',
   },
   wrong: {
-    title: 'Keyingi safar bo‘ladi',
+    title: 'Nice try!',
     icon: '💡',
     panel: 'border-wrong-500 bg-wrong-500/10',
     text: 'text-wrong-600',

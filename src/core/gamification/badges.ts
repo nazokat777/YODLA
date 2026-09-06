@@ -62,7 +62,7 @@ function threshold(
 export const BADGES: BadgeDefinition[] = [
   threshold(
     'first-steps',
-    'Birinchi qadam',
+    'First Step',
     'Birinchi so‘zni o‘rganing',
     '🌱',
     1,
@@ -70,7 +70,7 @@ export const BADGES: BadgeDefinition[] = [
   ),
   threshold(
     'first-10-words',
-    'Birinchi 10 so‘z',
+    'Starter Pack',
     '10 ta so‘zni o‘rganing',
     '📗',
     10,
@@ -78,7 +78,7 @@ export const BADGES: BadgeDefinition[] = [
   ),
   threshold(
     'hundred-words',
-    '100 so‘z yodlandi',
+    'Word Master',
     '100 ta so‘zni o‘rganing',
     '📚',
     100,
@@ -86,7 +86,7 @@ export const BADGES: BadgeDefinition[] = [
   ),
   threshold(
     'streak-7',
-    '7 kunlik streak',
+    'Streak ×7',
     'Ketma-ket 7 kun mashq qiling',
     '🔥',
     7,
@@ -94,7 +94,7 @@ export const BADGES: BadgeDefinition[] = [
   ),
   threshold(
     'streak-30',
-    '30 kunlik streak',
+    'Streak ×30',
     'Ketma-ket 30 kun mashq qiling',
     '🏔️',
     30,
@@ -102,17 +102,17 @@ export const BADGES: BadgeDefinition[] = [
   ),
   threshold(
     'mature-25',
-    'Mustahkam bilim',
+    'Big Brain',
     '25 ta so‘zni uzoq muddatli xotiraga o‘tkazing',
     '🧠',
     25,
     (s) => s.matureWords,
   ),
-  threshold('xp-1000', '1000 XP', '1000 XP to‘plang', '⭐', 1000, (s) => s.totalXp),
+  threshold('xp-1000', 'XP Legend', '1000 XP to‘plang', '⭐', 1000, (s) => s.totalXp),
   threshold(
     'perfect-session',
-    'Benuqson seans',
-    'Bir seansni bitta ham xatosiz tugating',
+    'Perfect Run',
+    'Bitta ham xatosiz seans',
     '🎯',
     1,
     (s) => s.perfectSessions,

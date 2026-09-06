@@ -81,7 +81,7 @@ describe('HomeScreen — geymifikatsiya', () => {
 
     renderScreen(2)
 
-    expect(await screen.findByText(/maqsad bajarildi/i)).toBeInTheDocument()
+    expect(await screen.findByText(/daily goal/i)).toBeInTheDocument()
   })
 
   it('takrorlanadigan kartalar sonini ko‘rsatadi', async () => {

@@ -176,7 +176,7 @@ describe('LeagueScreen — backend ulangan', () => {
     await screen.findByText('Dilnoza')
 
     fireEvent.click(screen.getByRole('button', { name: /Boburga xabar yuborish/i }))
-    fireEvent.click(await screen.findByRole('button', { name: /barakalla/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /bravo/i }))
 
     expect(await screen.findByText(/allaqachon yuborilgan/i)).toBeInTheDocument()
   })
@@ -200,7 +200,7 @@ describe('LeagueScreen — backend ulangan', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Boburga xabar yuborish/i }))
     // `bravo` turining ko'rinadigan nomi — "Barakalla"
-    fireEvent.click(await screen.findByRole('button', { name: /barakalla/i }))
+    fireEvent.click(await screen.findByRole('button', { name: /bravo/i }))
 
     await waitFor(() => {
       expect(sendCheer).toHaveBeenCalledWith(MY_CODE, 'QR6ST7', 'bravo')

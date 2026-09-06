@@ -107,7 +107,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
-    expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
+    expect(await screen.findByText(/perfect!/i)).toBeInTheDocument()
 
     await waitFor(async () => {
       const card = await getCard('en:hello')
@@ -128,7 +128,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await answerRecognition('wrong')
 
     // Xato javobda ham do'stona ohang: "Keyingi safar bo'ladi"
-    expect(await screen.findByText(/keyingi safar/i)).toBeInTheDocument()
+    expect(await screen.findByText(/nice try/i)).toBeInTheDocument()
     expect(screen.getByTestId('correct-answer')).toBeInTheDocument()
   })
 
@@ -139,12 +139,12 @@ describe('ReviewScreen — mashq oqimi', () => {
     await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
-    expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
+    expect(await screen.findByText(/perfect!/i)).toBeInTheDocument()
 
     // "Davom etish" bosilmaydi — feedback o'zi yopilib, keyingi mashq chiqadi
     await waitFor(
       () => {
-        expect(screen.queryByText(/to.g.ri!/i)).not.toBeInTheDocument()
+        expect(screen.queryByText(/perfect!/i)).not.toBeInTheDocument()
       },
       { timeout: 3000 },
     )
@@ -158,7 +158,7 @@ describe('ReviewScreen — mashq oqimi', () => {
     await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
-    const feedback = await screen.findByText(/keyingi safar/i)
+    const feedback = await screen.findByText(/nice try/i)
 
     // To'g'ri javobni o'qish va assotsiatsiya yozish uchun vaqt kerak,
     // shuning uchun bu yerda avtomatik o'tish bo'lmaydi
@@ -229,7 +229,7 @@ describe('ReviewScreen — adaptiv qiyinlik', () => {
     fireEvent.change(input, { target: { value: 'helo' } })
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
-    expect(await screen.findByText(/deyarli/i)).toBeInTheDocument()
+    expect(await screen.findByText(/almost/i)).toBeInTheDocument()
 
     await waitFor(async () => {
       const card = await getCard('en:hello')
@@ -248,7 +248,7 @@ describe('ReviewScreen — adaptiv qiyinlik', () => {
     fireEvent.change(input, { target: { value: 'banana' } })
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
-    expect(await screen.findByText(/keyingi safar/i)).toBeInTheDocument()
+    expect(await screen.findByText(/nice try/i)).toBeInTheDocument()
 
     await waitFor(async () => {
       const card = await getCard('en:hello')
@@ -307,7 +307,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
-    expect(await screen.findByText(/to.g.ri!/i)).toBeInTheDocument()
+    expect(await screen.findByText(/perfect!/i)).toBeInTheDocument()
   })
 
   it('xato tartibda tuzilgan jumla xato hisoblanadi', async () => {
@@ -334,7 +334,7 @@ describe('ReviewScreen — jumla qurish mashqi', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
 
-    expect(await screen.findByText(/keyingi safar/i)).toBeInTheDocument()
+    expect(await screen.findByText(/nice try/i)).toBeInTheDocument()
     // To'g'ri javob sifatida butun jumla ko'rsatiladi
     expect(screen.getByTestId('correct-answer')).toHaveTextContent('This is my house')
   })
@@ -388,8 +388,8 @@ describe('ReviewScreen — geymifikatsiya', () => {
       `+${PERFECT_SESSION_BONUS_XP} XP`,
     )
     // Birinchi o'rganilgan so'z uchun nishon
-    expect(await screen.findByText(/yangi nishon/i)).toBeInTheDocument()
-    expect(screen.getByText('Birinchi qadam')).toBeInTheDocument()
+    expect(await screen.findByText(/achievement unlocked/i)).toBeInTheDocument()
+    expect(screen.getByText('First Step')).toBeInTheDocument()
   })
 })
 
@@ -430,7 +430,7 @@ describe('ReviewScreen — feedback aniqligi', () => {
     await screen.findByTestId('session-progress')
     await answerRecognition('wrong')
 
-    await screen.findByText(/keyingi safar/i)
+    await screen.findByText(/nice try/i)
     expect(screen.getByText(/to.g.ri javob$/i)).toBeInTheDocument()
     expect(screen.getByText(/sizning javobingiz, xato/i)).toBeInTheDocument()
   })

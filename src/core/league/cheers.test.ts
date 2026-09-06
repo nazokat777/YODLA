@@ -18,7 +18,7 @@ describe('CHEERS', () => {
 
 describe('cheerByKind', () => {
   it('mavjud turni topadi', () => {
-    expect(cheerByKind('bravo')?.label).toBe('Barakalla')
+    expect(cheerByKind('bravo')?.label).toBe('Bravo!')
   })
 
   it('noma’lum turda null — eski yozuv ilovani buzmaydi', () => {

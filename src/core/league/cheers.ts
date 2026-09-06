@@ -17,10 +17,10 @@ export interface Cheer {
 }
 
 export const CHEERS: Cheer[] = [
-  { kind: 'bravo', icon: '👏', label: 'Barakalla' },
-  { kind: 'streak', icon: '🔥', label: "Zo'r streak" },
-  { kind: 'keep', icon: '💪', label: 'Davom et' },
-  { kind: 'wow', icon: '🚀', label: 'Ajoyib' },
+  { kind: 'bravo', icon: '👏', label: 'Bravo!' },
+  { kind: 'streak', icon: '🔥', label: 'On fire!' },
+  { kind: 'keep', icon: '💪', label: 'Keep going!' },
+  { kind: 'wow', icon: '🚀', label: 'Wow!' },
 ]
 
 const BY_KIND = new Map(CHEERS.map((cheer) => [cheer.kind, cheer]))

@@ -90,7 +90,7 @@ export function ProfileScreen() {
       {/* Nishonlar */}
       <section>
         <h2 className="mb-2 font-bold">
-          Nishonlar
+          Achievements
           <span className="ms-2 text-sm font-normal text-ink-600">
             {unlocked.size} / {BADGES.length}
           </span>

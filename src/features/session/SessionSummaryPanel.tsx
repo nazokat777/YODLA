@@ -46,7 +46,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
           <span data-celebrate="mascot" className="block">
             <Mascot mood="celebrating" size="md" className="mx-auto mb-2" />
           </span>
-          <p className="text-lg font-extrabold">Seans tugadi!</p>
+          <p className="text-lg font-extrabold">Level complete!</p>
           <p className="mt-1 text-sm text-ink-600">
             {summary.answered} ta javob · {accuracy}% aniqlik
           </p>
@@ -65,21 +65,21 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
               data-testid="perfect-bonus"
               className="mt-2 text-sm font-bold text-flame-700"
             >
-              ⭐ Benuqson dars — +{summary.perfectBonusXp} XP
+              ⭐ Perfect! Bonus +{summary.perfectBonusXp} XP
             </p>
           )}
 
           <div className="mt-4 grid grid-cols-3 gap-2" data-celebrate="stats">
-            <Stat label="To‘g‘ri" value={summary.correct} accent="text-brand-600" />
-            <Stat label="Deyarli" value={summary.almost} accent="text-flame-700" />
-            <Stat label="O‘rganildi" value={summary.wrong} accent="text-ink-600" />
+            <Stat label="Perfect" value={summary.correct} accent="text-brand-600" />
+            <Stat label="Almost" value={summary.almost} accent="text-flame-700" />
+            <Stat label="Learned" value={summary.wrong} accent="text-ink-600" />
           </div>
         </div>
       </Panel>
 
       {newBadges.length > 0 && (
         <Panel className="border-brand-500 bg-brand-50">
-          <p className="mb-2 text-sm font-bold text-brand-700">Yangi nishon qo‘lga kiritildi!</p>
+          <p className="mb-2 text-sm font-bold text-brand-700">🏆 Achievement unlocked!</p>
           <ul className="flex flex-col gap-2">
             {newBadges.map((badge) => (
               <li key={badge.id} className="flex items-center gap-3">

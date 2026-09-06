@@ -35,7 +35,7 @@ export function BadgeTile({ badge, stats, isUnlocked }: BadgeTileProps) {
 
       {isUnlocked ? (
         // Rangdan tashqari matnli belgi ham bor (WCAG 1.4.1)
-        <p className="text-[10px] font-semibold text-brand-700">✓ Ochilgan</p>
+        <p className="text-[10px] font-semibold text-brand-700">✓ Unlocked</p>
       ) : (
         <>
           <ProgressBar

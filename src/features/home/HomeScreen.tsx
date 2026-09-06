@@ -132,7 +132,7 @@ export function HomeScreen() {
         </div>
         <ProgressBar value={wordsToday} max={dailyGoalWords} label="Kunlik maqsad progressi" />
         {wordsToday >= dailyGoalWords && (
-          <p className="mt-2 text-sm font-bold text-brand-700">🎯 Bugungi maqsad bajarildi!</p>
+          <p className="mt-2 text-sm font-bold text-brand-700">🎯 Daily goal — done!</p>
         )}
       </Panel>
 
