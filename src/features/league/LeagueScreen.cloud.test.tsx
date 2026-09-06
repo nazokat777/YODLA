@@ -135,8 +135,7 @@ describe('LeagueScreen — backend ulangan', () => {
     expect(await screen.findByText(/bunday kod topilmadi/i)).toBeInTheDocument()
   })
 
-  it('server yetib bo‘lmasa — internet haqida aytiladi', async () => {
-    addFriend.mockResolvedValue('failed')
+  async function tryAddFriend() {
     renderScreen()
     await screen.findByText('Dilnoza')
 
@@ -144,8 +143,29 @@ describe('LeagueScreen — backend ulangan', () => {
       target: { value: 'QR6ST7' },
     })
     fireEvent.click(screen.getByRole('button', { name: /qo.shish/i }))
+  }
 
-    expect(await screen.findByText(/internetni tekshiring/i)).toBeInTheDocument()
+  it('SERVER javob bermasa — internet aybdor deyilmaydi', async () => {
+    /*
+     * Reyting xabari allaqachon shu ikkisini ajratadi, do'st qo'shish
+     * esa e'tibordan chetda qolgan edi: interneti bor odam "internetni
+     * tekshiring" ni o'qib, bekorga ulanishini tekshirib yurardi.
+     */
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true)
+    addFriend.mockResolvedValue('failed')
+
+    await tryAddFriend()
+
+    expect(await screen.findByText(/server javob bermadi/i)).toBeInTheDocument()
+  })
+
+  it('INTERNET yo‘q bo‘lsa ulanish haqida aytiladi', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    addFriend.mockResolvedValue('failed')
+
+    await tryAddFriend()
+
+    expect(await screen.findByText(/internet yo.q/i)).toBeInTheDocument()
   })
 
   it('takroriy xabar "allaqachon yuborilgan" deb aytiladi', async () => {

@@ -167,14 +167,23 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
 
     const result = await addFriend(myCode, code)
 
-    // Uch holat ataylab ajratilgan: kod qo'lda kiritiladi va bitta harf
-    // adashsa, "internetni tekshiring" foydalanuvchini noto'g'ri yo'ldan
-    // olib ketardi
+    /*
+     * Uch holat ataylab ajratilgan: kod qo'lda kiritiladi va bitta harf
+     * adashsa, "internetni tekshiring" foydalanuvchini noto'g'ri yo'ldan
+     * olib ketardi.
+     *
+     * `failed` ning O'ZI ham ikkiga bo'linadi — pastdagi reyting xabari
+     * bilan bir xil sababdan: server javob bermayotganda "internetni
+     * tekshiring" deyish interneti bor odamni bekorga ulanishini
+     * tekshirishga yuborardi.
+     */
     setAddMessage(
       {
         added: 'Do‘st qo‘shildi',
         'unknown-code': 'Bunday kod topilmadi — qaytadan tekshiring',
-        failed: 'Qo‘shib bo‘lmadi — internetni tekshiring',
+        failed: navigator.onLine
+          ? 'Server javob bermadi — keyinroq urinib ko‘ring'
+          : 'Internet yo‘q — ulanishni tekshiring',
       }[result],
     )
 
