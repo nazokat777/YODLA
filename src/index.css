@@ -26,8 +26,18 @@
   --color-ink-600: #475569; /* ikkilamchi matn */
   --color-ink-300: #cbd5e1; /* chegaralar */
 
+  /* Ikkinchi aksent — osmon ko'k: gradientlar va "premium" urg'ular uchun */
+  --color-sky-100: #e0f2fe;
+  --color-sky-500: #0ea5e9;
+  --color-sky-700: #0369a1;
+
+  /* Rangli yumshoq soya: karta "havoda turgandek" ko'rinadi */
+  --shadow-pop: 0 10px 30px -12px rgb(16 185 129 / 0.35), 0 2px 6px -2px rgb(15 23 42 / 0.08);
+  --shadow-pop-lg: 0 20px 45px -15px rgb(16 185 129 / 0.45), 0 4px 10px -4px rgb(15 23 42 / 0.1);
+  --radius-card: 1.5rem;
+
   /* Shriftlar: arab yozuvi uchun alohida zaxira shriftlar */
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Nunito', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-arabic: 'Noto Naskh Arabic', 'Amiri', 'Traditional Arabic', serif;
 }
 
@@ -41,6 +51,16 @@ body,
 
 body {
   @apply bg-slate-50 text-ink-900 antialiased;
+  /*
+   * Mesh-gradient: uch rangli nuqta 6–8% shaffoflikda — fon "nafas oladi",
+   * lekin matn kontrastiga ta'sir qilmaydi. `fixed` attachment YO'Q —
+   * iOS Safari uni qo'llamaydi va skrollda fon sakraydi.
+   */
+  background-image:
+    radial-gradient(60% 40% at 15% 0%, rgb(16 185 129 / 0.1), transparent 70%),
+    radial-gradient(50% 35% at 95% 15%, rgb(14 165 233 / 0.09), transparent 70%),
+    radial-gradient(55% 40% at 50% 100%, rgb(245 158 11 / 0.08), transparent 70%);
+  background-repeat: no-repeat;
   /* Mobil qurilmada ikki marta bosganda zumlanishning oldini olish */
   touch-action: manipulation;
   /* iOS'da "safe area" (notch) hisobga olinadi */
@@ -54,10 +74,80 @@ body {
    ms-* / me-* / ps-* / pe-* / text-start / text-end */
 [dir='rtl'] {
   font-family: var(--font-arabic);
+  /* Harakatlar (fatha, kasra…) harf ustida-ostida turadi — ularga joy kerak */
+  line-height: 1.9;
 }
 
 /* ---------- Yordamchi utilitalar ---------- */
 
 @utility tap-highlight-none {
   -webkit-tap-highlight-color: transparent;
+}
+
+@utility shadow-pop {
+  box-shadow: var(--shadow-pop);
+}
+
+@utility shadow-pop-lg {
+  box-shadow: var(--shadow-pop-lg);
+}
+
+/* ---------- Premium bezaklar ---------- */
+
+/*
+ * Yaltiroq yo'lak: tugma ustidan chapdan o'ngga yorug'lik o'tadi.
+ * Faqat hover/fokusda — doimiy yaltirash chalg'itadi. `overflow-hidden`
+ * va `relative` tugmaning o'zida.
+ */
+@utility shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-150%) skewX(-20deg);
+  background: linear-gradient(90deg, transparent 20%, rgb(255 255 255 / 0.35) 50%, transparent 80%);
+  pointer-events: none;
+}
+
+.shine:hover::after,
+.shine:focus-visible::after {
+  animation: shine-sweep 1.2s ease-in-out;
+}
+
+@keyframes shine-sweep {
+  to {
+    transform: translateX(150%) skewX(-20deg);
+  }
+}
+
+/* Streak olovi "lovullaydi" */
+@utility flicker {
+  display: inline-block;
+  transform-origin: 50% 90%;
+  animation: flicker 1.6s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-2deg);
+  }
+  35% {
+    transform: scale(1.12) rotate(2deg);
+  }
+  70% {
+    transform: scale(0.96) rotate(-1deg);
+  }
+}
+
+/* Harakat kamaytirilganda CSS animatsiyalar ham o'chadi */
+@media (prefers-reduced-motion: reduce) {
+  .shine::after,
+  .flicker {
+    animation: none;
+  }
 }

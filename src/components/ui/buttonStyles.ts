@@ -5,7 +5,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 
 /** Ko'rinish bo'yicha uslublar */
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-500 text-white shadow-[0_4px_0_0] shadow-brand-700 hover:bg-brand-600',
+  // `shine`: hover/fokusda yaltiroq yo'lak o'tadi — asosiy harakat "jonli"
+  primary:
+    'shine bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-[0_4px_0_0] shadow-brand-700 hover:from-brand-600 hover:to-brand-700',
   // Chuqurlik primary bilan bir xil fizikada: pastki chegara "qalinroq"
   secondary: 'bg-white text-ink-900 border-2 border-b-4 border-ink-300 hover:bg-slate-50',
   // Ghost ATAYLAB tekis: u matn tugmasi, chuqurlik ierarxiyani buzardi

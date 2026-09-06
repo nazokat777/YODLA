@@ -25,3 +25,11 @@ describe('Panel', () => {
     expect(panel.className).not.toMatch(/\bp-4\b/)
   })
 })
+
+it('interactive panel hover uslubini oladi, oddiy panel — yo‘q', () => {
+  const { rerender } = render(<Panel interactive>Karta</Panel>)
+  expect(screen.getByText('Karta').className).toContain('hover:-translate-y-0.5')
+
+  rerender(<Panel>Karta</Panel>)
+  expect(screen.getByText('Karta').className).not.toContain('hover:-translate-y-0.5')
+})
