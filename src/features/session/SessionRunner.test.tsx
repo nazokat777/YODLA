@@ -376,3 +376,62 @@ describe('SessionRunner — yangi so‘z bilan tanishtirish', () => {
     })
   })
 })
+
+describe('SessionRunner — progress ko‘rsatkichi', () => {
+  it('XATO javob umumiy sonni OSHIRMAYDI — maqsad joyida qoladi', async () => {
+    /*
+     * O'lchangan xato: xato javob qadamni navbat oxiriga qaytarardi va
+     * maxraj `queue.length` bo'lgani uchun ko'rsatkich 0/12 → 1/13 → 2/14
+     * bo'lib o'sardi. Foydalanuvchi har xatoda maqsad undan uzoqlashganini
+     * ko'rardi — bu jazolash hissini beradi va yolg'on javob.
+     */
+    // 0.1 → variantli mashq (juft topish o'z oqimida yuradi)
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    const total = (await screen.findByTestId('session-progress')).textContent?.split('/')[1]
+
+    // Xato javob: to'g'ri javob ("suv") dan boshqa variant
+    const options = await screen.findAllByRole('listitem')
+    const wrong = options
+      .map((item) => item.querySelector('button'))
+      .find((node) => node && node.textContent?.trim().toLowerCase() !== 'suv')
+    fireEvent.click(wrong!)
+    fireEvent.click(await screen.findByRole('button', { name: /tushunarli|davom etish/i }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-progress').textContent?.split('/')[1]).toBe(total)
+    })
+  })
+
+  it('xato javob berilgan qadam navbat OXIRIGA qaytariladi', async () => {
+    // 0.1 → tanib olish mashqi; tur barqaror bo'lsin
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+    render(<SessionRunner cards={[CARDS[0], CARDS[1]]} pool={CARDS} onFinish={() => {}} />)
+
+    const first = (await screen.findByTestId('exercise-prompt')).textContent
+
+    const wrongOption = screen
+      .getAllByRole('listitem')
+      .map((item) => item.querySelector('button'))
+      .find((node) => node && node.textContent?.trim().toLowerCase() !== 'suv')
+    fireEvent.click(wrongOption!)
+    fireEvent.click(await screen.findByRole('button', { name: /tushunarli/i }))
+
+    // Ikkinchi karta oralab o'tadi, so'ng xato karta QAYTADI
+    await waitFor(() => {
+      expect(screen.getByTestId('exercise-prompt').textContent).not.toBe(first)
+    })
+
+    const correct = screen
+      .getAllByRole('listitem')
+      .map((item) => item.querySelector('button'))
+      .find((node) => node?.textContent?.trim().toLowerCase() === 'non')
+    fireEvent.click(correct!)
+    fireEvent.click(await screen.findByRole('button', { name: /davom etish|tushunarli/i }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('exercise-prompt').textContent).toBe(first)
+    })
+  })
+})

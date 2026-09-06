@@ -168,19 +168,27 @@ describe('ReviewScreen — mashq oqimi', () => {
     expect(screen.getByRole('button', { name: /tushunarli/i })).toBeInTheDocument()
   })
 
-  it('xato javob berilgan karta seans oxiriga qaytariladi', async () => {
+  it('xato javobdan keyin seans DAVOM ETADI va maqsad joyida qoladi', async () => {
     await seed()
     renderScreen()
 
-    await screen.findByTestId('session-progress')
+    const first = (await screen.findByTestId('exercise-prompt')).textContent
     await answerRecognition('wrong')
-
     fireEvent.click(await screen.findByRole('button', { name: /tushunarli/i }))
 
-    // Navbat 3 tadan 4 taga uzaydi
+    /*
+     * Karta seans oxiriga QAYTADI (buni `SessionRunner` testi tekshiradi),
+     * lekin ko'rsatkich O'SMAYDI: maxraj rejalashtirilgan qadamlar soni
+     * bo'lib qoladi va xato javob qadamni bajarilgan deb hisoblamaydi.
+     *
+     * Ilgari bu yerda "1/4" chiqardi — ya'ni har xatoda maqsad
+     * foydalanuvchidan uzoqlashardi.
+     */
     await waitFor(() => {
-      expect(screen.getByTestId('session-progress')).toHaveTextContent('1/4')
+      expect(screen.getByTestId('exercise-prompt').textContent).not.toBe(first)
     })
+
+    expect(screen.getByTestId('session-progress')).toHaveTextContent('0/3')
   })
 
   it('variantli mashqda "Tekshirish" tugmasi umuman korsatilmaydi', async () => {

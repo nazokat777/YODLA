@@ -89,6 +89,18 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
 
   const [queue, setQueue] = useState<LessonStep[]>(() => buildLessonQueue(cards, stagesFor))
+
+  /**
+   * Seansdagi REJALASHTIRILGAN qadamlar soni — progress maxraji.
+   *
+   * `queue.length` EMAS: xato javob qadamni navbat oxiriga qaytaradi va
+   * navbat uzayadi. O'lchandi: foydalanuvchi 0/12 → 1/13 → 2/14 ni
+   * ko'rardi — ya'ni har xatoda MAQSAD UNDAN UZOQLASHARDI. Bu jazolash
+   * hissini beradi va "yana qancha qoldi?" degan savolga yolg'on javob.
+   *
+   * Qayta urinish yangi maqsad emas — o'sha maqsadning ikkinchi imkoni.
+   */
+  const plannedSteps = useRef(queue.length).current
   const [index, setIndex] = useState(0)
   const [exercise, setExercise] = useState<Exercise | null>(null)
   const [answer, setAnswer] = useState<ExerciseAnswerState>(EMPTY_ANSWER)
@@ -113,6 +125,15 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
    * `useRef` (`useState` emas): to'plamga yozish qayta render talab
    * qilmaydi — ko'rinishni `introCard` ning o'zi boshqaradi.
    */
+  /**
+   * Muvaffaqiyatli o'tilgan qadamlar (`kartaId:bosqich`).
+   *
+   * Progress ko'rsatkichi shu to'plamga tayanadi: xato javob qadamni
+   * o'tgan deb hisoblamaydi, qayta urinib to'g'ri javob berilganda esa
+   * qadam bir marta qo'shiladi.
+   */
+  const [doneSteps, setDoneSteps] = useState<Set<string>>(() => new Set())
+
   const introducedRef = useRef(new Set<string>())
   const [introCard, setIntroCard] = useState<CardRecord | null>(null)
 
@@ -356,6 +377,18 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
       }
 
       setNextIntervalDays(saved ? saved.interval : null)
+      /*
+       * Qadam FAQAT to'g'ri (yoki "deyarli") javobda bajarilgan
+       * hisoblanadi. Xato javobda u navbat oxiriga qaytadi va progress
+       * ko'rsatkichi joyida qoladi — foydalanuvchi qayta urinib ko'radi.
+       */
+      if (result !== 'wrong') {
+        const step = queue[index]
+        if (step) {
+          setDoneSteps((current) => new Set(current).add(`${step.card.id}:${step.stage}`))
+        }
+      }
+
       setVerdict(result)
       setLastXpGained(xpGained)
       setGoalJustCompleted(goalCompleted)
@@ -453,12 +486,20 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         xpEarned: current.xpEarned + xpTotal,
       }))
 
+      // Juft topish bitta qadam: u to'liq tugagandagina bajarilgan
+      const matchingStep = queue[index]
+      if (matchingStep) {
+        setDoneSteps((current) =>
+          new Set(current).add(`${matchingStep.card.id}:${matchingStep.stage}`),
+        )
+      }
+
       if (soundEnabled) playCorrectSound()
 
       setIsSaving(false)
       setIndex((current) => current + 1)
     },
-    [isSaving, dailyGoalWords, soundEnabled],
+    [isSaving, dailyGoalWords, soundEnabled, queue, index],
   )
 
   /**
@@ -486,7 +527,13 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
 
   // Juft topish bir mashqda bir nechta kartani baholaydi, shuning uchun
   // ko'rsatkich navbat uzunligidan oshib ketishi mumkin
-  const progressValue = Math.min(summary.answered, queue.length)
+  /*
+   * BAJARILGAN qadamlar: har qadam bir marta sanaladi.
+   *
+   * `summary.answered` EMAS: u qayta urinishlarni ham sanaydi va maxraj
+   * qotirilganda ko'rsatkich 13/12 bo'lib ketardi.
+   */
+  const progressValue = Math.min(doneSteps.size, plannedSteps)
 
   /*
    * Tanishtirish mashqning O'RNIGA emas, OLDIDAN chiziladi: "Tushundim"
@@ -497,9 +544,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     return (
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
+          <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
           <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{queue.length}
+            {progressValue}/{plannedSteps}
           </span>
         </div>
 
@@ -522,9 +569,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     return (
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
+          <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
           <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{queue.length}
+            {progressValue}/{plannedSteps}
           </span>
         </div>
 
@@ -541,9 +588,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
-        <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
+        <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
         <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-          {progressValue}/{queue.length}
+          {progressValue}/{plannedSteps}
         </span>
 
         {/*
