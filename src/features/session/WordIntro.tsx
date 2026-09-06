@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Panel } from '@/components/ui/Panel'
 import { PronounceButton } from '@/components/ui/PronounceButton'
+import { WordImage } from '@/components/ui/WordImage'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { LANGUAGES } from '@/core/config/languages'
 import type { CardRecord } from '@/core/db'
@@ -70,6 +71,9 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         ✨ Yangi so‘z
       </p>
       <Panel data-intro className="flex flex-col items-center gap-3 py-6 text-center">
+        {/* Rasmi bor so'zlarda ma'no matndan OLDIN ko'rinadi */}
+        <WordImage translation={card.translation} size="lg" />
+
         <div dir={language.dir} lang={language.code}>
           <WordDisplay text={card.word} language={language} testId="intro-word" />
         </div>

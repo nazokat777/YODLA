@@ -7,6 +7,7 @@ import { speak } from '@/lib/speech'
 import { ChoiceGrid } from './ChoiceGrid'
 import { PronounceButton } from '@/components/ui/PronounceButton'
 import { SpeakButton } from '@/components/ui/SpeakButton'
+import { WordImage } from '@/components/ui/WordImage'
 import { WordDisplay } from './WordDisplay'
 import type { ExerciseAnswerState } from './answerState'
 
@@ -176,6 +177,13 @@ function RecallView({
     <div className="flex flex-col gap-4">
       <Panel className="flex min-h-32 flex-col items-center justify-center gap-1 text-center">
         <p className="text-sm text-ink-600">Bu so'zni {language.name}da yozing</p>
+        {/*
+          Rasm SAVOLNI kuchaytiradi, javobni oshkor QILMAYDI: bu yerda
+          savol o'zbekcha tarjima, javob esa chet tilidagi so'z. Tanib
+          olish va eshitish mashqlarida esa aksincha bo'lardi — u yerda
+          rasm yo'q.
+        */}
+        <WordImage translation={exercise.prompt} size="md" />
         <p className="text-3xl font-extrabold">{exercise.prompt}</p>
       </Panel>
 
@@ -390,6 +398,8 @@ function SpellingView({
     <div className="flex flex-col gap-4">
       <Panel className="flex min-h-24 flex-col items-center justify-center gap-1 text-center">
         <p className="text-sm text-ink-600">Bu so'zni harflardan yig'ing</p>
+        {/* Eslab yozishdagi kabi: savol o'zbekcha, javob chet tilida */}
+        <WordImage translation={exercise.prompt} size="sm" />
         <p className="text-xl font-bold">{exercise.prompt}</p>
       </Panel>
 

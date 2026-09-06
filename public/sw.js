@@ -85,13 +85,20 @@ async function handleNavigation(request) {
 }
 
 /**
- * Nomi hash'langanmi (`/assets/index-Abc123.js`).
+ * Mazmuni nomi bilan birga o'zgarmaydigan fayllarmi.
  *
- * Vite chiqargan fayllar shunday: nom mazmunga bog'liq, ya'ni bir nom
- * bilan mazmun HECH QACHON o'zgarmaydi.
+ * `/assets/` — Vite chiqargan hash'langan fayllar: nom mazmunga bog'liq,
+ * ya'ni bir nom bilan mazmun HECH QACHON o'zgarmaydi.
+ *
+ * `/word-images/` — so'z rasmlari. Fayl nomi Unicode kod nuqtasi
+ * (`1F34E.svg` — olma) va u ham hech qachon boshqa rasmga aylanmaydi.
+ * Ular fon yangilanishiga muhtoj emas: 250 dan ortiq fayl uchun har
+ * ochilishda ortiqcha so'rov yuborilardi.
  */
 function isImmutable(url) {
-  return new URL(url).pathname.startsWith('/assets/')
+  const { pathname } = new URL(url)
+
+  return pathname.startsWith('/assets/') || pathname.startsWith('/word-images/')
 }
 
 /** Statik fayl */

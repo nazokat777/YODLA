@@ -120,3 +120,20 @@ describe('sw.js — oflayn zaxira', () => {
     expect(response.status).toBe(503)
   })
 })
+
+describe('sw.js — so‘z rasmlari', () => {
+  it('rasm keshdan beriladi, tarmoqqa CHIQILMAYDI', async () => {
+    /*
+     * Fayl nomi Unicode kod nuqtasi (`1F34E.svg` — olma) va u hech qachon
+     * boshqa rasmga aylanmaydi. Fon yangilanishi 250 dan ortiq fayl uchun
+     * har ochilishda ortiqcha so'rov bo'lardi.
+     */
+    const url = 'https://yodla.test/word-images/1F34E.svg'
+    cache.store.set(url, new Response('<svg />'))
+
+    const response = await runFetch(url)
+
+    expect(await response.text()).toBe('<svg />')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+})

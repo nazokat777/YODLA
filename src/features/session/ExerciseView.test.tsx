@@ -134,3 +134,46 @@ describe('Gap ichida (cloze) — ma’no', () => {
     expect(screen.getByTestId('cloze-translation')).toHaveTextContent('Rahmat, yo‘q')
   })
 })
+
+describe('So‘z rasmlari — qayerda ko‘rsatiladi', () => {
+  const withImage = (extra: Partial<CardRecord> = {}) =>
+    makeCard({ word: 'apple', translation: 'olma', ...extra })
+
+  it('TANIB OLISHDA rasm YO‘Q — javobni oshkor qilardi', () => {
+    render(
+      <ExerciseView
+        exercise={{
+          id: 'x',
+          type: 'recognition',
+          card: withImage(),
+          prompt: 'apple',
+          options: ['olma', 'non'],
+          correctIndex: 0,
+        }}
+        answer={EMPTY_ANSWER}
+        onAnswerChange={() => {}}
+        revealed={false}
+        onSubmit={() => {}}
+      />,
+    )
+
+    expect(screen.queryByTestId('word-image')).not.toBeInTheDocument()
+  })
+
+  it('ESLAB YOZISHDA rasm BOR — savol o‘zbekcha, javob chet tilida', () => {
+    render(
+      <ExerciseView
+        exercise={{ id: 'x', type: 'recall', card: withImage(), prompt: 'olma', answer: 'apple' }}
+        answer={EMPTY_ANSWER}
+        onAnswerChange={() => {}}
+        revealed={false}
+        onSubmit={() => {}}
+      />,
+    )
+
+    expect(screen.getByTestId('word-image')).toHaveAttribute(
+      'src',
+      '/word-images/1F34E.svg',
+    )
+  })
+})

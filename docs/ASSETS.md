@@ -41,3 +41,25 @@ Darsliklarning O'Z matnidan olingan arab jumlalari ham saqlanib qoladi
 
 `public/icon-*.png` va `public/apple-touch-icon.png` — `scripts/make-icons.mjs`
 bilan yaratilgan (tashqi manba yo'q, litsenziya masalasi tug'ilmaydi).
+
+## So'z rasmlari
+
+`public/word-images/` — 251 ta SVG rasmcha, so'z ma'nosini ko'rsatadi.
+
+| Manba | Litsenziya |
+| --- | --- |
+| [OpenMoji](https://openmoji.org) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+
+Fayl nomi — Unicode kod nuqtasi (`1F34E.svg` — olma). Xarita
+`src/content/wordImages.ts` da: kalit O'ZBEKCHA tarjima, shuning uchun
+bitta rasm uchala tilga ham xizmat qiladi.
+
+Yangilash: `node scripts/fetch-word-images.mjs`. Skript OpenMoji'da
+topilmagan kodlarni ro'yxat qilib chiqaradi va nol bo'lmagan kod bilan
+tugaydi.
+
+**Kalit so'z bo'yicha avtomatik qidiruv YO'Q.** Rasmlar aniq Unicode
+kodi bo'yicha olinadi, ya'ni natija oldindan ma'lum — ilova bolalar
+uchun mo'ljallangan va tasodifiy rasm tushishi mumkin emas.
+
+CC BY-SA 4.0 talab qiladigan atribut shu bo'lim orqali beriladi.

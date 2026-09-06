@@ -4,6 +4,7 @@ import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
+import { WordImage } from '@/components/ui/WordImage'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
 import { PronounceButton } from '@/components/ui/PronounceButton'
@@ -204,6 +205,12 @@ export function FeedbackBar({
           <p className="text-sm text-ink-600">To'g'ri javob:</p>
 
           <div className="flex items-center gap-2">
+            {/*
+              Javob KO'RSATILGANDAN keyin rasm chalg'itmaydi, balki
+              ma'noni mustahkamlaydi — so'z endi sir emas.
+            */}
+            <WordImage translation={exercise.card.translation} size="sm" />
+
             <div className="flex flex-col">
               <p
                 data-testid="correct-answer"
