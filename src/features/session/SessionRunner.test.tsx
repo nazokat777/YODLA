@@ -291,6 +291,31 @@ describe('SessionRunner — klaviatura', () => {
 })
 
 describe('SessionRunner — yordam', () => {
+  // Ko'rsatma "bu tur ko'rilgan" belgisini localStorage'da saqlaydi:
+  // avvalgi testdan qolgan belgi keyingisini yopiq boshlatardi
+  beforeEach(() => {
+    localStorage.clear()
+    // 0.1 → pog'onadan `recognition` tanlanadi (variantli mashq).
+    // Juft topish o'z oqimida bo'lgani uchun "javob → davom" yo'li yo'q.
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+  })
+
+  it('ko‘rsatma matni birinchi savoldan keyin YOPILADI — ekranni band qilmaydi', async () => {
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    // Birinchi savolda ko'rsatma o'zi ochiq
+    const body = await screen.findByText(/variantlardan tanlang/i)
+    expect(body).toBeInTheDocument()
+
+    // Qaysi variant to'g'ri ekani muhim emas — savol almashishi muhim
+    fireEvent.click(screen.getAllByRole('button', { name: /^\S/ })[2]!)
+    fireEvent.click(await screen.findByRole('button', { name: /davom etish|tushunarli/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByText(/variantlardan tanlang/i)).not.toBeInTheDocument()
+    })
+  })
+
   it('mashq turi bo‘yicha yordam tugmasi ko‘rsatiladi', async () => {
     render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
 

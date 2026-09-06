@@ -134,15 +134,20 @@ export function shake(gsap: GsapLike, target: Target) {
 }
 
 /**
- * Karta yon tomondan aylanib kiradi.
+ * Yangi savol yon tomondan siljib kiradi.
  *
  * RTL'da teskari tomondan: arabcha o'quvchi uchun "keyingi" — chap.
+ *
+ * NEGA AYLANISH (rotationY) EMAS: 3D aylanish sinab ko'rilgan va rad
+ * etilgan — animatsiya davomida BUTUN mashq, variantlar bilan birga,
+ * qiyshayib turadi va matn o'qilmaydi. Bola uchun bu bir zumlik "nima
+ * bo'lyapti?" degan to'siq. Yassi siljish esa yarim yo'lda ham o'qiladi.
  */
-export function flipIn(gsap: GsapLike, target: Target, dir: 'ltr' | 'rtl' = 'ltr') {
+export function slideIn(gsap: GsapLike, target: Target, dir: 'ltr' | 'rtl' = 'ltr') {
   return gsap.fromTo(
     target,
-    { rotationY: dir === 'rtl' ? -70 : 70, transformPerspective: 800 },
-    { rotationY: 0, duration: 0.3, ease: 'power3.out', clearProps: 'transform' },
+    { x: dir === 'rtl' ? -28 : 28 },
+    { x: 0, duration: 0.28, ease: 'power3.out', clearProps: 'transform' },
   )
 }
 

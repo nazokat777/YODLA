@@ -29,7 +29,7 @@ const CIRCLE = {
  * LOGIK BO'SHLIQ (`ms-*`): arabcha RTL rejimida yo'l o'zi ko'zguga
  * aylanadi — o'quvchi o'ng tomondan boshlaydi.
  */
-const ZIGZAG = ['ms-16', 'ms-32', 'ms-16', 'ms-0'] as const
+const ZIGZAG = ['ms-0', 'ms-10', 'ms-20', 'ms-10'] as const
 
 /**
  * O'quv yo'li — bo'limlar zanjiri.
@@ -187,15 +187,11 @@ export function LearningPath({ cards }: LearningPathProps) {
       <h2 className="mb-3 font-bold">O'quv yo'li</h2>
 
       {/*
-        Yo'l chizig'i: bo'limlar ORQASIDAN o'tadigan punktir. Alohida
-        element emas, ro'yxatning fon tasviri — shuning uchun bo'lim
-        qo'shilsa-yo'qolsa u o'zi cho'ziladi va hech qachon "sinmaydi".
+        CHIZIQ YO'Q: bo'limlar zigzag bo'ylab siljigani uchun bitta tik
+        chiziq ularning hech biridan o'tmasdi — u doiralar YONIDA osilib
+        qolardi. Zigzagning o'zi ketma-ketlikni yetarlicha ko'rsatadi.
       */}
-      <ol
-        ref={listRef}
-        aria-describedby={undefined}
-        className="relative flex flex-col gap-3 before:absolute before:inset-y-4 before:left-8 before:w-1 before:rounded-full before:bg-gradient-to-b before:from-brand-300 before:via-brand-100 before:to-transparent rtl:before:left-auto rtl:before:right-8"
-      >
+      <ol ref={listRef} className="flex flex-col gap-3">
         {units.map((unit, index) => (
           <li
             key={unit.id}

@@ -13,7 +13,7 @@ import {
 } from '@/core/exercises'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
 import { comboBonusXp, nextCombo } from '@/core/gamification'
-import { flipIn, withMotion } from '@/lib/motion'
+import { slideIn, withMotion } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
 import { requestPersistentStorage } from '@/lib/storage'
@@ -161,10 +161,10 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     let cancelled = false
     let revert = () => {}
 
-    // Savol yon tomondan aylanib kiradi. RTL'da teskari tomondan:
+    // Savol yon tomondan siljib kiradi. RTL'da teskari tomondan:
     // arabcha o'quvchi uchun "keyingi" — chap tomon
     void withMotion(animRef.current, (gsap) => {
-      flipIn(gsap, animRef.current as Element, dir)
+      slideIn(gsap, animRef.current as Element, dir)
     }).then((fn) => {
       if (cancelled) fn()
       else revert = fn
@@ -525,7 +525,17 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         Ko'rsatma mashqning O'ZIDAN oldin turadi: birinchi marta ochilganda
         u savolni pastga surib yubormaydi, chunki savol allaqachon pastda.
       */}
-      <ExerciseHelpButton type={exercise.type} />
+      {/*
+        `key` — HAR JAVOBDAN KEYIN komponent qaytadan yaratiladi.
+        Usiz birinchi savolda ochilgan ko'rsatma seans oxirigacha ochiq
+        qolar va har savolda ekranning uchdan birini egallab turardi.
+        Yangi nusxa esa "bu tur ko'rilganmi" ni qaytadan o'qiydi.
+
+        Kalitda javoblar SONI ham bor: xato javobdan keyin ayni savol
+        qaytadan chiqadi va `exercise.id` o'zgarmaydi — faqat id bo'lsa
+        ko'rsatma o'sha yerda ochiq qolardi.
+      */}
+      <ExerciseHelpButton key={`${exercise.id}:${summary.answered}`} type={exercise.type} />
 
       <div ref={stageRef} tabIndex={-1} className="focus:outline-none">
         <div ref={animRef}>

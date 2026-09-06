@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   countUp,
   enterStagger,
-  flipIn,
+  slideIn,
   loadGsap,
   prefersReducedMotion,
   shake,
@@ -112,16 +112,25 @@ describe('presetlar', () => {
     expect(items[0]?.style.opacity).toBe('')
   })
 
-  it('flipIn RTL da teskari tomondan aylanadi', async () => {
+  it('slideIn RTL da teskari tomondan kiradi', async () => {
     stubMatchMedia(false)
     const gsap = (await loadGsap())!
     const node = document.createElement('div')
 
-    const ltr = flipIn(gsap, node, 'ltr')
-    const rtl = flipIn(gsap, node, 'rtl')
+    const ltr = slideIn(gsap, node, 'ltr')
+    const rtl = slideIn(gsap, node, 'rtl')
 
-    expect(Math.sign(ltr.vars.startAt?.rotationY as number)).toBe(1)
-    expect(Math.sign(rtl.vars.startAt?.rotationY as number)).toBe(-1)
+    expect(Math.sign(ltr.vars.startAt?.x as number)).toBe(1)
+    expect(Math.sign(rtl.vars.startAt?.x as number)).toBe(-1)
+  })
+
+  it('slideIn matnni AYLANTIRMAYDI — o‘qish buzilmasin', async () => {
+    stubMatchMedia(false)
+    const gsap = (await loadGsap())!
+
+    const tween = slideIn(gsap, document.createElement('div'))
+
+    expect(tween.vars.startAt?.rotationY).toBeUndefined()
   })
 
   it('shake seans qoidasiga sig‘adi — 200 ms dan oshmaydi', async () => {

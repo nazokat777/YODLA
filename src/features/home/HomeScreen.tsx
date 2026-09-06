@@ -113,7 +113,7 @@ export function HomeScreen() {
             </h2>
             <span
               data-testid="total-xp"
-              className="inline-flex items-center gap-1 text-sm font-bold text-ink-600"
+              className="inline-flex items-center gap-1 self-center text-sm font-bold text-ink-600"
             >
               <Emblem kind="coin" size="sm" className="h-5 w-5" />
               {progress?.profile.totalXp ?? 0} XP

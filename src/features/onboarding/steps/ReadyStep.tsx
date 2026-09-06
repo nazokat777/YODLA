@@ -14,16 +14,27 @@ export function ReadyStep({ onFinish }: { onFinish: (destination: 'lesson' | 'ho
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="mb-6 flex flex-col items-center text-center">
+      {/*
+        `justify-center`: bu qadamda kontent kam va uni yuqorida qoldirsak
+        ekranning yarmi bo'sh qolardi. Markazlashtirilgan sarlavha +
+        pastdagi tugmalar to'liq, "tugallangan" ekran hosil qiladi.
+      */}
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
         <Emblem kind="rocket" size="lg" className="mb-3" />
         <h1 className="text-2xl font-extrabold">Tayyor!</h1>
         <p className="mt-2 text-sm text-ink-600">
           Boshlang'ich daraja: <strong>{startingLevel}</strong> · Kuniga{' '}
           <strong>{dailyGoalWords} so'z</strong>
         </p>
+
+        {/* Nima bo'lishini oldindan aytish: birinchi dars qo'rqinchli emas */}
+        <p className="mt-4 max-w-xs text-sm text-ink-600">
+          Birinchi darsda 4 ta yangi so'z bo'ladi. Har so'z bir necha xil
+          mashqda takrorlanadi — shuning uchun u esda qoladi.
+        </p>
       </div>
 
-      <div className="mt-auto flex flex-col gap-2 pt-8">
+      <div className="flex flex-col gap-2 pt-8">
         <Button block size="lg" onClick={() => onFinish('lesson')}>
           Birinchi darsni boshlash
         </Button>
