@@ -44,7 +44,7 @@ bilan yaratilgan (tashqi manba yo'q, litsenziya masalasi tug'ilmaydi).
 
 ## So'z rasmlari
 
-`public/word-images/` — 308 ta SVG rasmcha, so'z ma'nosini ko'rsatadi.
+`public/word-images/` — 326 ta SVG rasmcha, so'z ma'nosini ko'rsatadi.
 
 | Manba | Litsenziya |
 | --- | --- |

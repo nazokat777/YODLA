@@ -382,6 +382,35 @@ const WORD_IMAGES: Record<string, string> = {
   shokolad: '1F36B',
   kofe: '2615',
 
+  // ---- Muomala ----
+  salom: '1F44B',
+  rahmat: '1F64F',
+  kechirasiz: '1F647',
+  /*
+   * "ha"/"yo'q" uchun ✅ va ❌ EMAS, bosh barmoq.
+   *
+   * Feedback panelida rasm to'g'ri javob yonida turadi va o'sha yerda
+   * ✓/✕ belgilari ham bor — yashil belgi "javobingiz to'g'ri" degan
+   * ma'noda o'qilib, xato javob berganda chalkashtirardi.
+   */
+  ha: '1F44D',
+  "yo'q": '1F44E',
+
+  // ---- Yana narsalar va tabiat ----
+  'ob-havo': '26C5',
+  "ko'l": '1F3DE',
+  devor: '1F9F1',
+  uya: '1FAB9',
+  tirnoq: '1F485',
+  timsoh: '1F40A',
+  eshak: '1FACF',
+  chodir: '26FA',
+  qarmoq: '1F3A3',
+  hamyon: '1F45B',
+  elektr: '26A1',
+  haykal: '1F5FF',
+  olomon: '1F465',
+
   // ---- Boshqa ----
   pul: '1F4B0',
   narx: '1F3F7',
