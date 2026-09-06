@@ -314,6 +314,20 @@ function lessonRank(data) {
   return order < 1 ? Number.MAX_SAFE_INTEGER + order : order
 }
 
+/*
+ * Bo'lim DARSMI yoki kitobning tuzilma qismimi.
+ *
+ * Manbadagi `isExtra` shuni aytadi: 900+ raqamlar unit EMAS — modul
+ * muqovalari, Progress Test lar, ilovalar, Video Project lar va orqa
+ * muqova. Ularni "990-unit" deb atash kitobda mavjud bo'lmagan darsni
+ * o'ylab topish bo'lardi.
+ */
+const EXTRA_UNITS = new Set(
+  JSON.parse(readFileSync(`${SRC}/index.json`, 'utf8'))
+    .units.filter((unit) => unit.isExtra)
+    .map((unit) => unit.unit),
+)
+
 const files = readdirSync(SRC)
   .filter((name) => /^unit_\d+\.json$/.test(name))
   .map((name) => ({ name, data: JSON.parse(readFileSync(`${SRC}/${name}`, 'utf8')) }))
@@ -337,7 +351,11 @@ let dropped = 0
 
 for (const { data } of files) {
   const unitTitle = (data.title ?? '').trim()
-  const topic = `Enterprise ${data.unit}-unit${unitTitle ? `: ${unitTitle}` : ''}`
+
+  // Kitobda 15 ta dars bor; qolganlari raqamsiz, o'z nomi bilan ataladi
+  const topic = EXTRA_UNITS.has(data.unit)
+    ? `Enterprise 1 · ${unitTitle}`
+    : `Enterprise 1 · ${data.unit}-dars${unitTitle ? `: ${unitTitle}` : ''}`
 
   for (const rule of data.wordFormation ?? []) {
     for (const item of rule.items ?? []) {
