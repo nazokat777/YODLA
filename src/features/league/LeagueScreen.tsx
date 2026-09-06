@@ -236,7 +236,7 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
       </Panel>
 
       {!isCloudEnabled() && (
-        <Panel className="border-flame-500 bg-flame-500/10">
+        <Panel tone="warning">
           <p className="text-sm font-semibold text-flame-700">
             Lokal rejim: reyting server ulangach ishlaydi.
           </p>
@@ -263,7 +263,7 @@ function Standings({ myCode, myName }: { myCode: string; myName: string }) {
       )}
 
       {cheers.length > 0 && (
-        <Panel className="border-brand-500 bg-brand-50">
+        <Panel tone="brand">
           <h2 className="mb-2 font-bold text-brand-700">Sizga xabarlar</h2>
           <ul className="flex flex-wrap gap-2">
             {cheers.slice(-8).map((cheer) => {
@@ -408,7 +408,7 @@ function CheerPicker({
   if (!entry) return null
 
   return (
-    <Panel className="mt-2 border-brand-500">
+    <Panel tone="outline" className="mt-2">
       <div className="mb-2 flex items-center justify-between">
         <p className="font-bold">{entry.name}ga xabar</p>
         <button

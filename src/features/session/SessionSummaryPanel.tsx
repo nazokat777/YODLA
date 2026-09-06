@@ -82,7 +82,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
       </Panel>
 
       {newBadges.length > 0 && (
-        <Panel className="border-brand-500 bg-brand-50">
+        <Panel tone="brand">
           <p className="mb-2 text-sm font-bold text-brand-700">🏆 Achievement unlocked!</p>
           <ul className="flex flex-col gap-2">
             {newBadges.map((badge) => (

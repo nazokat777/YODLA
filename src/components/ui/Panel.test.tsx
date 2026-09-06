@@ -33,3 +33,12 @@ it('interactive panel hover uslubini oladi, oddiy panel — yo‘q', () => {
   rerender(<Panel>Karta</Panel>)
   expect(screen.getByText('Karta').className).not.toContain('hover:-translate-y-0.5')
 })
+
+it('tone chegarani ALMASHTIRADI — standart oq chegara qolmaydi', () => {
+  render(<Panel tone="warning">Ogohlantirish</Panel>)
+
+  const panel = screen.getByText('Ogohlantirish')
+
+  expect(panel.className).toContain('border-flame-500')
+  expect(panel.className).not.toContain('border-white')
+})

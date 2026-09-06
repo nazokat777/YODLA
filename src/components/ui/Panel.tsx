@@ -4,6 +4,22 @@ import { cn } from '@/lib/cn'
 /** Ichki bo'shliq o'lchamlari */
 const PADDING = { none: '', sm: 'p-3', md: 'p-4' } as const
 
+/**
+ * Panel ohangi — chegara va fon rangi.
+ *
+ * NEGA PROP, `className` EMAS: `padding` bilan bir xil sabab. `cn()`
+ * Tailwind ziddiyatlarini yechmaydi, ya'ni `className="border-flame-500"`
+ * uzatilganda elementda `border-white border-flame-500` ikkalasi qoladi
+ * va qaysi biri ishlashini CSS faylidagi tartib hal qiladi. Ogohlantirish
+ * paneli jimgina oq chegarali bo'lib qolishi mumkin edi.
+ */
+const TONES = {
+  default: 'border-white',
+  brand: 'border-brand-500 bg-brand-50',
+  warning: 'border-flame-500 bg-flame-500/10',
+  outline: 'border-brand-500',
+} as const
+
 interface PanelProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
   /**
@@ -22,6 +38,8 @@ interface PanelProps extends HTMLAttributes<HTMLDivElement> {
    * "ko'tarilishi" yolg'on va'da bo'lardi.
    */
   interactive?: boolean
+  /** Chegara va fon ohangi */
+  tone?: keyof typeof TONES
 }
 
 /**
@@ -30,12 +48,19 @@ interface PanelProps extends HTMLAttributes<HTMLDivElement> {
  * DIQQAT: nomi ataylab `Panel` — chunki `Card` nomi SRS domen modeli
  * (so'z kartasi) uchun band. Bu chalkashlikning oldini oladi.
  */
-export function Panel({ className, padding = 'md', interactive = false, ...rest }: PanelProps) {
+export function Panel({
+  className,
+  padding = 'md',
+  interactive = false,
+  tone = 'default',
+  ...rest
+}: PanelProps) {
   return (
     <div
       className={cn(
         // Ustki 1px yorug' chiziq (inset soya) kartaga "shisha" hajm beradi
-        'rounded-[var(--radius-card)] border border-white bg-white shadow-pop',
+        'rounded-[var(--radius-card)] border bg-white shadow-pop',
+        TONES[tone],
         'shadow-[var(--shadow-pop),inset_0_1px_0_0_rgb(255_255_255/0.9)]',
         interactive &&
           'transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-pop-lg focus-within:-translate-y-0.5',
