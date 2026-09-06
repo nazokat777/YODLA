@@ -4,7 +4,27 @@ import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, getAllCards, type NewCardRecordInput } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import * as starterDecks from '@/content/starterDecks'
+import * as motion from '@/lib/motion'
 import { LearningPath } from './LearningPath'
+
+/*
+ * Harakat qatlami mock qilinadi: GSAP jsdom'da yuklanmaydi, lekin
+ * PRESETGA QAYSI NISHON uzatilgani tekshirilishi kerak.
+ */
+vi.mock('@/lib/motion', async (importOriginal) => {
+  const actual = await importOriginal<typeof motion>()
+
+  return {
+    ...actual,
+    withMotion: vi.fn(async (scope: Element | null, fn: (gsap: unknown) => void) => {
+      if (scope) fn({})
+      return () => {}
+    }),
+    enterStagger: vi.fn(),
+    floatLoop: vi.fn(),
+    pulseRing: vi.fn(),
+  }
+})
 
 const WORDS: NewCardRecordInput[] = [
   { word: 'hello', translation: 'salom', language: 'en', topic: 'Salomlashish', level: 'A1' },
@@ -171,5 +191,24 @@ describe('LearningPath — yuklanish holati', () => {
 
     expect(await screen.findByText('Oila')).toBeInTheDocument()
     expect(screen.getByText('Salomlashish')).toBeInTheDocument()
+  })
+})
+
+describe('LearningPath — animatsiya hajmi', () => {
+  it('bo‘limlar soni qancha bo‘lsa ham animatsiya BIRINCHI ekran bilan cheklanadi', async () => {
+    /*
+     * O'lchangan xato: 213 bo'lim × 0.06 s stagger = 13 soniya. Oxirgi
+     * bo'limlar shuncha vaqt siljigan holatda qotib turardi va yo'l
+     * "singan" ko'rinardi.
+     */
+    await renderPath()
+
+    await waitFor(() => {
+      expect(motion.enterStagger).toHaveBeenCalled()
+    })
+
+    const target = vi.mocked(motion.enterStagger).mock.calls[0]?.[1]
+
+    expect(String(target)).toMatch(/nth-child\(-n\+\d+\)/)
   })
 })

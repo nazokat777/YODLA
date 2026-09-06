@@ -133,7 +133,20 @@ export function LearningPath({ cards }: LearningPathProps) {
     let revert = () => {}
 
     void withMotion(listRef.current, (gsap) => {
-      enterStagger(gsap, '[data-unit]', { stagger: 0.06, duration: 0.5, y: 28 })
+      /*
+       * FAQAT BIRINCHI EKRANDAGI bo'limlar.
+       *
+       * O'lchandi: inglizchada yo'lda 213 bo'lim bor va `stagger: 0.06`
+       * ularning hammasiga qo'llanganda animatsiya 13 SONIYA davom
+       * etardi — oxirgi bo'limlar shuncha vaqt siljigan holatda qotib
+       * turardi. Ekrandan tashqaridagi elementni "chiroyli chiqarish"
+       * ma'nosiz: uni hech kim ko'rmaydi.
+       */
+      enterStagger(gsap, '[data-unit]:nth-child(-n+8)', {
+        stagger: 0.06,
+        duration: 0.5,
+        y: 28,
+      })
 
       // "Nafas" + halqa: ko'z qayerga qarashni biladi
       floatLoop(gsap, '[data-state="current"]')
