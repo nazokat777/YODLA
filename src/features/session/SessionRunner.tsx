@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
+import { ExerciseHelpButton } from './ExerciseHelpButton'
 import { LANGUAGES } from '@/core/config/languages'
 import { finalizeSession, gradeCard, recordAnswer, type CardRecord } from '@/core/db'
 import {
@@ -472,6 +473,8 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
           </span>
         </div>
 
+        <ExerciseHelpButton type="matching" />
+
         <MatchingView
           exercise={exercise}
           onComplete={(results) => void handleMatchingComplete(results)}
@@ -520,6 +523,12 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
 
         `tabIndex={-1}` — dasturiy fokus uchun; Tab tartibiga kirmaydi.
       */}
+      {/*
+        Ko'rsatma mashqning O'ZIDAN oldin turadi: birinchi marta ochilganda
+        u savolni pastga surib yubormaydi, chunki savol allaqachon pastda.
+      */}
+      <ExerciseHelpButton type={exercise.type} />
+
       <div ref={stageRef} tabIndex={-1} className="focus:outline-none">
         <div ref={animRef}>
         <ExerciseView

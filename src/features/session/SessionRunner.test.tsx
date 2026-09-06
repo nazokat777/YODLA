@@ -289,3 +289,11 @@ describe('SessionRunner — klaviatura', () => {
     expect(document.activeElement).toBe(stage)
   })
 })
+
+describe('SessionRunner — yordam', () => {
+  it('mashq turi bo‘yicha yordam tugmasi ko‘rsatiladi', async () => {
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    expect(await screen.findByRole('button', { name: /qanday bajariladi/i })).toBeInTheDocument()
+  })
+})
