@@ -144,7 +144,10 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
    * ko'rinmas bo'lib qolardi. Siljish yarim yo'lda to'xtasa ham matn
    * o'qilaveradi.
    */
+  /** Fokus nishoni — GSAP unga TEGMAYDI (pastdagi izohga qarang) */
   const stageRef = useRef<HTMLDivElement>(null)
+  /** Animatsiya nishoni */
+  const animRef = useRef<HTMLDivElement>(null)
 
   // Faqat mashq ALMASHGANDA — obyektning o'zi qayta yaratilganda emas
   const exerciseId = exercise?.id
@@ -156,22 +159,40 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     let context: { revert: () => void } | null = null
 
     void loadGsap().then((gsap) => {
-      if (!gsap || cancelled || !stageRef.current) return
+      if (!gsap || cancelled || !animRef.current) return
 
       context = gsap.context(() => {
-        gsap.from(stageRef.current, {
+        gsap.from(animRef.current, {
           y: 16,
           duration: 0.25,
           ease: 'power2.out',
           clearProps: 'transform',
         })
-      }, stageRef)
+      }, animRef)
     })
 
     return () => {
       cancelled = true
       context?.revert()
     }
+  }, [exerciseId])
+
+  /*
+   * Yangi savol chizilganda FOKUS unga ko'chiriladi.
+   *
+   * "Davom etish" tugmasi DOM'dan olib tashlanadi va fokus <body> ga
+   * tushadi — klaviatura foydalanuvchisi har savolda sahifa boshidan
+   * qaytadan Tab bosishga majbur bo'lardi. `FeedbackBar` da xuddi shu
+   * naqsh bor (u paydo bo'lganda o'ziga fokus oladi).
+   *
+   * FAQAT fokus <body> da bo'lsa: "eslab yozish" mashqida `ExerciseView`
+   * kiritish maydoniga fokus beradi va uni tortib olish yaramaydi.
+   */
+  useEffect(() => {
+    if (!exerciseId) return
+    if (document.activeElement && document.activeElement !== document.body) return
+
+    stageRef.current?.focus()
   }, [exerciseId])
 
   // Ekrandan chiqilganda o'qish to'xtatiladi
@@ -490,7 +511,17 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         </p>
       )}
 
-      <div ref={stageRef}>
+      {/*
+        IKKI QATLAM: tashqisi fokusni oladi, ichkisi animatsiyalanadi.
+        Bitta elementda bo'lsa, GSAP fokusni yo'qotardi — o'lchandi:
+        fokus berilgandan ~50 ms keyin u <body> ga qaytardi va klaviatura
+        foydalanuvchisi har savolda sahifa boshidan Tab bosishga majbur
+        bo'lardi.
+
+        `tabIndex={-1}` — dasturiy fokus uchun; Tab tartibiga kirmaydi.
+      */}
+      <div ref={stageRef} tabIndex={-1} className="focus:outline-none">
+        <div ref={animRef}>
         <ExerciseView
           exercise={exercise}
           answer={answer}
@@ -498,6 +529,7 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
           revealed={verdict !== null}
           onSubmit={(submitted) => void handleSubmit(submitted)}
         />
+        </div>
       </div>
 
       <div className="mt-auto pt-2">

@@ -258,3 +258,34 @@ describe('SessionRunner — kombo', () => {
     expect(screen.queryByTestId('combo')).not.toBeInTheDocument()
   })
 })
+
+describe('SessionRunner — klaviatura', () => {
+  it('yangi savolda fokus BODY da qolmaydi', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0)
+
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    await screen.findByTestId('session-progress')
+
+    /*
+     * Fokus <body> da qolsa, klaviatura foydalanuvchisi har savolda
+     * sahifa boshidan qaytadan Tab bosishga majbur bo'lardi.
+     */
+    /*
+     * Fokus <body> da qolsa, klaviatura foydalanuvchisi har savolda
+     * sahifa boshidan qaytadan Tab bosishga majbur bo'lardi.
+     *
+     * Animatsiya BOSHQA elementga tegadi: bitta elementda bo'lganda GSAP
+     * fokusni yo'qotardi (o'lchandi — ~50 ms dan keyin <body> ga qaytardi).
+     */
+    const stage = document.querySelector('[tabindex="-1"]')
+
+    await waitFor(() => {
+      expect(document.activeElement).toBe(stage)
+    })
+
+    // GSAP animatsiyasi ishga tushgandan keyin ham fokus joyida qoladi
+    await new Promise((resolve) => setTimeout(resolve, 250))
+    expect(document.activeElement).toBe(stage)
+  })
+})
