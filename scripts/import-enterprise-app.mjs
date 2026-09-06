@@ -122,6 +122,31 @@ const JUNK_WORDS = new Set([
   // Darslik IZOHLARI — so'z maydoniga o'zbekcha matn tushib qolgan.
   // "ayollar uchun => eng kuchli maqtov" kartasi bolaga hech nima
   // o'rgatmaydi: ikkala tomon ham o'zbekcha.
+  //
+  // Ular `q` harfi bo'yicha topildi: inglizchada `q` deyarli har doim
+  // `qu` bo'lib keladi, o'zbekchada esa yakka turadi (`maqtov`, `oyoq`).
+  'oyoq',
+  'yostiq',
+  'oddiy maqtov',
+  'yaxshi maqtov',
+  'kuchli maqtov',
+  'kun qismlari',
+  'aniq vaqt',
+  'oraliq',
+  'aniq son',
+  'olti oyoq',
+  'maqtov',
+  'eng sovuq',
+  'aniq emas',
+  'buyruq',
+  'qarama-qarshilik',
+  'keyingi voqea',
+  'qisqartma',
+  'tovush taqlidi',
+  'rasmiy taqiq',
+  'kelajak haqida',
+  'qisqa javob',
+  'yerda taraqlaydi',
   'ayollar uchun',
   'asosan ayollar',
   'erkaklar uchun',

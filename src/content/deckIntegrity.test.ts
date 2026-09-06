@@ -307,6 +307,34 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(collisions).toEqual([])
   })
 
+  it('inglizcha so‘z maydonida O‘ZBEKCHA matn yo‘q', async () => {
+    if (language !== 'en') return
+
+    const cards = await allCards(language)
+
+    /*
+     * Darslikning grammatik izohlari so'z maydoniga tushib qolgan edi:
+     * `ayollar uchun => eng kuchli maqtov`, `buyruq => 8-mashqdagi
+     * belgilar`. Bunday karta hech nima o'rgatmaydi — ikkala tomon ham
+     * o'zbekcha.
+     *
+     * Rus va arab dekalarida bu sinf BO'LISHI MUMKIN EMAS: u yerda
+     * yozuv turi tekshiriladi. Inglizcha esa o'zbekcha bilan bir
+     * alifboni bo'lishadi, shuning uchun boshqa belgi kerak.
+     *
+     * BELGI: inglizchada `q` deyarli har doim `qu` bo'lib keladi
+     * (`question`, `quick`), o'zbekchada esa yakka turadi (`maqtov`,
+     * `oyoq`). Istisnolar — atoqli otlar.
+     */
+    const ALLOWED = ['iraq', 'qatar']
+
+    const suspicious = cards.filter(
+      (card) => /q(?!u)/i.test(card.word) && !ALLOWED.includes(card.word.toLowerCase()),
+    )
+
+    expect(suspicious.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)
