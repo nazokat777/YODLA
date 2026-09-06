@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
+import { saveTopicOrder } from '@/content/topicOrderCache'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { LessonScreen } from './LessonScreen'
 
@@ -61,5 +62,30 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     renderLesson('/lesson')
 
     expect(await screen.findByText(/hali so.z yo.q/i)).toBeInTheDocument()
+  })
+})
+
+describe('LessonScreen — bo‘limsiz dars', () => {
+  it('o‘quv yo‘lidagi JORIY bo‘limdan boshlanadi', async () => {
+    /*
+     * Ilgari bo'limsiz dars butun lug'atdan tuzilardi va tartib karta
+     * qo'shilish tartibiga tushib qolardi: yangi foydalanuvchi
+     * "Salomlashish" o'rniga import qilingan lug'atning birinchi
+     * so'zlaridan boshlardi — holbuki yo'lda "Salomlashish" joriy deb
+     * turardi.
+     */
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'hello', translation: 'salom', language: 'en', topic: 'Salomlashish', level: 'A1' },
+      { word: 'bye', translation: 'xayr', language: 'en', topic: 'Salomlashish', level: 'A1' },
+      { word: 'ability', translation: 'qobiliyat', language: 'en', topic: 'Boshqa', level: 'A1' },
+    ])
+    saveTopicOrder('en', ['Salomlashish', 'Boshqa'])
+
+    renderLesson('/lesson')
+
+    // Birinchi savol "Salomlashish" bo'limidan chiqadi
+    expect(await screen.findByText(/salom|xayr/i)).toBeInTheDocument()
+    expect(screen.queryByText('qobiliyat')).not.toBeInTheDocument()
   })
 })

@@ -6,7 +6,9 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
-import { unitIdOf } from '@/core/path'
+import { buildUnits, unitIdOf } from '@/core/path'
+import { readTopicOrder } from '@/content/topicOrderCache'
+import type { LanguageCode, LevelCode } from '@/core/types'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -61,11 +63,23 @@ export function LessonScreen() {
       .then((all) => {
         if (cancelled) return
 
-        // Bo'lim berilgan bo'lsa — faqat o'sha mavzu so'zlari.
+        /*
+         * Bo'lim BERILMAGAN bo'lsa (onboarding "Birinchi darsni boshlash"
+         * va "Yana bir dars"), o'quv yo'lidagi JORIY bo'lim olinadi.
+         *
+         * Ilgari bunday holatda butun lug'at manba bo'lardi va tartib
+         * karta qo'shilish tartibiga tushib qolardi: yangi foydalanuvchi
+         * "Salomlashish" o'rniga import qilingan lug'atning birinchi
+         * so'zlari — `ability`, `about` — bilan boshlardi. Ekran esa
+         * ayni paytda yo'lda "Salomlashish" joriy deb turardi, ya'ni
+         * ilova bir vaqtda ikki xil gap aytardi.
+         */
+        const targetUnit = lessonId ?? currentUnitId(all, learningLanguage, startingLevel)
+
         // Bo'lim ichida daraja bir xil, shuning uchun minLevel uzatilmaydi.
-        const scope = lessonId
+        const scope = targetUnit
           ? all.filter((card) =>
-              card.level && card.topic ? unitIdOf(card.level, card.topic) === lessonId : false,
+              card.level && card.topic ? unitIdOf(card.level, card.topic) === targetUnit : false,
             )
           : all
 
@@ -76,7 +90,7 @@ export function LessonScreen() {
 
         setPool(scope)
         // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
-        setCards(pickLessonCards(scope, LESSON_SIZE, lessonId ? undefined : startingLevel))
+        setCards(pickLessonCards(scope, LESSON_SIZE, targetUnit ? undefined : startingLevel))
       })
       .catch((error: unknown) => {
         console.error('Darsni yuklab bo‘lmadi:', error)
@@ -154,4 +168,25 @@ export function LessonScreen() {
       )}
     </div>
   )
+}
+
+/**
+ * O'quv yo'lidagi JORIY bo'lim identifikatori (topilmasa `null`).
+ *
+ * Mavzular tartibi keshdan o'qiladi — u bosh ekran tomonidan yoziladi.
+ * Kesh bo'sh bo'lsa (foydalanuvchi to'g'ridan-to'g'ri darsga kirgan)
+ * `null` qaytadi va dars eski yo'l bilan, butun lug'atdan tuziladi:
+ * lug'atni shu yerda yuklash darsning boshlanishini kechiktirardi.
+ */
+function currentUnitId(
+  cards: CardRecord[],
+  language: LanguageCode,
+  minLevel: LevelCode,
+): string | null {
+  const topicOrder = readTopicOrder(language)
+  if (!topicOrder) return null
+
+  const units = buildUnits(cards, { minLevel, topicOrder })
+
+  return units.find((unit) => unit.state === 'current')?.id ?? null
 }
