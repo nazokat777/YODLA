@@ -297,6 +297,29 @@ function importArabic() {
     bookOf[index] = book
   })
 
+  /*
+   * TAXMINNI MANBA BILAN SOLISHTIRAMIZ.
+   *
+   * Kitob raqami `num` ning qayta boshlanishidan chiqariladi, ya'ni u
+   * darslar TARTIBIGA tayanadi. Manbada esa 169 darsning 117 tasida
+   * `book` maydoni bor — ular bilan solishtirib turamiz.
+   *
+   * Ular ajralsa, so'zlar noto'g'ri DARAJAGA tushadi (kitob → A1/A2/B1)
+   * va mavzular aralashadi. Bu jimgina sodir bo'lardi, shuning uchun
+   * import shovqin bilan to'xtaydi.
+   */
+  const mismatched = lessons.filter(
+    (lesson, index) => lesson.book !== undefined && lesson.book !== bookOf[index] + 1,
+  )
+
+  if (mismatched.length > 0) {
+    throw new Error(
+      `Kitob raqami manbaga mos kelmadi (${mismatched.length} dars). ` +
+        `Masalan: ${mismatched[0].num}-dars — manbada ${mismatched[0].book}, ` +
+        `hisoblanganda ${bookOf[lessons.indexOf(mismatched[0])] + 1}.`,
+    )
+  }
+
   const LEVEL_BY_BOOK = ['A1', 'A2', 'B1']
 
   for (const [index, lesson] of lessons.entries()) {
