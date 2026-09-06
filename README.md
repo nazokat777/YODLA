@@ -345,11 +345,25 @@ lug'at qo'shilgan:
 
 | Til | Manba | So'z |
 | --- | ----- | ---- |
-| Arab | Mabdaul qiroat / Madina (169 dars) | +2133 |
-| Ingliz | Enterprise app + trainer | +3703 +587 |
+| Arab | Mabdaul qiroat / Madina (169 dars) | +2132 |
+| Ingliz | Enterprise 1 (Beginner) + trainer | +3657 +590 |
 | Rus | Ru-Uz-Dictionary + qo'lda | +3338 +118 |
 
-Jami **10 306** karta: arab 2266, ingliz 4437, rus 3603.
+Jami **10 231** karta: arab 2264, ingliz 4379, rus 3588.
+
+Import paytida uch xil chiqindi chetlab o'tiladi:
+
+- **Bolalarga mos kelmaydigan** so'z va jumlalar (Tatoeba va umumiy
+  lug'atlar KATTALAR uchun tuzilgan) — `UNSUITABLE_WORDS`.
+  Arabchaga qo'llanmaydi: u Qiroat darsligidan olingan.
+- **Darslik izohlari** — so'z maydoniga o'zbekcha matn tushib qolgani
+  (`ayollar uchun → eng kuchli maqtov`). Ular `q` harfi bo'yicha
+  topilgan: inglizchada `q` deyarli har doim `qu`, o'zbekchada yakka.
+- **Kitob metama'lumoti** — bet raqamlari, jadval kataklari,
+  tugallanmagan tarjimalar.
+
+Har uch sinf `deckIntegrity.test.ts` da qulflangan: import qayta ishga
+tushirilsa ham ular qaytolmaydi.
 
 Daraja **chastota bo'yicha**: ingliz Enterprise `freq`, rus OpenSubtitles ru_50k. Ko'p ishlatiladigan so'z pastroq darajada (30% A1 / 35% A2 / 35% B1). Arab — Madina kitob tartibida.
 
@@ -803,7 +817,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (10 275 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (10 231 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi + mascot
 - [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
       + GSAP animatsiyalari
