@@ -356,4 +356,23 @@ describe('SessionRunner — yangi so‘z bilan tanishtirish', () => {
     })
     expect(screen.queryByText(/yangi so/i)).not.toBeInTheDocument()
   })
+
+  it('ovozlar KECH yuklansa ham tanishtirish yopilib ketmaydi', async () => {
+    /*
+     * Haqiqiy xato: mashq yaratuvchi effekt `allowAudio` ga bog'liq va u
+     * ovozlar ro'yxati kelgach false→true bo'ladi. Belgi effektda
+     * qo'yilganda ikkinchi ishga tushish tanishtirishni darhol yopardi.
+     */
+    const fresh = { ...CARDS[0]!, totalReviews: 0, repetitions: 0 }
+
+    render(<SessionRunner cards={[fresh]} pool={CARDS} onFinish={() => {}} />)
+    expect(await screen.findByText(/yangi so/i)).toBeInTheDocument()
+
+    // Ovozlar ro'yxati keldi
+    window.speechSynthesis?.dispatchEvent(new Event('voiceschanged'))
+
+    await waitFor(() => {
+      expect(screen.getByText(/yangi so/i)).toBeInTheDocument()
+    })
+  })
 })

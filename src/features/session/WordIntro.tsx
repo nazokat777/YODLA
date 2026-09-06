@@ -61,6 +61,11 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         ✨ Yangi so‘z
       </p>
 
+      {/*
+        `justify-center` bilan o'ralgan blok: tanishtirishda kontent kam va
+        uni tepada qoldirsak ekranning yarmi bo'sh qolardi
+      */}
+      <div className="flex flex-1 flex-col justify-center gap-4">
       <Panel data-intro className="flex flex-col items-center gap-3 py-6 text-center">
         <div dir={language.dir} lang={language.code}>
           <WordDisplay text={card.word} language={language} testId="intro-word" />
@@ -91,8 +96,9 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
           )}
         </Panel>
       )}
+      </div>
 
-      <div className="mt-auto pt-2">
+      <div className="pt-2">
         <Button block size="lg" onClick={onContinue}>
           Tushundim
         </Button>

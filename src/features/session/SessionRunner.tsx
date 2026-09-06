@@ -147,15 +147,19 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
 
     /*
      * TANISHTIRISH avval. `totalReviews === 0` — so'z hech qachon
-     * so'ralmagan, ya'ni uni bilishning imkoni yo'q. Bir marta
-     * ko'rsatilgach, shu seansda qayta ko'rsatilmaydi.
+     * so'ralmagan, ya'ni uni bilishning imkoni yo'q.
+     *
+     * "Ko'rsatildi" belgisi BU YERDA QO'YILMAYDI, "Tushundim" bosilganda
+     * qo'yiladi. Sabab o'lchangan: bu effekt `allowAudio` ga ham bog'liq,
+     * u esa ovozlar ro'yxati asinxron yuklangach false→true bo'ladi.
+     * Belgi shu yerda qo'yilganda effekt ikkinchi marta ishlab, endigina
+     * ochilgan tanishtirishni o'zi yopib yuborardi — kartani hech kim
+     * ko'rmasdi.
      */
-    if (step.card.totalReviews === 0 && !introducedRef.current.has(step.card.id)) {
-      introducedRef.current.add(step.card.id)
-      setIntroCard(step.card)
-    } else {
-      setIntroCard(null)
-    }
+    const needsIntro =
+      step.card.totalReviews === 0 && !introducedRef.current.has(step.card.id)
+
+    setIntroCard(needsIntro ? step.card : null)
 
     setExercise(generateExercise({ card: step.card, pool, allowAudio, stage: step.stage }))
     setAnswer(EMPTY_ANSWER)
@@ -499,7 +503,13 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
           </span>
         </div>
 
-        <WordIntro card={introCard} onContinue={() => setIntroCard(null)} />
+        <WordIntro
+          card={introCard}
+          onContinue={() => {
+            introducedRef.current.add(introCard.id)
+            setIntroCard(null)
+          }}
+        />
       </div>
     )
   }

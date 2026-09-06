@@ -110,8 +110,13 @@ export function ChoiceGrid({
     let revert = () => {}
     let cancelled = false
 
-    void withMotion(listRef.current, (gsap) => {
-      enterStagger(gsap, listRef.current!.querySelectorAll('li'), {
+    // Element BU YERDA olinadi: `withMotion` GSAP yuklanishini kutadi va
+    // o'sha vaqt ichida komponent yo'q qilinsa `listRef.current` null
+    // bo'ladi — ilgari shu joyda "null.querySelectorAll" xatosi chiqardi
+    const list = listRef.current
+
+    void withMotion(list, (gsap) => {
+      enterStagger(gsap, list!.querySelectorAll('li'), {
         stagger: 0.03,
         duration: 0.2,
         y: 10,
