@@ -99,7 +99,15 @@ function WeeklyChart({ series }: { series: DayPoint[] }) {
           <li
             key={point.day}
             aria-label={`${WEEKDAY_NAMES[day]}: ${point.xp} XP`}
-            className="flex flex-1 flex-col items-center gap-1"
+            /*
+             * `h-full` MAJBURIY: ustun balandligi foizda beriladi
+             * (`height: 42%`), foiz esa ANIQ balandlikdagi ota-elementga
+             * nisbatan hisoblanadi. `li` o'z kontentiga qarab cho'zilganda
+             * foiz 0 ga aylanardi va grafik butunlay bo'sh ko'rinardi.
+             *
+             * `justify-end` — ustun pastdan o'sadi, raqam esa tepasida.
+             */
+            className="flex h-full flex-1 flex-col items-center justify-end gap-1"
           >
             <span aria-hidden="true" className="text-xs font-semibold text-ink-600">
               {point.xp || ''}
@@ -107,8 +115,13 @@ function WeeklyChart({ series }: { series: DayPoint[] }) {
             <div
               // Bo'sh kun ham ko'rinadi (ingichka chiziq): "kun o'tkazdim"
               // degan haqiqat yashirilmasligi kerak
+              data-testid={`bar-${point.day}`}
               style={{ height: `${Math.max(height, 3)}%` }}
-              className={point.xp > 0 ? 'w-full rounded-t-lg bg-brand-500' : 'w-full rounded-t-lg bg-ink-300'}
+              className={
+                point.xp > 0
+                  ? 'w-full rounded-t-lg bg-gradient-to-t from-brand-600 to-brand-300'
+                  : 'w-full rounded-t-lg bg-ink-300'
+              }
               role="presentation"
             />
             <span aria-hidden="true" className="text-xs text-ink-600">

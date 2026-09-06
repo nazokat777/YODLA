@@ -65,3 +65,19 @@ describe('StatsScreen', () => {
     })
   })
 })
+
+describe('XP grafigi', () => {
+  it('ustun balandligi CHIZILADI — konteyner aniq balandlikda', async () => {
+    /*
+     * Haqiqiy xato: `li` `h-full` siz edi va ustunning `height: N%`
+     * foizi noaniq ota-elementga nisbatan hisoblanib, 0 ga aylanardi —
+     * grafik ma'lumot bo'lsa ham bo'sh ko'rinardi.
+     */
+    renderStats()
+
+    const list = await screen.findByLabelText(/so.nggi 7 kundagi xp/i)
+    const item = list.querySelector('li')
+
+    expect(item?.className).toContain('h-full')
+  })
+})
