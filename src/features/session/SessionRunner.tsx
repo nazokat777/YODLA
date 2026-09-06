@@ -200,7 +200,7 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
       cancelled = true
       revert()
     }
-  }, [exerciseId])
+  }, [exerciseId, dir])
 
   /*
    * Yangi savol chizilganda FOKUS unga ko'chiriladi.
