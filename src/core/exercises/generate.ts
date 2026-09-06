@@ -258,6 +258,15 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
       const sentence = card.sentence?.trim()
       if (!sentence || clozeBlank(sentence, card.word) === null) return false
 
+      /*
+       * TARJIMA ham SHART (jumla qurishdagi kabi).
+       *
+       * Usiz mashq yechib bo'lmaydigan bo'lardi: foydalanuvchi jumlaning
+       * ma'nosini bilmay turib, to'rt xorijiy so'zdan qaysi biri bo'shliqqa
+       * mos kelishini aniqlay olmaydi — faqat taxmin qilardi.
+       */
+      if (!card.sentenceTranslation) return false
+
       return pool.some((candidate) => candidate.id !== card.id)
     }
     case 'spelling':

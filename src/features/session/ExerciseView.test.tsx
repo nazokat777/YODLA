@@ -105,3 +105,32 @@ describe('ExerciseView — harfma-harf (spelling)', () => {
     expect(onAnswerChange).toHaveBeenCalledWith(expect.objectContaining({ tokenOrder: [2] }))
   })
 })
+
+describe('Gap ichida (cloze) — ma’no', () => {
+  it('jumla TARJIMASI ko‘rsatiladi — usiz javobni topib bo‘lmaydi', () => {
+    const card = {
+      ...makeCard(),
+      sentence: 'شكرا، لا',
+      sentenceTranslation: 'Rahmat, yo‘q',
+    }
+
+    render(
+      <ExerciseView
+        exercise={{
+          id: 'x',
+          type: 'cloze',
+          card,
+          prompt: '___، لا',
+          options: ['شكرا', 'نعم'],
+          correctIndex: 0,
+        }}
+        answer={EMPTY_ANSWER}
+        onAnswerChange={() => {}}
+        revealed={false}
+        onSubmit={() => {}}
+      />,
+    )
+
+    expect(screen.getByTestId('cloze-translation')).toHaveTextContent('Rahmat, yo‘q')
+  })
+})

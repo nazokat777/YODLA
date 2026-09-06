@@ -641,3 +641,48 @@ describe('mashq identifikatori', () => {
     expect(first.id).not.toBe(second.id)
   })
 })
+
+describe('gap ichida (cloze) — yechilishi', () => {
+  /** Cloze pog'onasiga tushadigan karta: jumlada so'zning o'zi bor */
+  const clozeCard = (overrides: Partial<CardRecord> = {}) =>
+    makeCard({
+      id: 'en:water',
+      word: 'water',
+      translation: 'suv',
+      sentence: 'I drink water every day.',
+      sentenceTranslation: 'Men har kuni suv ichaman.',
+      // Cloze DIFFICULTY_LADDER'da faqat 2–3 takrorlashda uchraydi
+      repetitions: 2,
+      ...overrides,
+    })
+
+  const POOL = [
+    makeCard({ id: 'en:bread', word: 'bread', translation: 'non' }),
+    makeCard({ id: 'en:tea', word: 'tea', translation: 'choy' }),
+  ]
+
+  /** Shu pog'onada chiqishi MUMKIN bo'lgan barcha mashq turlari */
+  const typesFor = (card: CardRecord) =>
+    new Set(
+      // `random` butun oraliq bo'ylab yuriladi: tur tasodifiy tanlanadi
+      [0, 0.34, 0.67, 0.99].map(
+        (value) =>
+          generateExercise({
+            card,
+            pool: [card, ...POOL],
+            allowAudio: false,
+            random: () => value,
+          }).type,
+      ),
+    )
+
+  it('tarjima BOR bo‘lsa cloze chiqishi mumkin', () => {
+    expect(typesFor(clozeCard())).toContain('cloze')
+  })
+
+  it('jumla tarjimasi YO‘Q bo‘lsa cloze umuman chiqmaydi', () => {
+    // Usiz foydalanuvchi jumla ma'nosini bilmay, to'rt xorijiy so'zdan
+    // qaysi biri mos kelishini faqat TAXMIN qilardi
+    expect(typesFor(clozeCard({ sentenceTranslation: undefined }))).not.toContain('cloze')
+  })
+})

@@ -3,6 +3,7 @@ import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, MatchingExercise } from '@/core/exercises'
 import { shuffle } from '@/lib/random'
+import { speak } from '@/lib/speech'
 import { cn } from '@/lib/cn'
 
 /** Bitta kartaning juft topishdagi natijasi */
@@ -58,6 +59,20 @@ export function MatchingView({ exercise, onComplete }: MatchingViewProps) {
 
   function pickWord(cardId: string) {
     if (matched.has(cardId)) return
+
+    /*
+     * So'z bosilganda O'QIB beriladi.
+     *
+     * Boshqa mashqlarda buning uchun alohida 🔊 tugmasi bor, bu yerda esa
+     * yo'q: har so'zning yoniga tugma qo'yilsa, ikki ustunli tor tarmoqda
+     * so'zning o'ziga joy qolmasdi. Bosish baribir kerak, shuning uchun
+     * ovoz o'sha bosishga qo'shildi.
+     *
+     * Javobni OSHKOR QILMAYDI: eshitilayotgani chet tilidagi so'z, ya'ni
+     * ekranda allaqachon turgan matn — tarjima emas.
+     */
+    const word = exercise.pairs.find((pair) => pair.cardId === cardId)?.word
+    if (word) speak(word, language.speechLocale)
 
     // Bosilgan so'zni qayta bosish tanlovni bekor qiladi
     setPickedWord((current) => (current === cardId ? null : cardId))

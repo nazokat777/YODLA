@@ -2,7 +2,11 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import type { CardRecord } from '@/core/db'
 import type { MatchingExercise } from '@/core/exercises'
+import { speak } from '@/lib/speech'
 import { MatchingView, type MatchingResult } from './MatchingView'
+
+// Nutq sintezi jsdom'da yo'q — chaqiruvning O'ZI tekshiriladi
+vi.mock('@/lib/speech', () => ({ speak: vi.fn(), cancelSpeech: vi.fn() }))
 
 function makeCard(overrides: Partial<CardRecord> = {}): CardRecord {
   return {
@@ -127,5 +131,25 @@ describe('MatchingView', () => {
 
     expect(word('bread')).toBeDisabled()
     expect(translation('non')).toBeDisabled()
+  })
+})
+
+describe('MatchingView — talaffuz', () => {
+  it('so‘z bosilganda O‘RGANILAYOTGAN tilda o‘qib beriladi', () => {
+    vi.mocked(speak).mockClear()
+    renderView()
+
+    fireEvent.click(word('water'))
+
+    expect(speak).toHaveBeenCalledWith('water', 'en-US')
+  })
+
+  it('TARJIMA bosilganda hech nima o‘qilmaydi — javob oshkor bo‘lmasin', () => {
+    renderView()
+
+    vi.mocked(speak).mockClear()
+    fireEvent.click(translation('suv'))
+
+    expect(speak).not.toHaveBeenCalled()
   })
 })

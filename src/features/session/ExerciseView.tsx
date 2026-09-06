@@ -317,6 +317,20 @@ function ClozeView({
         >
           {exercise.prompt}
         </p>
+
+        {/*
+          JUMLA TARJIMASI — mashqning ishlashi uchun SHART.
+          Usiz foydalanuvchi butun jumlani allaqachon tushunishi kerak
+          edi, aks holda to'rt variantdan qaysi biri mos kelishini
+          bilishning imkoni yo'q — faqat taxmin qilish qolardi.
+          Tarjima ma'noni beradi, javob esa baribir o'rganilayotgan
+          tilda eslab chaqirishni talab qiladi.
+        */}
+        {exercise.card.sentenceTranslation && (
+          <p data-testid="cloze-translation" className="text-sm text-ink-600">
+            {exercise.card.sentenceTranslation}
+          </p>
+        )}
       </Panel>
 
       <ChoiceGrid
