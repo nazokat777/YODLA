@@ -90,7 +90,15 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         {/* Ajratuvchi chiziq: so'z va tarjima ikki alohida narsa ekani ko'rinsin */}
         <span aria-hidden="true" className="h-px w-16 bg-ink-300" />
 
-        <p className="text-2xl font-extrabold text-brand-700">{card.translation}</p>
+        <p className="text-2xl font-extrabold text-brand-700">
+          {/*
+            Ekran o'quvchi kartani "вода, voda, suv" deb o'qiydi va
+            oxirgisi TARJIMA ekani hech nimadan bilinmaydi — chiziq
+            faqat ko'z uchun. Ko'rinmas yorliq shu bog'lanishni aytadi.
+          */}
+          <span className="sr-only">Ma'nosi: </span>
+          {card.translation}
+        </p>
       </Panel>
 
       {card.sentence && (

@@ -49,3 +49,13 @@ describe('WordIntro', () => {
     expect(screen.getByText('سَلَام').closest('[dir]')).toHaveAttribute('dir', 'rtl')
   })
 })
+
+it('tarjima ekran o‘quvchi uchun BELGILANADI', () => {
+  /*
+   * Chiziq faqat ko'z uchun: ekran o'quvchi kartani "вода, voda, suv"
+   * deb o'qiydi va oxirgisi tarjima ekani hech nimadan bilinmaydi.
+   */
+  render(<WordIntro card={CARD} onContinue={() => {}} />)
+
+  expect(screen.getByText(/ma.nosi:/i)).toBeInTheDocument()
+})
