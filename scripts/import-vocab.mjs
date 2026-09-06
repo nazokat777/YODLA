@@ -335,6 +335,9 @@ function importArabic() {
       const uz = stripCrossReference((v.uz ?? '').trim())
       if (!word || !uz) { dropped++; continue }
       if (uz.toLowerCase() === word.toLowerCase()) { dropped++; continue }
+      // Uch nuqta bilan tugagan tarjima QIRQILGAN: "bir payt ikkovlari...".
+      // Yozish mashqida foydalanuvchi nima kiritishni bilmasdi.
+      if (/(\.\.\.|…)\s*$/.test(uz)) { dropped++; continue }
       if (!arabicIsClean(word)) { dropped++; continue }
       if (isSentence(word)) { dropped++; continue }
 

@@ -132,6 +132,8 @@ export const RETIRED_CARD_IDS: readonly string[] = [
   'en:he is',
   'en:she is',
   'en:they are',
+  // Tarjimasi qirqilgan edi: "bir payt ikkovlari..."
+  'ar:فِيمَا هُمَا',
   // Tarjima o'rnida izoh edi: "ikkalasi bir xil"
   "en:seven o'clock",
 ]

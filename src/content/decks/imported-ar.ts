@@ -5464,13 +5464,6 @@ export const AR_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'فِيمَا هُمَا',
-      translation: 'bir payt ikkovlari...',
-      language: 'ar',
-      topic: 'Qiroat 2-kitob 16-dars',
-      level: 'A2',
-    },
-    {
       word: 'لَيْتَ',
       translation: 'koshki',
       language: 'ar',

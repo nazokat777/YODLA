@@ -335,6 +335,55 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     expect(suspicious.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
   })
 
+  it('mavzu nomi MAVJUD BO‘LMAGAN darsni o‘ylab topmaydi', async () => {
+    const cards = await allCards(language)
+    const topics = [...new Set(cards.map((card) => card.topic).filter(Boolean))]
+
+    /*
+     * Ilgari kitobning tuzilma qismlari ham "dars" deb atalardi:
+     * `Enterprise 990-unit: Orqa muqova`. Foydalanuvchi bunday darsni
+     * kitobdan qidirib topolmasdi — manbada u `isExtra: true` deb
+     * belgilangan.
+     *
+     * Enterprise 1 da 15 ta dars bor (manbaning o'zi tasdiqlaydi:
+     * "Progress Test 8 (Units 1-15)").
+     */
+    const invented = topics.filter((topic) => {
+      const match = /(\d+)-dars/.exec(topic ?? '')
+      if (!match) return false
+
+      // Arabcha Qiroat kitoblarida darslar 60 tagacha
+      const limit = language === 'ar' ? 60 : 15
+
+      return Number(match[1]) > limit
+    })
+
+    expect(invented).toEqual([])
+  })
+
+  it('tarjima TUGALLANGAN', async () => {
+    const cards = await allCards(language)
+
+    // `he is => "u ..."` — jadval katagi. Yozish mashqida foydalanuvchi
+    // "u ..." ni ko'rib nima kiritishni bilmasdi.
+    const unfinished = cards.filter((card) => /(\.\.\.|…)\s*$/.test(card.translation))
+
+    expect(unfinished.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
+  it('tarjima o‘rnida BET RAQAMI yoki havola yo‘q', async () => {
+    const cards = await allCards(language)
+
+    // `high-speed catamarans => 154-bet` — kitob metama'lumoti, ma'no emas
+    const reference = cards.filter(
+      (card) =>
+        /\d+\s*-?\s*bet/i.test(card.translation) ||
+        /(Unit|Module|Page)\s*\d/i.test(card.translation),
+    )
+
+    expect(reference.map((card) => `${card.word} → ${card.translation}`)).toEqual([])
+  })
+
   it('hamma karta shu tilga tegishli', async () => {
     const cards = await allCards(language)
     const foreign = cards.filter((card) => card.language !== language)
