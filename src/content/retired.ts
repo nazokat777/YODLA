@@ -121,6 +121,17 @@ export const RETIRED_CARD_IDS: readonly string[] = [
   'en:xatning boshi',
   'en:tartib sonlar',
   'en:soqchilar kapitani',
+  /*
+   * Kitob METAMA'LUMOTI va grammatika jadvalining kataklari:
+   * `high-speed catamarans => 154-bet` (bet raqami),
+   * `sb => somebody = kimdir` (lug'at qisqartmasi),
+   * `he is => u ...` (jadval katagi, tugallanmagan tarjima).
+   */
+  'en:high-speed catamarans',
+  'en:sb',
+  'en:he is',
+  'en:she is',
+  'en:they are',
   // Tarjima o'rnida izoh edi: "ikkalasi bir xil"
   "en:seven o'clock",
 ]

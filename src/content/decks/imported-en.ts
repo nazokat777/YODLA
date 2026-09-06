@@ -183,6 +183,13 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
+      word: 'british',
+      translation: 'britaniyalik',
+      language: 'en',
+      topic: "Qo'shimcha lug'at · A1-2",
+      level: 'A1',
+    },
+    {
       word: 'july',
       translation: 'iyul',
       language: 'en',
@@ -284,7 +291,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'related',
       translation: "bog'liq",
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-2",
+      topic: "Qo'shimcha lug'at · A1-3",
       level: 'A1',
     },
     {
@@ -424,7 +431,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'followed',
       translation: 'ergashdi',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-3",
+      topic: "Qo'shimcha lug'at · A1-4",
       level: 'A1',
     },
     {
@@ -564,7 +571,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'asking',
       translation: "so'rab",
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-4",
+      topic: "Qo'shimcha lug'at · A1-5",
       level: 'A1',
     },
     {
@@ -704,7 +711,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'activities',
       translation: 'tadbirlar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-5",
+      topic: "Qo'shimcha lug'at · A1-6",
       level: 'A1',
     },
     {
@@ -844,7 +851,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'cities',
       translation: 'shaharlar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-6",
+      topic: "Qo'shimcha lug'at · A1-7",
       level: 'A1',
     },
     {
@@ -984,12 +991,19 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'dogs',
       translation: 'itlar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-7",
+      topic: "Qo'shimcha lug'at · A1-8",
       level: 'A1',
     },
     {
       word: 'copy',
       translation: "nusxa ko'chirish",
+      language: 'en',
+      topic: "Qo'shimcha lug'at · A1-8",
+      level: 'A1',
+    },
+    {
+      word: 'dear',
+      translation: 'hurmatli (xatda)',
       language: 'en',
       topic: "Qo'shimcha lug'at · A1-8",
       level: 'A1',
@@ -1117,14 +1131,14 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'britain',
       translation: 'Britaniya',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-8",
+      topic: "Qo'shimcha lug'at · A1-9",
       level: 'A1',
     },
     {
       word: 'windows',
       translation: 'derazalar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-8",
+      topic: "Qo'shimcha lug'at · A1-9",
       level: 'A1',
     },
     {
@@ -1232,15 +1246,15 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Qo'shimcha lug'at · A1-9",
       level: 'A1',
     },
+  ],
+  A2: [
     {
       word: 'adding',
       translation: "qo'shish",
       language: 'en',
-      topic: "Qo'shimcha lug'at · A1-9",
-      level: 'A1',
+      topic: "Qo'shimcha lug'at · A2-1",
+      level: 'A2',
     },
-  ],
-  A2: [
     {
       word: 'tests',
       translation: 'testlar',
@@ -1378,7 +1392,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'spain',
       translation: 'Ispaniya',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-1",
+      topic: "Qo'shimcha lug'at · A2-2",
       level: 'A2',
     },
     {
@@ -1518,7 +1532,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'seasons',
       translation: 'fasllar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-2",
+      topic: "Qo'shimcha lug'at · A2-3",
       level: 'A2',
     },
     {
@@ -1658,7 +1672,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'egypt',
       translation: 'Misr',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-3",
+      topic: "Qo'shimcha lug'at · A2-4",
       level: 'A2',
     },
     {
@@ -1798,7 +1812,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'jean',
       translation: 'jan',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-4",
+      topic: "Qo'shimcha lug'at · A2-5",
       level: 'A2',
     },
     {
@@ -1938,7 +1952,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'dec',
       translation: 'dek',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-5",
+      topic: "Qo'shimcha lug'at · A2-6",
       level: 'A2',
     },
     {
@@ -2078,7 +2092,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'describing',
       translation: 'tasvirlab berish',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-6",
+      topic: "Qo'shimcha lug'at · A2-7",
       level: 'A2',
     },
     {
@@ -2218,7 +2232,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'jennifer',
       translation: 'Jenifer',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-7",
+      topic: "Qo'shimcha lug'at · A2-8",
       level: 'A2',
     },
     {
@@ -2358,7 +2372,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'pine',
       translation: "qarag'ay",
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-8",
+      topic: "Qo'shimcha lug'at · A2-9",
       level: 'A2',
     },
     {
@@ -2498,7 +2512,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'symbols',
       translation: 'belgilar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-9",
+      topic: "Qo'shimcha lug'at · A2-10",
       level: 'A2',
     },
     {
@@ -2638,7 +2652,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'toes',
       translation: 'oyoq barmoqlari',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-10",
+      topic: "Qo'shimcha lug'at · A2-11",
       level: 'A2',
     },
     {
@@ -2676,15 +2690,15 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Qo'shimcha lug'at · A2-11",
       level: 'A2',
     },
+  ],
+  B1: [
     {
       word: 'appointments',
       translation: 'uchrashuvlar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · A2-11",
-      level: 'A2',
+      topic: "Qo'shimcha lug'at · B1-1",
+      level: 'B1',
     },
-  ],
-  B1: [
     {
       word: 'predictions',
       translation: 'bashoratlar',
@@ -2822,7 +2836,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'museums',
       translation: 'muzeylar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-1",
+      topic: "Qo'shimcha lug'at · B1-2",
       level: 'B1',
     },
     {
@@ -2962,7 +2976,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'seventy',
       translation: 'yetmish',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-2",
+      topic: "Qo'shimcha lug'at · B1-3",
       level: 'B1',
     },
     {
@@ -3102,7 +3116,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'nineteen',
       translation: "o'n to'qqiz",
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-3",
+      topic: "Qo'shimcha lug'at · B1-4",
       level: 'B1',
     },
     {
@@ -3242,7 +3256,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'bicycles',
       translation: 'velosipedlar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-4",
+      topic: "Qo'shimcha lug'at · B1-5",
       level: 'B1',
     },
     {
@@ -3382,7 +3396,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'teas',
       translation: 'choylar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-5",
+      topic: "Qo'shimcha lug'at · B1-6",
       level: 'B1',
     },
     {
@@ -3522,7 +3536,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'coon',
       translation: 'qaqshatqich',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-6",
+      topic: "Qo'shimcha lug'at · B1-7",
       level: 'B1',
     },
     {
@@ -3662,7 +3676,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'kirsty',
       translation: 'kirsti',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-7",
+      topic: "Qo'shimcha lug'at · B1-8",
       level: 'B1',
     },
     {
@@ -3802,7 +3816,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'cassettes',
       translation: 'kassetalar',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-8",
+      topic: "Qo'shimcha lug'at · B1-9",
       level: 'B1',
     },
     {
@@ -3942,7 +3956,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'ordinal',
       translation: 'tartibli',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-9",
+      topic: "Qo'shimcha lug'at · B1-10",
       level: 'B1',
     },
     {
@@ -4082,7 +4096,7 @@ export const EN_IMPORTED: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'nessie',
       translation: 'nesi',
       language: 'en',
-      topic: "Qo'shimcha lug'at · B1-10",
+      topic: "Qo'shimcha lug'at · B1-11",
       level: 'B1',
     },
     {

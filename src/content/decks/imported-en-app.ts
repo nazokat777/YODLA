@@ -192,24 +192,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
-      word: 'he is',
-      translation: 'u ...',
-      language: 'en',
-      topic: 'Enterprise 1 · 1-dars: Hi!',
-      level: 'A1',
-      sentence: 'He is of medium height.',
-      sentenceTranslation: "U o'rta bo'yli.",
-    },
-    {
-      word: 'they are',
-      translation: 'ular ...',
-      language: 'en',
-      topic: 'Enterprise 1 · 1-dars: Hi!',
-      level: 'A1',
-      sentence: 'They are farmers.',
-      sentenceTranslation: 'Ular dehqonlar.',
-    },
-    {
       word: 'is not',
       translation: '...emas',
       language: 'en',
@@ -8586,17 +8568,17 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Enterprise 1 · 5-dars: An Early Bird or a Night Owl?',
       level: 'A1',
     },
-  ],
-  A2: [
     {
       word: 'before',
       translation: 'oldin',
       language: 'en',
       topic: 'Enterprise 1 · 5-dars: An Early Bird or a Night Owl?',
-      level: 'A2',
+      level: 'A1',
       sentence: 'We have studied similar humans before.',
       sentenceTranslation: "Biz ilgari shunga o'xshash odamlarni o'rganganmiz.",
     },
+  ],
+  A2: [
     {
       word: 'there',
       translation: 'u yerda; bor',
@@ -18084,13 +18066,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A2',
     },
     {
-      word: 'sb',
-      translation: 'somebody = kimdir',
-      language: 'en',
-      topic: "Enterprise 1 · 11-dars: All's Well that Ends Well",
-      level: 'A2',
-    },
-    {
       word: 'heard',
       translation: 'eshitdi',
       language: 'en',
@@ -18253,15 +18228,15 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Enterprise 1 · 11-dars: All's Well that Ends Well",
       level: 'A2',
     },
-  ],
-  B1: [
     {
       word: 'several times',
       translation: 'bir necha marta',
       language: 'en',
       topic: "Enterprise 1 · 11-dars: All's Well that Ends Well",
-      level: 'B1',
+      level: 'A2',
     },
+  ],
+  B1: [
     {
       word: 'close to',
       translation: '...ga yaqin',
@@ -24824,15 +24799,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
       sentence: 'Vancouver is in the south-west of Canada.',
       sentenceTranslation: "Vankuver Kanadaning janubi-g'arbida.",
-    },
-    {
-      word: 'high-speed catamarans',
-      translation: '154-bet',
-      language: 'en',
-      topic: 'Enterprise 1 · Culture Clips (madaniyat lavhalari)',
-      level: 'B1',
-      sentence: "high-speed catamarans called 'Seacats'",
-      sentenceTranslation: "'Seacat' deb ataladigan tezyurar katamaranlar",
     },
     {
       word: 'uniform',

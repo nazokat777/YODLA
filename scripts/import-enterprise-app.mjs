@@ -170,6 +170,13 @@ const JUNK_WORDS = new Set([
   'xatning boshi',
   'tartib sonlar',
   'soqchilar kapitani',
+  // Tarjima o'rnida BET RAQAMI yoki lug'at qisqartmasi
+  'high-speed catamarans',
+  'sb',
+  // Grammatika jadvalining kataklari: tarjimasi "u ...", "ular ..."
+  'he is',
+  'she is',
+  'they are',
   // Tarjima o'rnida izoh: "seven o'clock => ikkalasi bir xil"
   "seven o'clock",
 ])
