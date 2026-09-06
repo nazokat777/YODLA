@@ -105,15 +105,23 @@ export function HomeScreen() {
       {level && (
         <Panel>
           <div className="mb-2 flex items-baseline justify-between">
-            <h2 className="font-bold">
-              {level.level}-daraja
+            <h2 className="min-w-0 truncate font-bold">
+              {/*
+                `whitespace-nowrap`: brauzer chiziqchadan keyin qator
+                bo'lishi mumkin deb hisoblaydi va tor ekranda "1-daraja"
+                "1-" va "daraja" bo'lib ikkiga bo'linardi
+              */}
+              <span className="whitespace-nowrap">{level.level}-daraja</span>
+              {/* Daraja nomi ikkinchi darajali: tor ekranda kesiladi */}
               <span className="ms-2 text-sm font-normal text-ink-600">
                 {levelTitle(level.level)}
               </span>
             </h2>
             <span
               data-testid="total-xp"
-              className="inline-flex items-center gap-1 self-center text-sm font-bold text-ink-600"
+              // `whitespace-nowrap`: 320 px li ekranda "0 XP" ikki qatorga
+              // bo'linib, tanga bilan raqam ajralib qolardi
+              className="inline-flex shrink-0 items-center gap-1 self-center whitespace-nowrap text-sm font-bold text-ink-600"
             >
               <Emblem kind="coin" size="sm" className="h-5 w-5" />
               {progress?.profile.totalXp ?? 0} XP

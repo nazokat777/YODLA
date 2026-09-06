@@ -51,7 +51,12 @@ export function AppShell() {
                 <span aria-hidden="true" className="text-xl transition-transform duration-200">
                   {item.icon}
                 </span>
-                {item.label}
+                {/*
+                  `truncate`: 320 px li ekranda beshta yorliq uchun 64 px
+                  dan joy qolmaydi va "Bosh sahifa" qo'shnisiga tegib
+                  ketardi. Ikonka baribir har bo'limni ajratib turadi.
+                */}
+                <span className="w-full truncate px-0.5 text-center">{item.label}</span>
               </NavLink>
             </li>
           ))}
