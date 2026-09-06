@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/Button'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 
@@ -23,7 +23,7 @@ export function GoalStep({ onNext, onBack }: { onNext: () => void; onBack: () =>
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Mascot mood="happy" size="md" className="mb-3" />
+        <Emblem kind="target" size="md" className="mb-3" />
         <h1 className="text-2xl font-extrabold">Kunlik maqsad</h1>
         <p className="mt-2 text-sm text-ink-600">
           Keyin Profil orqali o'zgartirsangiz bo'ladi.

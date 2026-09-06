@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/Button'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { LANGUAGE_LIST } from '@/core/config/languages'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
@@ -13,7 +13,7 @@ export function LanguageStep({ onNext }: { onNext: () => void }) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Mascot mood="idle" size="lg" className="mb-3" />
+        <Emblem kind="spark" size="lg" className="mb-3" />
         <h1 className="text-2xl font-extrabold">Qaysi tilni o'rganamiz?</h1>
         <p className="mt-2 text-sm text-ink-600">
           Kuniga 5 daqiqa — va so'zlar o'zi esda qoladi.

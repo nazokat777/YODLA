@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/Button'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /**
@@ -15,7 +15,7 @@ export function ReadyStep({ onFinish }: { onFinish: (destination: 'lesson' | 'ho
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-6 flex flex-col items-center text-center">
-        <Mascot mood="celebrating" size="lg" className="mb-3" />
+        <Emblem kind="rocket" size="lg" className="mb-3" />
         <h1 className="text-2xl font-extrabold">Tayyor!</h1>
         <p className="mt-2 text-sm text-ink-600">
           Boshlang'ich daraja: <strong>{startingLevel}</strong> · Kuniga{' '}

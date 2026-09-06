@@ -4,21 +4,15 @@ Bu faylda ilovada ishlatilgan, **boshqalar yaratgan** resurslar qayd etiladi.
 Loyiha ochiq repoda va jonli saytda turgani uchun har bir tashqi fayl qayerdan
 olingani va qanday litsenziya bilan kelgani yozib boriladi.
 
-## Personaj (mascot)
+## Personaj
 
-| Fayl | Manba | Litsenziya |
-| ---- | ----- | ---------- |
-| `src/assets/mascot-idle.webp` | [Pixabay #7096399](https://pixabay.com/illustrations/fairy-girl-3d-rendering-cartoon-7096399/) | Pixabay Content License |
-| `src/assets/mascot-happy.webp` | [Pixabay #7096405](https://pixabay.com/illustrations/fairy-girl-3d-rendering-cartoon-7096405/) | Pixabay Content License |
+Ilovada tashqi rasm sifatidagi personaj YO'Q. Avvalgi 3D feya rasmi
+olib tashlandi: uslubi ilovaning qolgan qismiga yopishmasdi va kichik
+o'lchamda sifatsiz ko'rinardi.
 
-**Pixabay Content License:** tijorat maqsadida ham bepul, atribut talab
-qilinmaydi. Taqiqlanadi: rasmni o'zgartirmasdan boshqa stok saytda qayta
-tarqatish. Bizda bunday holat yo'q — rasmlar ilova ichida personaj sifatida
-ishlatiladi.
-
-**Qanday tayyorlangan:** asl PNG (1255×1280) shaffof fon bilan yuklab olingan,
-ko'rinadigan qism bo'yicha kesilgan, kvadratga joylangan, 256×256 ga
-kichraytirilgan va WebP (sifat 88) ga o'girilgan — 74 KB → 19 KB.
+O'rniga `src/components/ui/Emblem.tsx` — brend ranglarida chizilgan SVG
+belgilar (tanga, kubok, nishon, uchqun, raketa). Ular har o'lchamda
+tiniq, litsenziya talab qilmaydi va paketga nol kilobayt qo'shadi.
 
 ## Jumlalar ("gap ichida" mashqi uchun)
 

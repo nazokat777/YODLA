@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
 import {
   CHEERS,
@@ -61,7 +61,7 @@ function JoinCard({ onJoin }: { onJoin: (name: string) => void }) {
       <h1 className="text-2xl font-extrabold">Liga</h1>
 
       <Panel className="flex flex-col gap-3 text-center">
-        <Mascot mood="happy" size="md" className="mx-auto" />
+        <Emblem kind="trophy" size="md" className="mx-auto" />
         <p className="text-lg font-extrabold">Ligaga qo'shilish</p>
         <p className="text-sm text-ink-600">
           Ismingiz va haftalik XP'ingiz serverga yuboriladi va reytingda ko'rinadi.

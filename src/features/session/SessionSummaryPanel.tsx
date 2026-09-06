@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
 import { loadGsap } from '@/lib/motion'
 import { Confetti } from './Confetti'
@@ -43,8 +43,8 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
       <Panel className="relative overflow-hidden text-center">
         <div ref={panelRef}>
           <Confetti />
-          <span data-celebrate="mascot" className="block">
-            <Mascot mood="celebrating" size="md" className="mx-auto mb-2" />
+          <span data-celebrate="emblem" className="block">
+            <Emblem kind="coin" size="lg" className="mx-auto mb-2 drop-shadow-[0_8px_16px_rgba(180,83,9,0.35)]" />
           </span>
           <p className="text-lg font-extrabold">Level complete!</p>
           <p className="mt-1 text-sm text-ink-600">
@@ -54,18 +54,20 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
           {summary.xpEarned > 0 && (
             <p
               data-testid="session-xp"
-              className="mt-3 inline-block rounded-full bg-brand-700 px-4 py-1.5 text-lg font-extrabold text-white"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-b from-brand-500 to-brand-700 px-4 py-1.5 text-lg font-extrabold text-white shadow-pop"
             >
-              +<span data-celebrate="xp">{summary.xpEarned}</span> XP
+              <Emblem kind="coin" size="sm" className="h-6 w-6" />+
+              <span data-celebrate="xp">{summary.xpEarned}</span> XP
             </p>
           )}
 
           {summary.perfectBonusXp > 0 && (
             <p
               data-testid="perfect-bonus"
-              className="mt-2 text-sm font-bold text-flame-700"
+              className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-flame-700"
             >
-              ⭐ Perfect! Bonus +{summary.perfectBonusXp} XP
+              <Emblem kind="coin" size="sm" className="h-5 w-5" />
+              Perfect! Bonus +{summary.perfectBonusXp} XP
             </p>
           )}
 
@@ -109,7 +111,7 @@ function Stat({ label, value, accent }: { label: string; value: number; accent: 
 }
 
 /**
- * Tantana timeline'i: mascot sakraydi → XP sanaladi → kartalar ko'tariladi.
+ * Tantana timeline'i: tanga aylanadi → XP sanaladi → kartalar ko'tariladi.
  *
  * XP raqami JSX'da YAKUNIY qiymati bilan chiziladi; bu yerda u 0 dan
  * sanab chiqiladi. Animatsiya ishlamasa foydalanuvchi to'g'ri sonni
@@ -128,7 +130,7 @@ function useCelebration(xpEarned: number) {
       context = gsap.context(() => {
         const timeline = gsap.timeline()
 
-        timeline.from('[data-celebrate="mascot"]', {
+        timeline.from('[data-celebrate="emblem"]', {
           y: -40,
           scale: 0.6,
           duration: 0.5,

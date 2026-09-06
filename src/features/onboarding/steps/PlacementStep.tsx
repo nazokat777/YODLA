@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Mascot } from '@/components/ui/Mascot'
+import { Emblem } from '@/components/ui/Emblem'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { loadLanguageDeck } from '@/content/starterDecks'
@@ -74,7 +74,7 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
   if (failed) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
-        <Mascot mood="thinking" size="md" />
+        <Emblem kind="spark" size="md" />
         <p className="text-ink-600">
           Daraja testini yuklab bo‘lmadi. Boshlang‘ich darajadan
           boshlayveramiz — keyin Profilda o‘zgartirsangiz bo‘ladi.
@@ -90,7 +90,7 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
   if (!question) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3">
-        <Mascot mood="thinking" size="md" />
+        <Emblem kind="spark" size="md" />
         <p className="text-ink-600">Yuklanmoqda…</p>
       </div>
     )
@@ -115,7 +115,7 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mb-4 flex flex-col items-center text-center">
-        <Mascot mood="thinking" size="md" className="mb-2" />
+        <Emblem kind="spark" size="md" className="mb-2" />
         <h1 className="text-xl font-extrabold">Darajangizni aniqlaymiz</h1>
         <p className="mt-1 text-sm text-ink-600">
           Bilmasangiz — xato javob ham natijaga yordam beradi.
