@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ExerciseHelpButton } from './ExerciseHelpButton'
+import { WordIntro } from './WordIntro'
 import { LANGUAGES } from '@/core/config/languages'
 import { finalizeSession, gradeCard, recordAnswer, type CardRecord } from '@/core/db'
 import {
@@ -102,6 +103,19 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   /** Ketma-ket to'g'ri javoblar — seans ichidagi holat, saqlanmaydi */
   const [combo, setCombo] = useState(0)
 
+  /**
+   * Shu seansda TANISHTIRILGAN so'zlar.
+   *
+   * Bola hech ko'rmagan so'zning tarjimasini variantlardan topa olmaydi —
+   * u faqat taxmin qiladi. Shuning uchun hali bir marta ham takrorlanmagan
+   * so'z birinchi savolidan OLDIN ko'rsatiladi: so'z, tarjimasi, talaffuzi.
+   *
+   * `useRef` (`useState` emas): to'plamga yozish qayta render talab
+   * qilmaydi — ko'rinishni `introCard` ning o'zi boshqaradi.
+   */
+  const introducedRef = useRef(new Set<string>())
+  const [introCard, setIntroCard] = useState<CardRecord | null>(null)
+
   // Bugungi natija ligaga SEANS TUGAGANDA bir marta yuboriladi (rozilik
   // bo'lsa). Har javobda yuborish o'nlab ortiqcha so'rov bo'lardi.
   useLeagueSync(index >= queue.length ? 'finished' : 'running')
@@ -129,6 +143,18 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     if (!step) {
       setExercise(null)
       return
+    }
+
+    /*
+     * TANISHTIRISH avval. `totalReviews === 0` — so'z hech qachon
+     * so'ralmagan, ya'ni uni bilishning imkoni yo'q. Bir marta
+     * ko'rsatilgach, shu seansda qayta ko'rsatilmaydi.
+     */
+    if (step.card.totalReviews === 0 && !introducedRef.current.has(step.card.id)) {
+      introducedRef.current.add(step.card.id)
+      setIntroCard(step.card)
+    } else {
+      setIntroCard(null)
     }
 
     setExercise(generateExercise({ card: step.card, pool, allowAudio, stage: step.stage }))
@@ -457,6 +483,27 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   // Juft topish bir mashqda bir nechta kartani baholaydi, shuning uchun
   // ko'rsatkich navbat uzunligidan oshib ketishi mumkin
   const progressValue = Math.min(summary.answered, queue.length)
+
+  /*
+   * Tanishtirish mashqning O'RNIGA emas, OLDIDAN chiziladi: "Tushundim"
+   * bosilgach ayni shu savol ochiladi. Shuning uchun `index` o'zgarmaydi
+   * va progress ko'rsatkichi ham joyida qoladi.
+   */
+  if (introCard) {
+    return (
+      <div className="flex flex-1 flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <ProgressBar value={progressValue} max={queue.length} label="Seans progressi" />
+          <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
+            {progressValue}/{queue.length}
+          </span>
+        </div>
+
+        <WordIntro card={introCard} onContinue={() => setIntroCard(null)} />
+      </div>
+    )
+  }
+
 
   // Juft topish standart "javob → feedback" oqimidan chetda: o'z yakunini
   // o'zi belgilaydi, shuning uchun FeedbackBar va bir-javob mashinasi

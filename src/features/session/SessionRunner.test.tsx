@@ -322,3 +322,38 @@ describe('SessionRunner — yordam', () => {
     expect(await screen.findByRole('button', { name: /qanday bajariladi/i })).toBeInTheDocument()
   })
 })
+
+describe('SessionRunner — yangi so‘z bilan tanishtirish', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('hech takrorlanmagan so‘z avval KO‘RSATILADI, keyin so‘raladi', async () => {
+    // Umumiy fikstura `totalReviews: 1` — bu yerda YANGI so'z kerak
+    const fresh = { ...CARDS[0]!, totalReviews: 0, repetitions: 0 }
+
+    render(<SessionRunner cards={[fresh]} pool={CARDS} onFinish={() => {}} />)
+
+    // Tanishtirish: so'z va tarjimasi birga
+    expect(await screen.findByText(/yangi so/i)).toBeInTheDocument()
+    expect(screen.getByText(fresh.translation)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /tushundim/i }))
+
+    // Endi mashq
+    await waitFor(() => {
+      expect(screen.queryByText(/yangi so/i)).not.toBeInTheDocument()
+    })
+  })
+
+  it('allaqachon takrorlangan so‘z tanishtirilmaydi', async () => {
+    const seen = { ...CARDS[0]!, totalReviews: 4, repetitions: 2 }
+
+    render(<SessionRunner cards={[seen]} pool={CARDS} onFinish={() => {}} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('session-progress')).toBeInTheDocument()
+    })
+    expect(screen.queryByText(/yangi so/i)).not.toBeInTheDocument()
+  })
+})

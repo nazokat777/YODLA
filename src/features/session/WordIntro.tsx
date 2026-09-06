@@ -1,0 +1,102 @@
+import { useEffect, useRef } from 'react'
+import { Button } from '@/components/ui/Button'
+import { Panel } from '@/components/ui/Panel'
+import { PronounceButton } from '@/components/ui/PronounceButton'
+import { SpeakButton } from '@/components/ui/SpeakButton'
+import { LANGUAGES } from '@/core/config/languages'
+import type { CardRecord } from '@/core/db'
+import { enterStagger, withMotion } from '@/lib/motion'
+import { speak } from '@/lib/speech'
+import { WordDisplay } from './WordDisplay'
+
+interface WordIntroProps {
+  card: CardRecord
+  onContinue: () => void
+}
+
+/**
+ * Yangi so'z bilan TANISHTIRISH.
+ *
+ * NEGA KERAK: bola hech qachon ko'rmagan so'zning tarjimasini
+ * variantlardan "topa olmaydi" — u faqat taxmin qiladi. Taxmin esa
+ * hech nima o'rgatmaydi va xato javob ruhini tushiradi.
+ *
+ * Shuning uchun so'z BIRINCHI marta uchraganda avval ko'rsatiladi:
+ * so'z, tarjimasi, talaffuzi va (bo'lsa) jumla. Faqat shundan keyin
+ * mashqlar boshlanadi. Bu "tanishtir → so'ra" tartibi — darslikda ham,
+ * Duolingo'da ham shunday.
+ */
+export function WordIntro({ card, onContinue }: WordIntroProps) {
+  const language = LANGUAGES[card.language]
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  // Yangi so'z darhol O'QIB beriladi: eshitmasdan yodlash qiyin
+  useEffect(() => {
+    speak(card.word, language.speechLocale)
+  }, [card.word, language.speechLocale])
+
+  useEffect(() => {
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(rootRef.current, (gsap) => {
+      enterStagger(gsap, '[data-intro]', { stagger: 0.08, duration: 0.4, y: 20 })
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [card.id])
+
+  return (
+    <div ref={rootRef} className="flex flex-1 flex-col gap-4">
+      <p
+        data-intro
+        className="self-start rounded-full bg-flame-500/15 px-3 py-1 text-xs font-extrabold text-flame-700"
+      >
+        ✨ Yangi so‘z
+      </p>
+
+      <Panel data-intro className="flex flex-col items-center gap-3 py-6 text-center">
+        <div dir={language.dir} lang={language.code}>
+          <WordDisplay text={card.word} language={language} testId="intro-word" />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <SpeakButton text={card.word} locale={language.speechLocale} size="lg" />
+          <PronounceButton
+            text={card.word}
+            locale={language.speechLocale}
+            language={language.code}
+          />
+        </div>
+
+        {/* Ajratuvchi chiziq: so'z va tarjima ikki alohida narsa ekani ko'rinsin */}
+        <span aria-hidden="true" className="h-px w-16 bg-ink-300" />
+
+        <p className="text-2xl font-extrabold text-brand-700">{card.translation}</p>
+      </Panel>
+
+      {card.sentence && (
+        <Panel data-intro padding="sm" className="text-center">
+          <p dir={language.dir} lang={language.code} className="font-bold">
+            {card.sentence}
+          </p>
+          {card.sentenceTranslation && (
+            <p className="mt-1 text-sm text-ink-600">{card.sentenceTranslation}</p>
+          )}
+        </Panel>
+      )}
+
+      <div className="mt-auto pt-2">
+        <Button block size="lg" onClick={onContinue}>
+          Tushundim
+        </Button>
+      </div>
+    </div>
+  )
+}
