@@ -56,8 +56,10 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
               data-testid="session-xp"
               className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-b from-brand-500 to-brand-700 px-4 py-1.5 text-lg font-extrabold text-white shadow-pop"
             >
-              <Emblem kind="coin" size="sm" className="h-6 w-6" />+
-              <span data-celebrate="xp">{summary.xpEarned}</span> XP
+              <Emblem kind="coin" size="sm" className="h-6 w-6" />
+              <span>
+                +<span data-celebrate="xp">{summary.xpEarned}</span> XP
+              </span>
             </p>
           )}
 

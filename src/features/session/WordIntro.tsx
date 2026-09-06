@@ -54,18 +54,21 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
 
   return (
     <div ref={rootRef} className="flex flex-1 flex-col gap-4">
+      {/*
+        `justify-center` bilan o'ralgan blok: tanishtirishda kontent kam va
+        uni tepada qoldirsak ekranning yarmi bo'sh qolardi.
+
+        Nishon ham SHU blok ichida: tashqarida qolganda u ekran tepasida
+        yolg'iz osilib turar, karta esa o'rtada — ikkisi bir-biriga
+        aloqasiz ko'rinardi.
+      */}
+      <div className="flex flex-1 flex-col justify-center gap-4">
       <p
         data-intro
         className="self-start rounded-full bg-flame-500/15 px-3 py-1 text-xs font-extrabold text-flame-700"
       >
         ✨ Yangi so‘z
       </p>
-
-      {/*
-        `justify-center` bilan o'ralgan blok: tanishtirishda kontent kam va
-        uni tepada qoldirsak ekranning yarmi bo'sh qolardi
-      */}
-      <div className="flex flex-1 flex-col justify-center gap-4">
       <Panel data-intro className="flex flex-col items-center gap-3 py-6 text-center">
         <div dir={language.dir} lang={language.code}>
           <WordDisplay text={card.word} language={language} testId="intro-word" />
