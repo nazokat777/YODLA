@@ -26,8 +26,8 @@ const CIRCLE = {
  * Bir tomonlama zinapoyadan farqli o'laroq, u ekranning butun kengligini
  * ishlatadi va uzun ro'yxat monoton ko'rinmaydi.
  *
- * LOGIK BO'SHLIQ (`ms-*`): arabcha RTL rejimida yo'l o'zi ko'zguga
- * aylanadi — o'quvchi o'ng tomondan boshlaydi.
+ * `ms-*` (`ml-*` emas): interfeys o'zbekcha va chapdan o'ngga, lekin
+ * logik bo'shliq kelajakda interfeys tili o'zgarsa ham to'g'ri ishlaydi.
  */
 const ZIGZAG = ['ms-0', 'ms-10', 'ms-20', 'ms-10'] as const
 
