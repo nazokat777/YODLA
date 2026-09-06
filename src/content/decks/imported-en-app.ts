@@ -6220,13 +6220,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
     },
     {
-      word: 'ayollar uchun',
-      translation: 'eng kuchli maqtov',
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
-    },
-    {
       word: 'gorgeous',
       translation: 'maftunkor',
       language: 'en',
@@ -6234,20 +6227,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'A1',
       sentence: "She's very beautiful with fair hair and gorgeous green eyes.",
       sentenceTranslation: "U juda go'zal, sochi sariq va ko'zlari maftunkor yashil.",
-    },
-    {
-      word: 'asosan ayollar',
-      translation: 'juda kuchli',
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
-    },
-    {
-      word: 'erkaklar uchun',
-      translation: "an'anaviy so'z",
-      language: 'en',
-      topic: 'Enterprise 4-unit: Like Father, like Son',
-      level: 'A1',
     },
     {
       word: 'boss',
@@ -6344,6 +6323,13 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'kuchli maqtov',
       translation: 'ayollar uchun',
+      language: 'en',
+      topic: 'Enterprise 4-unit: Like Father, like Son',
+      level: 'A1',
+    },
+    {
+      word: 'eng kuchli',
+      translation: 'juda kuchli',
       language: 'en',
       topic: 'Enterprise 4-unit: Like Father, like Son',
       level: 'A1',
@@ -8670,17 +8656,17 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
       level: 'A1',
     },
-  ],
-  A2: [
     {
       word: 'before',
       translation: 'oldin',
       language: 'en',
       topic: 'Enterprise 5-unit: An Early Bird or a Night Owl?',
-      level: 'A2',
+      level: 'A1',
       sentence: 'We have studied similar humans before.',
       sentenceTranslation: "Biz ilgari shunga o'xshash odamlarni o'rganganmiz.",
     },
+  ],
+  A2: [
     {
       word: 'there',
       translation: 'u yerda; bor',
@@ -10821,13 +10807,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'nuts',
       translation: "yong'oqlar",
-      language: 'en',
-      topic: 'Enterprise 6-unit: Birds of a Feather!',
-      level: 'A2',
-    },
-    {
-      word: 'orollar nomi',
-      translation: 'bosh harf bilan',
       language: 'en',
       topic: 'Enterprise 6-unit: Birds of a Feather!',
       level: 'A2',
@@ -14536,15 +14515,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'en',
       topic: 'Enterprise 8-unit: Enjoy your Meal',
       level: 'A2',
-    },
-    {
-      word: "seven o'clock",
-      translation: 'ikkalasi bir xil',
-      language: 'en',
-      topic: 'Enterprise 952-unit: Module Self-Assessment 2 (Units 5-8)',
-      level: 'A2',
-      sentence: "at seven o'clock, on Monday, in July",
-      sentenceTranslation: 'soat yettida, dushanba kuni, iyulda',
     },
     {
       word: 'interview',
@@ -18438,15 +18408,15 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       topic: "Enterprise 11-unit: All's Well that Ends Well",
       level: 'A2',
     },
-  ],
-  B1: [
     {
       word: 'luckily',
       translation: "omadga ko'ra",
       language: 'en',
       topic: "Enterprise 11-unit: All's Well that Ends Well",
-      level: 'B1',
+      level: 'A2',
     },
+  ],
+  B1: [
     {
       word: 'crash',
       translation: 'taraqlash, qulash ovozi',
@@ -20725,13 +20695,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
-      word: 'xatning boshi',
-      translation: 'faqat ism, keyin VERGUL',
-      language: 'en',
-      topic: 'Enterprise 13-unit: Time Will Tell!',
-      level: 'B1',
-    },
-    {
       word: 'breathe',
       translation: 'nafas olmoq',
       language: 'en',
@@ -22979,6 +22942,13 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       level: 'B1',
     },
     {
+      word: 'millat sifatlari',
+      translation: 'BOSH HARF bilan',
+      language: 'en',
+      topic: 'Enterprise 15-unit: Take a Break',
+      level: 'B1',
+    },
+    {
       word: 'since yesterday',
       translation: "'for yesterday' XATO",
       language: 'en',
@@ -23114,13 +23084,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
     {
       word: 'twin room',
       translation: 'ikki kishilik (ikki karavot)',
-      language: 'en',
-      topic: 'Enterprise 15-unit: Take a Break',
-      level: 'B1',
-    },
-    {
-      word: 'tartib sonlar',
-      translation: '1st, 2nd, 3rd, 4th...',
       language: 'en',
       topic: 'Enterprise 15-unit: Take a Break',
       level: 'B1',
@@ -26411,13 +26374,6 @@ export const EN_APP: Record<LevelCode, NewCardRecordInput[]> = {
       translation: 'bundan keyin',
       language: 'en',
       topic: 'Enterprise 975-unit: American English - British English Guide',
-      level: 'B1',
-    },
-    {
-      word: 'soqchilar kapitani',
-      translation: 'xarakteri: brave',
-      language: 'en',
-      topic: 'Enterprise 980-unit: Video Project — Unit 4: The Hunchback of Notre Dame',
       level: 'B1',
     },
     {

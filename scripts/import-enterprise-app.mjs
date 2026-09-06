@@ -119,6 +119,18 @@ const JUNK_WORDS = new Set([
   'egalik olmoshi',
   'qila olmaydi',
   'sotib ololmaydi',
+  // Darslik IZOHLARI — so'z maydoniga o'zbekcha matn tushib qolgan.
+  // "ayollar uchun => eng kuchli maqtov" kartasi bolaga hech nima
+  // o'rgatmaydi: ikkala tomon ham o'zbekcha.
+  'ayollar uchun',
+  'asosan ayollar',
+  'erkaklar uchun',
+  'orollar nomi',
+  'xatning boshi',
+  'tartib sonlar',
+  'soqchilar kapitani',
+  // Tarjima o'rnida izoh: "seven o'clock => ikkalasi bir xil"
+  "seven o'clock",
 ])
 
 /**

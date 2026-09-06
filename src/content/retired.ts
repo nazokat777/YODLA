@@ -72,6 +72,20 @@ export const RETIRED_CARD_IDS: readonly string[] = [
    */
   'en:itt',
   'ar:هِرٌّ',
+  /*
+   * DARSLIK IZOHLARI — so'z maydoniga o'zbekcha matn tushib qolgan.
+   * "ayollar uchun => eng kuchli maqtov" kartasi bolaga hech nima
+   * o'rgatmaydi: ikkala tomon ham o'zbekcha.
+   */
+  'en:ayollar uchun',
+  'en:asosan ayollar',
+  'en:erkaklar uchun',
+  'en:orollar nomi',
+  'en:xatning boshi',
+  'en:tartib sonlar',
+  'en:soqchilar kapitani',
+  // Tarjima o'rnida izoh edi: "ikkalasi bir xil"
+  "en:seven o'clock",
 ]
 
 /**
