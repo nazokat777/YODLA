@@ -5,17 +5,31 @@ import { loadLanguageDeck } from '@/content/starterDecks'
 import { readTopicOrder, saveTopicOrder } from '@/content/topicOrderCache'
 import type { CardRecord } from '@/core/db'
 import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
-import { loadGsap } from '@/lib/motion'
+import { enterStagger, floatLoop, pulseRing, withMotion } from '@/lib/motion'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 
 /** Holatga qarab doira uslubi */
 const CIRCLE = {
-  completed: 'bg-brand-700 text-white shadow-[0_4px_0_0] shadow-brand-800',
-  current: 'bg-brand-700 text-white ring-4 ring-brand-300 shadow-[0_4px_0_0] shadow-brand-800',
+  completed:
+    'bg-gradient-to-b from-brand-500 to-brand-700 text-white shadow-[0_4px_0_0] shadow-brand-800',
+  current:
+    'bg-gradient-to-b from-brand-500 to-brand-700 text-white ring-4 ring-brand-300 shadow-[0_6px_0_0] shadow-brand-800',
   skipped: 'border-2 border-brand-300 bg-brand-50 text-brand-700',
-  locked: 'bg-ink-300/40 text-ink-600',
+  locked: 'border-2 border-ink-300 bg-white text-ink-600',
 } as const
+
+/**
+ * Zigzag: bo'limlar 4 qadamli naqsh bo'yicha siljiydi.
+ *
+ * Duolingo'dagi kabi "ilon" yo'l: markaz → o'ng → markaz → chap.
+ * Bir tomonlama zinapoyadan farqli o'laroq, u ekranning butun kengligini
+ * ishlatadi va uzun ro'yxat monoton ko'rinmaydi.
+ *
+ * LOGIK BO'SHLIQ (`ms-*`): arabcha RTL rejimida yo'l o'zi ko'zguga
+ * aylanadi — o'quvchi o'ng tomondan boshlaydi.
+ */
+const ZIGZAG = ['ms-16', 'ms-32', 'ms-16', 'ms-0'] as const
 
 /**
  * O'quv yo'li — bo'limlar zanjiri.
@@ -116,41 +130,22 @@ export function LearningPath({ cards }: LearningPathProps) {
     if (units.length === 0) return
 
     let cancelled = false
+    let revert = () => {}
 
-    let context: { revert: () => void } | null = null
+    void withMotion(listRef.current, (gsap) => {
+      enterStagger(gsap, '[data-unit]', { stagger: 0.06, duration: 0.5, y: 28 })
 
-    void loadGsap().then((gsap) => {
-      if (!gsap || cancelled || !listRef.current) return
-
-      // `gsap.context` React uchun: `revert()` barcha o'zgarishlarni
-      // qaytaradi, ya'ni komponent yo'q qilinganda DOM toza qoladi
-      context = gsap.context(() => {
-        gsap.from('[data-unit]', {
-          // OPACITY ATAYLAB YO'Q: animatsiya tugamay qolsa (fon tab,
-          // to'xtatilgan rAF) bo'limlar ko'rinmas bo'lib qolardi.
-          // Siljish va masshtab esa yarim yo'lda ham o'qilaveradi.
-          y: 28,
-          scale: 0.9,
-          duration: 0.5,
-          stagger: 0.06,
-          ease: 'back.out(1.8)',
-          clearProps: 'transform',
-        })
-
-        // "Nafas": ko'z qayerga qarashni biladi
-        gsap.to('[data-state="current"]', {
-          scale: 1.04,
-          duration: 1,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        })
-      }, listRef)
+      // "Nafas" + halqa: ko'z qayerga qarashni biladi
+      floatLoop(gsap, '[data-state="current"]')
+      pulseRing(gsap, '[data-ring]')
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
     })
 
     return () => {
       cancelled = true
-      context?.revert()
+      revert()
     }
   }, [units.length])
 
@@ -191,23 +186,39 @@ export function LearningPath({ cards }: LearningPathProps) {
     <section>
       <h2 className="mb-3 font-bold">O'quv yo'li</h2>
 
-      <ol ref={listRef} className="flex flex-col gap-3">
+      {/*
+        Yo'l chizig'i: bo'limlar ORQASIDAN o'tadigan punktir. Alohida
+        element emas, ro'yxatning fon tasviri — shuning uchun bo'lim
+        qo'shilsa-yo'qolsa u o'zi cho'ziladi va hech qachon "sinmaydi".
+      */}
+      <ol
+        ref={listRef}
+        aria-describedby={undefined}
+        className="relative flex flex-col gap-3 before:absolute before:inset-y-4 before:left-8 before:w-1 before:rounded-full before:bg-gradient-to-b before:from-brand-300 before:via-brand-100 before:to-transparent rtl:before:left-auto rtl:before:right-8"
+      >
         {units.map((unit, index) => (
           <li
             key={unit.id}
             data-unit
             ref={unit.state === 'current' ? currentRef : undefined}
-            className="flex items-center gap-3"
+            className={cn('flex items-center gap-3', ZIGZAG[index % ZIGZAG.length])}
           >
-            {/* Zigzag: har ikkinchi bo'lim biroz siljiydi */}
-            <div className={cn('flex items-center gap-3', index % 2 === 1 && 'ms-10')}>
+            <div className="relative shrink-0">
+              {/* Joriy bo'lim ostidagi kengayuvchi halqa — sof bezak */}
+              {unit.state === 'current' && (
+                <span
+                  data-ring
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 rounded-full border-4 border-brand-500"
+                />
+              )}
               <UnitCircle unit={unit} />
-              <div className="flex flex-col">
-                <span className="font-bold">{unit.topic}</span>
-                <span className="text-xs text-ink-600">
-                  {unit.level} · {unit.learned}/{unit.total} so'z
-                </span>
-              </div>
+            </div>
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate font-bold">{unit.topic}</span>
+              <span className="text-xs text-ink-600">
+                {unit.level} · {unit.learned}/{unit.total} so'z
+              </span>
             </div>
           </li>
         ))}

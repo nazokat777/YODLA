@@ -4,6 +4,7 @@ import { PATHS } from '@/app/paths'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
+import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
@@ -88,7 +89,9 @@ export function HomeScreen() {
               : undefined
           }
         >
-          <span aria-hidden="true">🔥</span>
+          <span aria-hidden="true" className="flicker">
+            🔥
+          </span>
           <span>{streak}</span>
           <span className="sr-only">kunlik streak</span>
         </div>
@@ -108,7 +111,11 @@ export function HomeScreen() {
                 {levelTitle(level.level)}
               </span>
             </h2>
-            <span data-testid="total-xp" className="text-sm font-semibold text-ink-600">
+            <span
+              data-testid="total-xp"
+              className="inline-flex items-center gap-1 text-sm font-bold text-ink-600"
+            >
+              <Emblem kind="coin" size="sm" className="h-5 w-5" />
               {progress?.profile.totalXp ?? 0} XP
             </span>
           </div>
@@ -136,7 +143,7 @@ export function HomeScreen() {
         )}
       </Panel>
 
-      <Panel>
+      <Panel interactive>
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-bold">Bugun takrorlash</h2>
           {dueCount > 0 && (

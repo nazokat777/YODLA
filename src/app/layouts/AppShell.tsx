@@ -28,7 +28,7 @@ export function AppShell() {
 
       <nav
         aria-label="Asosiy navigatsiya"
-        className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-[480px] border-t border-ink-300/60 bg-white/95 backdrop-blur"
+        className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-[480px] border-t border-ink-300/40 bg-white/85 backdrop-blur-xl"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <ul className="flex">
@@ -39,12 +39,16 @@ export function AppShell() {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    'tap-highlight-none flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors',
-                    isActive ? 'text-brand-600' : 'text-ink-600 hover:text-ink-900',
+                    'tap-highlight-none relative flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors',
+                    // Faol bo'limda ikonka kattaroq va ustida chiziq turadi:
+                    // rangdan tashqari ikkinchi belgi (WCAG 1.4.1)
+                    isActive
+                      ? 'text-brand-600 before:absolute before:top-0 before:h-1 before:w-10 before:rounded-b-full before:bg-brand-500 [&>span]:scale-110'
+                      : 'text-ink-600 hover:text-ink-900',
                   )
                 }
               >
-                <span aria-hidden="true" className="text-xl">
+                <span aria-hidden="true" className="text-xl transition-transform duration-200">
                   {item.icon}
                 </span>
                 {item.label}
