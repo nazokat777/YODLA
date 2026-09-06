@@ -478,7 +478,19 @@ function importEnglish() {
   clean.forEach((w, i) => {
     const level = i < a1End ? 'A1' : i < a2End ? 'A2' : 'B1'
     const list = buckets[level]
-    list.push({ word: w.word, uz: w.uz, topic: `Enterprise ${level}-${Math.floor(list.length / 20) + 1}` })
+    /*
+     * "Enterprise" DEB ATALMAYDI.
+     *
+     * Bular kitobning bo'limlari EMAS — chastota bo'yicha tartiblanib,
+     * 20 tadan bo'lingan umumiy lug'at (manba: enterprise-trainer va
+     * beginner/words.json). "Enterprise B1-8" deb atalganda foydalanuvchi
+     * uni kitobdan qidirib topolmasdi.
+     */
+    list.push({
+      word: w.word,
+      uz: w.uz,
+      topic: `Qo'shimcha lug'at · ${level}-${Math.floor(list.length / 20) + 1}`,
+    })
   })
 
   writeFileSync('src/content/decks/imported-en.ts', toTs('EN_IMPORTED', 'en', buckets))
