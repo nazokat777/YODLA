@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { useNavigate, useParams } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { getAllCards, type CardRecord } from '@/core/db'
+import { countCards, getAllCards, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { buildUnits, unitIdOf } from '@/core/path'
 import { readTopicOrder } from '@/content/topicOrderCache'
@@ -50,6 +51,21 @@ export function LessonScreen() {
   const [isMissingUnit, setIsMissingUnit] = useState(false)
   /** Qiymati o'zgarganda yangi dars yuklanadi */
   const [lessonKey, setLessonKey] = useState(0)
+
+  /**
+   * Shu tildagi kartalar soni — JONLI.
+   *
+   * NEGA KERAK: lug'at ilova ochilganda FONDA bazaga yoziladi
+   * (`useStarterDeck`). Foydalanuvchi tilni almashtirib, import
+   * tugagunicha darsga kirsa, ekran "Bu tilda hali so'z yo'q" deb
+   * qotib qolardi va o'zi tuzalmasdi: kartalar bir marta, effektda
+   * o'qilardi. Jonli son import tugaganda o'zgaradi va dars qaytadan
+   * yuklanadi.
+   */
+  const cardCount = useLiveQuery(
+    () => (learningLanguage ? countCards(learningLanguage) : undefined),
+    [learningLanguage],
+  )
 
   useEffect(() => {
     if (!learningLanguage) return
@@ -100,7 +116,7 @@ export function LessonScreen() {
     return () => {
       cancelled = true
     }
-  }, [learningLanguage, lessonKey, startingLevel, lessonId])
+  }, [learningLanguage, lessonKey, startingLevel, lessonId, cardCount])
 
   const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
 import { saveTopicOrder } from '@/content/topicOrderCache'
@@ -87,5 +87,31 @@ describe('LessonScreen — bo‘limsiz dars', () => {
     // Birinchi savol "Salomlashish" bo'limidan chiqadi
     expect(await screen.findByText(/salom|xayr/i)).toBeInTheDocument()
     expect(screen.queryByText('qobiliyat')).not.toBeInTheDocument()
+  })
+})
+
+describe('LessonScreen — lug‘at fonda yuklanayotganda', () => {
+  it('kartalar KEYIN kelsa, dars o‘zi boshlanadi', async () => {
+    /*
+     * Lug'at ilova ochilganda fonda bazaga yoziladi. Foydalanuvchi tilni
+     * almashtirib, import tugagunicha darsga kirsa, ekran "Bu tilda hali
+     * so'z yo'q" deb qotib qolardi: kartalar bir marta, effektda
+     * o'qilardi va hech qachon qayta so'ralmasdi.
+     */
+    await db.cards.clear()
+
+    renderLesson('/lesson')
+
+    expect(await screen.findByText(/hali so.z yo.q/i)).toBeInTheDocument()
+
+    // Import tugadi
+    await addMissingCards(WORDS)
+
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/hali so.z yo.q/i)).not.toBeInTheDocument()
+      },
+      { timeout: 3000 },
+    )
   })
 })
