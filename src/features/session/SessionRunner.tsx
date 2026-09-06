@@ -13,7 +13,7 @@ import {
 } from '@/core/exercises'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
 import { comboBonusXp, nextCombo } from '@/core/gamification'
-import { loadGsap } from '@/lib/motion'
+import { flipIn, withMotion } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
 import { requestPersistentStorage } from '@/lib/storage'
@@ -119,6 +119,8 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
    * yangilaydi va mashq qayta tanlanadi.
    */
   const speechLocale = LANGUAGES[cards[0]?.language ?? 'en'].speechLocale
+  /** Savol animatsiyasi yo'nalishi — arabchada teskari tomondan kiradi */
+  const dir = LANGUAGES[cards[0]?.language ?? 'en'].dir
   const allowAudio = useHasVoice(speechLocale) && cards.length > 0
 
   // Navbatdagi karta o'zgarganda yangi mashq yaratiladi
@@ -157,24 +159,20 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     if (!exerciseId) return
 
     let cancelled = false
-    let context: { revert: () => void } | null = null
+    let revert = () => {}
 
-    void loadGsap().then((gsap) => {
-      if (!gsap || cancelled || !animRef.current) return
-
-      context = gsap.context(() => {
-        gsap.from(animRef.current, {
-          y: 16,
-          duration: 0.25,
-          ease: 'power2.out',
-          clearProps: 'transform',
-        })
-      }, animRef)
+    // Savol yon tomondan aylanib kiradi. RTL'da teskari tomondan:
+    // arabcha o'quvchi uchun "keyingi" — chap tomon
+    void withMotion(animRef.current, (gsap) => {
+      flipIn(gsap, animRef.current as Element, dir)
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
     })
 
     return () => {
       cancelled = true
-      context?.revert()
+      revert()
     }
   }, [exerciseId])
 

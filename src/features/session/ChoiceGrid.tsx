@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/cn'
-import { loadGsap } from '@/lib/motion'
+import { enterStagger, pressBounce, shake, withMotion } from '@/lib/motion'
 
 interface ChoiceGridProps {
   options: string[]
@@ -79,38 +79,53 @@ export function ChoiceGrid({
   useEffect(() => {
     if (!revealed || selectedIndex === null) return
 
+    let revert = () => {}
     let cancelled = false
-    let context: { revert: () => void } | null = null
 
-    void loadGsap().then((gsap) => {
-      const root = listRef.current
-      if (!gsap || cancelled || !root) return
-
-      const target = root.querySelectorAll('li')[selectedIndex]
+    void withMotion(listRef.current, (gsap) => {
+      const target = listRef.current?.querySelectorAll('li')[selectedIndex]
       if (!target) return
 
-      context = gsap.context(() => {
-        if (selectedIndex === correctIndex) {
-          gsap.fromTo(
-            target,
-            { scale: 1 },
-            { scale: 1.05, duration: 0.12, yoyo: true, repeat: 1, clearProps: 'transform' },
-          )
-        } else {
-          gsap.fromTo(
-            target,
-            { x: 0 },
-            { x: 6, duration: 0.07, yoyo: true, repeat: 3, clearProps: 'transform' },
-          )
-        }
-      }, listRef)
+      // To'g'ri — sakraydi; xato — qaltiraydi. Ikkalasi ham ≤200 ms:
+      // mashq ritmi sekinlashmasligi kerak
+      if (selectedIndex === correctIndex) pressBounce(gsap, target)
+      else shake(gsap, target)
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
     })
 
     return () => {
       cancelled = true
-      context?.revert()
+      revert()
     }
   }, [revealed, selectedIndex, correctIndex])
+
+  /*
+   * Variantlar ketma-ket chiqadi — ko'z ularni birma-bir "o'qiydi".
+   * Jami 4 × 0.03 + 0.2 = 0.32 s, lekin BIRINCHI variant darhol o'z
+   * joyida: kutish sezilmaydi.
+   */
+  useEffect(() => {
+    let revert = () => {}
+    let cancelled = false
+
+    void withMotion(listRef.current, (gsap) => {
+      enterStagger(gsap, listRef.current!.querySelectorAll('li'), {
+        stagger: 0.03,
+        duration: 0.2,
+        y: 10,
+      })
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [options])
 
   return (
     <ul ref={listRef} dir={dir} lang={lang} className="flex flex-col gap-2">

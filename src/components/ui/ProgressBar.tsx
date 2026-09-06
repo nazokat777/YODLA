@@ -28,7 +28,7 @@ export function ProgressBar({ value, max, className, label }: ProgressBarProps) 
       className={cn('h-3 w-full overflow-hidden rounded-full bg-ink-300/50', className)}
     >
       <div
-        className="h-full rounded-full bg-brand-500 transition-[width] duration-500 ease-out"
+        className="h-full rounded-full bg-gradient-to-r from-brand-500 to-brand-300 transition-[width] duration-500 [transition-timing-function:cubic-bezier(0.2,0.8,0.2,1)]"
         style={{ width: `${percent}%` }}
       />
     </div>
