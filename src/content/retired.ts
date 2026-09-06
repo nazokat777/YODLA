@@ -136,6 +136,32 @@ export const RETIRED_CARD_IDS: readonly string[] = [
   'ar:فِيمَا هُمَا',
   // Tarjima o'rnida izoh edi: "ikkalasi bir xil"
   "en:seven o'clock",
+  /*
+   * NASHRIYOT MATNI — muqova va mualliflik huquqi betidan olingan.
+   * "four-level series" ingliz tilining so'zi emas, kitobni sotish uchun
+   * yozilgan ibora.
+   */
+  'en:four-level series',
+  'en:cross-cultural topics',
+  'en:step-by-step guidance',
+  'en:easy-to-use',
+  'en:write-in tests',
+  'en:mid-term test',
+  'en:exit test',
+  'en:entry test',
+  'en:new edition',
+  'en:copyright page',
+  'en:copyright holder',
+  'en:front matter',
+  'en:photocopying',
+  'en:acknowledgements',
+  /*
+   * LUG'AT QISQARTMALARI va MAYDONLARI TESKARI karta:
+   * `kimdir => inviting sb out` — ikkala tomon ham noto'g'ri joyda.
+   */
+  'en:sth',
+  'en:adj',
+  'en:kimdir',
 ]
 
 /**

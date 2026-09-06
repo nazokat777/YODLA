@@ -95,6 +95,25 @@ const UNSUITABLE_WORDS = new Set([
 ])
 
 const JUNK_WORDS = new Set([
+  /*
+   * NASHRIYOT MATNI — muqova va mualliflik huquqi betidan.
+   * "four-level series" yoki "write-in tests" ingliz tilining so'zi emas,
+   * kitobni sotish uchun yozilgan ibora.
+   */
+  'four-level series',
+  'cross-cultural topics',
+  'step-by-step guidance',
+  'easy-to-use',
+  'write-in tests',
+  'mid-term test',
+  'exit test',
+  'entry test',
+  'new edition',
+  'copyright page',
+  'copyright holder',
+  'front matter',
+  'photocopying',
+  'acknowledgements',
   // Maydonlari almashgan
   'ism',
   'yosh',
@@ -103,6 +122,18 @@ const JUNK_WORDS = new Set([
   'oila soni',
   'juft narsa',
   'restoranda buyurtma',
+  /*
+   * LUG'AT QISQARTMALARI — `sb`, `sth`, `adj` so'z emas, lug'atdagi
+   * belgi. Bola ularni yodlab hech nima o'rganmaydi.
+   */
+  'sth',
+  'adj',
+  'sb',
+  /*
+   * MAYDONLARI TESKARI: so'z maydonida "kimdir", tarjimada
+   * "inviting sb out". Bola bunday kartadan hech nima o'rganmaydi.
+   */
+  'kimdir',
   // Grammatika jadvali kataklari
   'tasdiq gapda',
   'inkor gapda',
@@ -359,10 +390,21 @@ let dropped = 0
 for (const { data } of files) {
   const unitTitle = (data.title ?? '').trim()
 
+  /*
+   * MUQOVA VA KIRISH QISMI dars ham, kitob bo'limi ham emas — u yerdagi
+   * so'zlar shunchaki sahifada uchragan. Ularni "Orqa muqova" deb atash
+   * foydalanuvchiga kitobda yo'q bo'limni ko'rsatardi, "1-dars" deb
+   * atash esa yolg'on bo'lardi. Ikkalasi bitta halol nom ostida
+   * birlashtiriladi.
+   */
+  const isMatter = (data.order ?? data.unit) < 1 || /muqova|kirish qismi/i.test(unitTitle)
+
   // Kitobda 15 ta dars bor; qolganlari raqamsiz, o'z nomi bilan ataladi
-  const topic = EXTRA_UNITS.has(data.unit)
-    ? `Enterprise 1 · ${unitTitle}`
-    : `Enterprise 1 · ${data.unit}-dars${unitTitle ? `: ${unitTitle}` : ''}`
+  const topic = isMatter
+    ? 'Enterprise 1 · Kitob atamalari'
+    : EXTRA_UNITS.has(data.unit)
+      ? `Enterprise 1 · ${unitTitle}`
+      : `Enterprise 1 · ${data.unit}-dars${unitTitle ? `: ${unitTitle}` : ''}`
 
   for (const rule of data.wordFormation ?? []) {
     for (const item of rule.items ?? []) {

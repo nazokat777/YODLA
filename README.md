@@ -349,7 +349,7 @@ lug'at qo'shilgan:
 | Ingliz | Enterprise 1 (Beginner) + trainer | +3657 +590 |
 | Rus | Ru-Uz-Dictionary + qo'lda | +3338 +118 |
 
-Jami **10 231** karta: arab 2264, ingliz 4379, rus 3588.
+Jami **10 214** karta: arab 2264, ingliz 4362, rus 3588.
 
 Import paytida uch xil chiqindi chetlab o'tiladi:
 
@@ -817,7 +817,7 @@ Vaqtga bog'liq har qanday yangi so'rovda shu naqshni takrorlang.
 - [x] **Faza 2** — SM-2 algoritmi + Dexie saqlash + unit testlar
 - [x] **Faza 3** — 7 xil mashq turi + instant feedback
 - [x] **Faza 4** — streak, XP, nishonlar, kunlik maqsad
-- [x] **Faza 5** — uch til moduli + kontent (10 231 so'z) + TTS
+- [x] **Faza 5** — uch til moduli + kontent (10 214 so'z) + TTS
 - [x] **Faza 6** — to'liq onboarding + daraja testi
 - [x] **Faza 7** — liga + do'stlar + PWA (offline) + o'quv yo'li + statistika
       + GSAP animatsiyalari

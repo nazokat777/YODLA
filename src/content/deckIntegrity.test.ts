@@ -400,3 +400,37 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     }
   })
 })
+
+describe('lug‘at qisqartmalari', () => {
+  it('tarjimada `sb` yoki `sth` YO‘Q — bu lug‘at belgisi, so‘z emas', async () => {
+    /*
+     * `kimdir => inviting sb out` kartasi topilgan edi: maydonlar teskari
+     * va tarjimada ingliz lug'atining qisqartmasi turardi. Bola bunday
+     * kartadan hech nima o'rganmaydi.
+     */
+    const cards = await allCards('en')
+    const bad = cards.filter((card) => /(?:^|\s)(?:sb|sth)(?:\s|$|\.)/.test(card.translation))
+
+    expect(bad.map((card) => `${card.word} => ${card.translation}`)).toEqual([])
+  })
+})
+
+describe('kitob metama’lumoti', () => {
+  it('nashriyot iboralari lug‘atga tushmaydi', async () => {
+    // "four-level series" ingliz tilining so'zi emas — kitobni sotish
+    // uchun yozilgan ibora
+    const cards = await allCards('en')
+    const marketing = /four-level|write-in|easy-to-use|copyright (page|holder)|front matter/i
+    const bad = cards.filter((card) => marketing.test(card.word))
+
+    expect(bad.map((card) => card.word)).toEqual([])
+  })
+
+  it('muqova va kirish qismi BO‘LIM deb atalmaydi', async () => {
+    // Foydalanuvchi haqli edi: kitobda "Orqa muqova" degan dars yo'q
+    const cards = await allCards('en')
+    const bad = cards.filter((card) => /muqova|mundarija|titul/i.test(card.topic ?? ''))
+
+    expect(bad.map((card) => card.topic)).toEqual([])
+  })
+})

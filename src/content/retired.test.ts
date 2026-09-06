@@ -56,3 +56,21 @@ describe('ro‘yxat lug‘at bilan ZID EMAS', () => {
     },
   )
 })
+
+it('chiqarilgan har bir karta lug‘atda HAQIQATAN yo‘q', async () => {
+  /*
+   * Ro'yxat va lug'at bir-biridan ajralib ketishi mumkin: karta
+   * chiqarilgan, keyin importer qayta yuritilib u qaytib kelgan.
+   * Unda ilova uni har ochilishda o'chirar, lug'at esa qayta qo'shardi —
+   * foydalanuvchi so'zning goh paydo bo'lib, goh yo'qolishini ko'rardi.
+   */
+  const inDeck = new Set<string>()
+  for (const language of ['en', 'ru', 'ar'] as const) {
+    const deck = await loadLanguageDeck(language)
+    for (const card of flatten(deck)) inDeck.add(makeCardId(language, card.word))
+  }
+
+  const resurrected = RETIRED_CARD_IDS.filter((id) => inDeck.has(id))
+
+  expect(resurrected).toEqual([])
+})
