@@ -140,3 +140,35 @@ describe('pickLessonCards — boshlang‘ich daraja', () => {
     expect(pickLessonCards(cards, 2, 'A1').map((c) => c.id)).toEqual(['a1', 'a2'])
   })
 })
+
+describe('hamma so‘z o‘rganilgan holat', () => {
+  it('yangi so‘z qolmasa MUSTAHKAMLASHGA o‘tadi', () => {
+    /*
+     * Bir kun kelib foydalanuvchi butun lug'atni ko'rib chiqadi. Unda
+     * dars BO'SH qaytmasligi kerak — ko'rilgan kartalar navbatga
+     * tushadi va mashq davom etadi.
+     *
+     * `order.ts` dagi guruhlash aynan shu uchun: NEW → SEEN →
+     * LOW_LEVEL_NEW.
+     */
+    const seen = Array.from({ length: 8 }, (_, i) =>
+      card(`seen${i}`, { totalReviews: 3, interval: i + 1, level: 'A1' }),
+    )
+
+    const picked = pickLessonCards(seen, 4)
+
+    expect(picked).toHaveLength(4)
+    // Eng kam mustahkamlangani oldin — u ko'proq mashqqa muhtoj
+    expect(picked.map((card) => card.interval)).toEqual([1, 2, 3, 4])
+  })
+
+  it('kartalar SONI so‘ralgandan kam bo‘lsa borini beradi', () => {
+    const two = [card('a'), card('b')]
+
+    expect(pickLessonCards(two, 4)).toHaveLength(2)
+  })
+
+  it('umuman karta bo‘lmasa bo‘sh ro‘yxat', () => {
+    expect(pickLessonCards([], 4)).toEqual([])
+  })
+})
