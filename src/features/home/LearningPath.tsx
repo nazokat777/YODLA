@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { loadLanguageDeck } from '@/content/starterDecks'
@@ -206,8 +206,20 @@ export function LearningPath({ cards }: LearningPathProps) {
       */}
       <ol ref={listRef} className="flex flex-col gap-3">
         {units.map((unit, index) => (
+          <Fragment key={unit.id}>
+            {/*
+              Seksiya sarlavhasi FAQAT o'zgarganda chiziladi. Shu tufayli
+              "Enterprise 1" yuz marta emas, bir marta ko'rinadi va
+              foydalanuvchi yo'lning qayerida turganini biladi.
+            */}
+            {unit.section && unit.section !== units[index - 1]?.section && (
+              <li className="mt-4 first:mt-0">
+                <h3 className="rounded-full bg-brand-50 px-3 py-1 text-xs font-extrabold tracking-wide text-brand-700 uppercase">
+                  {unit.section}
+                </h3>
+              </li>
+            )}
           <li
-            key={unit.id}
             data-unit
             ref={unit.state === 'current' ? currentRef : undefined}
             className={cn('flex items-center gap-3', ZIGZAG[index % ZIGZAG.length])}
@@ -224,12 +236,19 @@ export function LearningPath({ cards }: LearningPathProps) {
               <UnitCircle unit={unit} />
             </div>
             <div className="flex min-w-0 flex-col">
-              <span className="truncate font-bold">{unit.topic}</span>
+              {/*
+                `line-clamp-2` (`truncate` EMAS): uzun nomlar bor —
+                "The Loch Ness Monster — Episode 2: The Wrong Photograph".
+                Bir qatorga siqilsa ular bir-biridan farq qilmay qolardi,
+                chunki farq nomning OXIRIDA.
+              */}
+              <span className="line-clamp-2 font-bold">{unit.title}</span>
               <span className="text-xs text-ink-600">
                 {unit.level} · {unit.learned}/{unit.total} so'z
               </span>
             </div>
           </li>
+          </Fragment>
         ))}
       </ol>
     </section>

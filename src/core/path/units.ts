@@ -1,13 +1,24 @@
 import { levelRank } from '@/core/config/levels'
 import type { CardRecord, NewCardRecordInput } from '@/core/db'
 import type { LevelCode } from '@/core/types'
+import { splitTopic } from './topicTitle'
 
 export type UnitState = 'completed' | 'current' | 'locked' | 'skipped'
 
 export interface PathUnit {
   id: string
   level: LevelCode
+  /** To'liq nom — havola sarlavhasi va ekran o'quvchi uchun */
   topic: string
+  /**
+   * Qo'shni bo'limlarda TAKRORLANADIGAN qism ("Enterprise 1").
+   *
+   * Ro'yxatda u bir marta, sarlavha sifatida chiziladi — har bo'limda
+   * takrorlansa, 375 px li ekranda joyning yarmini yeb qo'yardi.
+   */
+  section: string | null
+  /** Shu bo'limni ajratib turadigan qism — doiraning yonida shu ko'rinadi */
+  title: string
   /** Bo'limdagi so'zlar soni */
   total: number
   /** Kamida bir marta ko'rilganlari */
@@ -85,6 +96,7 @@ export function buildUnits(cards: CardRecord[], options: BuildOptions = {}): Pat
       id,
       level: card.level,
       topic: card.topic,
+      ...splitTopic(card.topic),
       total: 0,
       learned: 0,
       state: 'locked' as UnitState,

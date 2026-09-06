@@ -212,3 +212,19 @@ describe('LearningPath — animatsiya hajmi', () => {
     expect(String(target)).toMatch(/nth-child\(-n\+\d+\)/)
   })
 })
+
+describe('LearningPath — nomlar', () => {
+  it('takroriy prefiks bo‘limlarda TAKRORLANMAYDI, seksiya sarlavhasida bir marta chiqadi', async () => {
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en', topic: 'Enterprise 1 · 1-dars', level: 'A1' },
+      { word: 'b', translation: 'bb', language: 'en', topic: 'Enterprise 1 · 2-dars', level: 'A1' },
+    ])
+    await renderPath()
+
+    expect(await screen.findByRole('heading', { name: 'Enterprise 1' })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { name: 'Enterprise 1' })).toHaveLength(1)
+    expect(screen.getByText('1-dars')).toBeInTheDocument()
+    expect(screen.getByText('2-dars')).toBeInTheDocument()
+  })
+})

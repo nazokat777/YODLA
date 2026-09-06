@@ -131,3 +131,23 @@ describe('buildUnits', () => {
     expect(buildUnits([])).toEqual([])
   })
 })
+
+describe('buildUnits — nom bo‘laklari', () => {
+  it('takroriy prefiks seksiyaga chiqariladi', () => {
+    const units = buildUnits([
+      card('a', { level: 'A1', topic: 'Enterprise 1 · 5-dars: Family' }),
+    ])
+
+    expect(units[0]).toMatchObject({
+      topic: 'Enterprise 1 · 5-dars: Family',
+      section: 'Enterprise 1',
+      title: '5-dars: Family',
+    })
+  })
+
+  it('to‘liq nom SAQLANADI — havola sarlavhasi va ekran o‘quvchi uchun kerak', () => {
+    const units = buildUnits([card('b', { level: 'A1', topic: 'Salomlashish' })])
+
+    expect(units[0]).toMatchObject({ topic: 'Salomlashish', section: null, title: 'Salomlashish' })
+  })
+})
