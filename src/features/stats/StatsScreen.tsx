@@ -9,6 +9,17 @@ import { useProgress } from '@/hooks/useProgress'
 /** Hafta kunlari — diagramma ostidagi belgilar */
 const WEEKDAYS = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh']
 
+/** Ekran o'quvchi uchun to'liq nom — "Ju" o'qilganda hech nima anglashilmaydi */
+const WEEKDAY_NAMES = [
+  'Yakshanba',
+  'Dushanba',
+  'Seshanba',
+  'Chorshanba',
+  'Payshanba',
+  'Juma',
+  'Shanba',
+]
+
 /**
  * Statistika ekrani: haftalik diagramma va asosiy ko'rsatkichlar.
  *
@@ -67,14 +78,32 @@ function WeeklyChart({ series }: { series: DayPoint[] }) {
   const max = Math.max(...series.map((point) => point.xp), 1)
 
   return (
-    <div className="flex h-32 items-end justify-between gap-2">
+    /*
+     * Diagramma ro'yxat sifatida e'lon qilinadi.
+     *
+     * Ustunlarning O'ZI `role="presentation"` — ekran o'quvchi uchun
+     * balandlikning ma'nosi yo'q. Ma'lumot esa har ustunning
+     * `aria-label` ida to'liq gap bo'lib turadi: usiz nolli kunda
+     * FAQAT "Ju" o'qilardi va u hech nima anglatmasdi.
+     */
+    <ul
+      aria-label="So'nggi 7 kundagi XP"
+      className="flex h-32 items-end justify-between gap-2"
+    >
       {series.map((point) => {
         const height = Math.round((point.xp / max) * 100)
-        const weekday = WEEKDAYS[new Date(point.day).getDay()]
+        const day = new Date(point.day).getDay()
+        const weekday = WEEKDAYS[day]
 
         return (
-          <div key={point.day} className="flex flex-1 flex-col items-center gap-1">
-            <span className="text-xs font-semibold text-ink-600">{point.xp || ''}</span>
+          <li
+            key={point.day}
+            aria-label={`${WEEKDAY_NAMES[day]}: ${point.xp} XP`}
+            className="flex flex-1 flex-col items-center gap-1"
+          >
+            <span aria-hidden="true" className="text-xs font-semibold text-ink-600">
+              {point.xp || ''}
+            </span>
             <div
               // Bo'sh kun ham ko'rinadi (ingichka chiziq): "kun o'tkazdim"
               // degan haqiqat yashirilmasligi kerak
@@ -82,11 +111,13 @@ function WeeklyChart({ series }: { series: DayPoint[] }) {
               className={point.xp > 0 ? 'w-full rounded-t-lg bg-brand-500' : 'w-full rounded-t-lg bg-ink-300'}
               role="presentation"
             />
-            <span className="text-xs text-ink-600">{weekday}</span>
-          </div>
+            <span aria-hidden="true" className="text-xs text-ink-600">
+              {weekday}
+            </span>
+          </li>
         )
       })}
-    </div>
+    </ul>
   )
 }
 
