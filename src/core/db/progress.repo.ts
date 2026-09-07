@@ -15,7 +15,7 @@ import {
 import { startOfDay } from '@/lib/date'
 import { getGlobalCardStats } from './cards.repo'
 import { db } from './db'
-import { createProfile, type DailyStat, type ProfileRecord } from './schema'
+import { createProfile, type DailyStat, type GameId, type ProfileRecord } from './schema'
 
 /** Bo'sh kunlik yozuv */
 function createDailyStat(day: number): DailyStat {
@@ -343,3 +343,27 @@ export async function getProgressSnapshot(now: number = Date.now()): Promise<Pro
   }
 }
 
+
+/**
+ * O'yin rekordini saqlaydi. YANGI rekord bo'lsagina yozadi va shuni
+ * qaytaradi.
+ *
+ * Qaytarilgan qiymat ekranda "yangi rekord!" deb nishonlash uchun:
+ * uni chaqiruvchi o'zi hisoblasa, eski qiymatni oldindan o'qib olishi
+ * kerak bo'lardi va ikki foydalanuvchi harakati orasida u eskirishi
+ * mumkin edi.
+ */
+export async function saveGameBest(game: GameId, score: number): Promise<boolean> {
+  return db.transaction('rw', db.profile, async () => {
+    const profile = await ensureProfile()
+    const previous = profile.gameBests?.[game] ?? 0
+
+    if (score <= previous) return false
+
+    await db.profile.update('me', {
+      gameBests: { ...profile.gameBests, [game]: score },
+    })
+
+    return true
+  })
+}

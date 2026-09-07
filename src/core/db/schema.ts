@@ -99,7 +99,16 @@ export interface ProfileRecord {
   badgeUnlockedAt: Record<string, number>
   /** Bitta ham xatosiz tugatilgan seanslar soni */
   perfectSessions: number
+  /**
+   * O'yinlardagi shaxsiy rekordlar.
+   *
+   * Ixtiyoriy: eski profillarda yo'q va shu holicha ishlaydi.
+   */
+  gameBests?: Partial<Record<GameId, number>>
 }
+
+/** O'yin identifikatorlari */
+export type GameId = 'speed' | 'memory' | 'truefalse'
 
 /** Yangi foydalanuvchi profili */
 export function createProfile(): ProfileRecord {

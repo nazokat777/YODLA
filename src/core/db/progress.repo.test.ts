@@ -16,6 +16,7 @@ import {
   recordAnswer,
   recordPerfectSession,
   runDailyMaintenance,
+  saveGameBest,
   syncBadges,
 } from './progress.repo'
 
@@ -317,5 +318,40 @@ describe('nishonlar seansdan tashqarida ham ochiladi', () => {
 
     const after = await ensureProfile()
     expect(after.unlockedBadges.length).toBeGreaterThan(0)
+  })
+})
+
+describe('saveGameBest', () => {
+  it('birinchi natija rekord bo‘ladi', async () => {
+    await db.profile.clear()
+
+    expect(await saveGameBest('speed', 12)).toBe(true)
+    expect((await ensureProfile()).gameBests?.speed).toBe(12)
+  })
+
+  it('past natija rekordni BUZMAYDI', async () => {
+    await db.profile.clear()
+    await saveGameBest('speed', 20)
+
+    expect(await saveGameBest('speed', 15)).toBe(false)
+    expect((await ensureProfile()).gameBests?.speed).toBe(20)
+  })
+
+  it('teng natija ham rekord emas', async () => {
+    await db.profile.clear()
+    await saveGameBest('speed', 20)
+
+    expect(await saveGameBest('speed', 20)).toBe(false)
+  })
+
+  it('o‘yinlar bir-birini o‘chirmaydi', async () => {
+    await db.profile.clear()
+    await saveGameBest('speed', 12)
+    await saveGameBest('memory', 30)
+
+    const bests = (await ensureProfile()).gameBests
+
+    expect(bests?.speed).toBe(12)
+    expect(bests?.memory).toBe(30)
   })
 })
