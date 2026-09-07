@@ -63,6 +63,18 @@ export interface GenerateExerciseOptions {
    * hech qachon o'zlashtirilgan holatga chiqarmasdi.
    */
   preferType?: ExerciseType | null
+  /**
+   * Turni MAJBURAN belgilaydi — qiyinlik pog'onasi chetlab o'tiladi.
+   *
+   * O'yinlar uchun: "vaqtga qarshi" faqat tanib olishdan iborat
+   * (eng tez javob beriladigan tur). Pog'onaga tayansak, ko'p
+   * takrorlangan so'z uchun yozma mashq chiqib, o'yin ritmi
+   * buzilardi.
+   *
+   * Tur shu karta uchun MUMKIN bo'lmasa (masalan jumla yo'q),
+   * majburlash bekor qilinadi va odatdagi tanlov ishlaydi.
+   */
+  forceType?: ExerciseType
   random?: RandomSource
 }
 
@@ -308,7 +320,11 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
  * (u har doim mumkin).
  */
 export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType {
-  const { card, stage = 0, excludeTypes = [], preferType, random = Math.random } = options
+  const { card, stage = 0, excludeTypes = [], preferType, forceType, random = Math.random } = options
+
+  // Majburiy tur pog'onadan yuqori turadi — u mumkin bo'lsa
+  if (forceType && isTypeAvailable(forceType, options)) return forceType
+
   const effectiveRepetitions = card.repetitions + stage
 
   for (const step of DIFFICULTY_LADDER) {

@@ -766,3 +766,43 @@ describe('preferType — zaif ko‘nikmaga yo‘naltirish', () => {
     expect(typeWith(sequence(0.9, 0.0), 'listening')).toBe('recognition')
   })
 })
+
+describe('forceType — turni majburan belgilash', () => {
+  const CARD = makeCard({ id: 'en:water', word: 'water', translation: 'suv', repetitions: 9 })
+  const POOL = [CARD, makeCard({ id: 'en:bread', word: 'bread', translation: 'non' })]
+
+  it('pog‘ona yuqori bo‘lsa ham berilgan tur qaytadi', () => {
+    /*
+     * `repetitions: 9` da odatdagi tanlov yozma mashqlarni beradi.
+     * O'yin uchun esa faqat tanib olish kerak — aks holda 60 soniyalik
+     * poygada bola klaviatura bilan ovora bo'lardi.
+     */
+    const types = new Set(
+      [0, 0.3, 0.6, 0.9].map(
+        (value) =>
+          pickExerciseType({
+            card: CARD,
+            pool: POOL,
+            allowAudio: false,
+            forceType: 'recognition',
+            random: () => value,
+          }),
+      ),
+    )
+
+    expect([...types]).toEqual(['recognition'])
+  })
+
+  it('tur MUMKIN bo‘lmasa majburlash bekor qilinadi', () => {
+    // Kartada jumla yo'q — "jumla tuzish" yaratib bo'lmaydi
+    const type = pickExerciseType({
+      card: CARD,
+      pool: POOL,
+      allowAudio: false,
+      forceType: 'construction',
+      random: () => 0,
+    })
+
+    expect(type).not.toBe('construction')
+  })
+})

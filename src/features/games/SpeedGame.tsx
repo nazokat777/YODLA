@@ -100,8 +100,16 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
     const card = cards?.[index % Math.max(1, cards.length)]
     if (!card || !cards || cards.length < 4) return null
 
-    // Har doim tanib olish: eng tez javob beriladigan tur
-    return generateExercise({ card, pool: cards, allowAudio: false, stage: 0 })
+    // MAJBURAN tanib olish: eng tez javob beriladigan tur. Pog'onaga
+    // tayansak, ko'p takrorlangan so'z uchun yozma mashq chiqib o'yin
+    // ritmi buzilardi
+    return generateExercise({
+      card,
+      pool: cards,
+      allowAudio: false,
+      stage: 0,
+      forceType: 'recognition',
+    })
   }, [cards, index])
 
   const handleAnswer = useCallback(
