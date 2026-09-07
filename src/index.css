@@ -61,6 +61,19 @@ body {
     radial-gradient(50% 35% at 95% 15%, rgb(14 165 233 / 0.09), transparent 70%),
     radial-gradient(55% 40% at 50% 100%, rgb(245 158 11 / 0.08), transparent 70%);
   background-repeat: no-repeat;
+  /*
+   * AURORA: fon nuqtalari sekin suzadi.
+   *
+   * 40 soniyalik davr ataylab uzun — harakat SEZILMASLIGI, faqat
+   * ekran "tirik" bo'lib tuyulishi kerak. Tez bo'lsa u diqqatni
+   * mashqdan tortib olardi.
+   *
+   * `background-position` animatsiyasi kompozitor qatlamida ishlamaydi,
+   * lekin bu yerda muammo emas: u sekundiga bir necha marta o'zgaradi,
+   * har kadrda emas.
+   */
+  background-size: 160% 160%, 150% 150%, 170% 170%;
+  animation: aurora 40s ease-in-out infinite alternate;
   /* Mobil qurilmada ikki marta bosganda zumlanishning oldini olish */
   touch-action: manipulation;
   /* iOS'da "safe area" (notch) hisobga olinadi */
@@ -144,10 +157,26 @@ body {
   }
 }
 
+@keyframes aurora {
+  0% {
+    background-position:
+      0% 0%,
+      100% 0%,
+      50% 100%;
+  }
+  100% {
+    background-position:
+      20% 10%,
+      80% 20%,
+      40% 90%;
+  }
+}
+
 /* Harakat kamaytirilganda CSS animatsiyalar ham o'chadi */
 @media (prefers-reduced-motion: reduce) {
   .shine::after,
-  .flicker {
+  .flicker,
+  body {
     animation: none;
   }
 }

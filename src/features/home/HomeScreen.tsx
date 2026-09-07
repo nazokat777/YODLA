@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
@@ -15,6 +15,7 @@ import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { countUp, enterStagger, withMotion } from '@/lib/motion'
 import { LearningPath } from './LearningPath'
 
 /**
@@ -64,8 +65,40 @@ export function HomeScreen() {
   const wordsToday = progress?.daily.cardIds.length ?? 0
   const level = progress?.level
 
+  const rootRef = useRef<HTMLDivElement>(null)
+  const totalXp = progress?.profile.totalXp ?? 0
+
+  /*
+   * Kirish animatsiyasi: kartalar ketma-ket chiqadi, XP sanaladi.
+   *
+   * XP JSXda YAKUNIY qiymati bilan chiziladi — animatsiya bo'lmasa
+   * foydalanuvchi to'g'ri sonni ko'radi, nolni emas.
+   *
+   * Bog'liqlik `totalXp`: son o'zgarganda (dars tugagach) hisob
+   * qaytadan yuguradi va o'sish SEZILADI.
+   */
+  useEffect(() => {
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(rootRef.current, (gsap) => {
+      enterStagger(gsap, '[data-home-card]', { stagger: 0.07, duration: 0.4, y: 18 })
+
+      const xpNode = rootRef.current?.querySelector('[data-testid="total-xp"] [data-xp-value]')
+      if (xpNode && totalXp > 0) countUp(gsap, xpNode, totalXp, 0.9)
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [totalXp])
+
   return (
-    <div className="flex flex-col gap-4">
+    <div ref={rootRef} className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
         <div>
           <p className="text-sm text-ink-600">O'rganilmoqda</p>
@@ -104,7 +137,7 @@ export function HomeScreen() {
 
       {/* Daraja va XP */}
       {level && (
-        <Panel>
+        <Panel data-home-card>
           <div className="mb-2 flex items-baseline justify-between">
             <h2 className="min-w-0 truncate font-bold">
               {/*
@@ -125,7 +158,9 @@ export function HomeScreen() {
               className="inline-flex shrink-0 items-center gap-1 self-center whitespace-nowrap text-sm font-bold text-ink-600"
             >
               <Emblem kind="coin" size="sm" className="h-5 w-5" />
-              {progress?.profile.totalXp ?? 0} XP
+              {/* Raqam alohida: `countUp` aynan uni sanaydi, "XP" so'ziga
+                  tegmaydi */}
+              <span data-xp-value>{totalXp}</span> XP
             </span>
           </div>
           <ProgressBar
@@ -139,7 +174,7 @@ export function HomeScreen() {
         </Panel>
       )}
 
-      <Panel>
+      <Panel data-home-card>
         <div className="mb-2 flex items-baseline justify-between">
           <h2 className="font-bold">Kunlik maqsad</h2>
           <span data-testid="daily-goal" className="text-sm text-ink-600">
@@ -183,7 +218,7 @@ export function HomeScreen() {
         yerdan davom etishi mumkin.
       */}
       <Link to={PATHS.games} className="tap-highlight-none block">
-        <Panel interactive className="flex items-center gap-3">
+        <Panel data-home-card interactive className="flex items-center gap-3">
           <span aria-hidden="true" className="text-3xl">
             🎮
           </span>
