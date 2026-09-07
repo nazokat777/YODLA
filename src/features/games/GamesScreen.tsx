@@ -7,6 +7,8 @@ import { db } from '@/core/db'
 import type { GameId } from '@/core/db'
 import { CHALLENGE_BONUS_XP, dailyChallenge } from '@/core/games'
 import { useProgress } from '@/hooks/useProgress'
+import { enterStagger, pressTilt, revealHeading, withMotion } from '@/lib/motion'
+import { useEffect, useRef } from 'react'
 
 interface GameEntry {
   id: GameId
@@ -54,6 +56,43 @@ const GAMES: GameEntry[] = [
  * kelardi.
  */
 export function GamesScreen() {
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  /*
+   * Kirish animatsiyasi: sarlavha harfma-harf, kartalar ketma-ket.
+   * Bu ekranga BIR MARTA kiriladi va u "o'yin" kayfiyatini
+   * belgilaydi — shuning uchun bu yerda katta harakat o'rinli
+   * (mashq ichida esa u taqiqlangan).
+   */
+  useEffect(() => {
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(
+      rootRef.current,
+      (gsap) => {
+        const heading = rootRef.current?.querySelector('h1')
+        if (heading) revealHeading(gsap, heading)
+
+        enterStagger(gsap, '[data-game-card]', { stagger: 0.08, duration: 0.45, y: 20 })
+      },
+      ['splitText'],
+    ).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [])
+
+  /** Bosilganda karta 3D qiyaladi — "haqiqiy" bo'lib tuyuladi */
+  const handlePress = (element: HTMLElement) => {
+    void withMotion(element, (gsap) => pressTilt(gsap, element))
+  }
+
   /*
    * FAQAT O'QISH. `ensureProfile()` `rw` tranzaksiya ochadi va uni
    * `useLiveQuery` ichida chaqirib bo'lmaydi — Dexie xato beradi va
@@ -79,7 +118,7 @@ export function GamesScreen() {
   const challengeDone = challengeProgress >= challenge.target
 
   return (
-    <div className="flex flex-col gap-4">
+    <div ref={rootRef} className="flex flex-col gap-4">
       <div>
         <h1 className="text-2xl font-extrabold">O‘yinlar</h1>
         <p className="mt-1 text-sm text-ink-600">
@@ -118,7 +157,12 @@ export function GamesScreen() {
 
           return (
             <li key={game.id}>
-              <Link to={game.to} className="tap-highlight-none block">
+              <Link
+                to={game.to}
+                data-game-card
+                className="tap-highlight-none block"
+                onPointerDown={(event) => handlePress(event.currentTarget)}
+              >
                 <Panel interactive className="flex items-center gap-3">
                   <span aria-hidden="true" className="text-4xl">
                     {game.icon}

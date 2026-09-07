@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/cn'
-import { enterStagger, pressBounce, shake, withMotion } from '@/lib/motion'
+import { enterStagger, particleBurst, pressBounce, shake, withMotion } from '@/lib/motion'
 
 interface ChoiceGridProps {
   options: string[]
@@ -88,9 +88,21 @@ export function ChoiceGrid({
 
       // To'g'ri — sakraydi; xato — qaltiraydi. Ikkalasi ham ≤200 ms:
       // mashq ritmi sekinlashmasligi kerak
-      if (selectedIndex === correctIndex) pressBounce(gsap, target)
-      else shake(gsap, target)
-    }).then((fn) => {
+      if (selectedIndex === correctIndex) {
+        pressBounce(gsap, target)
+
+        /*
+         * ZARRACHALAR to'g'ri javobdan otiladi.
+         *
+         * Ular tugmaning ICHIDA, `pointer-events: none` bilan turadi
+         * va ritmni to'xtatmaydi: animatsiya fonda ketaveradi,
+         * foydalanuvchi esa darhol keyingi savolga o'tadi.
+         */
+        particleBurst(gsap, target.querySelectorAll('[data-spark]'))
+      } else {
+        shake(gsap, target)
+      }
+    }, ['physics2D']).then((fn) => {
       if (cancelled) fn()
       else revert = fn
     })
@@ -191,8 +203,29 @@ export function ChoiceGrid({
                     'active:translate-y-[2px] active:shadow-none',
                   ),
                 revealed && 'cursor-default',
+                // Zarrachalar tugma ichidan otiladi
+                'relative overflow-visible',
               )}
             >
+              {/*
+                UCHQUNLAR — sof bezak, `aria-hidden`. To'g'ri javobda
+                shu nuqtadan otiladi; animatsiyasiz ular ko'rinmas
+                holicha qoladi (`opacity-0`).
+              */}
+              {isSelected && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute start-6 top-1/2 h-0 w-0"
+                >
+                  {Array.from({ length: 8 }, (_, spark) => (
+                    <span
+                      key={spark}
+                      data-spark
+                      className="absolute h-1.5 w-1.5 rounded-full bg-brand-500 opacity-0"
+                    />
+                  ))}
+                </span>
+              )}
               {visual.icon && (
                 <span aria-hidden="true" className="text-lg font-extrabold">
                   {visual.icon}

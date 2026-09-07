@@ -39,9 +39,16 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
     .filter((badge) => badge !== undefined)
 
   return (
-    <div className="flex flex-col gap-3">
+    /*
+     * `panelRef` IKKALA panelni ham o'raydi.
+     *
+     * `gsap.context` selektorlarni SCOPE ICHIDA qidiradi. Ilgari ref
+     * faqat birinchi panelda edi va nishonlar animatsiyasi ularni
+     * topolmasdi — GSAP jimgina "target not found" deb o'tib ketardi.
+     */
+    <div ref={panelRef} className="flex flex-col gap-3">
       <Panel className="relative overflow-hidden text-center">
-        <div ref={panelRef}>
+        <div>
           <Confetti />
           <span data-celebrate="emblem" className="block">
             <Emblem kind="coin" size="lg" className="mx-auto mb-2 drop-shadow-[0_8px_16px_rgba(180,83,9,0.35)]" />
@@ -100,7 +107,7 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
           <p className="mb-2 text-sm font-bold text-brand-700">🏆 Achievement unlocked!</p>
           <ul className="flex flex-col gap-2">
             {newBadges.map((badge) => (
-              <li key={badge.id} className="flex items-center gap-3">
+              <li key={badge.id} data-celebrate="badge" className="flex items-center gap-3">
                 <span aria-hidden="true" className="text-3xl">
                   {badge.icon}
                 </span>
@@ -174,6 +181,26 @@ function useCelebration(xpEarned: number) {
           '[data-celebrate="stats"] > *',
           { y: 16, duration: 0.3, stagger: 0.08, ease: 'back.out(1.6)' },
           '-=0.4',
+        )
+
+        /*
+         * NISHONLAR aylanib kiradi — bu seansning eng yuqori nuqtasi
+         * va u shunday his qilinishi kerak.
+         *
+         * `rotationY` (opacity emas): animatsiya tugamay qolsa nishon
+         * baribir o'qiladi.
+         */
+        timeline.from(
+          '[data-celebrate="badge"]',
+          {
+            rotationY: 80,
+            transformPerspective: 700,
+            duration: 0.45,
+            stagger: 0.12,
+            ease: 'back.out(1.4)',
+            clearProps: 'transform',
+          },
+          '-=0.2',
         )
       }, rootRef)
     })
