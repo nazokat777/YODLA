@@ -224,6 +224,12 @@ darsdan umuman chiqolmasdi. Chegaraga yetilganda seans halol tugaydi:
 oldingi darslardan eng zaif 12 tasi qaytariladi (interleaving). Birinchi
 darsda bu bosqich o'tkazib yuboriladi.
 
+Bu yerda **bitta to'g'ri javob yetarli** (`REVIEW_STREAK`): so'zlar
+allaqachon o'rganilgan va maqsad ularni yodga solish. Ikki xil turni
+talab qilish 12 so'zni 24+ savolga aylantirardi — o'lchandi, butun dars
+78 savolga cho'zilgandi. Bitta javob bilan u 37 ta: "kuniga 5 daqiqa"
+va'dasiga mos.
+
 Ko'rsatkich `savol/savol` emas, `so'z/so'z` sanaydi va **hech qachon
 orqaga ketmaydi** — o'zlashtirilgan so'z shu seansda qayta "yo'qolmaydi".
 
