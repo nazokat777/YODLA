@@ -12,7 +12,15 @@ import {
   type AnswerVerdict,
   type Exercise,
 } from '@/core/exercises'
+import type { ExerciseType } from '@/core/types'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
+import {
+  applyAnswer,
+  emptyProgress,
+  excludedTypesFor,
+  pickNextCardId,
+  type WordProgress,
+} from '@/core/mastery'
 import { comboBonusXp, nextCombo } from '@/core/gamification'
 import { slideIn, withMotion } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
@@ -74,8 +82,31 @@ interface SessionRunnerProps {
    * yerda maqsad o'rgatish emas, tekshirish.
    */
   stagesFor?: (card: CardRecord) => number
+  /**
+   * Seans qanday tugaydi.
+   *
+   * `fixed` — oldindan tuzilgan navbat tugaganda (takrorlash ekrani:
+   * maqsad o'rgatish emas, SM-2 ni tekshirish).
+   *
+   * `mastery` — har so'z O'ZLASHTIRILGANDA. Navbat oldindan ma'lum
+   * emas: har javobdan keyin eng kam bilingan so'z tanlanadi va
+   * so'z ikki xil turdagi mashqda ketma-ket to'g'ri javob olguncha
+   * qaytaveradi (`core/mastery`).
+   */
+  mode?: 'fixed' | 'mastery'
   onFinish: (summary: SessionSummary) => void
 }
+
+/**
+ * O'zlashtirish rejimida seansning eng ko'p qadami.
+ *
+ * NEGA CHEGARA KERAK: "100% gacha" qoidasi qattiq qo'llansa,
+ * qiynalayotgan bola darsdan umuman chiqolmasdi. Chegaraga yetilganda
+ * seans halol tugaydi va o'zlashtirilmagan so'zlar ertaga birinchi
+ * navbatda qaytadi — bola muvaffaqiyat bilan chiqadi, mag'lubiyat
+ * bilan emas.
+ */
+export const MAX_SESSION_STEPS = 60
 
 /**
  * Mashq seansi: navbatdagi har karta uchun mos mashq yaratadi, javobni
@@ -84,11 +115,46 @@ interface SessionRunnerProps {
  * Takrorlash (`/review`) va dars (`/lesson`) ekranlari shu bir komponentni
  * ishlatadi — farq faqat kartalar qayerdan olinishida.
  */
-export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: SessionRunnerProps) {
+export function SessionRunner({
+  cards,
+  pool,
+  stagesFor = () => 1,
+  mode = 'fixed',
+  onFinish,
+}: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
 
-  const [queue, setQueue] = useState<LessonStep[]>(() => buildLessonQueue(cards, stagesFor))
+  /**
+   * Har so'zning o'zlashtirish holati (faqat `mastery` rejimida).
+   *
+   * `useState` (`useRef` emas): ko'rsatkich shu holatdan hisoblanadi,
+   * ya'ni o'zgarish qayta render talab qiladi.
+   */
+  const [mastery, setMastery] = useState<Map<string, WordProgress>>(
+    () => new Map(cards.map((card) => [card.id, emptyProgress(card.id)])),
+  )
+
+  /**
+   * Navbat.
+   *
+   * `mastery` rejimida u OLDINDAN to'liq emas: bitta qadam bilan
+   * boshlanadi va har javobdan keyin keyingi qadam qo'shiladi. Shu
+   * tufayli "navbat tugadi" sharti (`index >= queue.length`) ikkala
+   * rejimda ham bir xil ishlaydi.
+   */
+  const [queue, setQueue] = useState<LessonStep[]>(() => {
+    if (mode === 'fixed') return buildLessonQueue(cards, stagesFor)
+
+    const first = cards[0]
+    return first ? [{ card: first, stage: 0 }] : []
+  })
+
+  /** Shu kartaning o'zlashtirish holati (yo'q bo'lsa — bo'sh) */
+  const progressFor = useCallback(
+    (cardId: string) => mastery.get(cardId) ?? emptyProgress(cardId),
+    [mastery],
+  )
 
   /**
    * Seansdagi REJALASHTIRILGAN qadamlar soni — progress maxraji.
@@ -182,11 +248,23 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
 
     setIntroCard(needsIntro ? step.card : null)
 
-    setExercise(generateExercise({ card: step.card, pool, allowAudio, stage: step.stage }))
+    /*
+     * O'zlashtirish rejimida OXIRGI to'g'ri javob turi chetlanadi:
+     * qoida ikki XIL turda ketma-ket to'g'ri javobni talab qiladi
+     * (`core/mastery/progress.ts`).
+     */
+    const excludeTypes = mode === 'mastery' ? excludedTypesFor(progressFor(step.card.id)) : []
+
+    setExercise(
+      generateExercise({ card: step.card, pool, allowAudio, stage: step.stage, excludeTypes }),
+    )
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)
     setErrorMessage(null)
-  }, [queue, index, pool, allowAudio])
+  // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
+  // mashqni javob berilgan zahoti qayta yaratib yuborardi
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queue, index, pool, allowAudio, mode])
 
   /*
    * Yangi savol pastdan siljib chiqadi.
@@ -293,6 +371,51 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
       })
   }, [index, queue.length, onFinish, summary])
 
+  /**
+   * Javoblarni o'zlashtirish holatiga qo'llaydi va YANGI xaritani
+   * qaytaradi. Qaytarish shart: `setState` shu render'da ko'rinmaydi,
+   * keyingi qadam esa aynan yangilangan holatdan tanlanadi.
+   */
+  const applyToMastery = useCallback(
+    (results: ReadonlyArray<{ cardId: string; verdict: AnswerVerdict }>, type: ExerciseType) => {
+      const next = new Map(mastery)
+
+      for (const result of results) {
+        const current = next.get(result.cardId) ?? emptyProgress(result.cardId)
+        next.set(result.cardId, applyAnswer(current, result.verdict, type))
+      }
+
+      setMastery(next)
+
+      return next
+    },
+    [mastery],
+  )
+
+  /**
+   * Keyingi qadamni navbatga qo'shadi (o'zlashtirish rejimi).
+   *
+   * Hech nima qo'shilmasa seans tugaydi: `index >= queue.length`.
+   */
+  const enqueueNext = useCallback(
+    (state: Map<string, WordProgress>, lastShownId: string | null, stepsUsed: number) => {
+      if (stepsUsed >= MAX_SESSION_STEPS) return
+
+      const nextId = pickNextCardId([...state.values()], lastShownId)
+      if (!nextId) return
+
+      const card = cards.find((item) => item.id === nextId)
+      if (!card) return
+
+      // Qiyinlik pog'onasi so'zga berilgan savollar soniga qarab
+      // ko'tariladi: birinchi marta tanish, keyin yozish, so'ng yig'ish
+      const stage = state.get(nextId)?.asked ?? 0
+
+      setQueue((current) => [...current, { card, stage }])
+    },
+    [cards],
+  )
+
   /** Javob berishga tayyormi */
   const canSubmit = useMemo(() => {
     if (!exercise) return false
@@ -389,6 +512,11 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         }
       }
 
+      // O'zlashtirish holati — keyingi qadam aynan shundan tanlanadi
+      if (mode === 'mastery') {
+        applyToMastery([{ cardId: exercise.card.id, verdict: result }], exercise.type)
+      }
+
       setVerdict(result)
       setLastXpGained(xpGained)
       setGoalJustCompleted(goalCompleted)
@@ -418,11 +546,18 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
 
   /** Feedback'dan keyin keyingi mashqqa o'tish */
   const handleContinue = useCallback(() => {
-    // Xato javob berilgan karta shu seansning oxiriga qaytariladi:
-    // darhol qayta eslab chaqirish (retrieval practice) samaraliroq.
-    // Bosqich O'SHANDAYLIGICHA qoladi — foydalanuvchi uni hali o'tmadi,
-    // keyingisiga ko'tarish qiyinlikni asossiz oshirardi.
-    if (verdict === 'wrong') {
+    if (mode === 'mastery') {
+      /*
+       * Keyingi qadam O'ZLASHTIRISH HOLATIDAN tanlanadi: eng kam
+       * bilingan so'z oldinga chiqadi va o'zlashtirilgani boshqa
+       * qaytmaydi. Hech nima qo'shilmasa seans tugaydi.
+       */
+      enqueueNext(mastery, queue[index]?.card.id ?? null, queue.length)
+    } else if (verdict === 'wrong') {
+      // Xato javob berilgan karta shu seansning oxiriga qaytariladi:
+      // darhol qayta eslab chaqirish (retrieval practice) samaraliroq.
+      // Bosqich O'SHANDAYLIGICHA qoladi — foydalanuvchi uni hali o'tmadi,
+      // keyingisiga ko'tarish qiyinlikni asossiz oshirardi.
       const failed = queue[index]
       if (failed && queue.length < MAX_LESSON_STEPS) {
         setQueue((current) => [...current, failed])
@@ -430,7 +565,7 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     }
 
     setIndex((current) => current + 1)
-  }, [verdict, queue, index])
+  }, [verdict, queue, index, mode, mastery, enqueueNext])
 
   /**
    * Juft topish yakunlandi — bir mashqda BIR NECHTA karta baholanadi.
@@ -494,12 +629,22 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
         )
       }
 
+      /*
+       * Juft topish BIR NECHTA kartani baholaydi — hammasi
+       * o'zlashtirish holatiga tushadi. Keyingi qadam shu yerda
+       * qo'shiladi: bu mashqda "Davom etish" tugmasi yo'q.
+       */
+      if (mode === 'mastery') {
+        const next = applyToMastery(results, 'matching')
+        enqueueNext(next, matchingStep?.card.id ?? null, queue.length)
+      }
+
       if (soundEnabled) playCorrectSound()
 
       setIsSaving(false)
       setIndex((current) => current + 1)
     },
-    [isSaving, dailyGoalWords, soundEnabled, queue, index],
+    [isSaving, dailyGoalWords, soundEnabled, queue, index, mode, applyToMastery, enqueueNext],
   )
 
   /**
@@ -533,7 +678,17 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
    * `summary.answered` EMAS: u qayta urinishlarni ham sanaydi va maxraj
    * qotirilganda ko'rsatkich 13/12 bo'lib ketardi.
    */
-  const progressValue = Math.min(doneSteps.size, plannedSteps)
+  /*
+   * O'zlashtirish rejimida ko'rsatkich QADAMLARNI emas, SO'ZLARNI
+   * sanaydi: bola savollarni emas, so'zlarni o'rganadi va uning
+   * ongidagi model shunday. `mastered` qaytmas holat, ya'ni ko'rsatkich
+   * hech qachon orqaga ketmaydi.
+   */
+  const masteredCount = [...mastery.values()].filter((item) => item.mastered).length
+
+  const progressValue =
+    mode === 'mastery' ? masteredCount : Math.min(doneSteps.size, plannedSteps)
+  const progressMax = mode === 'mastery' ? cards.length : plannedSteps
 
   /*
    * Tanishtirish mashqning O'RNIGA emas, OLDIDAN chiziladi: "Tushundim"
@@ -544,9 +699,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     return (
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
+          <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
           <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{plannedSteps}
+            {progressValue}/{progressMax}
           </span>
         </div>
 
@@ -569,9 +724,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
     return (
       <div className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
+          <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
           <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{plannedSteps}
+            {progressValue}/{progressMax}
           </span>
         </div>
 
@@ -588,9 +743,9 @@ export function SessionRunner({ cards, pool, stagesFor = () => 1, onFinish }: Se
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
-        <ProgressBar value={progressValue} max={plannedSteps} label="Seans progressi" />
+        <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
         <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-          {progressValue}/{plannedSteps}
+          {progressValue}/{progressMax}
         </span>
 
         {/*

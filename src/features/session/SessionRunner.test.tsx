@@ -435,3 +435,83 @@ describe('SessionRunner — progress ko‘rsatkichi', () => {
     })
   })
 })
+
+describe('SessionRunner — o‘zlashtirish rejimi', () => {
+  /** Variantli mashq chiqishi uchun tasodifni qotiramiz */
+  function renderMastery(cards = [CARDS[0]]) {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+
+    return render(
+      <SessionRunner cards={cards} pool={CARDS} mode="mastery" onFinish={() => {}} />,
+    )
+  }
+
+  /**
+   * Ko'rsatilgan mashqqa javob beradi — TURIGA BOG'LIQ EMAS.
+   *
+   * O'zlashtirish rejimida so'z har safar boshqa turdagi mashqda
+   * qaytadi (qoida shuni talab qiladi), shuning uchun test aniq turga
+   * tayanmasligi kerak.
+   */
+  async function answerAnything(kind: 'correct' | 'wrong') {
+    const options = screen
+      .queryAllByRole('listitem')
+      .map((item) => item.querySelector('button'))
+      .filter((node): node is HTMLButtonElement => node !== null)
+
+    if (options.length > 0) {
+      const correctOption = options.find((node) =>
+        CARDS.some((card) => card.translation === node.textContent?.trim()
+          && card.word === screen.queryByTestId('exercise-prompt')?.textContent?.trim()),
+      )
+      const target =
+        kind === 'correct' ? (correctOption ?? options[0]) : options.find((n) => n !== correctOption)
+      fireEvent.click(target!)
+    } else {
+      // Yozma mashq: to'g'ri javobni bilamiz, xato uchun aniq noto'g'ri matn
+      const input = screen.getByLabelText(/javob/i)
+      fireEvent.change(input, { target: { value: kind === 'correct' ? 'water' : 'zzzz' } })
+      fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
+    }
+
+    const next = await screen.findByRole('button', { name: /davom etish|tushunarli/i })
+    fireEvent.click(next)
+  }
+
+  /** Seans davom etyaptimi (tugaganda butun ko'rinish yo'qoladi) */
+  const stillRunning = () => screen.queryByTestId('session-progress') !== null
+
+  it('ko‘rsatkich SO‘ZLARNI sanaydi, qadamlarni emas', async () => {
+    renderMastery()
+
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
+  })
+
+  it('xato javobdan keyin so‘z QAYTADI va ko‘rsatkich o‘smaydi', async () => {
+    renderMastery()
+    await screen.findByTestId('session-progress')
+
+    await answerAnything('wrong')
+
+    await waitFor(() => {
+      expect(stillRunning()).toBe(true)
+    })
+    expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
+  })
+
+  it('BIR marta to‘g‘ri javob so‘zni o‘zlashtirilgan qilmaydi', async () => {
+    /*
+     * To'rt variantdan bittasini ko'r-ko'rona bosish 25% ehtimol bilan
+     * to'g'ri chiqadi — qoida ikki XIL turdagi mashqni talab qiladi.
+     */
+    renderMastery()
+    await screen.findByTestId('session-progress')
+
+    await answerAnything('correct')
+
+    await waitFor(() => {
+      expect(stillRunning()).toBe(true)
+    })
+    expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
+  })
+})
