@@ -5,3 +5,4 @@
 export * from './luck'
 export * from './speed'
 export * from './memory'
+export * from './truefalse'

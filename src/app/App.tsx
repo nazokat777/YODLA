@@ -17,6 +17,7 @@ import { ReviewScreen } from '@/features/review/ReviewScreen'
 import { GamesScreen } from '@/features/games/GamesScreen'
 import { MemoryGame } from '@/features/games/MemoryGame'
 import { SpeedGame } from '@/features/games/SpeedGame'
+import { TrueFalseGame } from '@/features/games/TrueFalseGame'
 
 /**
  * Ilova ildizi: marshrutlar daraxti.
@@ -70,6 +71,7 @@ export function App() {
           <Route path={PATHS.games} element={<GamesScreen />} />
           <Route path={PATHS.speedGame} element={<SpeedGame />} />
           <Route path={PATHS.memoryGame} element={<MemoryGame />} />
+          <Route path={PATHS.trueFalseGame} element={<TrueFalseGame />} />
           <Route path={PATHS.league} element={<LeagueScreen />} />
           <Route path={PATHS.stats} element={<StatsScreen />} />
           <Route path={PATHS.profile} element={<ProfileScreen />} />

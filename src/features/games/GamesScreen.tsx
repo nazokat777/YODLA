@@ -32,6 +32,14 @@ const GAMES: GameEntry[] = [
     description: 'Yopiq kartalardan juftini toping',
     unit: 'ball',
   },
+  {
+    id: 'truefalse',
+    to: PATHS.trueFalseGame,
+    icon: '⚖️',
+    title: 'To‘g‘rimi?',
+    description: 'Juft to‘g‘ri yoki xato — tez javob bering',
+    unit: 'to‘g‘ri',
+  },
 ]
 
 /**

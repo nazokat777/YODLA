@@ -25,4 +25,5 @@ export const PATHS = {
   games: '/games',
   speedGame: '/games/speed',
   memoryGame: '/games/memory',
+  trueFalseGame: '/games/truefalse',
 } as const
