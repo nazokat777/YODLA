@@ -44,15 +44,23 @@ describe('weakness', () => {
     )
   })
 
-  it('hech qachon ko‘rilmagan so‘zda YIQILMAYDI', () => {
+  it('hech qachon ko‘rilmagan YANGI so‘z eng zaif deb hisoblanmaydi', () => {
     /*
      * `lastReviewedAt: null` — karta bazaga yozilgan, lekin hali bir
-     * marta ham so'ralmagan. Bu son bilan ishlanmasa `NaN` chiqib,
-     * saralash tartibi butunlay buzilardi.
+     * marta ham so'ralmagan. Uni to'g'ridan-to'g'ri songa aylantirsa
+     * `null` NOL bo'lib, "1970-yildan beri ko'rilmagan" degan ma'noni
+     * berardi: baho ~2800 ga chiqib, HAR QANDAY haqiqiy qiyin so'zni
+     * ro'yxatdan surib chiqarardi.
+     *
+     * Shuning uchun hisob karta YARATILGAN vaqtdan boshlanadi.
      */
-    const value = weakness(card('a', { lastReviewedAt: null, totalReviews: 0 }), NOW)
+    const fresh = weakness(
+      card('yangi', { lastReviewedAt: null, totalReviews: 0, createdAt: NOW - 2 * DAY }),
+      NOW,
+    )
+    const struggled = weakness(card('qiyin', { lapses: 4, easeFactor: 1.5 }), NOW)
 
-    expect(Number.isFinite(value)).toBe(true)
+    expect(fresh).toBeLessThan(struggled)
   })
 })
 
