@@ -14,6 +14,7 @@ import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen'
 import { ProfileScreen } from '@/features/profile/ProfileScreen'
 import { StatsScreen } from '@/features/stats/StatsScreen'
 import { ReviewScreen } from '@/features/review/ReviewScreen'
+import { GamesScreen } from '@/features/games/GamesScreen'
 import { SpeedGame } from '@/features/games/SpeedGame'
 
 /**
@@ -65,6 +66,7 @@ export function App() {
           <Route path={PATHS.review} element={<ReviewScreen />} />
           {/* Qiyin so'zlar mashqi — profildagi "Ustida ishlash kerak" dan */}
           <Route path={PATHS.weakReview} element={<ReviewScreen focus="weak" />} />
+          <Route path={PATHS.games} element={<GamesScreen />} />
           <Route path={PATHS.speedGame} element={<SpeedGame />} />
           <Route path={PATHS.league} element={<LeagueScreen />} />
           <Route path={PATHS.stats} element={<StatsScreen />} />

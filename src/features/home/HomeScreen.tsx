@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
@@ -175,6 +176,28 @@ export function HomeScreen() {
           {dueCount > 0 ? 'Takrorlashni boshlash' : 'Takrorlashni ochish'}
         </LinkButton>
       </Panel>
+
+      {/*
+        O'yinlar — mashqning boshqa formati. Bosh ekranda o'quv
+        yo'lidan OLDIN turadi: bola kunlik darsni bajargach shu
+        yerdan davom etishi mumkin.
+      */}
+      <Link to={PATHS.games} className="tap-highlight-none block">
+        <Panel interactive className="flex items-center gap-3">
+          <span aria-hidden="true" className="text-3xl">
+            🎮
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-bold">O‘yinlar</span>
+            <span className="block text-sm text-ink-600">
+              Bilganingizni tez va qiziqarli mustahkamlang
+            </span>
+          </span>
+          <span aria-hidden="true" className="shrink-0 text-ink-600">
+            ›
+          </span>
+        </Panel>
+      </Link>
 
       <LearningPath cards={cards} />
 
