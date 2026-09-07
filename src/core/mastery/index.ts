@@ -5,3 +5,4 @@
 export * from './progress'
 export * from './select'
 export * from './weakness'
+export * from './skill'
