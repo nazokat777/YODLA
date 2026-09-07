@@ -2,8 +2,11 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
+import { cn } from '@/lib/cn'
 import { db } from '@/core/db'
 import type { GameId } from '@/core/db'
+import { CHALLENGE_BONUS_XP, dailyChallenge } from '@/core/games'
+import { useProgress } from '@/hooks/useProgress'
 
 interface GameEntry {
   id: GameId
@@ -58,6 +61,22 @@ export function GamesScreen() {
    * qachon ko'rinmasdi.
    */
   const profile = useLiveQuery(() => db.profile.get('me'), [])
+  const progress = useProgress()
+
+  const challenge = dailyChallenge()
+  const bests = profile?.gameBests
+
+  /*
+   * Chaqiriq progressi mavjud o'lchovlardan olinadi — alohida hisob
+   * yuritilmaydi. Yangi jadval qo'shish bir kunlik vazifa uchun
+   * ortiqcha murakkablik bo'lardi.
+   */
+  const challengeProgress =
+    challenge.kind === 'speedScore'
+      ? (bests?.speed ?? 0)
+      : (progress?.daily.cardIds.length ?? 0)
+
+  const challengeDone = challengeProgress >= challenge.target
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,6 +86,31 @@ export function GamesScreen() {
           Bilganingizni mustahkamlang — tez va qiziqarli.
         </p>
       </div>
+
+      {/*
+        KUNLIK CHAQIRIQ — har kuni qaytish uchun sabab. Vazifa sanadan
+        hisoblanadi, ya'ni kun davomida o'zgarmaydi.
+      */}
+      <Panel
+        data-testid="daily-challenge"
+        className={cn(
+          'flex items-center gap-3',
+          challengeDone && 'border-brand-500 bg-brand-50',
+        )}
+      >
+        <span aria-hidden="true" className="text-3xl">
+          {challengeDone ? '✅' : challenge.icon}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm text-ink-600">Bugungi chaqiriq</span>
+          <span className="block font-bold">{challenge.title}</span>
+          <span className="block text-xs text-ink-600">
+            {challengeDone
+              ? `Bajarildi! +${CHALLENGE_BONUS_XP} XP`
+              : `${Math.min(challengeProgress, challenge.target)}/${challenge.target}`}
+          </span>
+        </span>
+      </Panel>
 
       <ul className="flex flex-col gap-3">
         {GAMES.map((game) => {

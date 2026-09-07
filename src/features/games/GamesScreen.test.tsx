@@ -48,3 +48,30 @@ describe('GamesScreen', () => {
     })
   })
 })
+
+describe('kunlik chaqiriq', () => {
+  it('chaqiriq va uning progressi ko‘rsatiladi', async () => {
+    renderScreen()
+
+    const panel = await screen.findByTestId('daily-challenge')
+
+    expect(panel.textContent).toMatch(/bugungi chaqiriq/i)
+    // Progress ko'rinadi: "0/10" kabi
+    expect(panel.textContent).toMatch(/\d+\/\d+/)
+  })
+
+  it('chaqiriq KUN DAVOMIDA o‘zgarmaydi', async () => {
+    /*
+     * Tasodifiy tanlansa, sahifani yangilaganda vazifa o'zgarib
+     * turardi va uni bajarish mumkin bo'lmasdi.
+     */
+    const { unmount } = renderScreen()
+    const first = (await screen.findByTestId('daily-challenge')).textContent
+    unmount()
+
+    renderScreen()
+    const second = (await screen.findByTestId('daily-challenge')).textContent
+
+    expect(second).toBe(first)
+  })
+})
