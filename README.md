@@ -194,16 +194,83 @@ Zina `repetitions` ga qarasa, YANGI so'z uchun faqat `recognition` ochiq
 bo'lardi — ya'ni birinchi darsdagi hamma savol bir xil chiqardi.
 
 Shuning uchun zina `repetitions + stage` ga qaraydi, bunda `stage` — so'z
-SEANS ICHIDA nechanchi marta chiqayotgani
-([queue.ts](src/core/lesson/queue.ts)):
+SEANS ICHIDA nechanchi marta chiqayotgani.
 
-```
-dars = 4 ta yangi so'z × 3 bosqich = 12 savol
-A₀ B₀ C₀ D₀ | A₁ B₁ C₁ D₁ | A₂ B₂ C₂ D₂
-```
+Bir so'zning takrorlari yonma-yon turmaydi, aks holda javobni oldingi
+ekrandan nusxa ko'chirish mumkin bo'lardi.
 
-Tartib **aylanma**: bir so'zning takrorlari yonma-yon turmaydi, aks holda
-javobni oldingi ekrandan nusxa ko'chirish mumkin bo'lardi.
+## O'zlashtirish halqasi
+
+**Dars savollar soni bilan emas, SO'ZLAR o'zlashtirilishi bilan
+tugaydi** ([core/mastery](src/core/mastery)).
+
+So'z **o'zlashtirilgan** hisoblanadi, agar ketma-ket ikki marta to'g'ri
+javob olsa **va ikkinchisi boshqa turdagi mashqda** bo'lsa.
+
+Nega ikki xil tur: to'rt variantli mashqda ko'r-ko'rona bosish 25%
+ehtimol bilan to'g'ri chiqadi. Bir xil turda ikki marta javob berish esa
+ekrandagi naqshni eslab qolish bo'lishi mumkin. Ikki XIL turda
+("tanidi", so'ng "yozdi") tasodif deyarli imkonsiz.
+
+Navbat **dinamik**: har javobdan keyin eng kam bilingan so'z tanlanadi,
+oxirgi ko'rsatilgani esa chetlab o'tiladi. Hisob 1 bo'lganda o'sha
+so'zga boshqa TUR mashq beriladi (`excludeTypes`).
+
+**`MAX_SESSION_STEPS = 60` — majburiy himoya.** Usiz qiynalayotgan bola
+darsdan umuman chiqolmasdi. Chegaraga yetilganda seans halol tugaydi:
+*"5 ta so'z o'zlashtirildi · 2 tasi keyingi darsga qoldi"*.
+
+**Ikkinchi bosqich — aralash takror.** Yangi so'zlar o'zlashtirilgach,
+oldingi darslardan eng zaif 12 tasi qaytariladi (interleaving). Birinchi
+darsda bu bosqich o'tkazib yuboriladi.
+
+Ko'rsatkich `savol/savol` emas, `so'z/so'z` sanaydi va **hech qachon
+orqaga ketmaydi** — o'zlashtirilgan so'z shu seansda qayta "yo'qolmaydi".
+
+## Zaif nuqtalarni aniqlash
+
+Ilova ikki xil zaiflikni **alohida** kuzatadi:
+
+| Nima | Qayerda | Nima uchun |
+| --- | --- | --- |
+| Qaysi SO'Z unutilyapti | `lapses` | eskidan bor |
+| Qaysi KO'NIKMA oqsayapti | `typeStats` (baza v4) | bola so'zni tanishi, lekin yozolmasligi mumkin |
+
+Bular boshqa-boshqa xotira turlari. Ilgari ikkalasi bir xil "bilaman"
+deb hisoblanardi.
+
+- **`MIN_SAMPLES = 3`** — bitta xato javobdan xulosa chiqarish shovqin.
+- **Yo'naltirish 50%** — zaif tur yarim ehtimol bilan tanlanadi. Har
+  safar eng yomon mashqni berish zeriktirardi va o'zlashtirish qoidasi
+  baribir ikki XIL turni talab qiladi.
+- Profilda **"Ustida ishlash kerak"** bo'limi va `/review/weak` —
+  qiyin so'zlar seansi (muddat hisobga olinmaydi).
+
+## O'yinlar
+
+Bosh ekrandagi 🎮 kartadan ochiladi. Pastki navigatsiyaga
+QO'SHILMAGAN: u yerda beshta element bor va 320 px da ular allaqachon
+tor.
+
+| O'yin | Formati |
+| --- | --- |
+| ⚡ Vaqtga qarshi | 60 soniya, tanib olish, rekord |
+| 🧠 Xotira | 12 ta **yopiq** katak, juftini top |
+| ⚖️ To'g'rimi? | "father = ota. Ha/Yo'q" |
+| 🎯 Kunlik chaqiriq | Sanadan hisoblanadi, +50 XP |
+
+**O'yinlar SM-2 ga yumshoq baho beradi** (to'g'ri 4, xato **2**, hech
+qachon 1): o'yindagi xato ko'pincha vaqt yetmagani yoki chalg'iganidan
+bo'ladi. To'liq "unutdim" bahosi bolani o'yin o'ynagani uchun
+jazolardi.
+
+**"To'g'rimi?" o'zlashtirishga hisobga o'tmaydi** — ikki variantdan
+bittasi 50% ehtimol bilan to'g'ri chiqadi.
+
+**Omadli karta**: 8% ehtimol bilan XP ikki barobar, javobdan **oldin**
+e'lon qilinadi (kutish — dofaminning asosiy manbai). Bonus
+`recordAnswer` tranzaksiyasi ichida beriladi, aks holda ekranda
+ko'rinib, bazaga yozilmasdi.
 
 Ikki qoida buzilmaydi:
 
@@ -690,6 +757,38 @@ ko'ngil aynishiga sabab bo'ladi.
 
 Kuchli effektlar yo'l va bosh sahifada; mashq siklida harakatlar
 ≤200 ms — javob va keyingi savol orasidagi ritm buzilmasligi kerak.
+
+### Plaginlar
+
+GSAP 3.15 to'liq to'plam bilan keladi. Ular **alohida dangasa
+bo'laklar** va ekranga qarab so'raladi:
+
+```ts
+withMotion(scope, (gsap) => { … }, ['scrollTrigger', 'drawSVG'])
+```
+
+| Plagin | Hajmi (gzip) | Qayerda |
+| --- | --- | --- |
+| ScrollTrigger | 17.5 kB | o'quv yo'li |
+| SplitText | 3.3 kB | o'yinlar sarlavhasi |
+| DrawSVG | 1.9 kB | yo'l chizig'i |
+| Physics2D | 0.9 kB | to'g'ri javob uchqunlari |
+
+Hech bir ekran hammasini yuklamaydi.
+
+**Uch tuzoq — uchalasi ham JIMGINA ishlamay qo'yadi:**
+
+1. `gsap.context(fn, scope)` selektorlarni SCOPE ICHIDA qidiradi.
+   Scope tashqarisidagi elementni animatsiyalash konsolga
+   ogohlantirish beradi va hech nima qilmaydi.
+2. `gsap.registerPlugin(SplitText)` uni `gsap.SplitText` sifatida
+   QO'SHMAYDI — klassni o'zingiz saqlab qo'yishingiz kerak.
+3. Bezak SVG'ga `-z-10` berilsa u SAHIFA FONINING ortiga tushadi va
+   umuman ko'rinmaydi.
+
+Presetlar bo'sh tanlovda `null` qaytaradi: aks holda konsol
+"GSAP target not found" xabarlari bilan to'lib, haqiqiy xatolar
+ko'rinmay qolardi.
 
 ## Liga va maxfiylik
 
