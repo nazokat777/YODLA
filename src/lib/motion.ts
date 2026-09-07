@@ -34,6 +34,20 @@ export type MotionPlugin = 'scrollTrigger' | 'drawSVG' | 'splitText' | 'physics2
 const registered = new Set<MotionPlugin>()
 
 /**
+ * `SplitText` KLASSI.
+ *
+ * `gsap.registerPlugin(SplitText)` uni `gsap.SplitText` sifatida
+ * QO'SHMAYDI — bu tuzoqqa bir marta tushildi va sarlavha animatsiyasi
+ * jimgina ishlamay turdi. Klass yuklanganda shu yerda saqlanadi.
+ */
+let SplitTextClass: SplitTextConstructor | null = null
+
+type SplitTextConstructor = new (
+  target: Element,
+  config: Record<string, unknown>,
+) => { chars: Element[]; revert: () => void }
+
+/**
  * Plaginni yuklab, GSAP'ga ro'yxatdan o'tkazadi.
  *
  * Xato bo'lsa JIMGINA o'tadi: plagin yo'qligi animatsiyani
@@ -57,6 +71,7 @@ async function registerPlugin(gsap: GsapLike, plugin: MotionPlugin): Promise<voi
       case 'splitText': {
         const module = await import('gsap/SplitText')
         gsap.registerPlugin(module.SplitText)
+        SplitTextClass = module.SplitText as unknown as SplitTextConstructor
         break
       }
       case 'physics2D': {
@@ -314,16 +329,12 @@ export function particleBurst(gsap: GsapLike, particles: Target) {
  * uchun `SplitText` `aria-label` ni saqlaydi.
  */
 export function revealHeading(gsap: GsapLike, element: Element) {
-  const SplitTextClass = (gsap as unknown as { SplitText?: unknown }).SplitText
   if (!SplitTextClass) return null
 
   const label = element.textContent ?? ''
   element.setAttribute('aria-label', label)
 
-  const split = new (SplitTextClass as new (
-    el: Element,
-    config: Record<string, unknown>,
-  ) => { chars: Element[]; revert: () => void })(element, {
+  const split = new SplitTextClass(element, {
     type: 'chars',
     // Ekran o'quvchi bo'lingan harflarni birma-bir o'qimasin
     charsClass: 'inline-block',
