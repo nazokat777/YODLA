@@ -116,3 +116,20 @@ describe('LessonScreen — lug‘at fonda yuklanayotganda', () => {
     )
   })
 })
+
+describe('LessonScreen — aralash takror bosqichi', () => {
+  it('BIRINCHI darsda aralash bosqich YO‘Q', async () => {
+    /*
+     * Qaytariladigan eski so'z bo'lmasa bosqich o'tkazib yuboriladi:
+     * bo'sh takror seansi foydalanuvchini chalg'itardi.
+     */
+    await db.cards.clear()
+    await addMissingCards(WORDS)
+
+    renderLesson('/lesson')
+
+    expect(await screen.findByTestId('session-progress')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Dars' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /aralash takror/i })).not.toBeInTheDocument()
+  })
+})

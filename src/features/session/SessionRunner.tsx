@@ -49,6 +49,16 @@ export interface SessionSummary {
   perfectBonusXp: number
   /** Shu seansda ochilgan nishonlar id lari */
   newBadges: string[]
+  /** O'zlashtirilgan so'zlar (faqat `mastery` rejimida) */
+  masteredWords: number
+  /**
+   * O'zlashtirilmay qolgan so'zlar.
+   *
+   * Nolldan katta bo'lishi — 60 qadamlik chegara ishlaganini bildiradi.
+   * Yakun panelida bu HALOL aytiladi: bola nima qilganini va nima
+   * qolganini bilishi kerak.
+   */
+  pendingWords: number
 }
 
 /**
@@ -67,6 +77,8 @@ const EMPTY_SUMMARY: SessionSummary = {
   xpEarned: 0,
   perfectBonusXp: 0,
   newBadges: [],
+  masteredWords: 0,
+  pendingWords: 0,
 }
 
 interface SessionRunnerProps {
@@ -352,10 +364,18 @@ export function SessionRunner({
      */
     void requestPersistentStorage()
 
+    // O'zlashtirish hisobi — yakun panelida halol ko'rsatiladi
+    const mastered = mode === 'mastery' ? [...mastery.values()].filter((w) => w.mastered).length : 0
+    const counts = {
+      masteredWords: mastered,
+      pendingWords: mode === 'mastery' ? cards.length - mastered : 0,
+    }
+
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
       .then(({ newlyUnlocked, perfectBonusXp }) =>
         onFinish({
           ...summary,
+          ...counts,
           // Benuqson bonusi bazaga `finalizeSession` da yozildi — yakun
           // ekranidagi son bilan haqiqiy XP mos kelishi uchun bu yerda ham
           xpEarned: summary.xpEarned + perfectBonusXp,
@@ -367,8 +387,9 @@ export function SessionRunner({
         // Nishonlarni hisoblab bo'lmasa ham seans yakuni ko'rsatiladi:
         // geymifikatsiya o'quv jarayonini to'sib qo'ymasligi kerak
         console.error('Nishonlarni yangilab bo‘lmadi:', error)
-        onFinish(summary)
+        onFinish({ ...summary, ...counts })
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, queue.length, onFinish, summary])
 
   /**

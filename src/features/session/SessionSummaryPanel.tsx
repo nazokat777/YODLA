@@ -51,6 +51,20 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
             {summary.answered} ta javob · {accuracy}% aniqlik
           </p>
 
+          {/*
+            HALOL HISOBOT. Dars 60 qadamlik chegaraga yetganda so'zlar
+            o'zlashtirilmagan holda tugashi mumkin. Buni yashirish
+            bolaga "o'rgandim" degan yolg'on ishonch berardi; aytish esa
+            keyingi qadamni aniq qiladi — bu so'zlar ertaga birinchi
+            navbatda qaytadi.
+          */}
+          {summary.pendingWords > 0 && (
+            <p data-testid="pending-words" className="mt-2 text-sm font-semibold text-flame-700">
+              {summary.masteredWords} ta so‘z o‘zlashtirildi ·{' '}
+              {summary.pendingWords} tasi keyingi darsga qoldi
+            </p>
+          )}
+
           {summary.xpEarned > 0 && (
             <p
               data-testid="session-xp"

@@ -11,6 +11,8 @@ const SUMMARY: SessionSummary = {
   perfectBonusXp: 0,
   xpEarned: 84,
   newBadges: [],
+  masteredWords: 0,
+  pendingWords: 0,
 }
 
 describe('SessionSummaryPanel', () => {
@@ -44,5 +46,33 @@ describe('SessionSummaryPanel', () => {
     render(<SessionSummaryPanel summary={null} />)
 
     expect(screen.getByText(/takrorlash uchun so.z yo.q/i)).toBeInTheDocument()
+  })
+})
+
+describe('SessionSummaryPanel — o‘zlashtirish hisoboti', () => {
+  it('qolgan so‘zlar HALOL aytiladi', () => {
+    /*
+     * 60 qadamlik chegara ishlaganda so'zlar o'zlashtirilmagan holda
+     * qolishi mumkin. Buni yashirish bolaga yolg'on ishonch berardi.
+     */
+    render(
+      <SessionSummaryPanel
+        summary={{ ...SUMMARY, answered: 60, masteredWords: 5, pendingWords: 2 }}
+      />,
+    )
+
+    expect(screen.getByTestId('pending-words')).toHaveTextContent(
+      /5 ta so.z o.zlashtirildi · 2 tasi keyingi darsga qoldi/,
+    )
+  })
+
+  it('hammasi o‘zlashtirilganda bu qator CHIQMAYDI', () => {
+    render(
+      <SessionSummaryPanel
+        summary={{ ...SUMMARY, answered: 14, masteredWords: 4, pendingWords: 0 }}
+      />,
+    )
+
+    expect(screen.queryByTestId('pending-words')).not.toBeInTheDocument()
   })
 })

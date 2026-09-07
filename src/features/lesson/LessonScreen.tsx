@@ -8,6 +8,7 @@ import { Panel } from '@/components/ui/Panel'
 import { countCards, getAllCards, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { buildUnits, unitIdOf } from '@/core/path'
+import { pickWeakest } from '@/core/mastery'
 import { readTopicOrder } from '@/content/topicOrderCache'
 import type { LanguageCode, LevelCode } from '@/core/types'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
@@ -26,6 +27,29 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 const LESSON_SIZE = 4
 
 /**
+ * Aralash takror bosqichida nechta eski so'z qaytariladi.
+ *
+ * Oldingi BARCHA so'zlarni har safar so'rash mumkin emas: 20-darsda
+ * ular 250 tadan oshadi va seans yarim soatga cho'ziladi. Shuning uchun
+ * eng ko'p e'tibor talab qiladigan 12 tasi tanlanadi
+ * (`core/mastery/weakness.ts`).
+ */
+const MIXED_REVIEW_SIZE = 12
+
+/** Bo'sh natija — ikki bosqichni qo'shishda tayanch nuqta */
+const EMPTY_LESSON_SUMMARY: SessionSummary = {
+  answered: 0,
+  correct: 0,
+  almost: 0,
+  wrong: 0,
+  xpEarned: 0,
+  perfectBonusXp: 0,
+  newBadges: [],
+  masteredWords: 0,
+  pendingWords: 0,
+}
+
+/**
  * Dars ekrani (TZ 6.3): yangi so'zlarni o'rganish.
  *
  * Takrorlashdan farqi — bu yerda avval HALI KO'RILMAGAN so'zlar beriladi.
@@ -38,6 +62,15 @@ export function LessonScreen() {
   const { lessonId } = useParams<{ lessonId?: string }>()
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
+  /**
+   * Aralash takror uchun so'zlar — oldingi darslardan eng zaif 12 tasi.
+   *
+   * `null` — bosqich hali boshlanmagan; bo'sh massiv — qaytariladigan
+   * so'z yo'q (birinchi dars).
+   */
+  const [mixedCards, setMixedCards] = useState<CardRecord[] | null>(null)
+  /** Bosqich 1 natijasi — yakunda ikkalasi qo'shiladi */
+  const [lessonSummary, setLessonSummary] = useState<SessionSummary | null>(null)
   const [pool, setPool] = useState<CardRecord[]>([])
   const [summary, setSummary] = useState<SessionSummary | null>(null)
   /** So'ralgan bo'lim umuman mavjud emas (eskirgan havola) */
@@ -98,6 +131,19 @@ export function LessonScreen() {
         setIsMissingUnit(Boolean(lessonId) && scope.length === 0 && all.length > 0)
 
         setPool(scope)
+
+        /*
+         * ARALASH TAKROR uchun manba: shu darsga KIRMAGAN va allaqachon
+         * ko'rilgan so'zlar. "Ko'rilgan" — amaliy ta'rif: foydalanuvchi
+         * haqiqatan o'tgan so'zlar, bo'lim raqami emas.
+         */
+        const lessonIds = new Set(
+          pickLessonCards(scope, LESSON_SIZE, targetUnit ? undefined : startingLevel).map(
+            (card) => card.id,
+          ),
+        )
+        const seen = all.filter((card) => card.totalReviews > 0 && !lessonIds.has(card.id))
+        setMixedCards(pickWeakest(seen, MIXED_REVIEW_SIZE, Date.now()))
         // Tartib domen qoidasi — core/lesson/order.ts da test qilingan
         setCards(pickLessonCards(scope, LESSON_SIZE, targetUnit ? undefined : startingLevel))
       })
@@ -111,7 +157,45 @@ export function LessonScreen() {
     }
   }, [learningLanguage, lessonKey, startingLevel, lessonId, cardCount])
 
-  const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
+  /**
+   * Bosqich 1 tugadi.
+   *
+   * Qaytariladigan eski so'z bo'lsa — ARALASH TAKROR boshlanadi
+   * (interleaving: yangi bilim eski bilim bilan bog'lanadi). Bo'lmasa
+   * (birinchi dars) seans shu yerda tugaydi.
+   */
+  const handleLessonFinish = useCallback(
+    (result: SessionSummary) => {
+      if (mixedCards && mixedCards.length > 0) {
+        setLessonSummary(result)
+        return
+      }
+
+      setSummary(result)
+    },
+    [mixedCards],
+  )
+
+  /** Bosqich 2 tugadi — ikkala bosqich natijasi qo'shiladi */
+  const handleMixedFinish = useCallback(
+    (result: SessionSummary) => {
+      const first = lessonSummary ?? EMPTY_LESSON_SUMMARY
+
+      setSummary({
+        answered: first.answered + result.answered,
+        correct: first.correct + result.correct,
+        almost: first.almost + result.almost,
+        wrong: first.wrong + result.wrong,
+        xpEarned: first.xpEarned + result.xpEarned,
+        perfectBonusXp: first.perfectBonusXp + result.perfectBonusXp,
+        // Takrorlanmasin: ikkala bosqichda bir nishon ochilishi mumkin
+        newBadges: [...new Set([...first.newBadges, ...result.newBadges])],
+        masteredWords: first.masteredWords + result.masteredWords,
+        pendingWords: first.pendingWords + result.pendingWords,
+      })
+    },
+    [lessonSummary],
+  )
 
   return (
     <div className="flex flex-1 flex-col p-4">
@@ -131,7 +215,9 @@ export function LessonScreen() {
         >
           ✕
         </button>
-        <h1 className="text-lg font-extrabold">Dars</h1>
+        <h1 className="text-lg font-extrabold">
+          {lessonSummary && summary === null ? 'Aralash takror' : 'Dars'}
+        </h1>
       </div>
 
       {cards === null && <Panel className="text-ink-600">Yuklanmoqda…</Panel>}
@@ -154,7 +240,25 @@ export function LessonScreen() {
         </Panel>
       )}
 
-      {cards !== null && cards.length > 0 && summary === null && (
+      {/*
+        BOSQICH 2 — aralash takror. Yangi so'zlar o'zlashtirilgach,
+        oldingi darslardan eng zaif 12 tasi qaytariladi: yangi bilim
+        eski bilim bilan bog'lanadi (interleaving).
+
+        Alohida `key`: seans holati (o'zlashtirish xaritasi, navbat)
+        noldan boshlanishi kerak.
+      */}
+      {lessonSummary !== null && summary === null && mixedCards !== null && (
+        <SessionRunner
+          key={`mixed-${lessonKey}`}
+          cards={mixedCards}
+          pool={pool}
+          mode="mastery"
+          onFinish={handleMixedFinish}
+        />
+      )}
+
+      {cards !== null && cards.length > 0 && summary === null && lessonSummary === null && (
         <SessionRunner
           key={lessonKey}
           cards={cards}
@@ -167,7 +271,7 @@ export function LessonScreen() {
             son emas.
           */
           mode="mastery"
-          onFinish={handleFinish}
+          onFinish={handleLessonFinish}
         />
       )}
 
