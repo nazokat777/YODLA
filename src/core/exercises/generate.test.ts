@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CardRecord } from '@/core/db'
+import type { ExerciseType } from '@/core/types'
 import { seededRandom } from '@/lib/random'
 import { MATCHING_SIZE, generateExercise, pickExerciseType } from './generate'
 import { MAX_CHOICES } from './types'
@@ -684,5 +685,51 @@ describe('gap ichida (cloze) — yechilishi', () => {
     // Usiz foydalanuvchi jumla ma'nosini bilmay, to'rt xorijiy so'zdan
     // qaysi biri mos kelishini faqat TAXMIN qilardi
     expect(typesFor(clozeCard({ sentenceTranslation: undefined }))).not.toContain('cloze')
+  })
+})
+
+describe('excludeTypes — mashq turini chetlash', () => {
+  const CARD = makeCard({
+    id: 'en:water',
+    word: 'water',
+    translation: 'suv',
+    repetitions: 1,
+    sentence: 'I drink water.',
+    sentenceTranslation: 'Men suv ichaman.',
+  })
+  const POOL = [
+    CARD,
+    makeCard({ id: 'en:bread', word: 'bread', translation: 'non' }),
+    makeCard({ id: 'en:tea', word: 'tea', translation: 'choy' }),
+  ]
+
+  /** Butun tasodif oralig'ida chiqishi mumkin bo'lgan turlar */
+  const typesFor = (excludeTypes: ExerciseType[]) =>
+    new Set(
+      [0, 0.34, 0.67, 0.99].map(
+        (value) =>
+          pickExerciseType({
+            card: CARD,
+            pool: POOL,
+            allowAudio: true,
+            excludeTypes,
+            random: () => value,
+          }),
+      ),
+    )
+
+  it('chetlangan tur QAYTMAYDI', () => {
+    expect(typesFor([])).toContain('recognition')
+    expect(typesFor(['recognition'])).not.toContain('recognition')
+  })
+
+  it('barcha turlar chetlansa ham mashq BERILADI', () => {
+    /*
+     * Aks holda so'z hech qanday mashq ololmay, seans o'sha yerda
+     * tiqilib qolardi — foydalanuvchi uchun ilova "qotgan" bo'lardi.
+     */
+    const types = typesFor(['recognition', 'listening', 'matching'])
+
+    expect(types.size).toBeGreaterThan(0)
   })
 })

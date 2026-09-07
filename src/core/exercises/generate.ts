@@ -38,6 +38,18 @@ export interface GenerateExerciseOptions {
    * o'zgarmasligi kerak.
    */
   stage?: number
+  /**
+   * Berilmasligi kerak bo'lgan mashq turlari.
+   *
+   * O'zlashtirish halqasi shuni talab qiladi: so'z ketma-ket ikki xil
+   * turda to'g'ri javob olishi kerak, ya'ni oxirgi tur chetlanadi
+   * (`core/mastery/select.ts`).
+   *
+   * Chetlash MAJBURIY EMAS: shu pog'onada boshqa tur qolmasa, u bekor
+   * qilinadi va mashq baribir beriladi. Aks holda so'z hech qanday
+   * mashq ololmay, seans o'sha yerda tiqilib qolardi.
+   */
+  excludeTypes?: readonly ExerciseType[]
   random?: RandomSource
 }
 
@@ -283,7 +295,7 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
  * (u har doim mumkin).
  */
 export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType {
-  const { card, stage = 0, random = Math.random } = options
+  const { card, stage = 0, excludeTypes = [], random = Math.random } = options
   const effectiveRepetitions = card.repetitions + stage
 
   for (const step of DIFFICULTY_LADDER) {
@@ -292,7 +304,12 @@ export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType
     const available = step.types.filter((type) => isTypeAvailable(type, options))
     if (available.length === 0) continue
 
-    return available[Math.floor(random() * available.length)]
+    // Chetlashdan keyin tur qolmasa, chetlash BEKOR qilinadi:
+    // mashqsiz qolgan so'z seansni to'xtatib qo'yardi
+    const allowed = available.filter((type) => !excludeTypes.includes(type))
+    const pool = allowed.length > 0 ? allowed : available
+
+    return pool[Math.floor(random() * pool.length)]
   }
 
   return 'recall'
