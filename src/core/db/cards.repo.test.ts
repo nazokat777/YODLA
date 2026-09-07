@@ -11,6 +11,7 @@ import {
   getNextDueDate,
   gradeCard,
   pruneRemovedCards,
+  recordTypeResult,
   syncCardContent,
   type NewCardRecordInput,
 } from './cards.repo'
@@ -396,5 +397,51 @@ describe('getGlobalCardStats', () => {
       learned: 0,
       mature: 0,
     })
+  })
+})
+
+describe('recordTypeResult', () => {
+  it('to‘g‘ri javob — seen ortadi, wrong ortmaydi', async () => {
+    await db.cards.clear()
+    await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
+
+    await recordTypeResult('en:apple', 'recognition', false)
+    await recordTypeResult('en:apple', 'recognition', false)
+
+    const card = await db.cards.get('en:apple')
+
+    expect(card?.typeStats?.recognition).toEqual({ seen: 2, wrong: 0 })
+  })
+
+  it('xato javob — ikkalasi ham ortadi', async () => {
+    await db.cards.clear()
+    await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
+
+    await recordTypeResult('en:apple', 'recall', true)
+
+    expect((await db.cards.get('en:apple'))?.typeStats?.recall).toEqual({ seen: 1, wrong: 1 })
+  })
+
+  it('turlar bir-birini O‘CHIRMAYDI', async () => {
+    /*
+     * Butun `typeStats` obyekti qayta yoziladi, shuning uchun eski
+     * turlar ko'chirilishi shart — aks holda har yangi tur oldingisini
+     * yo'q qilardi va statistika hech qachon to'planmasdi.
+     */
+    await db.cards.clear()
+    await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
+
+    await recordTypeResult('en:apple', 'recognition', false)
+    await recordTypeResult('en:apple', 'spelling', true)
+
+    const stats = (await db.cards.get('en:apple'))?.typeStats
+
+    expect(stats?.recognition).toEqual({ seen: 1, wrong: 0 })
+    expect(stats?.spelling).toEqual({ seen: 1, wrong: 1 })
+  })
+
+  it('yo‘q kartada YIQILMAYDI', async () => {
+    // Statistika o'quv jarayonini to'sib qo'ymasligi kerak
+    await expect(recordTypeResult('en:yoq', 'recall', false)).resolves.toBeUndefined()
   })
 })

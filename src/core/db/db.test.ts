@@ -9,8 +9,8 @@ afterEach(async () => {
 })
 
 describe('sxema', () => {
-  it('joriy versiya — 3', () => {
-    expect(db.verno).toBe(3)
+  it('joriy versiya — 4', () => {
+    expect(db.verno).toBe(4)
   })
 
   it('kerakli indekslar mavjud', () => {
@@ -111,6 +111,45 @@ describe('migratsiya', () => {
     const seen = await upgraded.cards.where('totalReviews').above(0).count()
 
     expect(seen).toBe(1)
+
+    upgraded.close()
+  })
+})
+
+describe('4-versiya — ko‘nikma statistikasi', () => {
+  it('ESKI kartalar progressi bilan ochiladi va typeStats yozilaveradi', async () => {
+    /*
+     * `typeStats` ixtiyoriy maydon: eski kartalarda u yo'q. Migratsiya
+     * SM-2 holatiga TEGMASLIGI kerak — foydalanuvchining oylab
+     * to'plagan progressi faqat shu bazada yashaydi.
+     */
+    const old = new Dexie(OLD_NAME)
+    old.version(1).stores({ cards: 'id, language, dueDate, [language+dueDate]' })
+    await old.open()
+    await old.table('cards').put({
+      id: 'en:apple',
+      word: 'apple',
+      translation: 'olma',
+      language: 'en',
+      interval: 15,
+      repetitions: 4,
+      easeFactor: 2.3,
+      dueDate: 5,
+      createdAt: 1,
+      lastReviewedAt: 2,
+      totalReviews: 7,
+      lapses: 2,
+    })
+    old.close()
+
+    const upgraded = new PolyglotDatabase(OLD_NAME)
+    await upgraded.open()
+
+    const card = await upgraded.cards.get('en:apple')
+
+    expect(card?.repetitions).toBe(4)
+    expect(card?.easeFactor).toBe(2.3)
+    expect(card?.typeStats).toBeUndefined()
 
     upgraded.close()
   })

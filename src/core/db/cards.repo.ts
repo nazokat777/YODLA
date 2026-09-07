@@ -1,5 +1,5 @@
 import Dexie from 'dexie'
-import type { Grade, LanguageCode } from '@/core/types'
+import type { ExerciseType, Grade, LanguageCode } from '@/core/types'
 import { createCard, makeCardId, PASSING_GRADE, reviewSrsState, type NewCardInput } from '@/core/srs'
 import { db } from './db'
 import { MATURE_INTERVAL_DAYS, type CardRecord } from './schema'
@@ -340,4 +340,35 @@ export async function getGlobalCardStats(): Promise<{
 /** Barcha kartalarni o'chirish (testlar va "progressni tozalash" uchun) */
 export async function clearAllCards(): Promise<void> {
   await db.cards.clear()
+}
+
+/**
+ * Mashq turi kesimidagi natijani yozadi.
+ *
+ * NEGA ALOHIDA FUNKSIYA: bu SM-2 dan mustaqil o'lchov. `gradeCard`
+ * so'zning QACHON qaytishini hisoblaydi, bu esa QAYSI KO'NIKMA
+ * oqsayotganini yozadi — bola so'zni tanishi, lekin yozolmasligi
+ * mumkin.
+ *
+ * Karta topilmasa jimgina qaytadi: statistika o'quv jarayonini
+ * to'sib qo'ymasligi kerak.
+ */
+export async function recordTypeResult(
+  cardId: string,
+  type: ExerciseType,
+  wasWrong: boolean,
+): Promise<void> {
+  await db.transaction('rw', db.cards, async () => {
+    const card = await db.cards.get(cardId)
+    if (!card) return
+
+    const previous = card.typeStats?.[type] ?? { seen: 0, wrong: 0 }
+
+    await db.cards.update(cardId, {
+      typeStats: {
+        ...card.typeStats,
+        [type]: { seen: previous.seen + 1, wrong: previous.wrong + (wasWrong ? 1 : 0) },
+      },
+    })
+  })
 }

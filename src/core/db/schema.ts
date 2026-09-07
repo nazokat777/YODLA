@@ -1,4 +1,4 @@
-import type { Card, LevelCode } from '@/core/types'
+import type { Card, ExerciseType, LevelCode } from '@/core/types'
 
 /**
  * Bazada saqlanadigan karta.
@@ -28,6 +28,26 @@ export interface CardRecord extends Card {
   sentence?: string
   /** Jumlaning o'zbekcha tarjimasi */
   sentenceTranslation?: string
+  /**
+   * MASHQ TURI kesimidagi natijalar.
+   *
+   * Nega kerak: so'zning qiyinligi (`lapses`) qaysi KO'NIKMA
+   * oqsayotganini aytmaydi. Bola `apple → olma` ni variantlardan
+   * bexato tanishi, lekin uni yozolmasligi mumkin — bular ikki xil
+   * xotira. Bu maydon shu farqni ko'rsatadi va mashqni aynan zaif
+   * ko'nikmaga yo'naltirishga imkon beradi.
+   *
+   * Ixtiyoriy: eski kartalarda yo'q va shu holicha ishlaydi.
+   */
+  typeStats?: Partial<Record<ExerciseType, TypeStat>>
+}
+
+/** Bitta mashq turining natijasi */
+export interface TypeStat {
+  /** Necha marta shu turda so'ralgan */
+  seen: number
+  /** Shundan nechtasi xato bo'lgan */
+  wrong: number
 }
 
 /**

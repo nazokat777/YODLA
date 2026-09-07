@@ -49,6 +49,24 @@ export class PolyglotDatabase extends Dexie {
       dailyStats: 'day',
       profile: 'id',
     })
+
+    /*
+     * 4-versiya: `typeStats` — mashq turi kesimidagi natijalar.
+     *
+     * INDEKS QO'SHILMAYDI, shuning uchun `stores` chaqiruvi 3-versiya
+     * bilan bir xil: yangi maydon INDEKSLANMAGAN va Dexie'da bunday
+     * maydonni e'lon qilish shart emas. Versiya raqami baribir
+     * oshiriladi — sxema o'zgargani kod tomonda ko'rinib tursin.
+     *
+     * Migratsiya YO'Q: maydon ixtiyoriy, eski kartalarda u yo'q va
+     * `undefined` holicha to'g'ri ishlaydi. Foydalanuvchining SM-2
+     * progressiga umuman tegilmaydi.
+     */
+    this.version(4).stores({
+      cards: 'id, language, dueDate, interval, totalReviews, [language+dueDate]',
+      dailyStats: 'day',
+      profile: 'id',
+    })
   }
 }
 
