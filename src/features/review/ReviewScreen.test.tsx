@@ -388,10 +388,20 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await answerRecognition('correct')
     fireEvent.click(await screen.findByRole('button', { name: /davom etish/i }))
 
-    // Seans bitta xatosiz tugadi — javob XP siga benuqson bonusi qo'shiladi
-    expect(await screen.findByTestId('session-xp')).toHaveTextContent(
-      `+${XP_PER_VERDICT.correct + PERFECT_SESSION_BONUS_XP} XP`,
-    )
+    /*
+     * Seans bitta xatosiz tugadi — javob XP siga benuqson bonusi
+     * qo'shiladi.
+     *
+     * `waitFor` (`findByTestId` emas): XP raqami NOLDAN sanab
+     * chiqadi va `findBy*` faqat elementning PAYDO BO'LISHINI
+     * kutadi. Tekshiruv animatsiya bilan poyga qilib, oraliq
+     * qiymatda ("+3 XP") yiqilardi — to'liq to'plamda ba'zan.
+     */
+    await waitFor(() => {
+      expect(screen.getByTestId('session-xp')).toHaveTextContent(
+        `+${XP_PER_VERDICT.correct + PERFECT_SESSION_BONUS_XP} XP`,
+      )
+    })
     expect(screen.getByTestId('perfect-bonus')).toHaveTextContent(
       `+${PERFECT_SESSION_BONUS_XP} XP`,
     )
