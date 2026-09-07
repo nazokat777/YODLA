@@ -24,6 +24,7 @@ import { LUCKY_MULTIPLIER, isLucky } from '@/core/games'
 import {
   applyAnswer,
   emptyProgress,
+  REQUIRED_STREAK,
   excludedTypesFor,
   pickNextCardId,
   weakestType,
@@ -115,6 +116,15 @@ interface SessionRunnerProps {
    * qaytaveradi (`core/mastery`).
    */
   mode?: 'fixed' | 'mastery'
+  /**
+   * O'zlashtirish uchun kerakli ketma-ket to'g'ri javoblar.
+   *
+   * Sukut — 2 (yangi so'z: bitta javob taxmin bo'lishi mumkin).
+   * Aralash TAKROR bosqichida 1 uzatiladi: u yerdagi so'zlar
+   * allaqachon o'rganilgan va ikki xil turni talab qilish darsni
+   * ikki barobar uzaytirardi.
+   */
+  requiredStreak?: number
   onFinish: (summary: SessionSummary) => void
 }
 
@@ -141,6 +151,7 @@ export function SessionRunner({
   pool,
   stagesFor = () => 1,
   mode = 'fixed',
+  requiredStreak = REQUIRED_STREAK,
   onFinish,
 }: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
@@ -448,14 +459,14 @@ export function SessionRunner({
         const current = next.get(result.cardId)
         if (!current) continue
 
-        next.set(result.cardId, applyAnswer(current, result.verdict, type))
+        next.set(result.cardId, applyAnswer(current, result.verdict, type, requiredStreak))
       }
 
       setMastery(next)
 
       return next
     },
-    [mastery],
+    [mastery, requiredStreak],
   )
 
   /**

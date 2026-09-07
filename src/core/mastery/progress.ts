@@ -20,8 +20,25 @@ export interface WordProgress {
   asked: number
 }
 
-/** O'zlashtirish uchun kerakli ketma-ket to'g'ri javoblar */
+/**
+ * YANGI so'z uchun kerakli ketma-ket to'g'ri javoblar.
+ *
+ * Ikkitasi va ular TURLI mashqlarda — chunki bu so'z birinchi marta
+ * o'rganilyapti va bitta to'g'ri javob taxmin bo'lishi mumkin.
+ */
 export const REQUIRED_STREAK = 2
+
+/**
+ * TAKROR uchun kerakli to'g'ri javoblar.
+ *
+ * Bittasi yetarli: aralash bosqichdagi so'zlar ALLAQACHON
+ * o'rganilgan va bu yerda maqsad ularni yodga solish. Ikki xil
+ * turni talab qilish 12 so'zni 24+ savolga aylantirardi va dars
+ * "kuniga 5 daqiqa" va'dasidan chiqib ketardi (o'lchandi: 78 ta
+ * savol). SM-2 ning o'zi ham bitta to'g'ri takrorni yetarli deb
+ * hisoblaydi.
+ */
+export const REVIEW_STREAK = 1
 
 export function emptyProgress(cardId: string): WordProgress {
   return { cardId, streak: 0, lastCorrectType: null, mastered: false, asked: 0 }
@@ -49,6 +66,7 @@ export function applyAnswer(
   progress: WordProgress,
   verdict: AnswerVerdict,
   type: ExerciseType,
+  requiredStreak: number = REQUIRED_STREAK,
 ): WordProgress {
   const asked = progress.asked + 1
 
@@ -58,13 +76,21 @@ export function applyAnswer(
 
   // `almost` — imlo xatosi: so'zni bilgan, faqat bir-ikki harf adashgan
   const streak = progress.streak + 1
-  const differentType = progress.lastCorrectType !== null && progress.lastCorrectType !== type
+
+  /*
+   * Bitta javob talab qilinganda TUR SHARTI qo'llanmaydi: bitta
+   * javobda ikki xil tur bo'lishi mumkin emas va shart hech qachon
+   * bajarilmasdi.
+   */
+  const typeRuleMet =
+    requiredStreak <= 1 ||
+    (progress.lastCorrectType !== null && progress.lastCorrectType !== type)
 
   return {
     ...progress,
     streak,
     lastCorrectType: type,
     asked,
-    mastered: progress.mastered || (streak >= REQUIRED_STREAK && differentType),
+    mastered: progress.mastered || (streak >= requiredStreak && typeRuleMet),
   }
 }

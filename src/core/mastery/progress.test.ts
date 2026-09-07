@@ -99,3 +99,36 @@ describe('applyAnswer', () => {
     expect(before.streak).toBe(0)
   })
 })
+
+describe('applyAnswer — takror rejimi (bitta javob)', () => {
+  it('BITTA to‘g‘ri javob o‘zlashtirilgan deb belgilaydi', () => {
+    /*
+     * Aralash takrordagi so'zlar ALLAQACHON o'rganilgan: bu yerda
+     * maqsad ularni yodga solish, noldan o'rgatish emas.
+     */
+    const progress = applyAnswer(emptyProgress('en:water'), 'correct', 'recognition', 1)
+
+    expect(progress.mastered).toBe(true)
+  })
+
+  it('TUR sharti qo‘llanmaydi — bitta javobda ikki tur bo‘lolmaydi', () => {
+    // Aks holda shart hech qachon bajarilmasdi va so'z abadiy qaytardi
+    const first = applyAnswer(emptyProgress('en:water'), 'correct', 'recall', 1)
+
+    expect(first.mastered).toBe(true)
+  })
+
+  it('xato javob bu rejimda ham nolga qaytaradi', () => {
+    const progress = applyAnswer(emptyProgress('en:water'), 'wrong', 'recall', 1)
+
+    expect(progress.mastered).toBe(false)
+    expect(progress.streak).toBe(0)
+  })
+
+  it('sukut bo‘yicha IKKI javob talab qilinadi', () => {
+    // Yangi so'z uchun qoida o'zgarmaydi
+    const progress = applyAnswer(emptyProgress('en:water'), 'correct', 'recognition')
+
+    expect(progress.mastered).toBe(false)
+  })
+})

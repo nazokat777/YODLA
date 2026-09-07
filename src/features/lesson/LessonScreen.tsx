@@ -8,7 +8,7 @@ import { Panel } from '@/components/ui/Panel'
 import { countCards, getAllCards, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { buildUnits, unitIdOf } from '@/core/path'
-import { pickWeakest } from '@/core/mastery'
+import { pickWeakest, REVIEW_STREAK } from '@/core/mastery'
 import { readTopicOrder } from '@/content/topicOrderCache'
 import type { LanguageCode, LevelCode } from '@/core/types'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
@@ -266,6 +266,13 @@ export function LessonScreen() {
           cards={mixedCards}
           pool={allCards}
           mode="mastery"
+          /*
+            TAKRORDA bitta to'g'ri javob yetarli: bu so'zlar allaqachon
+            o'rganilgan. Ikki xil turni talab qilish 12 so'zni 24+
+            savolga aylantirardi — o'lchandi, butun dars 78 savolga
+            cho'zilib, "kuniga 5 daqiqa" va'dasidan chiqib ketgandi.
+          */
+          requiredStreak={REVIEW_STREAK}
           onFinish={handleMixedFinish}
         />
       )}
