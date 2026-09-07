@@ -533,3 +533,26 @@ describe('SessionRunner — o‘zlashtirish xaritasi chegarasi', () => {
     expect(CARDS.length).toBeGreaterThan(1)
   })
 })
+
+describe('SessionRunner — omadli karta', () => {
+  it('omadli karta javobdan OLDIN e‘lon qilinadi', async () => {
+    /*
+     * Dofaminning asosiy manbai mukofotning o'zi emas, uni KUTISH.
+     * Javobdan keyin ko'rsatilsa, bu shunchaki bonus bo'lardi.
+     */
+    vi.spyOn(Math, 'random').mockReturnValue(0.01)
+
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    expect(await screen.findByTestId('lucky-badge')).toBeInTheDocument()
+  })
+
+  it('oddiy savolda nishon YO‘Q', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+
+    await screen.findByTestId('session-progress')
+    expect(screen.queryByTestId('lucky-badge')).not.toBeInTheDocument()
+  })
+})

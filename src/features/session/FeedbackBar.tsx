@@ -5,6 +5,7 @@ import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
+import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
 import { cn } from '@/lib/cn'
 import { formatInterval } from '@/lib/format'
 import { PronounceButton } from '@/components/ui/PronounceButton'
@@ -183,6 +184,13 @@ export function FeedbackBar({
           {tone.icon}
         </span>
         <p className={cn('text-lg font-extrabold', tone.text)}>{tone.title}</p>
+
+        {/*
+          SO'Z KUCHI — bola bugun qilgan ishi so'zni oldinga
+          surganini KO'RADI. Ko'rinmaydigan progress motivatsiya
+          bermaydi.
+        */}
+        <WordStrengthMeter card={exercise.card} className="ms-auto" />
 
         {xpGained > 0 && (
           <span

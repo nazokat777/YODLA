@@ -20,6 +20,7 @@ import {
 } from '@/core/exercises'
 import type { ExerciseType } from '@/core/types'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
+import { LUCKY_MULTIPLIER, isLucky } from '@/core/games'
 import {
   applyAnswer,
   emptyProgress,
@@ -29,7 +30,7 @@ import {
   EXERCISE_TYPES,
   type WordProgress,
 } from '@/core/mastery'
-import { comboBonusXp, nextCombo } from '@/core/gamification'
+import { comboBonusXp, nextCombo, xpForAnswer } from '@/core/gamification'
 import { slideIn, withMotion } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
@@ -200,6 +201,14 @@ export function SessionRunner({
   const [goalJustCompleted, setGoalJustCompleted] = useState(false)
   /** Ketma-ket to'g'ri javoblar — seans ichidagi holat, saqlanmaydi */
   const [combo, setCombo] = useState(0)
+  /**
+   * Shu savol "omadli" mi — XP ikki barobar.
+   *
+   * Javobdan OLDIN e'lon qilinadi: dofaminning asosiy manbai
+   * mukofotning o'zi emas, uni KUTISH. O'zgaruvchan mukofot
+   * (tasodifiy kelishi) barqarordan kuchliroq ta'sir qiladi.
+   */
+  const [lucky, setLucky] = useState(false)
 
   /**
    * Shu seansda TANISHTIRILGAN so'zlar.
@@ -298,6 +307,7 @@ export function SessionRunner({
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)
     setErrorMessage(null)
+    setLucky(isLucky())
   // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
   // mashqni javob berilgan zahoti qayta yaratib yuborardi
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -547,7 +557,16 @@ export function SessionRunner({
           cardId: exercise.card.id,
           verdict: result,
           dailyGoalWords,
-          bonusXp: comboBonusXp(streak),
+          /*
+           * OMADLI KARTA bonusi shu yerda, `bonusXp` orqali beriladi.
+           *
+           * Natijani ekranda ko'paytirish YARAMAYDI: bazaga oddiy XP
+           * yozilar va foydalanuvchi "+20 XP" ni ko'rib, aslida 10 ta
+           * olardi. Bonus ham aynan shu tranzaksiyaga qo'shiladi —
+           * ikki yozuv orasida ilova yopilsa u yo'qolardi.
+           */
+          bonusXp:
+            comboBonusXp(streak) + (lucky ? xpForAnswer(result) * (LUCKY_MULTIPLIER - 1) : 0),
         })
         xpGained = progress.xpGained
         goalCompleted = progress.goalJustCompleted
@@ -626,6 +645,7 @@ export function SessionRunner({
     index,
     mode,
     applyToMastery,
+    lucky,
   ])
 
   /** Feedback'dan keyin keyingi mashqqa o'tish */
@@ -836,6 +856,19 @@ export function SessionRunner({
           Kombo 2 dan boshlab ko'rinadi: "🔥 1" har to'g'ri javobdan keyin
           chiqib, shovqinga aylanardi va hech nima anglatmasdi.
         */}
+        {/*
+          OMADLI KARTA javobdan OLDIN e'lon qilinadi: dofaminning
+          asosiy manbai mukofotning o'zi emas, uni KUTISH.
+        */}
+        {lucky && verdict === null && (
+          <span
+            data-testid="lucky-badge"
+            className="shrink-0 rounded-full bg-flame-500/20 px-2.5 py-1 text-sm font-extrabold text-flame-700"
+          >
+            ✨ ×{LUCKY_MULTIPLIER} XP
+          </span>
+        )}
+
         {combo >= 2 && (
           <span
             data-testid="combo"
