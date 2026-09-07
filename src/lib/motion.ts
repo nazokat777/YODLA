@@ -339,3 +339,27 @@ export function pressTilt(gsap: GsapLike, target: Target) {
     },
   )
 }
+
+/**
+ * SVG chizig'i SKROLL bilan chiziladi (`scrollTrigger` + `drawSVG`).
+ *
+ * Foydalanuvchi pastga tushgan sari yo'l uzayadi — bu o'quv yo'lining
+ * "yo'l" ekanini eng aniq ko'rsatadigan effekt. `scrub` tufayli
+ * chiziq skroll bilan BOG'LANGAN, o'z-o'zidan yugurmaydi.
+ */
+export function drawPathOnScroll(gsap: GsapLike, target: Target, trigger: Element) {
+  return gsap.fromTo(
+    target,
+    { drawSVG: '0%' },
+    {
+      drawSVG: '100%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger,
+        start: 'top 80%',
+        end: 'bottom bottom',
+        scrub: 0.6,
+      },
+    },
+  )
+}

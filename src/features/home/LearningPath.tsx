@@ -5,7 +5,14 @@ import { loadLanguageDeck } from '@/content/starterDecks'
 import { readTopicOrder, saveTopicOrder } from '@/content/topicOrderCache'
 import type { CardRecord } from '@/core/db'
 import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
-import { enterStagger, floatLoop, pulseRing, withMotion } from '@/lib/motion'
+import {
+  drawPathOnScroll,
+  enterStagger,
+  floatLoop,
+  pulseRing,
+  revealOnScroll,
+  withMotion,
+} from '@/lib/motion'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 
@@ -123,6 +130,64 @@ export function LearningPath({ cards }: LearningPathProps) {
   const isLoading = cards === undefined || topicOrder === null
 
   const listRef = useRef<HTMLOListElement>(null)
+  const [pathShape, setPathShape] = useState<{ d: string; height: number } | null>(null)
+
+  /*
+   * YO'L CHIZIG'I bo'limlar MARKAZIDAN o'tadi.
+   *
+   * Ilgari chiziq umuman yo'q edi va sababi to'g'ri edi: bo'limlar
+   * zigzag bo'ylab siljigani uchun bitta TIK chiziq ularning hech
+   * biridan o'tmasdi. Yechim — tik chiziq emas, doiralarning haqiqiy
+   * markazlaridan o'tuvchi EGRI chiziq. Buning uchun joylashuv
+   * o'lchanadi: uni oldindan hisoblab bo'lmaydi, chunki u shrift
+   * o'lchami va ekran kengligiga bog'liq.
+   */
+  useEffect(() => {
+    const list = listRef.current
+    if (!list || units.length === 0) return
+
+    const measure = () => {
+      const circles = list.querySelectorAll('[data-circle]')
+      if (circles.length < 2) return
+
+      const base = list.getBoundingClientRect()
+      const points = [...circles].map((circle) => {
+        const box = circle.getBoundingClientRect()
+        return { x: box.left - base.left + box.width / 2, y: box.top - base.top + box.height / 2 }
+      })
+
+      /*
+       * Silliq egri: har ikki nuqta orasida ULARNING O'RTASIGA
+       * qaratilgan kvadratik yoy. To'g'ri chiziqlar bilan bog'lansa
+       * yo'l siniq va "arzon" ko'rinardi.
+       */
+      let d = `M ${points[0]!.x} ${points[0]!.y}`
+      for (let i = 1; i < points.length; i += 1) {
+        const previous = points[i - 1]!
+        const current = points[i]!
+        const midY = (previous.y + current.y) / 2
+        d += ` C ${previous.x} ${midY} ${current.x} ${midY} ${current.x} ${current.y}`
+      }
+
+      setPathShape({ d, height: base.height })
+    }
+
+    measure()
+
+    /*
+     * Ekran kengligi o'zgarsa zigzag ham o'zgaradi.
+     *
+     * `ResizeObserver` BO'LMASLIGI mumkin (eski brauzer, test muhiti).
+     * Chiziq — bezak, shuning uchun u yo'q bo'lsa bir marta o'lchab
+     * qo'ya qolamiz: butun ekranni yiqitish mutlaqo asossiz bo'lardi.
+     */
+    if (typeof ResizeObserver !== 'function') return
+
+    const observer = new ResizeObserver(measure)
+    observer.observe(list)
+
+    return () => observer.disconnect()
+  }, [units])
 
   // Bo'limlar ketma-ket "otilib" chiqadi. Animatsiya bo'lmasa ro'yxat
   // shunchaki joyida turadi — DOM allaqachon to'g'ri
@@ -148,10 +213,23 @@ export function LearningPath({ cards }: LearningPathProps) {
         y: 28,
       })
 
+      /*
+       * QOLGANLARI ekranga kirganda ochiladi.
+       *
+       * Bu ham chiroyliroq, ham ARZONROQ: 260 dan ortiq bo'limni
+       * ochilishda animatsiyalash isrof edi — foydalanuvchi bir
+       * vaqtda beshtasini ko'radi.
+       */
+      revealOnScroll(gsap, '[data-unit]:nth-child(n+9)')
+
+      // Yo'l chizig'i SKROLL bilan chiziladi — bo'limlar ro'yxat
+      // emas, YO'L ekani ko'rinadi
+      if (listRef.current) drawPathOnScroll(gsap, '[data-path-line]', listRef.current)
+
       // "Nafas" + halqa: ko'z qayerga qarashni biladi
       floatLoop(gsap, '[data-state="current"]')
       pulseRing(gsap, '[data-ring]')
-    }).then((fn) => {
+    }, ['scrollTrigger', 'drawSVG']).then((fn) => {
       if (cancelled) fn()
       else revert = fn
     })
@@ -199,12 +277,31 @@ export function LearningPath({ cards }: LearningPathProps) {
     <section>
       <h2 className="mb-3 font-bold">O'quv yo'li</h2>
 
-      {/*
-        CHIZIQ YO'Q: bo'limlar zigzag bo'ylab siljigani uchun bitta tik
-        chiziq ularning hech biridan o'tmasdi — u doiralar YONIDA osilib
-        qolardi. Zigzagning o'zi ketma-ketlikni yetarlicha ko'rsatadi.
-      */}
-      <ol ref={listRef} className="flex flex-col gap-3">
+      <div className="relative">
+        {/*
+          YO'L CHIZIG'I — sof bezak, shuning uchun `aria-hidden` va
+          bosishni o'tkazmaydi. U doiralarning ORTIDA turadi.
+        */}
+        {pathShape && (
+          <svg
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+            viewBox={`0 0 ${listRef.current?.clientWidth ?? 0} ${pathShape.height}`}
+            preserveAspectRatio="none"
+          >
+            <path
+              data-path-line
+              d={pathShape.d}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={4}
+              strokeLinecap="round"
+              className="text-brand-300/60"
+            />
+          </svg>
+        )}
+
+        <ol ref={listRef} className="flex flex-col gap-3">
         {units.map((unit, index) => (
           <Fragment key={unit.id}>
             {/*
@@ -250,7 +347,8 @@ export function LearningPath({ cards }: LearningPathProps) {
           </li>
           </Fragment>
         ))}
-      </ol>
+        </ol>
+      </div>
     </section>
   )
 }
@@ -272,6 +370,7 @@ function UnitCircle({ unit }: { unit: PathUnit }) {
       <div
         data-testid={`unit-${unit.id}`}
         data-state={unit.state}
+        data-circle
         role="button"
         aria-disabled="true"
         // FOKUS OLMAYDI: yo'lda 400 dan ortiq bo'lim bor va ularning
@@ -291,6 +390,7 @@ function UnitCircle({ unit }: { unit: PathUnit }) {
       to={PATHS.lessonById(unit.id)}
       data-testid={`unit-${unit.id}`}
       data-state={unit.state}
+      data-circle
       aria-label={label}
       className={cn(className, 'tap-highlight-none transition-transform active:translate-y-0.5')}
     >
