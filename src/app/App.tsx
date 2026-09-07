@@ -62,6 +62,8 @@ export function App() {
         >
           <Route path={PATHS.home} element={<HomeScreen />} />
           <Route path={PATHS.review} element={<ReviewScreen />} />
+          {/* Qiyin so'zlar mashqi — profildagi "Ustida ishlash kerak" dan */}
+          <Route path={PATHS.weakReview} element={<ReviewScreen focus="weak" />} />
           <Route path={PATHS.league} element={<LeagueScreen />} />
           <Route path={PATHS.stats} element={<StatsScreen />} />
           <Route path={PATHS.profile} element={<ProfileScreen />} />

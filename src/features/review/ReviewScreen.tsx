@@ -6,6 +6,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, getNextDueDate, type CardRecord } from '@/core/db'
 import { pickDueCards } from '@/core/srs'
+import { pickWeakest } from '@/core/mastery'
 import { formatTimeUntil } from '@/lib/format'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
@@ -14,6 +15,12 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 /** Bir seansda ko'rsatiladigan kartalarning yuqori chegarasi (charchashning oldini oladi) */
 const SESSION_LIMIT = 20
 
+/** Qiyin so'zlar seansida nechta so'z beriladi */
+const WEAK_SESSION_SIZE = 10
+
+/** Qiyin so'zlar ro'yxatiga tushish uchun eng kam xato soni */
+const MIN_LAPSES = 2
+
 /**
  * Takrorlash ekrani (TZ 6.4).
  *
@@ -21,7 +28,16 @@ const SESSION_LIMIT = 20
  * takrorlanadi. Qaysi tur chiqishi kartaning `repetitions` darajasiga
  * qarab avtomatik tanlanadi (adaptiv qiyinlik).
  */
-export function ReviewScreen() {
+interface ReviewScreenProps {
+  /**
+   * `weak` — muddati yetganini emas, eng ko'p UNUTILGAN so'zlarni
+   * beradi ("Ustida ishlash kerak" bo'limidagi tugma shu yerga olib
+   * keladi).
+   */
+  focus?: 'due' | 'weak'
+}
+
+export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
 
   /** null — hali yuklanmoqda */
@@ -57,7 +73,22 @@ export function ReviewScreen() {
     getAllCards(learningLanguage)
       .then((all) => {
         if (cancelled) return
-        setCards(pickDueCards(all, Date.now(), SESSION_LIMIT))
+        /*
+         * Qiyin so'zlar rejimida MUDDAT hisobga olinmaydi: maqsad
+         * jadvalni bajarish emas, aynan qoqilayotgan so'zlar ustida
+         * ishlash. Ular o'zlashtirish rejimida beriladi — ya'ni
+         * ikki xil turdagi mashqda to'g'ri javob olguncha qaytadi.
+         */
+        const queue =
+          focus === 'weak'
+            ? pickWeakest(
+                all.filter((card) => card.lapses >= MIN_LAPSES),
+                WEAK_SESSION_SIZE,
+                Date.now(),
+              )
+            : pickDueCards(all, Date.now(), SESSION_LIMIT)
+
+        setCards(queue)
         setPool(all)
       })
       .catch((error: unknown) => {
@@ -70,7 +101,7 @@ export function ReviewScreen() {
     return () => {
       cancelled = true
     }
-  }, [learningLanguage, sessionKey])
+  }, [learningLanguage, sessionKey, focus])
 
   const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
 
@@ -134,7 +165,18 @@ export function ReviewScreen() {
         Bu yerda maqsad o'rgatish emas, tekshirish: bir so'zni ketma-ket
         uch marta so'rash SM-2 o'lchovini buzardi.
       */}
-      <SessionRunner key={sessionKey} cards={cards} pool={pool} onFinish={handleFinish} />
+      <SessionRunner
+        key={sessionKey}
+        cards={cards}
+        pool={pool}
+        /*
+          Qiyin so'zlarda O'ZLASHTIRISH rejimi: maqsad jadvalni
+          bajarish emas, so'zni haqiqatan o'rgatish. Oddiy takrorlashda
+          esa har so'z bir marta chiqadi — u SM-2 o'lchovi.
+        */
+        mode={focus === 'weak' ? 'mastery' : 'fixed'}
+        onFinish={handleFinish}
+      />
     </div>
   )
 }

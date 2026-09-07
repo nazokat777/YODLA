@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CardRecord } from '@/core/db'
-import { EXERCISE_TYPE_NAMES, errorRate, skillSummary, weakestType } from './skill'
+import { EXERCISE_TYPE_NAMES, errorRate, hasWeakSpots, skillSummary, weakestType } from './skill'
 
 const ALL = ['recognition', 'recall', 'spelling'] as const
 
@@ -101,5 +101,30 @@ describe('EXERCISE_TYPE_NAMES', () => {
     // Foydalanuvchiga `spelling` deb ko'rsatish mumkin emas
     expect(Object.values(EXERCISE_TYPE_NAMES).every((name) => name.length > 0)).toBe(true)
     expect(Object.keys(EXERCISE_TYPE_NAMES)).toHaveLength(7)
+  })
+})
+
+describe('hasWeakSpots', () => {
+  it('hech qanday xato yo‘q — ko‘rsatilmaydi', () => {
+    expect(hasWeakSpots([card({ recognition: { seen: 9, wrong: 0 } })], 2)).toBe(false)
+  })
+
+  it('bitta xato — hali "qiyin" emas', () => {
+    // Bir marta adashish qiyinlik emas: bola chalg'igan bo'lishi mumkin
+    const subject = { ...card(), lapses: 1 }
+
+    expect(hasWeakSpots([subject], 2)).toBe(false)
+  })
+
+  it('ko‘p unutilgan so‘z bor — ko‘rsatiladi', () => {
+    expect(hasWeakSpots([{ ...card(), lapses: 3 }], 2)).toBe(true)
+  })
+
+  it('ko‘nikmada xato bor — ko‘rsatiladi', () => {
+    expect(hasWeakSpots([card({ spelling: { seen: 5, wrong: 2 } })], 2)).toBe(true)
+  })
+
+  it('bo‘sh ro‘yxatda false', () => {
+    expect(hasWeakSpots([], 2)).toBe(false)
   })
 })

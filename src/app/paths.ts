@@ -9,6 +9,13 @@ export const PATHS = {
   /** Aniq darsga o'tish: lessonPath('food-a1') → "/lesson/food-a1" */
   lessonById: (lessonId: string) => `/lesson/${lessonId}`,
   review: '/review',
+  /**
+   * Faqat QIYIN so'zlar seansi.
+   *
+   * Alohida yo'l (`/review` ga parametr emas): bu boshqa maqsadli
+   * mashq — muddati yetganini emas, eng ko'p unutilganini beradi.
+   */
+  weakReview: '/review/weak',
   stats: '/stats',
   profile: '/profile',
   /** Foydalanuvchi yozgan mnemonik assotsiatsiyalar */

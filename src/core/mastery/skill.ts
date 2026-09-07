@@ -112,3 +112,17 @@ export function skillSummary(cards: readonly CardRecord[]): SkillSummary[] {
     .filter((item) => item.seen >= MIN_SAMPLES)
     .sort((a, b) => b.wrong / b.seen - a.wrong / a.seen)
 }
+
+/**
+ * "Ustida ishlash kerak" bo'limini ko'rsatish uchun yetarli
+ * ma'lumot bormi.
+ *
+ * NEGA SOF FUNKSIYA: ko'rinish testi "hali yuklanmadi" va "ko'rsatish
+ * shart emas" holatlarini bir-biridan ajrata olmaydi — ikkalasida ham
+ * ekranda hech nima yo'q. Qaror shu yerda, alohida tekshiriladi.
+ */
+export function hasWeakSpots(cards: readonly CardRecord[], minLapses: number): boolean {
+  if (cards.some((card) => card.lapses >= minLapses)) return true
+
+  return skillSummary(cards).some((skill) => skill.wrong > 0)
+}

@@ -7,6 +7,7 @@ import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { BADGES, levelTitle, MAX_STREAK_FREEZES, type BadgeStats } from '@/core/gamification'
 import { useProgress } from '@/hooks/useProgress'
+import { WeakSpots } from './WeakSpots'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReminderSettings } from './ReminderSettings'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -86,6 +87,8 @@ export function ProfileScreen() {
           )}
         </Panel>
       )}
+
+      <WeakSpots />
 
       {/* Nishonlar */}
       <section>
