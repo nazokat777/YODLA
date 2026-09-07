@@ -24,4 +24,5 @@ export const PATHS = {
   /** O'yinlar sahifasi — bosh ekrandagi kartadan ochiladi */
   games: '/games',
   speedGame: '/games/speed',
+  memoryGame: '/games/memory',
 } as const

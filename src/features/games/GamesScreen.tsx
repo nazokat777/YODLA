@@ -24,6 +24,14 @@ const GAMES: GameEntry[] = [
     description: '60 soniyada nechta so‘zni bilasiz?',
     unit: 'ochko',
   },
+  {
+    id: 'memory',
+    to: PATHS.memoryGame,
+    icon: '🧠',
+    title: 'Xotira o‘yini',
+    description: 'Yopiq kartalardan juftini toping',
+    unit: 'ball',
+  },
 ]
 
 /**

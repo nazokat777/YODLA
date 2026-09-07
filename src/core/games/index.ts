@@ -4,3 +4,4 @@
  */
 export * from './luck'
 export * from './speed'
+export * from './memory'
