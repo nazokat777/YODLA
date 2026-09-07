@@ -130,6 +130,15 @@ export function LearningPath({ cards }: LearningPathProps) {
   const isLoading = cards === undefined || topicOrder === null
 
   const listRef = useRef<HTMLOListElement>(null)
+  /**
+   * Chiziq va ro'yxatni O'RAB turuvchi element.
+   *
+   * `gsap.context` selektorlarni SCOPE ICHIDA qidiradi. Chiziq
+   * `<ol>` ning tashqarisida turadi, shuning uchun `<ol>` ni scope
+   * qilib bo'lmaydi — GSAP uni topolmay, "target not found" deb
+   * ogohlantirardi va animatsiya umuman qo'llanmasdi.
+   */
+  const wrapRef = useRef<HTMLDivElement>(null)
   const [pathShape, setPathShape] = useState<{ d: string; height: number } | null>(null)
 
   /*
@@ -222,14 +231,10 @@ export function LearningPath({ cards }: LearningPathProps) {
        */
       revealOnScroll(gsap, '[data-unit]:nth-child(n+9)')
 
-      // Yo'l chizig'i SKROLL bilan chiziladi — bo'limlar ro'yxat
-      // emas, YO'L ekani ko'rinadi
-      if (listRef.current) drawPathOnScroll(gsap, '[data-path-line]', listRef.current)
-
       // "Nafas" + halqa: ko'z qayerga qarashni biladi
       floatLoop(gsap, '[data-state="current"]')
       pulseRing(gsap, '[data-ring]')
-    }, ['scrollTrigger', 'drawSVG']).then((fn) => {
+    }, ['scrollTrigger']).then((fn) => {
       if (cancelled) fn()
       else revert = fn
     })
@@ -239,6 +244,38 @@ export function LearningPath({ cards }: LearningPathProps) {
       revert()
     }
   }, [units.length])
+
+  /*
+   * YO'L CHIZIG'I skroll bilan chiziladi.
+   *
+   * ALOHIDA EFFEKT: chiziq DOMga o'lchovdan KEYIN qo'shiladi, ya'ni
+   * yuqoridagi effekt ishga tushganda u hali yo'q edi va GSAP
+   * "target not found" deb ogohlantirardi — animatsiya esa umuman
+   * qo'llanmasdi.
+   */
+  useEffect(() => {
+    const list = listRef.current
+    if (!pathShape || !list || !wrapRef.current) return
+
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(
+      wrapRef.current,
+      (gsap) => {
+        drawPathOnScroll(gsap, '[data-path-line]', list)
+      },
+      ['scrollTrigger', 'drawSVG'],
+    ).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [pathShape])
 
   useEffect(() => {
     const target = currentRef.current
@@ -277,7 +314,7 @@ export function LearningPath({ cards }: LearningPathProps) {
     <section>
       <h2 className="mb-3 font-bold">O'quv yo'li</h2>
 
-      <div className="relative">
+      <div ref={wrapRef} className="relative">
         {/*
           YO'L CHIZIG'I — sof bezak, shuning uchun `aria-hidden` va
           bosishni o'tkazmaydi. U doiralarning ORTIDA turadi.
@@ -285,7 +322,12 @@ export function LearningPath({ cards }: LearningPathProps) {
         {pathShape && (
           <svg
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+            /*
+              `-z-10` YARAMAYDI: u chiziqni sahifa FONINING ortiga
+              yuborardi va chiziq umuman ko'rinmasdi. Yechim — chiziq
+              odatiy qatlamda, ro'yxat esa uning USTIDA.
+            */
+            className="pointer-events-none absolute inset-0 h-full w-full"
             viewBox={`0 0 ${listRef.current?.clientWidth ?? 0} ${pathShape.height}`}
             preserveAspectRatio="none"
           >
@@ -301,7 +343,7 @@ export function LearningPath({ cards }: LearningPathProps) {
           </svg>
         )}
 
-        <ol ref={listRef} className="flex flex-col gap-3">
+        <ol ref={listRef} className="relative z-10 flex flex-col gap-3">
         {units.map((unit, index) => (
           <Fragment key={unit.id}>
             {/*

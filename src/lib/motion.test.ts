@@ -111,9 +111,21 @@ describe('presetlar', () => {
     const items = [document.createElement('li'), document.createElement('li')]
 
     const tween = enterStagger(gsap, items)
-    tween.progress(0)
+    tween?.progress(0)
 
     expect(items[0]?.style.opacity).toBe('')
+  })
+
+  it('BO‘SH tanlovda hech nima qaytarmaydi', async () => {
+    /*
+     * Bo'sh tanlovda GSAP "target not found" deb ogohlantiradi va
+     * konsol shu xabarlar bilan to'lib ketardi — haqiqiy xatolar
+     * orasida ko'rinmay qolardi.
+     */
+    stubMatchMedia(false)
+    const gsap = (await loadGsap())!
+
+    expect(enterStagger(gsap, '[data-yoq-narsa]')).toBeNull()
   })
 
   it('slideIn RTL da teskari tomondan kiradi', async () => {

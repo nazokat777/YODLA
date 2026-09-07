@@ -139,6 +139,8 @@ export function enterStagger(
 ) {
   const { stagger = 0.05, duration = 0.35, y = 16 } = options
 
+  if (!hasTarget(gsap, targets)) return null
+
   return gsap.from(targets, {
     y,
     scale: 0.96,
@@ -208,13 +210,28 @@ export function slideIn(gsap: GsapLike, target: Target, dir: 'ltr' | 'rtl' = 'lt
   )
 }
 
+/**
+ * Nishon HAQIQATAN mavjudmi.
+ *
+ * Bo'sh tanlovda GSAP "target not found" deb ogohlantiradi va konsol
+ * shu xabarlar bilan to'lib ketardi — haqiqiy xatolar orasida
+ * ko'rinmay qolardi.
+ */
+function hasTarget(gsap: GsapLike, target: Target): boolean {
+  return gsap.utils.toArray<Element>(target).length > 0
+}
+
 /** Sekin suzish — ko'z qayerga qarashni biladi (joriy bo'lim) */
 export function floatLoop(gsap: GsapLike, target: Target) {
+  if (!hasTarget(gsap, target)) return null
+
   return gsap.to(target, { y: -6, duration: 1.4, repeat: -1, yoyo: true, ease: 'sine.inOut' })
 }
 
 /** Kengayib so'nadigan halqa (element `opacity` bilan boshlanadi — u bezak) */
 export function pulseRing(gsap: GsapLike, target: Target) {
+  if (!hasTarget(gsap, target)) return null
+
   return gsap.fromTo(
     target,
     { scale: 1, opacity: 0.7 },
@@ -241,6 +258,8 @@ export function pulseRing(gsap: GsapLike, target: Target) {
 export function revealOnScroll(gsap: GsapLike, targets: Target, options: { y?: number } = {}) {
   const { y = 24 } = options
 
+  // Bo'sh tanlov: GSAP "target not found" deb ogohlantiradi va konsol
+  // haqiqiy xatolar ko'rinmaydigan darajada to'lib ketardi
   return gsap.utils.toArray<Element>(targets).map((element) =>
     gsap.from(element, {
       y,
@@ -348,6 +367,8 @@ export function pressTilt(gsap: GsapLike, target: Target) {
  * chiziq skroll bilan BOG'LANGAN, o'z-o'zidan yugurmaydi.
  */
 export function drawPathOnScroll(gsap: GsapLike, target: Target, trigger: Element) {
+  if (!hasTarget(gsap, target)) return null
+
   return gsap.fromTo(
     target,
     { drawSVG: '0%' },
