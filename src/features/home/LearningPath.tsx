@@ -155,14 +155,40 @@ export function LearningPath({ cards }: LearningPathProps) {
     const list = listRef.current
     if (!list || units.length === 0) return
 
+    /**
+     * Elementning ro'yxatga NISBATAN joylashuvi.
+     *
+     * `getBoundingClientRect` YARAMAYDI: u CSS transformni hisobga
+     * oladi va o'lchov kirish animatsiyasi paytida olinsa, doiralar
+     * o'sha lahzadagi (siljigan) holatida yozilardi. O'lchandi: chiziq
+     * doiralardan 28 px pastda qolib ketardi — aynan `enterStagger`
+     * dagi `y: 28` qadar.
+     *
+     * `offsetLeft/offsetTop` esa JOYLASHUV qiymatlari: transform
+     * ularga umuman ta'sir qilmaydi.
+     */
+    const offsetWithin = (element: HTMLElement) => {
+      let x = 0
+      let y = 0
+      let node: HTMLElement | null = element
+
+      while (node && node !== list) {
+        x += node.offsetLeft
+        y += node.offsetTop
+        node = node.offsetParent as HTMLElement | null
+      }
+
+      return { x, y }
+    }
+
     const measure = () => {
-      const circles = list.querySelectorAll('[data-circle]')
+      const circles = list.querySelectorAll<HTMLElement>('[data-circle]')
       if (circles.length < 2) return
 
       const base = list.getBoundingClientRect()
       const points = [...circles].map((circle) => {
-        const box = circle.getBoundingClientRect()
-        return { x: box.left - base.left + box.width / 2, y: box.top - base.top + box.height / 2 }
+        const origin = offsetWithin(circle)
+        return { x: origin.x + circle.offsetWidth / 2, y: origin.y + circle.offsetHeight / 2 }
       })
 
       /*
