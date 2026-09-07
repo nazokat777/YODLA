@@ -31,7 +31,14 @@ export function AppShell() {
 
       <nav
         aria-label="Asosiy navigatsiya"
-        className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-[480px] border-t border-ink-300/40 bg-white/85 backdrop-blur-xl"
+        /*
+          `z-20` ANIQ berilgan: o'quv yo'li ro'yxati chiziq ustida
+          turishi uchun `z-10` oldi va navigatsiya undan YUQORIDA
+          bo'lishi shart. Amalda hozir ham shunday, lekin bu qatlam
+          tartibi tasodifga bog'liq bo'lib qolmasligi kerak —
+          navigatsiya hech qachon kontent ostida qolmasligi kerak.
+        */
+        className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-[480px] border-t border-ink-300/40 bg-white/85 backdrop-blur-xl"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <ul className="flex">
