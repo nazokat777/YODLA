@@ -18,19 +18,12 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 /**
  * Bir darsdagi TURLI so'zlar soni.
  *
- * 5 emas 4: har so'z endi uch bosqichda chiqadi (4 × 3 = 12 savol).
- * Til tanlash ekranidagi "kuniga 5 daqiqa" va'dasiga shu mos keladi.
+ * Har so'z necha marta chiqishi OLDINDAN ma'lum emas: dars
+ * o'zlashtirish rejimida ishlaydi va so'z ikki xil turdagi mashqda
+ * ketma-ket to'g'ri javob olguncha qaytaveradi. To'rt so'z odatda
+ * 10-16 savol beradi — "kuniga 5 daqiqa" va'dasiga shu mos keladi.
  */
 const LESSON_SIZE = 4
-
-/**
- * Yangi so'z darsning O'ZIDA mustahkamlanadi — uch marta, har safar
- * qiyinroq turda. Allaqachon ko'rilgan so'z bir marta chiqadi: u
- * takrorlash jadvali bo'yicha baribir qaytadi.
- */
-function lessonStages(card: CardRecord): number {
-  return card.totalReviews === 0 ? 3 : 1
-}
 
 /**
  * Dars ekrani (TZ 6.3): yangi so'zlarni o'rganish.
@@ -166,7 +159,14 @@ export function LessonScreen() {
           key={lessonKey}
           cards={cards}
           pool={pool}
-          stagesFor={lessonStages}
+          /*
+            DARSDA o'zlashtirish rejimi: so'z ikki xil turdagi mashqda
+            ketma-ket to'g'ri javob olguncha qaytaveradi. `stagesFor`
+            endi kerak emas — necha marta so'rash kerakligini
+            foydalanuvchining javoblari hal qiladi, oldindan belgilangan
+            son emas.
+          */
+          mode="mastery"
           onFinish={handleFinish}
         />
       )}

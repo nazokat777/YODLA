@@ -35,14 +35,15 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     renderLesson('/lesson/a1-oila')
 
     // "Oila" bo'limida ikkita YANGI so'z bor, har biri uch bosqichda
-    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/6')
+    // Ko'rsatkich SO'ZLARNI sanaydi: bo'limda ikkita so'z bor
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/2')
   })
 
   it('bo‘limsiz ochilganda butun to‘plamdan tanlaydi', async () => {
     renderLesson('/lesson')
 
-    // Uchala so'z ham yangi: 3 × 3
-    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/9')
+    // Butun lug'atdan uchala so'z ham darsga tushadi
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/3')
   })
 
   it('yo‘q bo‘lim id sida "so‘z yo‘q" DEMAYDI', async () => {
