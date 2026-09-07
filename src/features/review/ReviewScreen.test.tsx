@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, db, getAllCards, getCard, type NewCardRecordInput } from '@/core/db'
+import { addMissingCards, db, getAllCards, getCard, gradeCard, type NewCardRecordInput } from '@/core/db'
 import { PERFECT_SESSION_BONUS_XP, XP_PER_VERDICT } from '@/core/gamification'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReviewScreen } from './ReviewScreen'
@@ -511,6 +511,40 @@ describe('ReviewScreen — ko‘nikma statistikasi', () => {
       const withStats = cards.filter((card) => card.typeStats !== undefined)
 
       expect(withStats.length).toBeGreaterThan(0)
+    })
+  })
+})
+
+describe('ReviewScreen — qiyin so‘zlar rejimi', () => {
+  it('sarlavha "Qiyin so‘zlar" bo‘ladi va faqat zaif so‘zlar olinadi', async () => {
+    /*
+     * Foydalanuvchi profildagi tugmadan keladi va qaysi ekranga
+     * tushganini bilishi kerak. Bundan tashqari bu yerda MUDDAT
+     * hisobga olinmaydi — maqsad jadvalni bajarish emas, qoqilayotgan
+     * so'zlar ustida ishlash.
+     */
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'hello', translation: 'salom', language: 'en' },
+      { word: 'bread', translation: 'non', language: 'en' },
+      { word: 'water', translation: 'suv', language: 'en' },
+    ])
+    // Faqat bittasi qiyin
+    for (let i = 0; i < 3; i += 1) await gradeCard('en:bread', 1)
+
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <ReviewScreen focus="weak" />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByRole('heading', { name: /qiyin so.zlar/i })).toBeInTheDocument()
+    // Bitta so'z — ko'rsatkich shuni tasdiqlaydi
+    await waitFor(() => {
+      expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
     })
   })
 })

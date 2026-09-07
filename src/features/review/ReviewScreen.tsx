@@ -108,7 +108,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (!learningLanguage) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">Takrorlash</h1>
+        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
         <Panel>Avval til tanlang.</Panel>
       </div>
     )
@@ -117,7 +117,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (cards === null) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">Takrorlash</h1>
+        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
         <Panel className="text-ink-600">Yuklanmoqda…</Panel>
       </div>
     )
@@ -127,7 +127,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (summary !== null || cards.length === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">Takrorlash</h1>
+        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
 
         <SessionSummaryPanel summary={summary} />
 
@@ -159,7 +159,17 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   }
 
   return (
-    <div className="flex min-h-[70vh] flex-col">
+    <div className="flex min-h-[70vh] flex-col gap-3">
+      {/*
+        Sarlavha SEANS PAYTIDA ham qoladi.
+        Foydalanuvchi profildagi "Shu so'zlarni mashq qilish" tugmasidan
+        keladi va u qaysi ekranga tushganini bilishi kerak — usiz
+        ekranda faqat ko'rsatkich va savol turardi.
+      */}
+      <h1 className="text-2xl font-extrabold">
+        {focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}
+      </h1>
+
       {/*
         `stagesFor` UZATILMAYDI — takrorlashda har so'z bir marta chiqadi.
         Bu yerda maqsad o'rgatish emas, tekshirish: bir so'zni ketma-ket
