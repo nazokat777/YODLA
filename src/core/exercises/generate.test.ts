@@ -733,3 +733,36 @@ describe('excludeTypes — mashq turini chetlash', () => {
     expect(types.size).toBeGreaterThan(0)
   })
 })
+
+describe('preferType — zaif ko‘nikmaga yo‘naltirish', () => {
+  const CARD = makeCard({ id: 'en:water', word: 'water', translation: 'suv', repetitions: 1 })
+  const POOL = [CARD, makeCard({ id: 'en:bread', word: 'bread', translation: 'non' })]
+
+  /**
+   * Ketma-ket qiymat beruvchi tasodif manbai.
+   *
+   * Bitta doimiy qiymat YARAMAYDI: funksiya ikki marta `random()`
+   * chaqiradi (avval "zaif turni beraylikmi?", so'ng "qaysi turni?")
+   * va doimiy manba bu ikki qarorni sun'iy bog'lab qo'yardi.
+   */
+  const sequence = (...values: number[]) => {
+    let index = 0
+    return () => values[Math.min(index++, values.length - 1)]!
+  }
+
+  const typeWith = (random: () => number, preferType: ExerciseType) =>
+    pickExerciseType({ card: CARD, pool: POOL, allowAudio: true, preferType, random })
+
+  it('birinchi tasodif yarmidan KICHIK bo‘lsa zaif tur beriladi', () => {
+    expect(typeWith(sequence(0.1), 'listening')).toBe('listening')
+  })
+
+  it('birinchi tasodif yarmidan KATTA bo‘lsa odatdagi tanlov ishlaydi', () => {
+    /*
+     * Har safar eng yomon mashqni berish bolani zeriktiradi va
+     * o'zlashtirish qoidasi ikki XIL turni talab qiladi — bitta turga
+     * qadalib qolish so'zni hech qachon o'zlashtirmasdi.
+     */
+    expect(typeWith(sequence(0.9, 0.0), 'listening')).toBe('recognition')
+  })
+})

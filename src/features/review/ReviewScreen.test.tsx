@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, db, getCard, type NewCardRecordInput } from '@/core/db'
+import { addMissingCards, db, getAllCards, getCard, type NewCardRecordInput } from '@/core/db'
 import { PERFECT_SESSION_BONUS_XP, XP_PER_VERDICT } from '@/core/gamification'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReviewScreen } from './ReviewScreen'
@@ -490,5 +490,27 @@ describe('ReviewScreen — eshitib tushunish mashqi', () => {
     // Audio o'rniga yozma mashq
     expect(await screen.findByLabelText(/javob/i)).toBeInTheDocument()
     expect(screen.queryByText(/nima eshitdingiz/i)).not.toBeInTheDocument()
+  })
+})
+
+describe('ReviewScreen — ko‘nikma statistikasi', () => {
+  it('javobdan keyin mashq TURI bo‘yicha natija yoziladi', async () => {
+    /*
+     * Bu SM-2 dan mustaqil o'lchov: u so'z qachon qaytishini, bu esa
+     * QAYSI ko'nikma oqsayotganini yozadi. Usiz "yozolmayapman" va
+     * "tanimayapman" bir xil ko'rinardi.
+     */
+    await seed()
+    renderScreen()
+
+    await screen.findByTestId('exercise-prompt')
+    await answerRecognition('correct')
+
+    await waitFor(async () => {
+      const cards = await getAllCards('en')
+      const withStats = cards.filter((card) => card.typeStats !== undefined)
+
+      expect(withStats.length).toBeGreaterThan(0)
+    })
   })
 })

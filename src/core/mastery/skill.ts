@@ -10,6 +10,17 @@ import type { ExerciseType } from '@/core/types'
  */
 export const MIN_SAMPLES = 3
 
+/** Barcha mashq turlari — ro'yxat sifatida */
+export const EXERCISE_TYPES = [
+  'recognition',
+  'recall',
+  'listening',
+  'construction',
+  'cloze',
+  'spelling',
+  'matching',
+] as const satisfies readonly ExerciseType[]
+
 /** Mashq turlarining o'zbekcha nomlari — foydalanuvchiga ko'rsatish uchun */
 export const EXERCISE_TYPE_NAMES: Record<ExerciseType, string> = {
   recognition: 'Ma’noni tanish',

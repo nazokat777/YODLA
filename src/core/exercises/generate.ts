@@ -50,6 +50,19 @@ export interface GenerateExerciseOptions {
    * mashq ololmay, seans o'sha yerda tiqilib qolardi.
    */
   excludeTypes?: readonly ExerciseType[]
+  /**
+   * Foydalanuvchi shu kartada eng ko'p qiynalayotgan tur
+   * (`core/mastery/skill.ts`).
+   *
+   * Berilgan tur shu pog'onada mavjud bo'lsa, u YARIM ehtimol bilan
+   * tanlanadi.
+   *
+   * NEGA 100% EMAS: har safar eng yomon mashqni berish bolani faqat
+   * qiynaydi va zeriktiradi. Bundan tashqari o'zlashtirish qoidasi
+   * ikki XIL turni talab qiladi — bitta turga qadalib qolish so'zni
+   * hech qachon o'zlashtirilgan holatga chiqarmasdi.
+   */
+  preferType?: ExerciseType | null
   random?: RandomSource
 }
 
@@ -295,7 +308,7 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
  * (u har doim mumkin).
  */
 export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType {
-  const { card, stage = 0, excludeTypes = [], random = Math.random } = options
+  const { card, stage = 0, excludeTypes = [], preferType, random = Math.random } = options
   const effectiveRepetitions = card.repetitions + stage
 
   for (const step of DIFFICULTY_LADDER) {
@@ -308,6 +321,10 @@ export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType
     // mashqsiz qolgan so'z seansni to'xtatib qo'yardi
     const allowed = available.filter((type) => !excludeTypes.includes(type))
     const pool = allowed.length > 0 ? allowed : available
+
+    // Zaif ko'nikma yarim ehtimol bilan tanlanadi — qolgan yarmi
+    // xilma-xillik uchun qoladi
+    if (preferType && pool.includes(preferType) && random() < 0.5) return preferType
 
     return pool[Math.floor(random() * pool.length)]
   }

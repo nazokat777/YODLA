@@ -4,7 +4,13 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ExerciseHelpButton } from './ExerciseHelpButton'
 import { WordIntro } from './WordIntro'
 import { LANGUAGES } from '@/core/config/languages'
-import { finalizeSession, gradeCard, recordAnswer, type CardRecord } from '@/core/db'
+import {
+  finalizeSession,
+  gradeCard,
+  recordAnswer,
+  recordTypeResult,
+  type CardRecord,
+} from '@/core/db'
 import {
   checkExercise,
   deriveGrade,
@@ -19,6 +25,8 @@ import {
   emptyProgress,
   excludedTypesFor,
   pickNextCardId,
+  weakestType,
+  EXERCISE_TYPES,
   type WordProgress,
 } from '@/core/mastery'
 import { comboBonusXp, nextCombo } from '@/core/gamification'
@@ -267,8 +275,25 @@ export function SessionRunner({
      */
     const excludeTypes = mode === 'mastery' ? excludedTypesFor(progressFor(step.card.id)) : []
 
+    /*
+     * ZAIF KO'NIKMAGA yo'naltirish: foydalanuvchi shu so'zda eng ko'p
+     * qiynalayotgan tur yarim ehtimol bilan tanlanadi. Chetlangan
+     * turlar bundan chiqariladi — aks holda qoida buzilardi.
+     */
+    const preferType = weakestType(
+      step.card,
+      EXERCISE_TYPES.filter((type) => !excludeTypes.includes(type)),
+    )
+
     setExercise(
-      generateExercise({ card: step.card, pool, allowAudio, stage: step.stage, excludeTypes }),
+      generateExercise({
+        card: step.card,
+        pool,
+        allowAudio,
+        stage: step.stage,
+        excludeTypes,
+        preferType,
+      }),
     )
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)
@@ -542,6 +567,13 @@ export function SessionRunner({
           setDoneSteps((current) => new Set(current).add(`${step.card.id}:${step.stage}`))
         }
       }
+
+      /*
+       * KO'NIKMA statistikasi — QAYSI mashq turi oqsayotganini yozadi.
+       * SM-2 dan mustaqil: u so'z qachon qaytishini, bu esa qaysi
+       * ko'nikma zaifligini o'lchaydi.
+       */
+      void recordTypeResult(cardId, exercise.type, result === 'wrong')
 
       // O'zlashtirish holati — keyingi qadam aynan shundan tanlanadi
       if (mode === 'mastery') {
