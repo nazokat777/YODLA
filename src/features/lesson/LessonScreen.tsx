@@ -69,6 +69,17 @@ export function LessonScreen() {
    * so'z yo'q (birinchi dars).
    */
   const [mixedCards, setMixedCards] = useState<CardRecord[] | null>(null)
+  /**
+   * Butun tildagi kartalar — ARALASH bosqichning chalg'ituvchi
+   * variantlari uchun.
+   *
+   * Bo'limning o'z `pool` i yaramaydi: aralash bosqichdagi so'zlar
+   * BOSHQA bo'limlardan keladi va ularga o'sha bo'lim so'zlaridan
+   * variant qo'yish savolni juda oson qilardi ("Oila" so'ziga
+   * "Ovqat" variantlari). Juft topish mashqi esa umuman boshqa
+   * kartalarni baholab, bosqichni tiqilib qoldirardi.
+   */
+  const [allCards, setAllCards] = useState<CardRecord[]>([])
   /** Bosqich 1 natijasi — yakunda ikkalasi qo'shiladi */
   const [lessonSummary, setLessonSummary] = useState<SessionSummary | null>(null)
   const [pool, setPool] = useState<CardRecord[]>([])
@@ -131,6 +142,7 @@ export function LessonScreen() {
         setIsMissingUnit(Boolean(lessonId) && scope.length === 0 && all.length > 0)
 
         setPool(scope)
+        setAllCards(all)
 
         /*
          * ARALASH TAKROR uchun manba: shu darsga KIRMAGAN va allaqachon
@@ -252,7 +264,7 @@ export function LessonScreen() {
         <SessionRunner
           key={`mixed-${lessonKey}`}
           cards={mixedCards}
-          pool={pool}
+          pool={allCards}
           mode="mastery"
           onFinish={handleMixedFinish}
         />
