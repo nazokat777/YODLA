@@ -6,6 +6,18 @@ import { PERFECT_SESSION_BONUS_XP, XP_PER_VERDICT } from '@/core/gamification'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReviewScreen } from './ReviewScreen'
 
+/*
+ * OMADLI KARTA o'chiriladi.
+ *
+ * U 8% ehtimol bilan XP ni ikkilantiradi — ya'ni XP ni ANIQ sonda
+ * tekshiradigan har bir test har yigirmanchi yurishda yiqilardi.
+ * Tasodifga bog'liq xatti-harakat testda aniq boshqarilishi kerak.
+ */
+vi.mock('@/core/games', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/core/games')>()),
+  isLucky: () => false,
+}))
+
 const EN_WORDS: NewCardRecordInput[] = [
   { word: 'hello', translation: 'salom', language: 'en', topic: 'Salomlashish' },
   { word: 'water', translation: 'suv', language: 'en', topic: 'Ovqat' },
