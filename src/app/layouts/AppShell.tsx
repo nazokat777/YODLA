@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { cn } from '@/lib/cn'
+import { RouteTransition } from './RouteTransition'
 
 /** Pastki navigatsiya elementlari */
 const NAV_ITEMS = [
@@ -22,8 +23,10 @@ export function AppShell() {
   return (
     <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col bg-slate-50">
       {/* Kontent — pastki panel balandligi (4rem) qadar joy qoldiriladi */}
-      <main className="flex-1 px-4 pt-4 pb-24">
-        <Outlet />
+      <main className="flex flex-1 flex-col px-4 pt-4 pb-24">
+        <RouteTransition>
+          <Outlet />
+        </RouteTransition>
       </main>
 
       <nav
