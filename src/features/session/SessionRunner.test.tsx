@@ -515,3 +515,21 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
     expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
   })
 })
+
+describe('SessionRunner — o‘zlashtirish xaritasi chegarasi', () => {
+  it('seansdan TASHQARIDAGI karta ko‘rsatkichni buzmaydi', async () => {
+    /*
+     * Juft topish mashqi juftlarni butun POOL dan oladi. O'lchangan
+     * xato: begona kartalar o'zlashtirish xaritasiga tushib, keyingi
+     * qadam o'shalarga tanlanardi va seans so'zlar o'zlashtirilmagan
+     * holda jimgina tugab qolardi (4 ta so'zdan 3 tasi).
+     */
+    vi.spyOn(Math, 'random').mockReturnValue(0.1)
+
+    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} mode="mastery" onFinish={() => {}} />)
+
+    // Maxraj — seansning O'Z so'zlari soni, pool emas
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
+    expect(CARDS.length).toBeGreaterThan(1)
+  })
+})

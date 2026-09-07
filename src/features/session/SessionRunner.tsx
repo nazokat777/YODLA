@@ -381,7 +381,17 @@ export function SessionRunner({
       const next = new Map(mastery)
 
       for (const result of results) {
-        const current = next.get(result.cardId) ?? emptyProgress(result.cardId)
+        /*
+         * FAQAT shu seansning so'zlari. Juft topish mashqi juftlarni
+         * butun POOL dan oladi, ya'ni natijalar orasida darsga
+         * kirmagan kartalar ham bo'ladi. Ular xaritaga tushsa,
+         * keyingi qadam o'sha "begona" so'zga tanlanar, `cards` da
+         * topilmasdi va seans o'zlashtirilmagan so'zlar qolganida
+         * jimgina tugab qolardi (o'lchandi: 4 ta so'zdan 3 tasi).
+         */
+        const current = next.get(result.cardId)
+        if (!current) continue
+
         next.set(result.cardId, applyAnswer(current, result.verdict, type))
       }
 
@@ -541,8 +551,29 @@ export function SessionRunner({
     } finally {
       setIsSaving(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [exercise, canSubmit, isSaving, verdict, answer, soundEnabled, dailyGoalWords, combo])
+    /*
+     * `queue`, `index` va `applyToMastery` BOG'LIQLIKDA BO'LISHI SHART.
+     *
+     * O'lchangan xato: ular yo'q edi va funksiya BIRINCHI renderdagi
+     * bo'sh o'zlashtirish xaritasini ushlab qolardi. Har javob o'sha
+     * eski xaritadan yangisini yasardi, ya'ni oldingi javoblar
+     * yo'qolardi — ko'rsatkich 9 ta to'g'ri javobdan keyin ham 0/4 da
+     * turardi va dars hech qachon o'zlashtirilmasdi.
+     */
+  }, [
+    exercise,
+    canSubmit,
+    isSaving,
+    verdict,
+    answer,
+    soundEnabled,
+    dailyGoalWords,
+    combo,
+    queue,
+    index,
+    mode,
+    applyToMastery,
+  ])
 
   /** Feedback'dan keyin keyingi mashqqa o'tish */
   const handleContinue = useCallback(() => {
