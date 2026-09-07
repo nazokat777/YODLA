@@ -68,7 +68,10 @@ describe('withMotion', () => {
 
   it('odatiy holatda fn gsap bilan chaqiriladi va revert ishlaydi', async () => {
     stubMatchMedia(false)
+    // Element DOMga ULANGAN bo'lishi kerak: ajratilganini
+    // animatsiyalash ma'nosiz va `withMotion` uni o'tkazib yuboradi
     const scope = document.createElement('div')
+    document.body.append(scope)
     const fn = vi.fn()
 
     const revert = await withMotion(scope, fn)
@@ -76,6 +79,7 @@ describe('withMotion', () => {
     expect(fn).toHaveBeenCalledTimes(1)
     expect(typeof fn.mock.calls[0]?.[0]?.to).toBe('function')
     expect(() => revert()).not.toThrow()
+    scope.remove()
   })
 
   it('scope yo‘q (null) bo‘lsa fn chaqirilmaydi', async () => {
@@ -140,5 +144,46 @@ describe('presetlar', () => {
     const tween = shake(gsap, document.createElement('div'))
 
     expect(tween.totalDuration()).toBeLessThanOrEqual(0.2)
+  })
+})
+
+describe('plaginli presetlar', () => {
+  it('harakat kamaytirilganda plagin ham YUKLANMAYDI', async () => {
+    /*
+     * Plaginlar dangasa bo'lakda: harakat kerak bo'lmagan
+     * foydalanuvchi ularni umuman yuklab olmasligi kerak.
+     */
+    stubMatchMedia(true)
+    const fn = vi.fn()
+
+    await withMotion(document.createElement('div'), fn, ['scrollTrigger', 'drawSVG'])
+
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('scope DOMdan chiqib ketgan bo‘lsa animatsiya boshlanmaydi', async () => {
+    /*
+     * Plagin yuklanguncha komponent yo'q qilingan bo'lishi mumkin.
+     * O'sha elementga tegish "null" xatolariga olib kelardi.
+     */
+    stubMatchMedia(false)
+    const detached = document.createElement('div')
+    const fn = vi.fn()
+
+    await withMotion(detached, fn, ['scrollTrigger'])
+
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('ulangan elementda plagin bilan ishlaydi', async () => {
+    stubMatchMedia(false)
+    const attached = document.createElement('div')
+    document.body.append(attached)
+    const fn = vi.fn()
+
+    await withMotion(attached, fn, ['scrollTrigger'])
+
+    expect(fn).toHaveBeenCalledTimes(1)
+    attached.remove()
   })
 })
