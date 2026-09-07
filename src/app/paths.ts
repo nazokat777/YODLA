@@ -21,4 +21,7 @@ export const PATHS = {
   /** Foydalanuvchi yozgan mnemonik assotsiatsiyalar */
   mnemonics: '/mnemonics',
   league: '/league',
+  /** O'yinlar sahifasi — bosh ekrandagi kartadan ochiladi */
+  games: '/games',
+  speedGame: '/games/speed',
 } as const
