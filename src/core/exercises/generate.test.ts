@@ -538,9 +538,58 @@ describe('generateExercise — juft topish (matching)', () => {
   })
 
   it('to‘plamda yetarli karta bo‘lmasa matching yaratilmaydi', () => {
-    const small = POOL.slice(0, 4)
+    const small = POOL.slice(0, 2)
 
     expect(findMatching(small[0], small)).toBeNull()
+  })
+
+  it('sheriklar berilsa juftlar FAQAT ulardan olinadi — begona so‘z kirmaydi', () => {
+    /*
+     * 1-darsda 4 ta so'z bor. Juftlar butun lug'atdan olinsa bola hali
+     * o'rgatilmagan so'zni juftlashga majbur bo'lar, u so'z esa
+     * baholanib "takrorlash" navbatiga tushib qolardi.
+     */
+    const partners = POOL.slice(0, 4)
+    const card = { ...partners[0]!, repetitions: 1 }
+
+    for (let seed = 1; seed < 40; seed += 1) {
+      const exercise = generateExercise({
+        card,
+        pool: POOL,
+        partners,
+        allowAudio: false,
+        random: seededRandom(seed),
+      })
+      if (exercise.type !== 'matching') continue
+
+      const ids = exercise.pairs.map((pair) => pair.cardId)
+      expect(ids).toHaveLength(4)
+      for (const id of ids) expect(partners.some((item) => item.id === id)).toBe(true)
+      return
+    }
+
+    throw new Error('matching chiqmadi')
+  })
+
+  it('sheriklar juda kam bo‘lsa to‘plamdan to‘ldiriladi', () => {
+    const partners = POOL.slice(0, 2)
+    const card = { ...partners[0]!, repetitions: 1 }
+
+    for (let seed = 1; seed < 40; seed += 1) {
+      const exercise = generateExercise({
+        card,
+        pool: POOL,
+        partners,
+        allowAudio: false,
+        random: seededRandom(seed),
+      })
+      if (exercise.type !== 'matching') continue
+
+      expect(exercise.pairs).toHaveLength(MATCHING_SIZE)
+      return
+    }
+
+    throw new Error('matching chiqmadi')
   })
 })
 

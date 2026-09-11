@@ -317,6 +317,8 @@ export function SessionRunner({
       generateExercise({
         card: step.card,
         pool,
+        // Juftlar seansning O'Z so'zlaridan — begona so'z darsga kirmaydi
+        partners: cards,
         allowAudio,
         stage: step.stage,
         excludeTypes,
@@ -331,7 +333,7 @@ export function SessionRunner({
   // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
   // mashqni javob berilgan zahoti qayta yaratib yuborardi
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queue, index, pool, allowAudio, mode])
+  }, [queue, index, pool, cards, allowAudio, mode])
 
   /*
    * Yangi savol pastdan siljib chiqadi.
@@ -712,7 +714,17 @@ export function SessionRunner({
       let wrong = 0
       let xpTotal = 0
 
-      for (const { cardId, verdict } of results) {
+      /*
+       * FAQAT seansning o'z so'zlari baholanadi. Sheriklar kam bo'lganda
+       * taxta `pool` dan to'ldiriladi — o'sha begona so'z hali
+       * o'rgatilmagan (yoki o'z jadvalida) va bir juftlik uchun SM-2
+       * jadvaliga tushmasligi kerak: aks holda u "takrorlash"
+       * navbatida paydo bo'lardi.
+       */
+      const own = new Set(cards.map((card) => card.id))
+      const ownResults = results.filter((result) => own.has(result.cardId))
+
+      for (const { cardId, verdict } of ownResults) {
         // Juft topish bir mashqda bir nechta kartani baholaydi, ya'ni
         // seansda allaqachon baholangan so'zni ikkinchi marta baholab
         // yuborishi mumkin — shuning uchun shu yerda ham tekshiriladi
@@ -740,7 +752,7 @@ export function SessionRunner({
 
       setSummary((current) => ({
         ...current,
-        answered: current.answered + results.length,
+        answered: current.answered + ownResults.length,
         correct: current.correct + correct,
         wrong: current.wrong + wrong,
         xpEarned: current.xpEarned + xpTotal,
@@ -769,7 +781,7 @@ export function SessionRunner({
       setIsSaving(false)
       setIndex((current) => current + 1)
     },
-    [isSaving, dailyGoalWords, soundEnabled, queue, index, mode, applyToMastery, enqueueNext],
+    [isSaving, dailyGoalWords, soundEnabled, queue, index, mode, applyToMastery, enqueueNext, cards],
   )
 
   /**

@@ -75,6 +75,16 @@ export interface GenerateExerciseOptions {
    * majburlash bekor qilinadi va odatdagi tanlov ishlaydi.
    */
   forceType?: ExerciseType
+  /**
+   * Juft topish uchun AFZAL sheriklar — odatda seansning o'z so'zlari.
+   *
+   * Usiz juftlar butun `pool` dan olinardi: 1-darsda bola hali
+   * o'rgatilmagan so'zni juftlashga majbur bo'lar, u so'z esa baholanib
+   * "takrorlash" navbatiga tushib qolardi. Sheriklar kam bo'lsa
+   * (kamida `MATCHING_MIN_SIZE`) taxta kichikroq bo'ladi; undan ham
+   * kam bo'lsa `pool` dan to'ldiriladi.
+   */
+  partners?: readonly CardRecord[]
   random?: RandomSource
 }
 
@@ -231,6 +241,9 @@ function isSpellable(card: CardRecord): boolean {
 /** Juft topishdagi kartalar soni */
 export const MATCHING_SIZE = 5
 
+/** Sheriklar kam bo'lganda taxtaning eng kichik o'lchami */
+export const MATCHING_MIN_SIZE = 3
+
 /**
  * Joriy karta + to'plamdan yana `MATCHING_SIZE - 1` ta kartani olib juftlar
  * tuzadi. Yetarli karta bo'lmasa null — generator bir pog'ona pastga tushadi.
@@ -239,13 +252,23 @@ function buildMatching(
   card: CardRecord,
   pool: readonly CardRecord[],
   random: RandomSource,
+  partners: readonly CardRecord[] = [],
 ): MatchingPair[] | null {
-  const others = shuffle(
-    pool.filter((candidate) => candidate.id !== card.id),
+  const ownPartners = shuffle(
+    partners.filter((candidate) => candidate.id !== card.id),
     random,
   ).slice(0, MATCHING_SIZE - 1)
 
-  if (others.length < MATCHING_SIZE - 1) return null
+  // Seansning o'z so'zlari yetarli — begona so'z umuman kirmaydi
+  const others =
+    ownPartners.length >= MATCHING_MIN_SIZE - 1
+      ? ownPartners
+      : shuffle(
+          pool.filter((candidate) => candidate.id !== card.id),
+          random,
+        ).slice(0, MATCHING_SIZE - 1)
+
+  if (others.length < MATCHING_MIN_SIZE - 1) return null
 
   return shuffle([card, ...others], random).map((item) => ({
     cardId: item.id,
@@ -309,8 +332,8 @@ function isTypeAvailable(type: ExerciseType, options: GenerateExerciseOptions): 
     case 'spelling':
       return isSpellable(card)
     case 'matching':
-      // O'zidan tashqari kamida MATCHING_SIZE-1 karta kerak
-      return pool.filter((candidate) => candidate.id !== card.id).length >= MATCHING_SIZE - 1
+      // O'zidan tashqari kamida MATCHING_MIN_SIZE-1 karta kerak
+      return pool.filter((candidate) => candidate.id !== card.id).length >= MATCHING_MIN_SIZE - 1
   }
 }
 
@@ -426,7 +449,7 @@ export function generateExercise(options: GenerateExerciseOptions): Exercise {
     }
 
     case 'matching': {
-      const pairs = buildMatching(card, pool, random)
+      const pairs = buildMatching(card, pool, random, options.partners)
       // Mavjudlik yuqorida tekshirilgan; bu shart faqat tip tizimi uchun
       if (!pairs) return buildRecall(card)
 

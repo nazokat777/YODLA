@@ -60,7 +60,8 @@ afterEach(() => {
 
 describe('SessionRunner — juft topish', () => {
   it('bir mashqda barcha juftlangan kartalar baholanadi', async () => {
-    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+    // Hammasi seansning o'z so'zlari — hammasi baholanadi
+    render(<SessionRunner cards={CARDS} pool={CARDS} onFinish={() => {}} />)
 
     expect(await screen.findByText(/so.z va tarjimasini juftlang/i)).toBeInTheDocument()
 
@@ -81,7 +82,7 @@ describe('SessionRunner — juft topish', () => {
   })
 
   it('xato juftlangan karta jazolanmaydi — baho 2, nol emas', async () => {
-    render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={() => {}} />)
+    render(<SessionRunner cards={CARDS} pool={CARDS} onFinish={() => {}} />)
 
     await screen.findByText(/so.z va tarjimasini juftlang/i)
 
@@ -102,7 +103,12 @@ describe('SessionRunner — juft topish', () => {
     expect(vi.mocked(gradeCard)).toHaveBeenCalledWith('en:tea', 4)
   })
 
-  it('juft topish seans hisobiga hamma kartani qo‘shadi', async () => {
+  it('BEGONA (seansga kirmagan) juft baholanmaydi va hisobga kirmaydi', async () => {
+    /*
+     * Seansda bitta so'z, sheriklar `pool` dan to'ldirilgan. Ilgari
+     * hammasi baholanardi: 1-darsda hali o'rgatilmagan so'z SM-2
+     * jadvaliga tushib, "takrorlash" navbatida paydo bo'lardi.
+     */
     const onFinish = vi.fn()
     render(<SessionRunner cards={[CARDS[0]]} pool={CARDS} onFinish={onFinish} />)
 
@@ -115,10 +121,11 @@ describe('SessionRunner — juft topish', () => {
 
     // Navbatda bitta karta bor edi — juftlik yakunlangach seans tugaydi
     await waitFor(() => {
-      expect(onFinish).toHaveBeenCalledWith(
-        expect.objectContaining({ answered: CARDS.length, correct: CARDS.length }),
-      )
+      expect(onFinish).toHaveBeenCalledWith(expect.objectContaining({ answered: 1, correct: 1 }))
     })
+    expect(gradeCard).toHaveBeenCalledTimes(1)
+    expect(gradeCard).toHaveBeenCalledWith(CARDS[0].id, 4)
+    expect(recordAnswer).toHaveBeenCalledTimes(1)
   })
 })
 
