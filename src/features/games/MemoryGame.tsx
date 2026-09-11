@@ -107,8 +107,12 @@ export function MemoryGame() {
        * "qiyin so'zlar" ro'yxatiga tushardi — bola o'yin o'ynagani
        * uchun jazolanardi.
        */
-      if (isPair) void gradeCard(firstTile.cardId, gameGrade(true))
-      void recordTypeResult(firstTile.cardId, 'matching', !isPair)
+      if (isPair) {
+        void gradeCard(firstTile.cardId, gameGrade(true))
+        // Ko'nikma statistikasi ham faqat topilgan juft uchun: mos
+        // kelmagan ochish "juftlarni topish qiyin kelyapti" degani emas
+        void recordTypeResult(firstTile.cardId, 'matching', false)
+      }
       /*
        * XP va kunlik maqsad ham yoziladi. Usiz bola xotira o'yinini
        * o'n daqiqa o'ynab HECH NIMA olmasdi — streak ham saqlanmasdi.

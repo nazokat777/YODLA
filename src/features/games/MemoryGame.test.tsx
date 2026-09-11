@@ -126,6 +126,8 @@ describe('MemoryGame', () => {
     await new Promise((resolve) => setTimeout(resolve, 200))
     const cards = await db.cards.toArray()
     expect(cards.every((card) => card.lapses === 0)).toBe(true)
-    expect(cards.every((card) => card.interval >= 0)).toBe(true)
+    // Ko'nikma statistikasida ham "xato" yo'q — aks holda profilda
+    // "Eng qiyin mashq: juftlarni topish" deb chiqardi
+    expect(cards.every((card) => (card.typeStats?.matching?.wrong ?? 0) === 0)).toBe(true)
   })
 })
