@@ -152,4 +152,22 @@ describe('MatchingView — talaffuz', () => {
 
     expect(speak).not.toHaveBeenCalled()
   })
+
+  it('arabcha so‘z tugmalari kattaroq va RTL', () => {
+    // Harakatlar 16 px da ajratib bo'lmaydi — bola aynan ularni o'qiyapti
+    const arabic: MatchingExercise = {
+      ...EXERCISE,
+      card: makeCard({ id: 'ar:kitob', word: 'كِتَاب', translation: 'kitob', language: 'ar' }),
+      pairs: [
+        { cardId: 'ar:kitob', word: 'كِتَاب', translation: 'kitob' },
+        { cardId: 'ar:qalam', word: 'قَلَم', translation: 'qalam' },
+        { cardId: 'ar:uy', word: 'بَيْت', translation: 'uy' },
+      ],
+    }
+    render(<MatchingView exercise={arabic} onComplete={vi.fn()} />)
+
+    const tile = word('كِتَاب')
+    expect(tile).toHaveAttribute('dir', 'rtl')
+    expect(tile).toHaveClass('text-xl')
+  })
 })

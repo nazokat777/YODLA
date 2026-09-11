@@ -135,6 +135,8 @@ export function MatchingView({ exercise, onComplete }: MatchingViewProps) {
                 aria-pressed={active}
                 className={cn(
                   'tap-highlight-none min-h-13 rounded-2xl border-2 px-3 py-3 font-semibold transition-colors',
+                  // Arab yozuvi kattaroq — harakatlar 16 px da o'qilmaydi
+                  language.dir === 'rtl' && 'text-xl leading-relaxed',
                   done && 'border-brand-500 bg-brand-100 text-brand-700 opacity-50',
                   !done && active && 'border-brand-500 bg-brand-50',
                   !done && !active && 'border-ink-300 bg-white',
