@@ -23,6 +23,8 @@ vi.mock('@/lib/motion', async (importOriginal) => {
     enterStagger: vi.fn(),
     floatLoop: vi.fn(),
     pulseRing: vi.fn(),
+    revealOnScroll: vi.fn(),
+    drawPathOnScroll: vi.fn(),
   }
 })
 

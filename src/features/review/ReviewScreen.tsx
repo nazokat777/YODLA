@@ -22,6 +22,16 @@ const WEAK_SESSION_SIZE = 10
 const MIN_LAPSES = 2
 
 /**
+ * Qiyin so'z qolmaganda — bu YUTUQ, "takrorlash uchun so'z yo'q" emas.
+ * Standart matn muddat haqida va bu yerda chalg'itardi.
+ */
+const NO_WEAK_WORDS = {
+  icon: '🎉',
+  title: 'Qiyin so‘zlar qolmadi!',
+  hint: 'Hammasi mustahkam yodlangan. Yangi darsga o‘tishingiz mumkin.',
+}
+
+/**
  * Takrorlash ekrani (TZ 6.4).
  *
  * SRS bo'yicha muddati yetgan kartalar to'rt xil mashq turi orqali
@@ -129,9 +139,13 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
       <div className="flex flex-col gap-4">
         <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
 
-        <SessionSummaryPanel summary={summary} />
+        <SessionSummaryPanel
+          summary={summary}
+          emptyMessage={focus === 'weak' ? NO_WEAK_WORDS : undefined}
+        />
 
-        {nextDueAt != null && (
+        {/* Muddat qiyin so'zlar rejimiga aloqasiz — u yerda chalg'itadi */}
+        {focus === 'due' && nextDueAt != null && (
           <p className="text-center text-sm text-ink-600">
             Keyingi takrorlash: {formatTimeUntil(nextDueAt)}.
           </p>

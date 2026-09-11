@@ -9,6 +9,18 @@ import type { SessionSummary } from './SessionRunner'
 interface SessionSummaryPanelProps {
   /** null — seans umuman boshlanmagan (takrorlanadigan karta yo'q edi) */
   summary: SessionSummary | null
+  /**
+   * Seans boshlanmaganda ko'rsatiladigan matn. Standart — "takrorlash
+   * uchun so'z yo'q"; qiyin so'zlar rejimida bu noto'g'ri bo'lardi
+   * (u yerda so'z yo'qligi YUTUQ, muddat emas).
+   */
+  emptyMessage?: { icon: string; title: string; hint: string }
+}
+
+const DEFAULT_EMPTY = {
+  icon: '☕',
+  title: 'Hozircha takrorlash uchun so‘z yo‘q',
+  hint: 'Yangi so‘zlarni darsda o‘rganishingiz mumkin.',
 }
 
 /**
@@ -16,7 +28,10 @@ interface SessionSummaryPanelProps {
  * Xatolar "muvaffaqiyatsizlik" sifatida emas, "o'rganilgan so'zlar" sifatida
  * ko'rsatiladi — TZ 4: xatoda jazolamaslik tamoyili.
  */
-export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
+export function SessionSummaryPanel({
+  summary,
+  emptyMessage = DEFAULT_EMPTY,
+}: SessionSummaryPanelProps) {
   // Hook erta `return` dan OLDIN chaqiriladi: React hook'lar har renderda
   // bir xil tartibda bo'lishi shart
   const panelRef = useCelebration(summary?.xpEarned ?? 0)
@@ -25,10 +40,10 @@ export function SessionSummaryPanel({ summary }: SessionSummaryPanelProps) {
     return (
       <Panel className="text-center">
         <div className="mb-2 text-5xl" aria-hidden="true">
-          ☕
+          {emptyMessage.icon}
         </div>
-        <p className="font-bold">Hozircha takrorlash uchun so‘z yo‘q</p>
-        <p className="mt-1 text-sm text-ink-600">Yangi so‘zlarni darsda o‘rganishingiz mumkin.</p>
+        <p className="font-bold">{emptyMessage.title}</p>
+        <p className="mt-1 text-sm text-ink-600">{emptyMessage.hint}</p>
       </Panel>
     )
   }

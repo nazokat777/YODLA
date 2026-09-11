@@ -569,4 +569,27 @@ describe('ReviewScreen — qiyin so‘zlar rejimi', () => {
       expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
     })
   })
+
+  it('qiyin so‘z qolmasa YUTUQ xabari chiqadi, muddat haqida emas', async () => {
+    /*
+     * Foydalanuvchi qiyin so'zlarni yodlab bo'lgach shu ekranga
+     * qaytsa, "takrorlash uchun so'z yo'q" va "keyingi takrorlash 3
+     * soatdan keyin" chiqardi — bu muddat haqida va bu yerda ma'nosiz.
+     */
+    await db.cards.clear()
+    await addMissingCards([{ word: 'hello', translation: 'salom', language: 'en' }])
+    await gradeCard('en:hello', 5)
+
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <ReviewScreen focus="weak" />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText(/qiyin so.zlar qolmadi/i)).toBeInTheDocument()
+    expect(screen.queryByText(/keyingi takrorlash/i)).not.toBeInTheDocument()
+  })
 })

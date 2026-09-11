@@ -19,6 +19,7 @@ vi.mock('@/lib/motion', async (importOriginal) => {
     enterStagger: vi.fn(),
     pressBounce: vi.fn(),
     shake: vi.fn(),
+    particleBurst: vi.fn(),
   }
 })
 
