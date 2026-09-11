@@ -201,7 +201,14 @@ export function MemoryGame() {
                 lang={open && isTarget ? language?.code : 'uz'}
                 aria-label={open ? tile.text : 'Yopiq katak'}
                 className={cn(
-                  'tap-highlight-none flex min-h-20 w-full items-center justify-center rounded-2xl border-2 px-1 py-2 text-center text-sm font-bold transition-colors',
+                  'tap-highlight-none flex min-h-20 w-full items-center justify-center rounded-2xl border-2 px-1 py-2 text-center font-bold transition-colors',
+                  /*
+                   * Arab yozuvi lotinchadan KATTAROQ bo'lishi kerak:
+                   * harakatlar (fatha, kasra…) 14 px da ajratib
+                   * bo'lmaydi, bola esa aynan ularni o'qishni
+                   * o'rganyapti.
+                   */
+                  open && isTarget && language?.dir === 'rtl' ? 'text-xl' : 'text-sm',
                   matched && 'border-brand-500 bg-brand-100 text-brand-700',
                   open && !matched && 'border-sky-500 bg-sky-100',
                   !open && 'border-ink-300 bg-white',
