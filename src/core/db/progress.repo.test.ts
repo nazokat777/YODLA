@@ -346,6 +346,25 @@ describe('saveGameBest', () => {
     expect(await saveGameBest('speed', 20)).toBe(false)
   })
 
+  it('kunlik eng yaxshi natija umrbod rekorddan ALOHIDA saqlanadi', async () => {
+    /*
+     * Kunlik chaqiriq "bugun 12 ochko" ni o'lchaydi. Faqat umrbod
+     * rekord bo'lsa, kecha 20 olgan bola bugun o'ynamasdan ham
+     * chaqiriqni "bajargan" bo'lardi.
+     */
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    const DAY = 24 * 60 * 60 * 1000
+    const yesterday = Date.now() - DAY
+
+    await saveGameBest('speed', 20, yesterday)
+    expect(await saveGameBest('speed', 9, Date.now())).toBe(false)
+
+    const today = await getDailyStat(Date.now())
+    expect(today?.gameBests?.speed).toBe(9)
+    expect((await ensureProfile()).gameBests?.speed).toBe(20)
+  })
+
   it('o‘yinlar bir-birini o‘chirmaydi', async () => {
     await db.profile.clear()
     await saveGameBest('speed', 12)

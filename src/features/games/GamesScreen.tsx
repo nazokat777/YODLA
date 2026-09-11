@@ -103,12 +103,13 @@ export function GamesScreen() {
   const progress = useProgress()
 
   const challenge = dailyChallenge()
-  const bests = profile?.gameBests
 
-  // Progress mavjud kunlik o'lchovlardan — manbalar `core/games` da
+  // Progress mavjud KUNLIK o'lchovlardan — manbalar `core/games` da.
+  // Tezlik ham bugungi natija: umrbod rekord bo'lsa bir marta 12 olgan
+  // bola har uchinchi kuni o'ynamasdan bonus olaverardi
   const done = challengeProgress(challenge, {
     correctToday: progress?.daily.correct ?? 0,
-    speedBest: bests?.speed ?? 0,
+    speedBest: progress?.daily.gameBests?.speed ?? 0,
     lessonsToday: progress?.daily.lessonsCompleted ?? 0,
   })
   const challengeDone = isChallengeDone(challenge, done)

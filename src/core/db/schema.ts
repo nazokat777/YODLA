@@ -89,6 +89,15 @@ export interface DailyStat {
   lessonsCompleted?: number
   /** Kunlik chaqiriq bonusi berilganmi (ikki marta berilmasligi uchun) */
   challengeBonusAwarded?: boolean
+  /**
+   * SHU KUNGI eng yaxshi o'yin natijalari.
+   *
+   * Profildagi `gameBests` umrbod rekord. Kunlik chaqiriq ("12 ochko
+   * to'plang") uni o'lchasa, bir marta 12 olgan bola har uchinchi kuni
+   * o'ynamasdan bonus olaverardi. Chaqiriq BUGUN o'ynalganini talab
+   * qiladi — shuning uchun kunlik yozuv alohida.
+   */
+  gameBests?: Partial<Record<GameId, number>>
 }
 
 /** Foydalanuvchi profili — bazada bitta yozuv */

@@ -345,16 +345,29 @@ export async function getProgressSnapshot(now: number = Date.now()): Promise<Pro
 
 
 /**
- * O'yin rekordini saqlaydi. YANGI rekord bo'lsagina yozadi va shuni
- * qaytaradi.
+ * O'yin natijasini saqlaydi. Umrbod rekord YANGI bo'lsagina yoziladi
+ * va shu qaytariladi; kunlik eng yaxshi natija esa har safar
+ * yangilanadi (kunlik chaqiriq uchun).
  *
  * Qaytarilgan qiymat ekranda "yangi rekord!" deb nishonlash uchun:
  * uni chaqiruvchi o'zi hisoblasa, eski qiymatni oldindan o'qib olishi
  * kerak bo'lardi va ikki foydalanuvchi harakati orasida u eskirishi
  * mumkin edi.
  */
-export async function saveGameBest(game: GameId, score: number): Promise<boolean> {
-  return db.transaction('rw', db.profile, async () => {
+export async function saveGameBest(
+  game: GameId,
+  score: number,
+  now: number = Date.now(),
+): Promise<boolean> {
+  const day = startOfDay(now)
+
+  return db.transaction('rw', db.profile, db.dailyStats, async () => {
+    const daily = (await db.dailyStats.get(day)) ?? createDailyStat(day)
+    if (score > (daily.gameBests?.[game] ?? 0)) {
+      daily.gameBests = { ...daily.gameBests, [game]: score }
+      await db.dailyStats.put(daily)
+    }
+
     const profile = await ensureProfile()
     const previous = profile.gameBests?.[game] ?? 0
 

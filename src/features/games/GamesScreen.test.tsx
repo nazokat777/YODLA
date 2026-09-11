@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import {
@@ -85,6 +85,37 @@ describe('kunlik chaqiriq', () => {
 })
 
 describe('kunlik chaqiriq bonusi', () => {
+  it('KECHAGI tezlik rekordi bugungi chaqiriqni bajarmaydi', async () => {
+    /*
+     * Chaqiriq umrbod rekordni o'lchasa, bir marta 12 olgan bola har
+     * uchinchi kuni o'ynamasdan +50 XP olaverardi.
+     *
+     * FAQAT `Date` soxtalanadi: taymerlar soxtalansa Dexie qotib
+     * qoladi. Tezlik chaqirig'i chiqadigan kun qidirib topiladi.
+     */
+    const DAY = 24 * 60 * 60 * 1000
+    let now = Date.now()
+    while (dailyChallenge(now).kind !== 'speedScore') now += DAY
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(now)
+
+    try {
+      await db.profile.clear()
+      await db.dailyStats.clear()
+      await saveGameBest('speed', 99, now - DAY)
+      const before = (await ensureProfile()).totalXp
+
+      renderScreen()
+      expect(await screen.findByTestId('daily-challenge')).toHaveTextContent('0/12')
+
+      // Bonus yozilmasligi kerak — haqiqiy taymer bilan kutiladi
+      await new Promise((resolve) => setTimeout(resolve, 150))
+      expect((await ensureProfile()).totalXp).toBe(before)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('chaqiriq bajarilganda bonus HAQIQATAN yoziladi', async () => {
     /*
      * Ilgari ekranda "+50 XP" deb turardi, lekin hech qayerga
