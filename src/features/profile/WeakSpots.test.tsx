@@ -75,3 +75,23 @@ describe('WeakSpots', () => {
     expect(link).toHaveAttribute('href', '/review/weak')
   })
 })
+
+it('arabcha so‘z o‘z yo‘nalishi va tili bilan chiziladi', async () => {
+  // Arab shrifti `[dir='rtl']` orqali — usiz so'z lotin shriftida chiqardi
+  await db.cards.clear()
+  await addMissingCards([{ word: 'كِتَاب', translation: 'kitob', language: 'ar' }])
+  await forget('ar:كِتَاب', 2)
+  useSettingsStore.getState().reset()
+  useSettingsStore.getState().setLearningLanguage('ar')
+
+  render(
+    <MemoryRouter>
+      <WeakSpots />
+    </MemoryRouter>,
+  )
+
+  const word = await screen.findByText('كِتَاب')
+
+  expect(word).toHaveAttribute('dir', 'rtl')
+  expect(word).toHaveAttribute('lang', 'ar')
+})

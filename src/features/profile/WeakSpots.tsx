@@ -12,6 +12,7 @@ import {
   skillSummary,
 } from '@/core/mastery'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { LANGUAGES } from '@/core/config/languages'
 
 /** Ro'yxatda nechta qiyin so'z ko'rsatiladi */
 const HARD_WORDS_SHOWN = 8
@@ -40,6 +41,7 @@ const MIN_LAPSES = 2
  */
 export function WeakSpots() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const cards = useLiveQuery(
     () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
@@ -80,7 +82,15 @@ export function WeakSpots() {
               <li key={card.id} className="flex items-center gap-2 rounded-xl px-1 py-1.5">
                 <WordImage translation={card.translation} size="sm" />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-semibold">{card.word}</span>
+                  {/* Arab shrifti va yo'nalishi `[dir='rtl']` orqali — usiz
+                      arabcha so'z lotin shriftida chiqardi */}
+                  <span
+                    dir={language?.dir}
+                    lang={language?.code}
+                    className="block truncate font-semibold"
+                  >
+                    {card.word}
+                  </span>
                   <span className="block truncate text-xs text-ink-600">{card.translation}</span>
                 </span>
                 <span className="shrink-0 rounded-full bg-flame-500/15 px-2 py-0.5 text-xs font-bold text-flame-700">
