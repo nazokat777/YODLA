@@ -82,7 +82,6 @@ export function LessonScreen() {
   const [allCards, setAllCards] = useState<CardRecord[]>([])
   /** Bosqich 1 natijasi — yakunda ikkalasi qo'shiladi */
   const [lessonSummary, setLessonSummary] = useState<SessionSummary | null>(null)
-  const [pool, setPool] = useState<CardRecord[]>([])
   const [summary, setSummary] = useState<SessionSummary | null>(null)
   /** So'ralgan bo'lim umuman mavjud emas (eskirgan havola) */
   const [isMissingUnit, setIsMissingUnit] = useState(false)
@@ -141,7 +140,7 @@ export function LessonScreen() {
         // yangilanishdan keyin nomi o'zgargan mavzu), lug'at bo'sh emas.
         setIsMissingUnit(Boolean(lessonId) && scope.length === 0 && all.length > 0)
 
-        setPool(scope)
+
         setAllCards(all)
 
         /*
@@ -286,7 +285,15 @@ export function LessonScreen() {
         <SessionRunner
           key={lessonKey}
           cards={cards}
-          pool={pool}
+          /*
+            Chalg'ituvchilar BUTUN lug'atdan (`collectDistractors` bir
+            mavzudagilarni baribir afzal ko'radi). Bo'limning o'zi manba
+            bo'lsa, 1–2 so'zli bo'limlarda ("Maktab 0/1") variant
+            topilmas, har mashq "tarjimani yozish" bo'lib qolar va ikki
+            XIL tur qoidasi hech qachon bajarilmasdi. Juftlash sheriklari
+            esa `partners` (seans so'zlari) orqali — begona so'z kirmaydi.
+          */
+          pool={allCards}
           /*
             DARSDA o'zlashtirish rejimi: so'z ikki xil turdagi mashqda
             ketma-ket to'g'ri javob olguncha qaytaveradi. `stagesFor`

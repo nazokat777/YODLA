@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
 import { saveTopicOrder } from '@/content/topicOrderCache'
@@ -37,6 +37,23 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     // "Oila" bo'limida ikkita YANGI so'z bor, har biri uch bosqichda
     // Ko'rsatkich SO'ZLARNI sanaydi: bo'limda ikkita so'z bor
     expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/2')
+  })
+
+  it('BIR so‘zli bo‘limda ham variantli mashq chiqadi — chalg‘ituvchilar butun lug‘atdan', async () => {
+    /*
+     * Arab A1 da "Maktab 0/1", "Vaqt 0/1" kabi bo'limlar bor. Chalg'ituvchi
+     * manbai faqat bo'limning o'zi bo'lsa, bitta so'zga variant topilmas,
+     * har mashq "tarjimani yozish" bo'lib qolar va o'zlashtirish qoidasi
+     * (ikki XIL tur) hech qachon bajarilmasdi — dars 60 qadamgacha
+     * cho'zilardi.
+     */
+    renderLesson('/lesson/a1-salomlashish')
+
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
+    fireEvent.click(await screen.findByRole('button', { name: /tushundim/i }))
+
+    // Variantlar orasida boshqa bo'limning tarjimalari bor
+    expect((await screen.findAllByRole('button', { name: /ona|ota/ })).length).toBeGreaterThan(0)
   })
 
   it('bo‘limsiz ochilganda butun to‘plamdan tanlaydi', async () => {
