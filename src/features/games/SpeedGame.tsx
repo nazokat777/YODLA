@@ -6,7 +6,14 @@ import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
-import { getAllCards, gradeCard, recordAnswer, recordTypeResult, saveGameBest } from '@/core/db'
+import {
+  getAllCards,
+  gradeCard,
+  recordAnswer,
+  recordTypeResult,
+  refreshBadges,
+  saveGameBest,
+} from '@/core/db'
 import { generateExercise, type Exercise } from '@/core/exercises'
 import {
   SPEED_SECONDS,
@@ -101,6 +108,9 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
 
     bestSavedRef.current = true
     void saveGameBest('speed', state.score).then(setIsRecord)
+    // Nishonlar o'yindan keyin ham yangilanadi: aks holda faqat o'yin
+    // o'ynagan kuni 'Streak ×7' yoki 'XP Legend' keyingi darsgacha ochilmasdi
+    void refreshBadges()
   }, [state.finished, state.score])
 
   const exercise = useMemo<Exercise | null>(() => {

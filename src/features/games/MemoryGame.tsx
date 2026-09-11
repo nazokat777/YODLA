@@ -10,6 +10,7 @@ import {
   gradeCard,
   recordAnswer,
   recordTypeResult,
+  refreshBadges,
   saveGameBest,
   type CardRecord,
 } from '@/core/db'
@@ -142,6 +143,9 @@ export function MemoryGame() {
 
     const score = Math.max(1, PERFECT_ATTEMPTS * 2 - state.attempts)
     void saveGameBest('memory', score).then(setIsRecord)
+    // Nishonlar o'yindan keyin ham yangilanadi: aks holda faqat o'yin
+    // o'ynagan kuni 'Streak ×7' yoki 'XP Legend' keyingi darsgacha ochilmasdi
+    void refreshBadges()
   }, [complete, state])
 
   const handleOpen = useCallback((tileId: string) => {

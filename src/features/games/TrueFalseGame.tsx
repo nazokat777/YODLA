@@ -11,6 +11,7 @@ import {
   gradeCard,
   recordAnswer,
   recordTypeResult,
+  refreshBadges,
   saveGameBest,
   type CardRecord,
 } from '@/core/db'
@@ -88,6 +89,9 @@ export function TrueFalseGame() {
 
     savedRef.current = true
     void saveGameBest('truefalse', score).then(setIsRecord)
+    // Nishonlar o'yindan keyin ham yangilanadi: aks holda faqat o'yin
+    // o'ynagan kuni 'Streak ×7' yoki 'XP Legend' keyingi darsgacha ochilmasdi
+    void refreshBadges()
   }, [finished, score])
 
   const answer = useCallback(

@@ -141,6 +141,11 @@ describe('SpeedGame', () => {
     await waitFor(async () => {
       expect((await ensureProfile()).gameBests?.speed).toBe(1)
     })
+    // Nishonlar o'yindan keyin ham qayta hisoblanadi — bitta to'g'ri
+    // javob "First Step" ni ochadi, darsni kutmasdan
+    await waitFor(async () => {
+      expect((await ensureProfile()).unlockedBadges).toContain('first-steps')
+    })
   })
 })
 
