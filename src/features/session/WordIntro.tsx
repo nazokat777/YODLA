@@ -1,3 +1,4 @@
+import { cn } from '@/lib/cn'
 import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Panel } from '@/components/ui/Panel'
@@ -103,7 +104,12 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
 
       {card.sentence && (
         <Panel data-intro padding="sm" className="text-center">
-          <p dir={language.dir} lang={language.code} className="font-bold">
+          <p
+            dir={language.dir}
+            lang={language.code}
+            // Arabcha jumla kattaroq — 16 px Nasx yozuvi bola uchun mayda
+            className={cn('font-bold', language.dir === 'rtl' && 'text-xl leading-relaxed')}
+          >
             {card.sentence}
           </p>
           {card.sentenceTranslation && (

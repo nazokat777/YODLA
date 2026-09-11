@@ -187,6 +187,9 @@ export function ChoiceGrid({
               }}
               className={cn(
                 'tap-highlight-none flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-start font-semibold transition-colors',
+                // Arab yozuvi lotinchadan KATTAROQ: harakatlar 16 px da
+                // ajratib bo'lmaydi, bola esa aynan ularni o'qiyapti
+                dir === 'rtl' && 'text-xl leading-relaxed',
                 visual.className,
                 // Tugma "qalin": pastida qattiq soya, bosilganda u
                 // yo'qoladi va tugma pastga tushadi. Loyihaning `Button`

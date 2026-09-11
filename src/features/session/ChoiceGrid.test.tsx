@@ -56,6 +56,8 @@ describe('ChoiceGrid', () => {
     const list = screen.getByRole('list')
     expect(list).toHaveAttribute('dir', 'rtl')
     expect(list).toHaveAttribute('lang', 'ar')
+    // Arab yozuvi kattaroq: harakatlar 16 px da ajratib bo'lmaydi
+    expect(screen.getAllByRole('button')[0]).toHaveClass('text-xl')
   })
 })
 

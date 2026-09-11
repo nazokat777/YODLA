@@ -273,7 +273,10 @@ function ConstructionView({
             // Yig'ilgan va tanlanmagan so'zlar bir xil matnga ega — ekran
             // o'quvchi ularni faqat shu nom orqali farqlaydi
             aria-label={`${exercise.tokens[tokenIndex]} — olib tashlash`}
-            className="tap-highlight-none min-h-11 rounded-xl border-2 border-brand-500 bg-brand-50 px-3 py-2 font-semibold"
+            className={cn(
+              'tap-highlight-none min-h-11 rounded-xl border-2 border-brand-500 bg-brand-50 px-3 py-2 font-semibold',
+              language.dir === 'rtl' && 'text-xl',
+            )}
           >
             {exercise.tokens[tokenIndex]}
           </button>
@@ -292,6 +295,8 @@ function ConstructionView({
             aria-label={`${token} — qo'shish`}
             className={cn(
               'tap-highlight-none min-h-11 rounded-xl border-2 border-ink-300 bg-white px-3 py-2 font-semibold transition-opacity',
+              // Arab yozuvi kattaroq — harakatlar o'qilishi kerak
+              language.dir === 'rtl' && 'text-xl',
               used.has(index) && 'invisible',
             )}
           >
