@@ -5,6 +5,9 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import * as starterDecks from '@/content/starterDecks'
 import { OnboardingScreen } from './OnboardingScreen'
 
+/** Lug'at bo'lagi dangasa yuklanadi — sukutdagi 1 s yetmasligi mumkin */
+const DECK_LOAD_TIMEOUT = 5000
+
 function renderScreen() {
   useSettingsStore.getState().reset()
 
@@ -36,15 +39,24 @@ describe('OnboardingScreen — oqim', () => {
     renderScreen()
     chooseEnglish()
 
-    // Lug'at dangasa yuklanadi — savol tayyor bo'lguncha kutamiz
-    expect(await screen.findByTestId('placement-progress')).toHaveTextContent('1/9')
+    /*
+     * Lug'at DANGASA yuklanadi (~700 kB bo'lak). To'liq to'plam ikki
+     * ishchi bilan yurganda bu 1 soniyadan oshishi mumkin va sukutdagi
+     * kutish tugab, test ba'zan yiqilardi. Bu xato emas, sekin yuklash —
+     * kutish shunga mos.
+     */
+    expect(
+      await screen.findByTestId('placement-progress', undefined, { timeout: DECK_LOAD_TIMEOUT }),
+    ).toHaveTextContent('1/9')
   })
 
   it('testni o‘tkazib yuborsa daraja A1 bo‘ladi', async () => {
     renderScreen()
     chooseEnglish()
 
-    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(
+      await screen.findByRole('button', { name: /o.tkazib yuborish/i }, { timeout: DECK_LOAD_TIMEOUT }),
+    )
 
     expect(useSettingsStore.getState().startingLevel).toBe('A1')
     // Keyingi qadam — kunlik maqsad
@@ -56,7 +68,7 @@ describe('OnboardingScreen — oqim', () => {
     chooseEnglish()
 
     // Birinchi savol yuklanguncha kutamiz
-    await screen.findByTestId('placement-progress')
+    await screen.findByTestId('placement-progress', undefined, { timeout: DECK_LOAD_TIMEOUT })
 
     // Har savolda birinchi variantni tanlaymiz — natija muhim emas,
     // muhimi oqim oxirigacha borishi
@@ -71,7 +83,9 @@ describe('OnboardingScreen — oqim', () => {
   it('kunlik maqsad tanlanadi va yakun qadamida ko‘rinadi', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(
+      await screen.findByRole('button', { name: /o.tkazib yuborish/i }, { timeout: DECK_LOAD_TIMEOUT }),
+    )
 
     fireEvent.click(screen.getByRole('button', { name: /yengil/i }))
     fireEvent.click(screen.getByRole('button', { name: /davom etish/i }))
@@ -83,7 +97,9 @@ describe('OnboardingScreen — oqim', () => {
   it('maqsad qadamidan orqaga qaytish mumkin', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(
+      await screen.findByRole('button', { name: /o.tkazib yuborish/i }, { timeout: DECK_LOAD_TIMEOUT }),
+    )
 
     fireEvent.click(screen.getByRole('button', { name: /orqaga/i }))
 
@@ -93,7 +109,9 @@ describe('OnboardingScreen — oqim', () => {
   it('yakunda onboarding tugallangan deb belgilanadi', async () => {
     renderScreen()
     chooseEnglish()
-    fireEvent.click(await screen.findByRole('button', { name: /o.tkazib yuborish/i }))
+    fireEvent.click(
+      await screen.findByRole('button', { name: /o.tkazib yuborish/i }, { timeout: DECK_LOAD_TIMEOUT }),
+    )
     fireEvent.click(screen.getByRole('button', { name: /davom etish/i }))
 
     expect(useSettingsStore.getState().onboardingCompleted).toBe(false)
