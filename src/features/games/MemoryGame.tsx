@@ -15,6 +15,7 @@ import {
 } from '@/core/db'
 import {
   MEMORY_PAIRS,
+  gameGrade,
   isMemoryComplete,
   openTile,
   resolveMemory,
@@ -99,10 +100,14 @@ export function MemoryGame() {
 
     if (firstTile) {
       /*
-       * SM-2 ga yumshoq baho (`matching` kabi): o'yindagi xato
-       * ko'pincha esdan chiqqanidan emas, joyini adashganidan.
+       * SM-2 FAQAT TOPILGAN JUFT uchun. Yopiq kataklarda mos kelmagan
+       * ochish — o'yin mexanikasi, unutish emas: 12 katakli taxtada
+       * birinchi urinishlarning deyarli hammasi "xato". Ilgari har
+       * biri 2 baho olar, ya'ni so'z jadvalda noldan boshlanar va
+       * "qiyin so'zlar" ro'yxatiga tushardi — bola o'yin o'ynagani
+       * uchun jazolanardi.
        */
-      void gradeCard(firstTile.cardId, isPair ? 4 : 2)
+      if (isPair) void gradeCard(firstTile.cardId, gameGrade(true))
       void recordTypeResult(firstTile.cardId, 'matching', !isPair)
       /*
        * XP va kunlik maqsad ham yoziladi. Usiz bola xotira o'yinini

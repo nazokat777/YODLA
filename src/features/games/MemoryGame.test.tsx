@@ -90,4 +90,42 @@ describe('MemoryGame', () => {
 
     expect(closedTiles()).toHaveLength(10)
   })
+
+  it('mos kelmagan ochish so‘zni SM-2 da JAZOLAMAYDI', async () => {
+    /*
+     * 12 katakli taxtada birinchi urinishlarning deyarli hammasi "xato"
+     * — bu o'yin mexanikasi, unutish emas. Ilgari har biri 2 baho olar,
+     * so'z jadvalda noldan boshlanar va "qiyin so'zlar" ro'yxatiga
+     * tushardi.
+     */
+    renderGame()
+
+    await waitFor(() => {
+      expect(closedTiles()).toHaveLength(12)
+    })
+
+    // Bir xil kartaning ikki tomonini emas, ikki XIL kartani ochamiz:
+    // aria-label ochilgach matnni beradi
+    const tiles = closedTiles()
+    fireEvent.click(tiles[0])
+    fireEvent.click(tiles[1])
+
+    await waitFor(() => {
+      expect(closedTiles()).toHaveLength(10)
+    })
+    const opened = screen
+      .getAllByRole('button')
+      .filter((node) => !/yopiq katak/i.test(node.getAttribute('aria-label') ?? ''))
+      .map((node) => node.getAttribute('aria-label'))
+    const pairMatched = WORDS.some(
+      (entry) => opened.includes(entry.word) && opened.includes(entry.translation),
+    )
+    if (pairMatched) return // tasodifan juft chiqdi — bu holat boshqa test mavzusi
+
+    // Yozuvlar tugashini kutamiz, keyin hech bir karta yiqilmaganini ko'ramiz
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    const cards = await db.cards.toArray()
+    expect(cards.every((card) => card.lapses === 0)).toBe(true)
+    expect(cards.every((card) => card.interval >= 0)).toBe(true)
+  })
 })

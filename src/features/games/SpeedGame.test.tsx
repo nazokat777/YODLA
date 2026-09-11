@@ -119,6 +119,12 @@ describe('SpeedGame', () => {
       expect(card?.totalReviews).toBe(2)
     })
     expect(screen.getByTestId('speed-live-score')).toHaveTextContent('0')
+
+    // Yiqilish EMAS: xato hisoblanmaydi, jadval noldan boshlanmaydi.
+    // Ilgari test buni tekshirmasdi va baho 2 aslida to'liq unutish edi
+    const card = await getCard(`en:${word}`)
+    expect(card?.lapses).toBe(0)
+    expect(card?.repetitions).toBeGreaterThan(0)
   })
 
   it('vaqt tugagach natija va rekord saqlanadi', async () => {

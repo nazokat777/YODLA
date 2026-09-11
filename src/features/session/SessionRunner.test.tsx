@@ -81,7 +81,7 @@ describe('SessionRunner — juft topish', () => {
     }
   })
 
-  it('xato juftlangan karta jazolanmaydi — baho 2, nol emas', async () => {
+  it('xato juftlangan karta jazolanmaydi — baho 3, yiqilish emas', async () => {
     render(<SessionRunner cards={CARDS} pool={CARDS} onFinish={() => {}} />)
 
     await screen.findByText(/so.z va tarjimasini juftlang/i)
@@ -99,7 +99,7 @@ describe('SessionRunner — juft topish', () => {
       expect(gradeCard).toHaveBeenCalledTimes(CARDS.length)
     })
 
-    expect(vi.mocked(gradeCard)).toHaveBeenCalledWith('en:water', 2)
+    expect(vi.mocked(gradeCard)).toHaveBeenCalledWith('en:water', 3)
     expect(vi.mocked(gradeCard)).toHaveBeenCalledWith('en:tea', 4)
   })
 

@@ -8,7 +8,14 @@ import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { getAllCards, gradeCard, recordAnswer, recordTypeResult, saveGameBest } from '@/core/db'
 import { generateExercise, type Exercise } from '@/core/exercises'
-import { SPEED_SECONDS, WRONG_PAUSE_MS, answerSpeed, startSpeed, tickSpeed } from '@/core/games'
+import {
+  SPEED_SECONDS,
+  WRONG_PAUSE_MS,
+  answerSpeed,
+  gameGrade,
+  startSpeed,
+  tickSpeed,
+} from '@/core/games'
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -17,18 +24,12 @@ import { playCorrectSound, playWrongSound } from '@/lib/sound'
 /** O'yinga nechta karta tayyorlanadi — 60 soniyaga yetib ortadi */
 const POOL_SIZE = 60
 
-/** O'yinda javob to'g'ri bo'lsa/bo'lmasa SM-2 ga qaysi baho beriladi */
-const CORRECT_GRADE = 4
-const WRONG_GRADE = 2
-
 /**
  * Vaqtga qarshi poyga: 60 soniyada nechta so'zni bilasiz?
  *
- * NEGA SM-2 GA YUMSHOQ BAHO (xato = 2, 1 emas): o'yinda xato ko'pincha
- * vaqt yetmagani yoki chalg'iganidan bo'ladi, bilmaganidan emas. Uni
- * to'liq "unutdim" deb hisoblash intervalni asossiz qisqartirardi va
- * bola o'yin o'ynagani uchun JAZOLANARDI. `matching` mashqi ham aynan
- * shu bahoni beradi.
+ * SM-2 ga baho `gameGrade` orqali: o'yinda xato ko'pincha vaqt
+ * yetmagani yoki chalg'iganidan bo'ladi, bilmaganidan emas — u jadvalni
+ * buzmasligi kerak (`core/games/grade.ts`).
  */
 interface SpeedGameProps {
   /**
@@ -133,7 +134,7 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
       if (soundEnabled) (correct ? playCorrectSound : playWrongSound)()
 
       const cardId = exercise.card.id
-      void gradeCard(cardId, correct ? CORRECT_GRADE : WRONG_GRADE)
+      void gradeCard(cardId, gameGrade(correct))
       void recordTypeResult(cardId, 'recognition', !correct)
       void recordAnswer({ cardId, verdict: correct ? 'correct' : 'wrong', dailyGoalWords })
 

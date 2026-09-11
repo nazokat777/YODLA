@@ -20,7 +20,7 @@ import {
 } from '@/core/exercises'
 import type { ExerciseType } from '@/core/types'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
-import { LUCKY_MULTIPLIER, isLucky } from '@/core/games'
+import { LUCKY_MULTIPLIER, gameGrade, isLucky } from '@/core/games'
 import {
   applyAnswer,
   emptyProgress,
@@ -697,9 +697,11 @@ export function SessionRunner({
   /**
    * Juft topish yakunlandi — bir mashqda BIR NECHTA karta baholanadi.
    *
-   * Baho: to'g'ri = 4, xato = 2. Nol emas, chunki juft topish tanib olishga
-   * yaqin passiv tur: bu yerdagi xato so'z butunlay unutilganini bildirmaydi,
-   * shuning uchun intervalni noldan boshlash haqsizlik bo'lardi.
+   * Baho `gameGrade` orqali: to'g'ri = 4, xato = 3 ("qiyin, lekin
+   * o'tdi"). Juft topish tanib olishga yaqin passiv tur: bu yerdagi xato
+   * so'z butunlay unutilganini bildirmaydi. Ilgari 2 berilardi va bu
+   * SM-2 uchun yiqilish edi — interval noldan boshlanar, `lapses`
+   * oshardi (`core/games/grade.ts`).
    *
    * Navbat BITTAGA suriladi: qolgan kartalar o'z navbatida yana chiqadi,
    * bu yerdagi baho ular uchun bonus takror bo'ladi.
@@ -731,7 +733,7 @@ export function SessionRunner({
         if (!gradedRef.current.has(cardId)) {
           gradedRef.current.add(cardId)
           try {
-            await gradeCard(cardId, verdict === 'correct' ? 4 : 2)
+            await gradeCard(cardId, gameGrade(verdict === 'correct'))
           } catch (error) {
             // Bittasi saqlanmasa ham qolganlari yoziladi — butun juftlikni
             // bekor qilish foydalanuvchining mehnatini yo'qqa chiqarardi

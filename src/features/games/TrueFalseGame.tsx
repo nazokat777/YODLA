@@ -14,7 +14,7 @@ import {
   saveGameBest,
   type CardRecord,
 } from '@/core/db'
-import { checkTrueFalse, makeTrueFalsePair } from '@/core/games'
+import { checkTrueFalse, gameGrade, makeTrueFalsePair } from '@/core/games'
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -101,7 +101,7 @@ export function TrueFalseGame() {
 
       // SM-2 ga yumshoq baho: takrorlashning o'zi foydali, lekin
       // 50% taxmin qilinadigan formatga qattiq tayanib bo'lmaydi
-      void gradeCard(pair.card.id, correct ? 4 : 2)
+      void gradeCard(pair.card.id, gameGrade(correct))
       void recordTypeResult(pair.card.id, 'recognition', !correct)
       // XP va kunlik maqsad — vaqtga qarshi o'yin bilan bir xil
       void recordAnswer({ cardId: pair.card.id, verdict: correct ? 'correct' : 'wrong', dailyGoalWords })
