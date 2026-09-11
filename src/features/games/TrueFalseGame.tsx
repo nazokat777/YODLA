@@ -57,8 +57,9 @@ export function TrueFalseGame() {
       .then((all) => {
         if (cancelled) return
 
+        // FAQAT ko'rilgan so'zlar — kam bo'lsa "avval dars o'ting"
         const seen = all.filter((card) => card.totalReviews > 0)
-        setCards(shuffle(seen.length >= 4 ? seen : all))
+        setCards(shuffle(seen))
       })
       .catch((error: unknown) => {
         console.error('O‘yin uchun so‘zlarni yuklab bo‘lmadi:', error)

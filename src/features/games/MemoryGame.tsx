@@ -59,9 +59,10 @@ export function MemoryGame() {
       .then((all) => {
         if (cancelled) return
 
-        // Ko'rilgan so'zlar afzal — o'yin tekshiruv, o'rgatish emas
+        // FAQAT ko'rilgan so'zlar — o'yin tekshiruv, o'rgatish emas.
+        // Kam bo'lsa "avval dars o'ting" xabari chiqadi
         const seen = all.filter((card) => card.totalReviews > 0)
-        setCards(shuffle(seen.length >= MEMORY_PAIRS ? seen : all))
+        setCards(shuffle(seen))
       })
       .catch((error: unknown) => {
         console.error('O‘yin uchun so‘zlarni yuklab bo‘lmadi:', error)

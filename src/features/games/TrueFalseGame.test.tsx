@@ -11,6 +11,11 @@ const WORDS = [
   { word: 'water', translation: 'suv', language: 'en' as const },
 ]
 
+/** Barcha seed kartalarini "ko'rilgan" holatga o'tkazadi */
+async function markSeen() {
+  await db.cards.toCollection().modify({ totalReviews: 1 })
+}
+
 function renderGame() {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
@@ -28,6 +33,8 @@ describe('TrueFalseGame', () => {
     await db.profile.clear()
     await db.dailyStats.clear()
     await addMissingCards(WORDS)
+    // O'yinlar FAQAT ko'rilgan so'zlarni oladi — seeddagilar "ko'rilgan" qilinadi
+    await markSeen()
   })
 
   it('so‘z va taklif qilingan tarjima ko‘rsatiladi', async () => {
@@ -73,6 +80,7 @@ describe('TrueFalseGame — XP', () => {
     await db.cards.clear()
     await db.dailyStats.clear()
     await addMissingCards(WORDS)
+    await markSeen()
 
     renderGame()
     await screen.findByTestId('tf-word')

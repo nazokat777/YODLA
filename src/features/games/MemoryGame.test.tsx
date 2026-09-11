@@ -14,6 +14,11 @@ const WORDS = [
   { word: 'salt', translation: 'tuz', language: 'en' as const },
 ]
 
+/** Barcha seed kartalarini "ko'rilgan" holatga o'tkazadi */
+async function markSeen() {
+  await db.cards.toCollection().modify({ totalReviews: 1 })
+}
+
 function renderGame() {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
@@ -32,6 +37,8 @@ describe('MemoryGame', () => {
     await db.cards.clear()
     await db.profile.clear()
     await addMissingCards(WORDS)
+    // O'yinlar FAQAT ko'rilgan so'zlarni oladi — seeddagilar "ko'rilgan" qilinadi
+    await markSeen()
   })
 
   it('so‘z kam bo‘lsa o‘yin boshlanmaydi', async () => {

@@ -17,6 +17,11 @@ const WORDS = [
   { word: 'tea', translation: 'choy', language: 'en' as const },
 ]
 
+/** Barcha seed kartalarini "ko'rilgan" holatga o'tkazadi */
+async function markSeen() {
+  await db.cards.toCollection().modify({ totalReviews: 1 })
+}
+
 function renderGame(seconds?: number) {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
@@ -51,6 +56,21 @@ describe('SpeedGame', () => {
     await db.cards.clear()
     await db.profile.clear()
     await addMissingCards(WORDS)
+    // O'yinlar FAQAT ko'rilgan so'zlarni oladi — seeddagilar "ko'rilgan" qilinadi
+    await markSeen()
+  })
+
+  it('hali KO‘RILMAGAN so‘zlar o‘yinga kirmaydi', async () => {
+    /*
+     * Ilgari ko'rilgan so'z kam bo'lsa BUTUN lug'at olinardi — yangi
+     * foydalanuvchi ko'rmagan so'zlarni 3 soniyada topishga majbur
+     * bo'lardi. O'yin tekshiruv, o'rgatish emas.
+     */
+    await db.cards.toCollection().modify({ totalReviews: 0 })
+
+    renderGame()
+
+    expect(await screen.findByText(/avval bir dars o.ting/i)).toBeInTheDocument()
   })
 
   it('so‘z kam bo‘lsa o‘yin boshlanmaydi', async () => {
@@ -96,7 +116,7 @@ describe('SpeedGame', () => {
 
     await waitFor(async () => {
       const card = await getCard(`en:${word}`)
-      expect(card?.totalReviews).toBe(1)
+      expect(card?.totalReviews).toBe(2)
     })
     expect(screen.getByTestId('speed-live-score')).toHaveTextContent('0')
   })
@@ -131,6 +151,7 @@ describe('SpeedGame — arab tili', () => {
       { word: 'بَيْت', translation: 'uy', language: 'ar' },
       { word: 'مَاء', translation: 'suv', language: 'ar' },
     ])
+    await markSeen()
     useSettingsStore.getState().reset()
     useSettingsStore.getState().setLearningLanguage('ar')
 
@@ -158,6 +179,7 @@ describe('SpeedGame — ovoz', () => {
     vi.mocked(playCorrectSound).mockClear()
     await db.cards.clear()
     await addMissingCards(WORDS)
+    await markSeen()
     useSettingsStore.getState().reset()
     useSettingsStore.getState().setLearningLanguage('en')
     useSettingsStore.getState().setSoundEnabled(true)

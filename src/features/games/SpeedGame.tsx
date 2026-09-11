@@ -64,12 +64,14 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
         if (cancelled) return
 
         /*
-         * Ko'rilgan so'zlar afzal: o'yin TEKSHIRUV, o'rgatish emas.
+         * FAQAT ko'rilgan so'zlar: o'yin TEKSHIRUV, o'rgatish emas.
          * Hech qachon ko'rmagan so'zni 3 soniyada topish mumkin emas
-         * va bu faqat xafa qilardi.
+         * va bu faqat xafa qilardi. Ilgari ular kam bo'lsa butun lug'at
+         * olinardi — yangi foydalanuvchi B1 so'zlarini ko'rar, pastdagi
+         * "avval dars o'ting" xabari esa hech qachon chiqmasdi.
          */
         const seen = all.filter((card) => card.totalReviews > 0)
-        setCards(shuffle(seen.length >= 8 ? seen : all).slice(0, POOL_SIZE))
+        setCards(shuffle(seen).slice(0, POOL_SIZE))
       })
       .catch((error: unknown) => {
         console.error('O‘yin uchun so‘zlarni yuklab bo‘lmadi:', error)
