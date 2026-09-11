@@ -5,7 +5,7 @@ import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { countCards, getAllCards, type CardRecord } from '@/core/db'
+import { countCards, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { buildUnits, unitIdOf } from '@/core/path'
 import { pickWeakest, REVIEW_STREAK } from '@/core/mastery'
@@ -183,6 +183,8 @@ export function LessonScreen() {
         return
       }
 
+      // Aralash bosqich yo'q — dars shu yerda TO'LIQ tugadi
+      void recordLessonCompleted()
       setSummary(result)
     },
     [mixedCards],
@@ -192,6 +194,9 @@ export function LessonScreen() {
   const handleMixedFinish = useCallback(
     (result: SessionSummary) => {
       const first = lessonSummary ?? EMPTY_LESSON_SUMMARY
+
+      // Ikkala bosqich ham tugadi — kunlik chaqiriq shuni sanaydi
+      void recordLessonCompleted()
 
       setSummary({
         answered: first.answered + result.answered,

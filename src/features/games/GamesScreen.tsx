@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
 import { cn } from '@/lib/cn'
-import { db } from '@/core/db'
+import { claimChallengeBonus, db } from '@/core/db'
 import type { GameId } from '@/core/db'
-import { CHALLENGE_BONUS_XP, dailyChallenge } from '@/core/games'
+import { CHALLENGE_BONUS_XP, challengeProgress, dailyChallenge, isChallengeDone } from '@/core/games'
 import { useProgress } from '@/hooks/useProgress'
 import { enterStagger, pressTilt, revealHeading, withMotion } from '@/lib/motion'
 import { useEffect, useRef } from 'react'
@@ -105,17 +105,26 @@ export function GamesScreen() {
   const challenge = dailyChallenge()
   const bests = profile?.gameBests
 
-  /*
-   * Chaqiriq progressi mavjud o'lchovlardan olinadi — alohida hisob
-   * yuritilmaydi. Yangi jadval qo'shish bir kunlik vazifa uchun
-   * ortiqcha murakkablik bo'lardi.
-   */
-  const challengeProgress =
-    challenge.kind === 'speedScore'
-      ? (bests?.speed ?? 0)
-      : (progress?.daily.cardIds.length ?? 0)
+  // Progress mavjud kunlik o'lchovlardan — manbalar `core/games` da
+  const done = challengeProgress(challenge, {
+    correctToday: progress?.daily.correct ?? 0,
+    speedBest: bests?.speed ?? 0,
+    lessonsToday: progress?.daily.lessonsCompleted ?? 0,
+  })
+  const challengeDone = isChallengeDone(challenge, done)
 
-  const challengeDone = challengeProgress >= challenge.target
+  /*
+   * BONUS HAQIQATAN BERILADI. Ilgari ekranda "+50 XP" deb turardi,
+   * lekin hech qayerga yozilmasdi — va'da qilingan mukofot yolg'on
+   * edi. `claimChallengeBonus` bir kunda bir marta beradi, shuning
+   * uchun bu effekt har renderda xavfsiz.
+   */
+  const bonusClaimed = progress?.daily.challengeBonusAwarded ?? false
+  useEffect(() => {
+    if (!challengeDone || bonusClaimed) return
+
+    void claimChallengeBonus(CHALLENGE_BONUS_XP)
+  }, [challengeDone, bonusClaimed])
 
   return (
     <div ref={rootRef} className="flex flex-col gap-4">
@@ -146,7 +155,7 @@ export function GamesScreen() {
           <span className="block text-xs text-ink-600">
             {challengeDone
               ? `Bajarildi! +${CHALLENGE_BONUS_XP} XP`
-              : `${Math.min(challengeProgress, challenge.target)}/${challenge.target}`}
+              : `${Math.min(done, challenge.target)}/${challenge.target}`}
           </span>
         </span>
       </Panel>

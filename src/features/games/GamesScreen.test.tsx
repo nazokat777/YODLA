@@ -1,7 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { db, saveGameBest } from '@/core/db'
+import {
+  addMissingCards,
+  db,
+  ensureProfile,
+  recordAnswer,
+  recordLessonCompleted,
+  saveGameBest,
+} from '@/core/db'
+import { CHALLENGE_BONUS_XP, dailyChallenge } from '@/core/games'
 import { GamesScreen } from './GamesScreen'
 
 function renderScreen() {
@@ -73,5 +81,35 @@ describe('kunlik chaqiriq', () => {
     const second = (await screen.findByTestId('daily-challenge')).textContent
 
     expect(second).toBe(first)
+  })
+})
+
+describe('kunlik chaqiriq bonusi', () => {
+  it('chaqiriq bajarilganda bonus HAQIQATAN yoziladi', async () => {
+    /*
+     * Ilgari ekranda "+50 XP" deb turardi, lekin hech qayerga
+     * yozilmasdi — va'da qilingan mukofot yolg'on edi.
+     */
+    await db.profile.clear()
+    await db.dailyStats.clear()
+
+    // Bugungi chaqiriq qaysi bo'lsa ham, uning maqsadiga yetkazamiz
+    const challenge = dailyChallenge()
+    if (challenge.kind === 'speedScore') await saveGameBest('speed', challenge.target)
+    else if (challenge.kind === 'finishLesson') {
+      for (let i = 0; i < challenge.target; i += 1) await recordLessonCompleted()
+    } else {
+      await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
+      for (let i = 0; i < challenge.target; i += 1) {
+        await recordAnswer({ cardId: 'en:apple', verdict: 'correct', dailyGoalWords: 100 })
+      }
+    }
+    const before = (await ensureProfile()).totalXp
+
+    renderScreen()
+
+    await waitFor(async () => {
+      expect((await ensureProfile()).totalXp).toBe(before + CHALLENGE_BONUS_XP)
+    })
   })
 })

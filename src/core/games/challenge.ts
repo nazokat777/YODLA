@@ -19,7 +19,9 @@ const CHALLENGES: readonly DailyChallenge[] = [
   {
     kind: 'perfectWords',
     target: 10,
-    title: '10 ta so‘zga xatosiz javob bering',
+    // O'lchanadigan narsa TO'G'RI JAVOBLAR soni (`daily.correct`):
+    // "xatosiz so'z" so'z kesimida kuzatilmaydi va matn shunga mos
+    title: '10 ta to‘g‘ri javob bering',
     icon: '🎯',
   },
   {
@@ -56,4 +58,26 @@ export function dailyChallenge(now: number = Date.now()): DailyChallenge {
 /** Chaqiriq bajarildimi */
 export function isChallengeDone(challenge: DailyChallenge, progress: number): boolean {
   return progress >= challenge.target
+}
+
+/**
+ * Chaqiriq progressi — MAVJUD kunlik o'lchovlardan.
+ *
+ * Har tur o'z manbasidan o'qiladi. Ilgari ikkitasi noto'g'ri manbaga
+ * ulangan edi: "darsni tugat" bitta so'z ko'rilishi bilan, "10 ta
+ * to'g'ri" esa 10 ta so'z KO'RILISHI bilan (xato bo'lsa ham) bajarilib
+ * qolardi.
+ */
+export function challengeProgress(
+  challenge: DailyChallenge,
+  sources: { correctToday: number; speedBest: number; lessonsToday: number },
+): number {
+  switch (challenge.kind) {
+    case 'perfectWords':
+      return sources.correctToday
+    case 'speedScore':
+      return sources.speedBest
+    case 'finishLesson':
+      return sources.lessonsToday
+  }
 }

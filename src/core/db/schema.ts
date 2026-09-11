@@ -80,6 +80,15 @@ export interface DailyStat {
   cardIds: string[]
   /** Kunlik maqsad bonusi berilganmi (ikki marta berilmasligi uchun) */
   goalBonusAwarded: boolean
+  /**
+   * Shu kuni TO'LIQ tugatilgan darslar soni.
+   *
+   * Kunlik chaqiriq ("bitta darsni o'zlashtir") shuni o'lchaydi.
+   * Ixtiyoriy: eski yozuvlarda yo'q va 0 deb o'qiladi.
+   */
+  lessonsCompleted?: number
+  /** Kunlik chaqiriq bonusi berilganmi (ikki marta berilmasligi uchun) */
+  challengeBonusAwarded?: boolean
 }
 
 /** Foydalanuvchi profili — bazada bitta yozuv */

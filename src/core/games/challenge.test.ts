@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CHALLENGE_BONUS_XP, dailyChallenge, isChallengeDone } from './challenge'
+import { CHALLENGE_BONUS_XP, challengeProgress, dailyChallenge, isChallengeDone } from './challenge'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -51,5 +51,32 @@ describe('isChallengeDone', () => {
 
   it('kam bo‘lsa hali bajarilmagan', () => {
     expect(isChallengeDone(challenge, challenge.target - 1)).toBe(false)
+  })
+})
+
+describe('challengeProgress', () => {
+  const sources = { correctToday: 7, speedBest: 12, lessonsToday: 1 }
+
+  it('"to‘g‘ri javob" chaqirig‘i TO‘G‘RI JAVOBLARNI sanaydi', () => {
+    /*
+     * Ilgari ko'rilgan so'zlar soni olinardi — xato javob berilgan
+     * so'z ham hisobga o'tardi.
+     */
+    const challenge = { kind: 'perfectWords' as const, target: 10, title: '', icon: '' }
+
+    expect(challengeProgress(challenge, sources)).toBe(7)
+  })
+
+  it('"vaqtga qarshi" chaqirig‘i rekordni oladi', () => {
+    const challenge = { kind: 'speedScore' as const, target: 12, title: '', icon: '' }
+
+    expect(challengeProgress(challenge, sources)).toBe(12)
+  })
+
+  it('"darsni tugat" chaqirig‘i TUGATILGAN DARSLARNI sanaydi', () => {
+    // Ilgari bitta so'z ko'rilishi bilan bajarilib qolardi
+    const challenge = { kind: 'finishLesson' as const, target: 1, title: '', icon: '' }
+
+    expect(challengeProgress(challenge, sources)).toBe(1)
   })
 })

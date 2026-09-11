@@ -367,3 +367,49 @@ export async function saveGameBest(game: GameId, score: number): Promise<boolean
     return true
   })
 }
+
+/**
+ * Dars TO'LIQ tugadi — kunlik hisobga yoziladi.
+ *
+ * `finalizeSession` dan alohida: u har seansda (takrorlash, o'yin
+ * emas — SessionRunner) chaqiriladi, bu esa faqat DARS yakunida.
+ * Kunlik chaqiriq "bitta darsni o'zlashtir" aynan shuni sanaydi.
+ */
+export async function recordLessonCompleted(now: number = Date.now()): Promise<void> {
+  const day = startOfDay(now)
+
+  await db.transaction('rw', db.dailyStats, async () => {
+    const daily = (await db.dailyStats.get(day)) ?? createDailyStat(day)
+    daily.lessonsCompleted = (daily.lessonsCompleted ?? 0) + 1
+    await db.dailyStats.put(daily)
+  })
+}
+
+/**
+ * Kunlik chaqiriq bonusini beradi. Bir kunda BIR MARTA.
+ *
+ * Qaytaradi: bonus aynan shu chaqiruvda berildimi. Bu yerda tekshirish
+ * shart: ekranda "bajarildi" deb turgan chaqiriq uchun XP haqiqatan
+ * yozilmasa, foydalanuvchi va'da qilingan mukofotni olmagan bo'lardi.
+ */
+export async function claimChallengeBonus(
+  bonusXp: number,
+  now: number = Date.now(),
+): Promise<boolean> {
+  const day = startOfDay(now)
+
+  return db.transaction('rw', db.dailyStats, db.profile, async () => {
+    const daily = (await db.dailyStats.get(day)) ?? createDailyStat(day)
+    if (daily.challengeBonusAwarded) return false
+
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    daily.challengeBonusAwarded = true
+    daily.xp += bonusXp
+    profile.totalXp += bonusXp
+
+    await db.dailyStats.put(daily)
+    await db.profile.put(profile)
+
+    return true
+  })
+}

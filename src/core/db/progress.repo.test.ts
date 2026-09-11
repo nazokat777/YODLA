@@ -16,6 +16,8 @@ import {
   recordAnswer,
   recordPerfectSession,
   runDailyMaintenance,
+  claimChallengeBonus,
+  recordLessonCompleted,
   saveGameBest,
   syncBadges,
 } from './progress.repo'
@@ -353,5 +355,47 @@ describe('saveGameBest', () => {
 
     expect(bests?.speed).toBe(12)
     expect(bests?.memory).toBe(30)
+  })
+})
+
+describe('recordLessonCompleted', () => {
+  it('kunlik hisobda tugatilgan darslar soni ortadi', async () => {
+    await db.dailyStats.clear()
+    const now = Date.now()
+
+    await recordLessonCompleted(now)
+    await recordLessonCompleted(now)
+
+    expect((await getDailyStat(now)).lessonsCompleted).toBe(2)
+  })
+})
+
+describe('claimChallengeBonus', () => {
+  it('bonus XP profil va kunlik hisobga yoziladi', async () => {
+    await db.dailyStats.clear()
+    await db.profile.clear()
+    const now = Date.now()
+
+    const claimed = await claimChallengeBonus(50, now)
+
+    expect(claimed).toBe(true)
+    expect((await ensureProfile()).totalXp).toBe(50)
+    expect((await getDailyStat(now)).xp).toBe(50)
+  })
+
+  it('bir kunda IKKI MARTA berilmaydi', async () => {
+    /*
+     * Ekranga qayta kirishning o'zi mukofot bo'lmasligi kerak — aks
+     * holda sahifani yangilab XP yig'ish mumkin bo'lardi.
+     */
+    await db.dailyStats.clear()
+    await db.profile.clear()
+    const now = Date.now()
+
+    await claimChallengeBonus(50, now)
+    const second = await claimChallengeBonus(50, now)
+
+    expect(second).toBe(false)
+    expect((await ensureProfile()).totalXp).toBe(50)
   })
 })
