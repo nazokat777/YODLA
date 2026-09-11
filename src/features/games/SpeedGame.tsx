@@ -12,6 +12,7 @@ import { SPEED_SECONDS, WRONG_PAUSE_MS, answerSpeed, startSpeed, tickSpeed } fro
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { playCorrectSound, playWrongSound } from '@/lib/sound'
 
 /** O'yinga nechta karta tayyorlanadi — 60 soniyaga yetib ortadi */
 const POOL_SIZE = 60
@@ -43,6 +44,7 @@ interface SpeedGameProps {
 export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
+  const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<Awaited<ReturnType<typeof getAllCards>> | null>(null)
@@ -124,6 +126,10 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
       setState((current) => answerSpeed(current, correct))
       setFlash(correct ? 'correct' : 'wrong')
 
+      // Ovoz — seansdagi kabi. O'yinda ayniqsa kerak: bola ekranga
+      // emas, tugmaga qaraydi va natijani QULOQ bilan oladi
+      if (soundEnabled) (correct ? playCorrectSound : playWrongSound)()
+
       const cardId = exercise.card.id
       void gradeCard(cardId, correct ? CORRECT_GRADE : WRONG_GRADE)
       void recordTypeResult(cardId, 'recognition', !correct)
@@ -138,7 +144,7 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
         correct ? 150 : WRONG_PAUSE_MS,
       )
     },
-    [exercise, flash, state.finished, dailyGoalWords],
+    [exercise, flash, state.finished, dailyGoalWords, soundEnabled],
   )
 
   if (cards === null) {

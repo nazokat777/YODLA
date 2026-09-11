@@ -24,6 +24,7 @@ import {
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { playCorrectSound, playWrongSound } from '@/lib/sound'
 
 /** Juft bo'lmagan kataklar necha ms ochiq turadi */
 const FLIP_BACK_MS = 900
@@ -41,6 +42,7 @@ const PERFECT_ATTEMPTS = MEMORY_PAIRS
 export function MemoryGame() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
+  const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
@@ -111,6 +113,7 @@ export function MemoryGame() {
         verdict: isPair ? 'correct' : 'wrong',
         dailyGoalWords,
       })
+      if (soundEnabled) (isPair ? playCorrectSound : playWrongSound)()
     }
 
     const timer = window.setTimeout(
@@ -119,7 +122,7 @@ export function MemoryGame() {
     )
 
     return () => clearTimeout(timer)
-  }, [state, dailyGoalWords])
+  }, [state, dailyGoalWords, soundEnabled])
 
   const complete = state !== null && isMemoryComplete(state)
 

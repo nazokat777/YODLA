@@ -18,6 +18,7 @@ import { checkTrueFalse, makeTrueFalsePair } from '@/core/games'
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { playCorrectSound, playWrongSound } from '@/lib/sound'
 
 /** Bir o'yinda nechta savol */
 const ROUND_SIZE = 15
@@ -37,6 +38,7 @@ const FEEDBACK_MS = 450
 export function TrueFalseGame() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
+  const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
@@ -94,6 +96,7 @@ export function TrueFalseGame() {
       const correct = checkTrueFalse(pair, saidTrue)
       setFeedback(correct ? 'correct' : 'wrong')
       setScore((current) => current + (correct ? 1 : 0))
+      if (soundEnabled) (correct ? playCorrectSound : playWrongSound)()
 
       // SM-2 ga yumshoq baho: takrorlashning o'zi foydali, lekin
       // 50% taxmin qilinadigan formatga qattiq tayanib bo'lmaydi
@@ -107,7 +110,7 @@ export function TrueFalseGame() {
         setIndex((current) => current + 1)
       }, FEEDBACK_MS)
     },
-    [pair, feedback, dailyGoalWords],
+    [pair, feedback, dailyGoalWords, soundEnabled],
   )
 
   if (cards === null) return <Panel className="text-ink-600">Yuklanmoqda…</Panel>

@@ -1,9 +1,13 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, ensureProfile, getCard } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { SpeedGame } from './SpeedGame'
+import { playCorrectSound } from '@/lib/sound'
+
+// Ovoz jsdom'da yo'q — chaqiruvning O'ZI tekshiriladi
+vi.mock('@/lib/sound', () => ({ playCorrectSound: vi.fn(), playWrongSound: vi.fn() }))
 
 const WORDS = [
   { word: 'apple', translation: 'olma', language: 'en' as const },
@@ -141,5 +145,33 @@ describe('SpeedGame — arab tili', () => {
 
     expect(word).toHaveAttribute('dir', 'rtl')
     expect(word).toHaveAttribute('lang', 'ar')
+  })
+})
+
+describe('SpeedGame — ovoz', () => {
+  it('ovoz yoqilgan bo‘lsa to‘g‘ri javobda signal beriladi', async () => {
+    /*
+     * O'yinlar ovozsiz edi, seans esa ovozli — farq asossiz. O'yinda
+     * ovoz ayniqsa kerak: bola tugmaga qaraydi, natijani quloq bilan
+     * oladi.
+     */
+    vi.mocked(playCorrectSound).mockClear()
+    await db.cards.clear()
+    await addMissingCards(WORDS)
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    useSettingsStore.getState().setSoundEnabled(true)
+
+    render(
+      <MemoryRouter>
+        <SpeedGame />
+      </MemoryRouter>,
+    )
+    fireEvent.click(await screen.findByRole('button', { name: /boshlash/i }))
+    answer('correct')
+
+    await waitFor(() => {
+      expect(playCorrectSound).toHaveBeenCalledTimes(1)
+    })
   })
 })
