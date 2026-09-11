@@ -250,7 +250,11 @@ export function FeedbackBar({
               <p
                 dir={context.isTarget ? language.dir : 'ltr'}
                 lang={context.isTarget ? language.code : 'uz'}
-                className="text-sm text-ink-600"
+                // Arabcha jumla 14 px da o'qilmaydi — harakatlar yo'qoladi
+                className={cn(
+                  'text-ink-600',
+                  context.isTarget && language.dir === 'rtl' ? 'text-lg leading-relaxed' : 'text-sm',
+                )}
               >
                 {context.isTarget ? context.text : `= ${context.text}`}
               </p>
