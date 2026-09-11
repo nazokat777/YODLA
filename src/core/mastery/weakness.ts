@@ -1,5 +1,5 @@
 import type { CardRecord } from '@/core/db'
-import { DEFAULT_EASE_FACTOR } from '@/core/srs'
+import { DEFAULT_EASE_FACTOR, wordStrength } from '@/core/srs'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -52,4 +52,20 @@ export function pickWeakest(
 ): CardRecord[] {
   // Nusxa: chaqiruvchi bergan massiv o'zgarmasligi kerak
   return [...cards].sort((a, b) => weakness(b, now) - weakness(a, now)).slice(0, size)
+}
+
+/**
+ * So'z HOZIR ham qiyinmi.
+ *
+ * `lapses` tarixiy son — u hech qachon kamaymaydi. Bola so'zni olti
+ * marta unutib, keyin mashq qilib mustahkam o'rgangan bo'lsa ham, u
+ * "6 marta unutilgan" bo'lib qolaverardi va "Ustida ishlash kerak"
+ * ro'yxatidan hech qachon chiqmasdi — bu esa mashqning ma'nosini
+ * yo'qqa chiqaradi.
+ *
+ * Yechim: uzoq muddatli xotiraga o'tgan so'z (kuchi 3, ya'ni interval
+ * 21 kundan oshgan) qiyin hisoblanmaydi — tarixi qanday bo'lmasin.
+ */
+export function isStillStruggling(card: CardRecord, minLapses: number): boolean {
+  return card.lapses >= minLapses && wordStrength(card) < 3
 }

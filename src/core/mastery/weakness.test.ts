@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CardRecord } from '@/core/db'
-import { pickWeakest, weakness } from './weakness'
+import { isStillStruggling, pickWeakest, weakness } from './weakness'
 
 const DAY = 24 * 60 * 60 * 1000
 const NOW = 1_700_000_000_000
@@ -89,5 +89,26 @@ describe('pickWeakest', () => {
     pickWeakest(cards, 2, NOW)
 
     expect(cards.map((item) => item.id)).toEqual(['a', 'b'])
+  })
+})
+
+describe('isStillStruggling', () => {
+  it('ko‘p unutilgan va hali mustahkam bo‘lmagan so‘z — qiyin', () => {
+    expect(isStillStruggling(card('a', { lapses: 4, interval: 3 }), 2)).toBe(true)
+  })
+
+  it('kam unutilgan so‘z — qiyin emas', () => {
+    expect(isStillStruggling(card('a', { lapses: 1, interval: 3 }), 2)).toBe(false)
+  })
+
+  it('ko‘p unutilgan, lekin ENDI yodlangan so‘z — qiyin EMAS', () => {
+    /*
+     * `lapses` tarixiy son va hech qachon kamaymaydi. Bola so'zni
+     * mashq qilib mustahkam o'rgangan bo'lsa ham, u ro'yxatdan hech
+     * qachon chiqmasdi — mashqning ma'nosi yo'qolardi.
+     */
+    expect(isStillStruggling(card('a', { lapses: 6, interval: 30, repetitions: 6 }), 2)).toBe(
+      false,
+    )
   })
 })

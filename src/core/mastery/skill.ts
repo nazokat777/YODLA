@@ -1,5 +1,6 @@
 import type { CardRecord, TypeStat } from '@/core/db'
 import type { ExerciseType } from '@/core/types'
+import { isStillStruggling } from './weakness'
 
 /**
  * Turni baholash uchun kerakli eng kam namuna.
@@ -122,7 +123,7 @@ export function skillSummary(cards: readonly CardRecord[]): SkillSummary[] {
  * ekranda hech nima yo'q. Qaror shu yerda, alohida tekshiriladi.
  */
 export function hasWeakSpots(cards: readonly CardRecord[], minLapses: number): boolean {
-  if (cards.some((card) => card.lapses >= minLapses)) return true
+  if (cards.some((card) => isStillStruggling(card, minLapses))) return true
 
   return skillSummary(cards).some((skill) => skill.wrong > 0)
 }

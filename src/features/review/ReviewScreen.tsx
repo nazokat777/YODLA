@@ -6,7 +6,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, getNextDueDate, type CardRecord } from '@/core/db'
 import { pickDueCards } from '@/core/srs'
-import { pickWeakest } from '@/core/mastery'
+import { isStillStruggling, pickWeakest } from '@/core/mastery'
 import { formatTimeUntil } from '@/lib/format'
 import { SessionRunner, type SessionSummary } from '@/features/session/SessionRunner'
 import { SessionSummaryPanel } from '@/features/session/SessionSummaryPanel'
@@ -82,7 +82,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
         const queue =
           focus === 'weak'
             ? pickWeakest(
-                all.filter((card) => card.lapses >= MIN_LAPSES),
+                all.filter((card) => isStillStruggling(card, MIN_LAPSES)),
                 WEAK_SESSION_SIZE,
                 Date.now(),
               )

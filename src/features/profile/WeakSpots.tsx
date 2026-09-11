@@ -4,7 +4,13 @@ import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
 import { WordImage } from '@/components/ui/WordImage'
 import { getAllCards } from '@/core/db'
-import { EXERCISE_TYPE_NAMES, hasWeakSpots, pickWeakest, skillSummary } from '@/core/mastery'
+import {
+  EXERCISE_TYPE_NAMES,
+  hasWeakSpots,
+  isStillStruggling,
+  pickWeakest,
+  skillSummary,
+} from '@/core/mastery'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /** Ro'yxatda nechta qiyin so'z ko'rsatiladi */
@@ -45,7 +51,7 @@ export function WeakSpots() {
   // Hali aytadigan gap yo'q — qaror `core/mastery` da tekshiriladi
   if (!hasWeakSpots(cards, MIN_LAPSES)) return null
 
-  const struggled = cards.filter((card) => card.lapses >= MIN_LAPSES)
+  const struggled = cards.filter((card) => isStillStruggling(card, MIN_LAPSES))
   const hardWords = pickWeakest(struggled, HARD_WORDS_SHOWN, Date.now())
   const weakestSkill = skillSummary(cards)[0]
 
