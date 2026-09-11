@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
+import { LANGUAGES } from '@/core/config/languages'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
@@ -42,6 +43,7 @@ interface SpeedGameProps {
 export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
+  const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<Awaited<ReturnType<typeof getAllCards>> | null>(null)
   const [state, setState] = useState(() => startSpeed(seconds))
@@ -243,7 +245,18 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
       {exercise?.type === 'recognition' && (
         <>
           <Panel className="flex min-h-24 items-center justify-center text-center">
-            <p data-testid="speed-word" className="text-3xl font-extrabold">
+            {/*
+              `dir`/`lang` SHART: arab shrifti va harakatlar uchun
+              satr balandligi `[dir='rtl']` orqali beriladi. Usiz
+              arabcha so'z lotin shriftida, harakatlari bir-biriga
+              yopishgan holda chiqardi.
+            */}
+            <p
+              data-testid="speed-word"
+              dir={language?.dir}
+              lang={language?.code}
+              className="text-3xl font-extrabold"
+            >
               {exercise.prompt}
             </p>
           </Panel>

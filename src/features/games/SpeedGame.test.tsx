@@ -113,3 +113,33 @@ describe('SpeedGame', () => {
     })
   })
 })
+
+describe('SpeedGame — arab tili', () => {
+  it('so‘z o‘rganilayotgan tilning yo‘nalishi va tili bilan chiziladi', async () => {
+    /*
+     * Arab shrifti va harakatlar uchun satr balandligi `[dir='rtl']`
+     * orqali beriladi. Usiz arabcha so'z lotin shriftida chiqardi.
+     */
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'كِتَاب', translation: 'kitob', language: 'ar' },
+      { word: 'قَلَم', translation: 'qalam', language: 'ar' },
+      { word: 'بَيْت', translation: 'uy', language: 'ar' },
+      { word: 'مَاء', translation: 'suv', language: 'ar' },
+    ])
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('ar')
+
+    render(
+      <MemoryRouter>
+        <SpeedGame />
+      </MemoryRouter>,
+    )
+    fireEvent.click(await screen.findByRole('button', { name: /boshlash/i }))
+
+    const word = screen.getByTestId('speed-word')
+
+    expect(word).toHaveAttribute('dir', 'rtl')
+    expect(word).toHaveAttribute('lang', 'ar')
+  })
+})
