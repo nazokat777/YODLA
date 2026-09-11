@@ -31,6 +31,13 @@ const NO_WEAK_WORDS = {
   hint: 'Hammasi mustahkam yodlangan. Yangi darsga o‘tishingiz mumkin.',
 }
 
+/** Hali birorta so'z ko'rilmagan — "hammasi yodlangan" deyish yolg'on bo'lardi */
+const NOTHING_SEEN_YET = {
+  icon: '📗',
+  title: 'Hali qiyin so‘zlar yo‘q',
+  hint: 'Avval bir dars o‘ting — qiynalgan so‘zlaringiz shu yerda to‘planadi.',
+}
+
 /**
  * Takrorlash ekrani (TZ 6.4).
  *
@@ -141,7 +148,13 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
 
         <SessionSummaryPanel
           summary={summary}
-          emptyMessage={focus === 'weak' ? NO_WEAK_WORDS : undefined}
+          emptyMessage={
+            focus === 'weak'
+              ? pool.some((card) => card.totalReviews > 0)
+                ? NO_WEAK_WORDS
+                : NOTHING_SEEN_YET
+              : undefined
+          }
         />
 
         {/* Muddat qiyin so'zlar rejimiga aloqasiz — u yerda chalg'itadi */}

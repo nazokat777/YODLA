@@ -592,4 +592,21 @@ describe('ReviewScreen — qiyin so‘zlar rejimi', () => {
     expect(await screen.findByText(/qiyin so.zlar qolmadi/i)).toBeInTheDocument()
     expect(screen.queryByText(/keyingi takrorlash/i)).not.toBeInTheDocument()
   })
+
+  it('hech narsa ko‘rilmagan bo‘lsa "hammasi yodlangan" DEYILMAYDI', async () => {
+    await db.cards.clear()
+    await addMissingCards([{ word: 'hello', translation: 'salom', language: 'en' }])
+
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <ReviewScreen focus="weak" />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText(/hali qiyin so.zlar yo.q/i)).toBeInTheDocument()
+    expect(screen.queryByText(/hammasi mustahkam/i)).not.toBeInTheDocument()
+  })
 })
