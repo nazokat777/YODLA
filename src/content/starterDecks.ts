@@ -1,7 +1,7 @@
 import { LEVEL_ORDER } from '@/core/config/levels'
 import type { NewCardRecordInput } from '@/core/db'
 import type { LanguageCode, LevelCode } from '@/core/types'
-import { chunkLargeTopics } from './chunkTopics'
+import { chunkLargeTopics, mergeTinyTopics } from './chunkTopics'
 
 export type Deck = Record<LevelCode, NewCardRecordInput[]>
 
@@ -45,7 +45,8 @@ function withSentences(deck: Deck, sentences: Record<string, string>): Deck {
  */
 function chunkTopics(deck: Deck): Deck {
   return LEVEL_ORDER.reduce(
-    (acc, level) => ({ ...acc, [level]: chunkLargeTopics(deck[level]) }),
+    // Avval kichiklar qo'shiladi, keyin kattalar bo'linadi
+    (acc, level) => ({ ...acc, [level]: chunkLargeTopics(mergeTinyTopics(deck[level])) }),
     {} as Deck,
   )
 }

@@ -369,7 +369,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'صَبَاح',
       translation: 'ertalab',
       language: 'ar',
-      topic: 'Vaqt',
+      topic: 'Salomlashish',
       level: 'A1',
       sentence: 'صباح الخير',
       sentenceTranslation: 'Xayrli tong',

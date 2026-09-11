@@ -368,7 +368,7 @@ export const RU_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'утро',
       translation: 'ertalab',
       language: 'ru',
-      topic: 'Vaqt',
+      topic: 'Salomlashish',
       level: 'A1',
       sentence: 'Доброе утро',
       sentenceTranslation: 'Xayrli tong',

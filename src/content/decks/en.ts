@@ -370,7 +370,7 @@ export const EN_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       word: 'morning',
       translation: 'ertalab',
       language: 'en',
-      topic: 'Vaqt',
+      topic: 'Salomlashish',
       level: 'A1',
       sentence: 'Good morning',
       sentenceTranslation: 'Xayrli tong',

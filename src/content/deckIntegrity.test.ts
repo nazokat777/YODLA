@@ -16,7 +16,7 @@ import type { LanguageCode } from '@/core/types'
  */
 
 import { unitIdOf } from '@/core/path'
-import { MAX_UNIT_WORDS } from './chunkTopics'
+import { MAX_UNIT_WORDS, MIN_UNIT_WORDS } from './chunkTopics'
 
 const LANGUAGES: LanguageCode[] = ['en', 'ru', 'ar']
 
@@ -182,6 +182,22 @@ describe.each(LANGUAGES)('lug‘at yaxlitligi — %s', (language) => {
     const oversized = [...counts.entries()].filter(([, count]) => count > MAX_UNIT_WORDS)
 
     expect(oversized).toEqual([])
+  })
+
+  it('hech bir bo‘lim 3 so‘zdan kichik emas', async () => {
+    const cards = await allCards(language)
+
+    const counts = new Map<string, number>()
+    for (const card of cards) {
+      if (!card.topic || !card.level) continue
+      const key = `${card.level}|${card.topic}`
+      counts.set(key, (counts.get(key) ?? 0) + 1)
+    }
+
+    // Bir so'zli "dars" — o'quv yo'lida alohida doira, ichida bitta savol
+    const tiny = [...counts.entries()].filter(([, count]) => count < MIN_UNIT_WORDS)
+
+    expect(tiny).toEqual([])
   })
 
   it('bo‘lim id lari noyob', async () => {

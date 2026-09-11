@@ -15,6 +15,63 @@ import type { NewCardRecordInput } from '@/core/db'
 export const MAX_UNIT_WORDS = 20
 
 /**
+ * Bitta o'quv bo'limidagi so'zlarning eng kam soni.
+ *
+ * Qo'lda yozilgan A1 to'plamlarida 1–2 so'zli mavzular bor edi
+ * ("Maktab": faqat "kitob"). Bir so'zli dars — o'quv yo'lida alohida
+ * doira, ichida esa bitta savol: bola "dars"ga kirib, o'n soniyada
+ * chiqadi. Bunday mavzu qo'shnisiga qo'shiladi.
+ */
+export const MIN_UNIT_WORDS = 3
+
+/**
+ * Kichik mavzularni QO'SHNISIGA qo'shadi.
+ *
+ * Mavzu kontentdagi KEYINGI mavzuga qo'shiladi (oxirgisi — oldingisiga)
+ * va uning nomini oladi. Zanjir bo'lishi mumkin: 1 so'zli mavzu 1 so'zli
+ * qo'shnisiga qo'shilib 2 bo'ladi va u ham keyingisiga qo'shiladi —
+ * shuning uchun tartib bilan, o'sha zahoti yangilangan hisob bilan
+ * yuriladi.
+ *
+ * KONTENT O'ZGARMAYDI — faqat `topic` nomi (`chunkLargeTopics` kabi).
+ */
+export function mergeTinyTopics(cards: NewCardRecordInput[]): NewCardRecordInput[] {
+  const order: string[] = []
+  const totals = new Map<string, number>()
+  for (const card of cards) {
+    if (!card.topic) continue
+    if (!totals.has(card.topic)) order.push(card.topic)
+    totals.set(card.topic, (totals.get(card.topic) ?? 0) + 1)
+  }
+
+  if (order.length < 2) return cards
+
+  /** Har mavzu qaysi nomga ko'chadi (ko'chmasa — o'zi) */
+  const target = new Map<string, string>(order.map((topic) => [topic, topic]))
+
+  for (let i = 0; i < order.length; i += 1) {
+    const topic = order[i]!
+    const count = totals.get(topic) ?? 0
+    if (count >= MIN_UNIT_WORDS) continue
+
+    const neighbour = i + 1 < order.length ? order[i + 1]! : order[i - 1]!
+    // Oldingisi allaqachon ko'chgan bo'lishi mumkin — yakuniy nomga
+    const finalName = target.get(neighbour) ?? neighbour
+
+    for (const [from, to] of target) if (to === topic) target.set(from, finalName)
+    target.set(topic, finalName)
+    totals.set(finalName, (totals.get(finalName) ?? 0) + count)
+    totals.set(topic, 0)
+  }
+
+  return cards.map((card) => {
+    if (!card.topic) return card
+    const to = target.get(card.topic) ?? card.topic
+    return to === card.topic ? card : { ...card, topic: to }
+  })
+}
+
+/**
  * Katta mavzularni "(1-qism)", "(2-qism)" ga bo'ladi.
  *
  * KONTENT O'ZGARMAYDI — faqat `topic` nomi. Kartalar tartibi ham
