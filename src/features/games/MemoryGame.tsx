@@ -5,7 +5,14 @@ import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
-import { getAllCards, gradeCard, recordTypeResult, saveGameBest, type CardRecord } from '@/core/db'
+import {
+  getAllCards,
+  gradeCard,
+  recordAnswer,
+  recordTypeResult,
+  saveGameBest,
+  type CardRecord,
+} from '@/core/db'
 import {
   MEMORY_PAIRS,
   isMemoryComplete,
@@ -33,6 +40,7 @@ const PERFECT_ATTEMPTS = MEMORY_PAIRS
  */
 export function MemoryGame() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
@@ -93,6 +101,16 @@ export function MemoryGame() {
        */
       void gradeCard(firstTile.cardId, isPair ? 4 : 2)
       void recordTypeResult(firstTile.cardId, 'matching', !isPair)
+      /*
+       * XP va kunlik maqsad ham yoziladi. Usiz bola xotira o'yinini
+       * o'n daqiqa o'ynab HECH NIMA olmasdi — streak ham saqlanmasdi.
+       * Vaqtga qarshi o'yin buni allaqachon qilardi; farq asossiz edi.
+       */
+      void recordAnswer({
+        cardId: firstTile.cardId,
+        verdict: isPair ? 'correct' : 'wrong',
+        dailyGoalWords,
+      })
     }
 
     const timer = window.setTimeout(
@@ -101,7 +119,7 @@ export function MemoryGame() {
     )
 
     return () => clearTimeout(timer)
-  }, [state])
+  }, [state, dailyGoalWords])
 
   const complete = state !== null && isMemoryComplete(state)
 

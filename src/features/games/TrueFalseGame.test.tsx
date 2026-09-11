@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, db } from '@/core/db'
+import { addMissingCards, db, getDailyStat } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { TrueFalseGame } from './TrueFalseGame'
 
@@ -26,6 +26,7 @@ describe('TrueFalseGame', () => {
   beforeEach(async () => {
     await db.cards.clear()
     await db.profile.clear()
+    await db.dailyStats.clear()
     await addMissingCards(WORDS)
   })
 
@@ -59,5 +60,27 @@ describe('TrueFalseGame', () => {
     renderGame()
 
     expect(await screen.findByText(/kamida 2 ta so.z kerak/i)).toBeInTheDocument()
+  })
+})
+
+describe('TrueFalseGame — XP', () => {
+  it('javob XP va kunlik maqsadga YOZILADI', async () => {
+    /*
+     * Ilgari faqat SM-2 va ko'nikma statistikasi yozilardi: bola
+     * o'yinni o'n daqiqa o'ynab hech nima olmasdi va streak
+     * saqlanmasdi. Vaqtga qarshi o'yin bilan farq asossiz edi.
+     */
+    await db.cards.clear()
+    await db.dailyStats.clear()
+    await addMissingCards(WORDS)
+
+    renderGame()
+    await screen.findByTestId('tf-word')
+
+    fireEvent.click(screen.getByRole('button', { name: /ha/i }))
+
+    await waitFor(async () => {
+      expect((await getDailyStat()).answered).toBe(1)
+    })
   })
 })

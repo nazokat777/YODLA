@@ -6,7 +6,14 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
-import { getAllCards, gradeCard, recordTypeResult, saveGameBest, type CardRecord } from '@/core/db'
+import {
+  getAllCards,
+  gradeCard,
+  recordAnswer,
+  recordTypeResult,
+  saveGameBest,
+  type CardRecord,
+} from '@/core/db'
 import { checkTrueFalse, makeTrueFalsePair } from '@/core/games'
 import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
@@ -29,6 +36,7 @@ const FEEDBACK_MS = 450
  */
 export function TrueFalseGame() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
   const [cards, setCards] = useState<CardRecord[] | null>(null)
@@ -91,13 +99,15 @@ export function TrueFalseGame() {
       // 50% taxmin qilinadigan formatga qattiq tayanib bo'lmaydi
       void gradeCard(pair.card.id, correct ? 4 : 2)
       void recordTypeResult(pair.card.id, 'recognition', !correct)
+      // XP va kunlik maqsad — vaqtga qarshi o'yin bilan bir xil
+      void recordAnswer({ cardId: pair.card.id, verdict: correct ? 'correct' : 'wrong', dailyGoalWords })
 
       window.setTimeout(() => {
         setFeedback(null)
         setIndex((current) => current + 1)
       }, FEEDBACK_MS)
     },
-    [pair, feedback],
+    [pair, feedback, dailyGoalWords],
   )
 
   if (cards === null) return <Panel className="text-ink-600">Yuklanmoqda…</Panel>
