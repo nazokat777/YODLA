@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
+import type { CardRecord } from '@/core/db'
 import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
@@ -22,6 +23,11 @@ interface FeedbackBarProps {
    * "keyingi takrorlash" deb ko'rsatish foydalanuvchini chalg'itardi.
    */
   nextIntervalDays: number | null
+  /**
+   * Javobdan KEYINGI karta holati (SM-2 yangilangan). `null` — bu
+   * so'z shu seansda ikkinchi marta chiqqan va jadval o'zgarmagan.
+   */
+  gradedCard?: CardRecord | null
   /** Shu javob uchun berilgan XP */
   xpGained: number
   /** Kunlik maqsad aynan shu javob bilan bajarildimi */
@@ -121,6 +127,7 @@ export function FeedbackBar({
   exercise,
   verdict,
   nextIntervalDays,
+  gradedCard = null,
   xpGained,
   goalJustCompleted,
   onContinue,
@@ -190,7 +197,7 @@ export function FeedbackBar({
           surganini KO'RADI. Ko'rinmaydigan progress motivatsiya
           bermaydi.
         */}
-        <WordStrengthMeter card={exercise.card} className="ms-auto" />
+        <WordStrengthMeter card={gradedCard ?? exercise.card} className="ms-auto" />
 
         {xpGained > 0 && (
           <span

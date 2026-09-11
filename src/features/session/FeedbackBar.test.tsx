@@ -112,3 +112,36 @@ describe('jadval o‘zgarmagan javob', () => {
     expect(screen.queryByText(/keyingi takrorlash/i)).not.toBeInTheDocument()
   })
 })
+
+describe('FeedbackBar — so‘z kuchi', () => {
+  it('BAHOLANGAN kartaning kuchi ko‘rsatiladi, mashqdagi eski karta emas', () => {
+    /*
+     * `exercise.card` javobdan OLDINGI holat. Indikator uni o'qisa,
+     * bola bugun qilgan ishi so'zni oldinga surganini ko'rmasdi.
+     */
+    const stale = makeCard({ interval: 0, repetitions: 0 })
+    const graded = { ...stale, interval: 6, repetitions: 2 }
+
+    render(
+      <FeedbackBar
+        exercise={exerciseFor(stale)}
+        verdict="correct"
+        nextIntervalDays={6}
+        gradedCard={graded}
+        xpGained={2}
+        goalJustCompleted={false}
+        onContinue={() => {}}
+      />,
+    )
+
+    expect(screen.getByTestId('word-strength')).toHaveTextContent('O‘rganilmoqda')
+  })
+
+  it('baholanmagan (takroriy) javobda mashq kartasi ishlatiladi', () => {
+    const card = makeCard({ interval: 30, repetitions: 5 })
+
+    renderBar(card, 'correct', null)
+
+    expect(screen.getByTestId('word-strength')).toHaveTextContent('Yodlangan')
+  })
+})

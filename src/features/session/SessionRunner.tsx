@@ -204,6 +204,14 @@ export function SessionRunner({
   const [answer, setAnswer] = useState<ExerciseAnswerState>(EMPTY_ANSWER)
   const [verdict, setVerdict] = useState<AnswerVerdict | null>(null)
   const [nextIntervalDays, setNextIntervalDays] = useState<number | null>(1)
+  /**
+   * BAHOLANGAN karta — feedback panelidagi "so'z kuchi" uchun.
+   *
+   * `exercise.card` mashq yaratilgan paytdagi holat, ya'ni javobdan
+   * OLDINGI. Indikator uni o'qisa, bola bugun qilgan ishi so'zni
+   * oldinga surganini KO'RMASDI — indikatorning butun maqsadi shu edi.
+   */
+  const [gradedCard, setGradedCard] = useState<CardRecord | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [summary, setSummary] = useState<SessionSummary>(EMPTY_SUMMARY)
@@ -318,6 +326,7 @@ export function SessionRunner({
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)
     setErrorMessage(null)
+    setGradedCard(null)
     setLucky(isLucky())
   // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
   // mashqni javob berilgan zahoti qayta yaratib yuborardi
@@ -586,6 +595,7 @@ export function SessionRunner({
       }
 
       setNextIntervalDays(saved ? saved.interval : null)
+      setGradedCard(saved)
       /*
        * Qadam FAQAT to'g'ri (yoki "deyarli") javobda bajarilgan
        * hisoblanadi. Xato javobda u navbat oxiriga qaytadi va progress
@@ -955,6 +965,7 @@ export function SessionRunner({
             exercise={exercise}
             verdict={verdict}
             nextIntervalDays={nextIntervalDays}
+            gradedCard={gradedCard}
             xpGained={lastXpGained}
             goalJustCompleted={goalJustCompleted}
             onContinue={handleContinue}
