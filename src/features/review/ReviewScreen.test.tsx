@@ -412,9 +412,10 @@ describe('ReviewScreen — geymifikatsiya', () => {
      * kutadi. Tekshiruv animatsiya bilan poyga qilib, oraliq
      * qiymatda ("+3 XP") yiqilardi — to'liq to'plamda ba'zan.
      */
+    // Kunning birinchi to'g'ri javobi ×2 + benuqson bonusi
     await waitFor(() => {
       expect(screen.getByTestId('session-xp')).toHaveTextContent(
-        `+${XP_PER_VERDICT.correct + PERFECT_SESSION_BONUS_XP} XP`,
+        `+${XP_PER_VERDICT.correct * 2 + PERFECT_SESSION_BONUS_XP} XP`,
       )
     })
     expect(screen.getByTestId('perfect-bonus')).toHaveTextContent(

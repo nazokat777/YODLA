@@ -39,6 +39,7 @@ import {
   nextCombo,
   levelFromXp,
   levelTitle,
+  type LevelUp,
   nextComboMilestone,
   xpForAnswer,
 } from '@/core/gamification'
@@ -74,7 +75,7 @@ export interface SessionSummary {
    * Seans davomida DARAJA oshdi — yakunda katta bayram uchun.
    * `undefined` — oshmadi (yoki o'lchab bo'lmadi).
    */
-  levelUp?: { from: number; to: number; title: string }
+  levelUp?: LevelUp
   /** O'zlashtirilgan so'zlar (faqat `mastery` rejimida) */
   masteredWords: number
   /**

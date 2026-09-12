@@ -7,6 +7,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { countCards, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
+import { mergeLevelUp } from '@/core/gamification'
 import { buildUnits, unitIdOf } from '@/core/path'
 import { pickWeakest, REVIEW_STREAK } from '@/core/mastery'
 import { readTopicOrder } from '@/content/topicOrderCache'
@@ -208,6 +209,9 @@ export function LessonScreen() {
         newBadges: [...new Set([...first.newBadges, ...result.newBadges])],
         masteredWords: first.masteredWords + result.masteredWords,
         pendingWords: first.pendingWords + result.pendingWords,
+        // Daraja IKKALA bosqich davomida oshgan bo'lishi mumkin —
+        // boshlang'ich birinchi bosqichdan, yakuniy ikkinchisidan
+        levelUp: mergeLevelUp(first.levelUp, result.levelUp),
       })
     },
     [lessonSummary],

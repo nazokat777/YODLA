@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { levelFromXp, levelTitle, xpForAnswer, xpToReachLevel } from './xp'
+import { mergeLevelUp } from './xp'
 
 describe('xpForAnswer', () => {
   it('to‘g‘ri javob eng ko‘p XP beradi', () => {
@@ -87,5 +88,19 @@ describe('levelTitle', () => {
 
   it('juda katta daraja uchun ham unvon bor', () => {
     expect(levelTitle(999)).toBe('Ustoz')
+  })
+})
+
+describe('mergeLevelUp', () => {
+  it('ikkala bosqichda oshgan bo‘lsa boshi birinchidan, oxiri ikkinchidan', () => {
+    expect(
+      mergeLevelUp({ from: 1, to: 2, title: 'a' }, { from: 2, to: 3, title: 'b' }),
+    ).toEqual({ from: 1, to: 3, title: 'b' })
+  })
+
+  it('faqat bittasida oshgan bo‘lsa — o‘sha', () => {
+    expect(mergeLevelUp(undefined, { from: 2, to: 3, title: 'b' })?.to).toBe(3)
+    expect(mergeLevelUp({ from: 1, to: 2, title: 'a' }, undefined)?.to).toBe(2)
+    expect(mergeLevelUp(undefined, undefined)).toBeUndefined()
   })
 })

@@ -91,3 +91,23 @@ const LEVEL_TITLES: Array<{ minLevel: number; title: string }> = [
 export function levelTitle(level: number): string {
   return LEVEL_TITLES.find((entry) => level >= entry.minLevel)?.title ?? 'Yangi boshlovchi'
 }
+
+/** Seans davomida daraja oshgani — yakun bayrami uchun */
+export interface LevelUp {
+  from: number
+  to: number
+  title: string
+}
+
+/**
+ * Ikki ketma-ket bosqichning (dars + aralash takror) daraja
+ * o'zgarishini birlashtiradi: 1→2 va 2→3 bo'lsa natija 1→3; faqat
+ * bittasida oshgan bo'lsa — o'sha.
+ */
+export function mergeLevelUp(
+  first: LevelUp | undefined,
+  second: LevelUp | undefined,
+): LevelUp | undefined {
+  if (first && second) return { from: first.from, to: second.to, title: second.title }
+  return second ?? first
+}
