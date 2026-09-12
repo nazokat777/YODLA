@@ -29,8 +29,8 @@ export function ReadyStep({ onFinish }: { onFinish: (destination: 'lesson' | 'ho
 
         {/* Nima bo'lishini oldindan aytish: birinchi dars qo'rqinchli emas */}
         <p className="mt-4 max-w-xs text-sm text-ink-600">
-          Birinchi darsda 4 ta yangi so'z bo'ladi. Har so'z bir necha xil
-          mashqda takrorlanadi — shuning uchun u esda qoladi.
+          Birinchi darsda 4 ta yangi so'z bo'ladi — taxminan 2 daqiqa. Har so'z
+          bir necha xil mashqda takrorlanadi — shuning uchun u esda qoladi.
         </p>
       </div>
 
