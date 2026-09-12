@@ -240,3 +240,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .levelup-in, .levelup-number, .levelup-sweep { animation: none; }
 }
+
+/* So'z osmoni — yulduzlar sekin miltillaydi */
+@keyframes sky-twinkle {
+  0%, 100% { opacity: var(--twinkle-base, 0.8); }
+  50% { opacity: 0.25; }
+}
+.sky-twinkle { animation: sky-twinkle 3.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sky-twinkle { animation: none; }
+}

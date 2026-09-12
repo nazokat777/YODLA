@@ -17,6 +17,7 @@ import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { countUp, enterStagger, withMotion } from '@/lib/motion'
 import { LearningPath } from './LearningPath'
+import { WordSky } from './WordSky'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -244,6 +245,9 @@ export function HomeScreen() {
       </Link>
 
       <LearningPath cards={cards} />
+
+      {/* O'rganilgan so'zlar — shaxsiy osmon: raqam emas, tasvir */}
+      {cards && <WordSky cards={cards} />}
 
       <section>
         <h2 className="mb-2 font-bold">Lug'at holati</h2>

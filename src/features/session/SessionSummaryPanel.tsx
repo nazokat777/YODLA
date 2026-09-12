@@ -6,6 +6,7 @@ import { Confetti } from './Confetti'
 import { BADGE_BY_ID, CHEST_MIN_ANSWERS } from '@/core/gamification'
 import { SessionChest } from './SessionChest'
 import { LevelUpBanner } from './LevelUpBanner'
+import { TomorrowCard } from './TomorrowCard'
 import type { SessionSummary } from './SessionRunner'
 
 interface SessionSummaryPanelProps {
@@ -127,6 +128,9 @@ export function SessionSummaryPanel({
         qayta-qayta ochib mukofot yig'ib bo'lmasin.
       */}
       {summary.answered >= CHEST_MIN_ANSWERS && <SessionChest />}
+
+      {/* Halqa ochiq qoladi: ertangi kun va rekord (Zeigarnik) */}
+      <TomorrowCard />
 
       {newBadges.length > 0 && (
         <Panel tone="brand">
