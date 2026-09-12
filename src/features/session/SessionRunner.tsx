@@ -21,6 +21,7 @@ import {
 } from '@/core/exercises'
 import type { ExerciseType } from '@/core/types'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
+import { estimateMinutes } from '@/core/lesson/eta'
 import { LUCKY_MULTIPLIER, gameGrade, isLucky } from '@/core/games'
 import {
   applyAnswer,
@@ -948,12 +949,7 @@ export function SessionRunner({
   if (introCard) {
     return (
       <div className="flex flex-1 flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
-          <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{progressMax}
-          </span>
-        </div>
+        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
 
         <WordIntro
           card={introCard}
@@ -973,12 +969,7 @@ export function SessionRunner({
   if (exercise.type === 'matching') {
     return (
       <div className="flex flex-1 flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
-          <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-            {progressValue}/{progressMax}
-          </span>
-        </div>
+        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
 
         <ExerciseHelpButton type="matching" />
 
@@ -993,10 +984,7 @@ export function SessionRunner({
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
-        <ProgressBar value={progressValue} max={progressMax} label="Seans progressi" />
-        <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
-          {progressValue}/{progressMax}
-        </span>
+        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
 
         {/*
           Kombo 2 dan boshlab ko'rinadi: "🔥 1" har to'g'ri javobdan keyin
@@ -1147,5 +1135,35 @@ function ComboDots({ combo }: { combo: number }) {
         />
       ))}
     </span>
+  )
+}
+
+/**
+ * Ko'rsatkich + qolgan vaqt taxmini.
+ *
+ * O'zlashtirish rejimida "0/4 so'z" yana qancha davom etishini aytmaydi
+ * (savollar soni o'zgaruvchan) — "≈ 2 daq" shu bo'shliqni yopadi.
+ */
+function ProgressHeader({ value, max, mode }: { value: number; max: number; mode: 'fixed' | 'mastery' }) {
+  const remaining = Math.max(0, max - value)
+  // Oddiy takrorda har qadam bitta javob
+  const minutes = estimateMinutes(remaining, mode === 'mastery' ? 2 : 1)
+
+  return (
+    <>
+      <ProgressBar value={value} max={max} label="Seans progressi" />
+      <span data-testid="session-progress" className="text-sm font-semibold text-ink-600">
+        {value}/{max}
+      </span>
+      {remaining > 0 && (
+        <span
+          data-testid="session-eta"
+          className="shrink-0 text-xs text-ink-600/80"
+          aria-label={`taxminan ${minutes} daqiqa qoldi`}
+        >
+          ≈{minutes} daq
+        </span>
+      )}
+    </>
   )
 }

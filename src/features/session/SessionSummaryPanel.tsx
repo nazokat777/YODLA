@@ -76,6 +76,7 @@ export function SessionSummaryPanel({
             <Emblem kind="coin" size="lg" className="mx-auto mb-2 drop-shadow-[0_8px_16px_rgba(180,83,9,0.35)]" />
           </span>
           <p className="text-lg font-extrabold">Level complete!</p>
+          <p className="text-xs font-semibold text-ink-600/80">Dars tugadi</p>
           <p className="mt-1 text-sm text-ink-600">
             {summary.answered} ta javob · {accuracy}% aniqlik
           </p>
@@ -117,9 +118,10 @@ export function SessionSummaryPanel({
           )}
 
           <div className="mt-4 grid grid-cols-3 gap-2" data-celebrate="stats">
-            <Stat label="Perfect" value={summary.correct} accent="text-brand-600" />
-            <Stat label="Almost" value={summary.almost} accent="text-flame-700" />
-            <Stat label="Learned" value={summary.wrong} accent="text-ink-600" />
+            {/* Brend so'z + o'zbekcha izoh: 7 yoshli bola "Almost"ni bilmaydi */}
+            <Stat label="Perfect" hint="bexato" value={summary.correct} accent="text-brand-600" />
+            <Stat label="Almost" hint="deyarli" value={summary.almost} accent="text-flame-700" />
+            <Stat label="Learned" hint="o‘rganildi" value={summary.wrong} accent="text-ink-600" />
           </div>
         </div>
       </Panel>
@@ -138,7 +140,9 @@ export function SessionSummaryPanel({
 
       {newBadges.length > 0 && (
         <Panel tone="brand">
-          <p className="mb-2 text-sm font-bold text-brand-700">🏆 Achievement unlocked!</p>
+          <p className="mb-2 text-sm font-bold text-brand-700">
+            🏆 Achievement unlocked! <span className="font-normal text-ink-600">— yangi nishon</span>
+          </p>
           <ul className="flex flex-col gap-2">
             {newBadges.map((badge) => (
               <li key={badge.id} data-celebrate="badge" className="flex items-center gap-3">
@@ -158,11 +162,23 @@ export function SessionSummaryPanel({
   )
 }
 
-function Stat({ label, value, accent }: { label: string; value: number; accent: string }) {
+function Stat({
+  label,
+  hint,
+  value,
+  accent,
+}: {
+  label: string
+  /** O'zbekcha izoh — brend so'z ostida */
+  hint: string
+  value: number
+  accent: string
+}) {
   return (
     <div className="rounded-xl bg-slate-50 p-2">
       <p className={`text-xl font-extrabold ${accent}`}>{value}</p>
-      <p className="text-xs text-ink-600">{label}</p>
+      <p className="text-xs font-bold text-ink-600">{label}</p>
+      <p className="text-[11px] text-ink-600/80">{hint}</p>
     </div>
   )
 }

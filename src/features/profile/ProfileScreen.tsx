@@ -118,7 +118,7 @@ export function ProfileScreen() {
         <h2 className="mb-2 font-bold">
           Achievements
           <span className="ms-2 text-sm font-normal text-ink-600">
-            {unlocked.size} / {BADGES.length}
+            nishonlar · {unlocked.size} / {BADGES.length}
           </span>
         </h2>
         <ul className="grid grid-cols-3 gap-2">

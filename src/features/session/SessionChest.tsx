@@ -87,6 +87,7 @@ export function SessionChest() {
               🎁
             </span>
             <span className="font-extrabold">Mystery box</span>
+            <span className="text-xs text-ink-600">sirli sandiq</span>
             <span className="text-sm text-ink-600">
               {isOpening ? 'Ochilmoqda…' : 'Ochish uchun bos'}
             </span>

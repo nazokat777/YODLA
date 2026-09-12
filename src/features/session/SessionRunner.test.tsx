@@ -504,6 +504,13 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
     expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
   })
 
+  it('qolgan vaqt taxmini ko‘rsatiladi — "yana qancha?" savoliga javob', async () => {
+    renderMastery([CARDS[0], CARDS[1], CARDS[2], CARDS[3]])
+
+    // 4 so'z × 2 javob × 15 s ≈ 2 daqiqa
+    expect(await screen.findByTestId('session-eta')).toHaveTextContent('≈2 daq')
+  })
+
   it('xato javobdan keyin so‘z QAYTADI va ko‘rsatkich o‘smaydi', async () => {
     renderMastery()
     await screen.findByTestId('session-progress')

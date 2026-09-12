@@ -176,7 +176,9 @@ export function HomeHero({
             <Emblem kind="coin" size="sm" className="h-5 w-5" />
             <span data-xp-value>{totalXp}</span> XP
             {level && (
-              <span className="text-white/70">· yana {level.xpForNextLevel - level.xpIntoLevel}</span>
+              <span className="text-white/70">
+                · {level.level + 1}-darajagacha {level.xpForNextLevel - level.xpIntoLevel} XP
+              </span>
             )}
           </p>
         </div>
@@ -187,7 +189,7 @@ export function HomeHero({
           data-testid="goal-done"
           className="mastered-pop relative mt-4 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-sm font-bold backdrop-blur-md"
         >
-          🎯 Daily goal — done!
+          🎯 Daily goal — done! <span className="font-semibold text-white/85">Kunlik maqsad bajarildi</span>
         </p>
       )}
 
