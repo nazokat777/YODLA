@@ -16,6 +16,15 @@ import { haptic } from '@/lib/haptics'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 const DAY_LABELS = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'] as const
+const DAY_NAMES = [
+  'Dushanba',
+  'Seshanba',
+  'Chorshanba',
+  'Payshanba',
+  'Juma',
+  'Shanba',
+  'Yakshanba',
+] as const
 
 /**
  * HAFTALIK SAYOHAT — 7 qadam, yo'lda 3 sandiq.
@@ -75,7 +84,14 @@ export function WeeklyQuest() {
           const reached = milestone ? data.active >= milestone.days : false
 
           return (
-            <li key={dayNumber} className="flex flex-1 flex-col items-center gap-1">
+            <li
+              key={dayNumber}
+              // Ekran o'quvchi uchun to'liq gap: "✓" yoki "Du" hech nima anglatmaydi
+              aria-label={`${DAY_NAMES[index]}: ${active ? 'faol' : 'hali yo‘q'}${
+                milestone ? `, ${milestone.days} kunlik sandiq${opened ? ' ochilgan' : ''}` : ''
+              }`}
+              className="flex flex-1 flex-col items-center gap-1"
+            >
               {milestone ? (
                 <span
                   aria-hidden="true"
@@ -91,6 +107,7 @@ export function WeeklyQuest() {
                 <span aria-hidden="true" className="h-7" />
               )}
               <span
+                aria-hidden="true"
                 data-testid={`week-day-${dayNumber}`}
                 data-active={active}
                 className={cn(
