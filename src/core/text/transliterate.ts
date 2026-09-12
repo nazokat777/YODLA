@@ -169,11 +169,35 @@ function transliterateArabic(text: string): string {
       if (!carriesVowel && flat().endsWith(lengthened)) continue
     }
 
+    /*
+     * QUYOSH HARFLARI: "ال" dan keyingi harf shaddali bo'lsa (الطِّفْلُ),
+     * artiklning "l"i o'qilmaydi — "at-tiflu", "alttiflu" emas. Bu
+     * arab talaffuzining asosiy qoidalaridan biri va bola aynan uni
+     * eshitib o'rganadi. Faqat so'z boshidagi artikl uchun.
+     */
+    if (char === 'ل' && isSunArticle(chars, position)) continue
+
     afterTanwin = false
     parts.push({ text: ARABIC_LETTERS[char] ?? char, isConsonant: true })
   }
 
   return flat()
+}
+
+/** `position` dagi lam — so'z boshidagi "ال" ning lami va keyingi harf shaddalimi */
+function isSunArticle(chars: readonly string[], position: number): boolean {
+  // Orqaga: harakatlarni o'tkazib, alif bo'lishi va u so'z boshida turishi kerak
+  let back = position - 1
+  while (back >= 0 && (chars[back]! in ARABIC_MARKS || chars[back] === SUKUN)) back -= 1
+  if (back < 0 || !(chars[back]! in ALEF_FAMILY)) return false
+  if (back !== 0 && chars[back - 1] !== ' ') return false
+
+  // Oldinga: lam ustidagi sukunni o'tkazib, keyingi harf, undan keyin shadda
+  let ahead = position + 1
+  while (ahead < chars.length && (chars[ahead] === SUKUN || chars[ahead]! in ARABIC_MARKS)) ahead += 1
+  ahead += 1 // harfning o'zi
+  while (ahead < chars.length && chars[ahead]! in ARABIC_MARKS) ahead += 1
+  return chars[ahead] === SHADDA
 }
 
 /** Kirill harflari (o'zbek lotinига moslangan) */

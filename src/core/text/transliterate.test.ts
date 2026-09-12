@@ -43,6 +43,15 @@ describe('transliterate — arab yozuvi', () => {
     expect(ar('اِثْنَان')).toBe('isnan')
   })
 
+  it('quyosh harfi: "ال" ning lami o‘qilmaydi — "attiflu", "alttiflu" emas', () => {
+    expect(transliterate('الطِّفْلُ', 'arabic')).toBe('attiflu')
+    expect(transliterate('الشَّمْسُ', 'arabic')).toBe('ashshamsu')
+    // Oy harfi — lam o'qiladi
+    expect(transliterate('الْكِتَابُ', 'arabic')).toBe('alkitabu')
+    // Harakatsiz matnda o'zgarish yo'q (shadda yo'q — bilib bo'lmaydi)
+    expect(transliterate('الطفل', 'arabic')).toBe('altfl')
+  })
+
   it('so‘z ichidagi hamza — bo‘g‘iz to‘xtami', () => {
     expect(ar('يَأْكُل')).toBe("ya'kul")
     expect(ar('مَاء')).toBe("ma'")
