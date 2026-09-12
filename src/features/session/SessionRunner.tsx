@@ -31,13 +31,21 @@ import {
   EXERCISE_TYPES,
   type WordProgress,
 } from '@/core/mastery'
-import { comboBonusXp, nextCombo, xpForAnswer } from '@/core/gamification'
+import {
+  COMBO_MILESTONES,
+  comboBonusXp,
+  comboMilestone,
+  nextCombo,
+  nextComboMilestone,
+  xpForAnswer,
+} from '@/core/gamification'
 import { slideIn, withMotion } from '@/lib/motion'
 import { PASSING_GRADE } from '@/core/srs'
 import { cancelSpeech } from '@/lib/speech'
 import { requestPersistentStorage } from '@/lib/storage'
 import { useHasVoice } from '@/hooks/useHasVoice'
-import { playCorrectSound, playWrongSound } from '@/lib/sound'
+import { playCorrectSound, playMasteredSound, playMilestoneSound, playWrongSound } from '@/lib/sound'
+import { cn } from '@/lib/cn'
 import { useLeagueSync } from '@/hooks/useLeagueSync'
 import { usePushActivity } from '@/hooks/usePushActivity'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -220,6 +228,10 @@ export function SessionRunner({
   const [goalJustCompleted, setGoalJustCompleted] = useState(false)
   /** Ketma-ket to'g'ri javoblar — seans ichidagi holat, saqlanmaydi */
   const [combo, setCombo] = useState(0)
+  /** Shu javob bilan so'z O'ZLASHTIRILDI — bayram uchun */
+  const [justMastered, setJustMastered] = useState(false)
+  /** Kombo pog'onasi bayrami — qisqa vaqt ko'rinadi */
+  const [milestone, setMilestone] = useState<{ title: string; emoji: string } | null>(null)
   /**
    * Shu savol "omadli" mi — XP ikki barobar.
    *
@@ -329,6 +341,7 @@ export function SessionRunner({
     setVerdict(null)
     setErrorMessage(null)
     setGradedCard(null)
+    setJustMastered(false)
     setLucky(isLucky())
   // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
   // mashqni javob berilgan zahoti qayta yaratib yuborardi
@@ -618,9 +631,17 @@ export function SessionRunner({
       void recordTypeResult(cardId, exercise.type, result === 'wrong')
 
       // O'zlashtirish holati — keyingi qadam aynan shundan tanlanadi
+      let masteredNow = false
       if (mode === 'mastery') {
-        applyToMastery([{ cardId: exercise.card.id, verdict: result }], exercise.type)
+        const wasMastered = mastery.get(exercise.card.id)?.mastered ?? false
+        const next = applyToMastery([{ cardId: exercise.card.id, verdict: result }], exercise.type)
+        masteredNow = !wasMastered && (next.get(exercise.card.id)?.mastered ?? false)
       }
+      setJustMastered(masteredNow)
+
+      // Kombo pog'onasi — kutilgan nuqtaga yetildi
+      const reached = comboMilestone(streak)
+      setMilestone(reached)
 
       setVerdict(result)
       setLastXpGained(xpGained)
@@ -635,8 +656,11 @@ export function SessionRunner({
       }))
 
       if (soundEnabled) {
-        if (grade >= PASSING_GRADE) playCorrectSound()
-        else playWrongSound()
+        if (grade < PASSING_GRADE) playWrongSound()
+        else if (masteredNow) playMasteredSound()
+        else if (reached) playMilestoneSound()
+        // Ohang kombo bilan ko'tariladi — quloq o'sishni his qiladi
+        else playCorrectSound(streak - 1)
       }
     } catch (error) {
       // Baho saqlanmasa feedback ko'rsatilmaydi — aks holda ekranda
@@ -668,6 +692,7 @@ export function SessionRunner({
     index,
     mode,
     applyToMastery,
+    mastery,
     lucky,
   ])
 
@@ -907,12 +932,31 @@ export function SessionRunner({
         {combo >= 2 && (
           <span
             data-testid="combo"
-            className="shrink-0 rounded-full bg-flame-500/15 px-2.5 py-1 text-sm font-extrabold text-flame-700"
+            key={combo}
+            // `key={combo}`: har o'sishda element qayta yaratiladi va
+            // CSS "pop" animatsiyasi qaytadan o'ynaydi — pill "urib" qo'yadi
+            className="combo-pop flex shrink-0 items-center gap-1.5 rounded-full bg-flame-500/15 px-2.5 py-1 text-sm font-extrabold text-flame-700"
           >
             🔥 {combo}
+            {/*
+              KUTISH: keyingi pog'onagacha nechta qolgani nuqtalar bilan.
+              Dofamin mukofotning o'zidan ko'ra uni kutishda ajraladi —
+              "yana 2 ta" degan aniq maqsad har javobni qimmatlashtiradi.
+            */}
+            <ComboDots combo={combo} />
           </span>
         )}
       </div>
+
+      {milestone && verdict !== null && (
+        <p
+          data-testid="combo-milestone"
+          role="status"
+          className="milestone-pop -mt-2 self-center rounded-full bg-gradient-to-r from-flame-500 to-brand-500 px-4 py-1 text-sm font-extrabold text-white shadow-pop"
+        >
+          {milestone.emoji} {milestone.title}
+        </p>
+      )}
 
       {errorMessage && (
         <p
@@ -982,10 +1026,39 @@ export function SessionRunner({
             gradedCard={gradedCard}
             xpGained={lastXpGained}
             goalJustCompleted={goalJustCompleted}
+            mastered={justMastered}
             onContinue={handleContinue}
           />
         )}
       </div>
     </div>
+  )
+}
+
+/**
+ * Keyingi kombo pog'onasigacha yo'l — kichik nuqtalar.
+ * Oxirgi pog'onadan o'tilgan bo'lsa hech nima chizilmaydi.
+ */
+function ComboDots({ combo }: { combo: number }) {
+  const next = nextComboMilestone(combo)
+  if (next === null) return null
+
+  const previous = [0, ...COMBO_MILESTONES].filter((m) => m <= combo).at(-1) ?? 0
+  const span = next - previous
+  const done = combo - previous
+
+  return (
+    <span
+      aria-label={`${next} gacha ${next - combo} ta`}
+      className="flex items-center gap-0.5"
+    >
+      {Array.from({ length: span }, (_, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className={cn('h-1.5 w-1.5 rounded-full', i < done ? 'bg-flame-500' : 'bg-flame-500/30')}
+        />
+      ))}
+    </span>
   )
 }

@@ -461,6 +461,14 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
    * tayanmasligi kerak.
    */
   async function answerAnything(kind: 'correct' | 'wrong') {
+    await answerOnly(kind)
+
+    const next = await screen.findByRole('button', { name: /davom etish|tushunarli/i })
+    fireEvent.click(next)
+  }
+
+  /** Javob beradi, lekin "Davom etish"ni BOSMAYDI — feedback tekshiriladi */
+  async function answerOnly(kind: 'correct' | 'wrong') {
     const options = screen
       .queryAllByRole('listitem')
       .map((item) => item.querySelector('button'))
@@ -477,12 +485,14 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
     } else {
       // Yozma mashq: to'g'ri javobni bilamiz, xato uchun aniq noto'g'ri matn
       const input = screen.getByLabelText(/javob/i)
-      fireEvent.change(input, { target: { value: kind === 'correct' ? 'water' : 'zzzz' } })
+      // Yozma mashqda savol — TARJIMA, javob — so'zning o'zi
+      const prompt = screen.queryByTestId('exercise-prompt')?.textContent?.trim()
+      const want = CARDS.find((card) => card.translation === prompt)?.word ?? 'water'
+      fireEvent.change(input, { target: { value: kind === 'correct' ? want : 'zzzz' } })
       fireEvent.click(screen.getByRole('button', { name: /tekshirish/i }))
     }
 
-    const next = await screen.findByRole('button', { name: /davom etish|tushunarli/i })
-    fireEvent.click(next)
+    await screen.findByRole('button', { name: /davom etish|tushunarli/i })
   }
 
   /** Seans davom etyaptimi (tugaganda butun ko'rinish yo'qoladi) */
@@ -504,6 +514,44 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
       expect(stillRunning()).toBe(true)
     })
     expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
+  })
+
+  it('so‘z O‘ZLASHTIRILGAN lahzada alohida nishon chiqadi', async () => {
+    /*
+     * Darsdagi eng katta yutuq — so'z ikki xil mashqda bilindi. Uni
+     * ko'rinmas qoldirish eng katta mukofotni yashirish bo'lardi.
+     */
+    renderMastery()
+    await screen.findByTestId('session-progress')
+
+    await answerOnly('correct')
+    // Birinchi to'g'ri javob — hali yodlanmadi
+    expect(screen.queryByTestId('mastered-ribbon')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /davom etish|tushunarli/i }))
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /davom etish|tushunarli/i })).toBeNull()
+    })
+    await answerOnly('correct')
+
+    expect(screen.getByTestId('mastered-ribbon')).toBeInTheDocument()
+  })
+
+  it('uchinchi ketma-ket to‘g‘ri javobda kombo pog‘onasi nishonlanadi', async () => {
+    renderMastery([CARDS[0], CARDS[1]])
+    await screen.findByTestId('session-progress')
+
+    for (let i = 0; i < 2; i += 1) {
+      await answerOnly('correct')
+      expect(screen.queryByTestId('combo-milestone')).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: /davom etish|tushunarli/i }))
+      await waitFor(() => {
+        expect(screen.queryByRole('button', { name: /davom etish|tushunarli/i })).toBeNull()
+      })
+    }
+    await answerOnly('correct')
+
+    expect(screen.getByTestId('combo-milestone')).toHaveTextContent(/×3/)
   })
 
   it('BIR marta to‘g‘ri javob so‘zni o‘zlashtirilgan qilmaydi', async () => {

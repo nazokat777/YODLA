@@ -10,6 +10,8 @@ import {
   PERFECT_SESSION_BONUS_XP,
   xpForAnswer,
   type BadgeStats,
+  type ChestReward,
+  MAX_STREAK_FREEZES,
   type StreakResult,
 } from '@/core/gamification'
 import { startOfDay } from '@/lib/date'
@@ -425,4 +427,28 @@ export async function claimChallengeBonus(
 
     return true
   })
+}
+
+/**
+ * Sirli sandiq mukofotini HAQIQATAN yozadi.
+ *
+ * Ekranda ko'rsatilgan har mukofot bazaga tushishi shart — aks holda
+ * u yolg'on bo'lardi (kunlik chaqiriq bonusi bilan bir marta shunday
+ * bo'lgan). Maqtov hech nimani yozmaydi — u so'zning o'zi.
+ */
+export async function applyChestReward(reward: ChestReward, now: number = Date.now()): Promise<void> {
+  if (reward.kind === 'xp') {
+    await awardBonusXp(reward.amount, now)
+    return
+  }
+
+  if (reward.kind === 'freeze') {
+    await db.transaction('rw', db.profile, async () => {
+      const profile = (await db.profile.get('me')) ?? createProfile()
+      await db.profile.put({
+        ...profile,
+        freezesAvailable: Math.min(MAX_STREAK_FREEZES, profile.freezesAvailable + 1),
+      })
+    })
+  }
 }

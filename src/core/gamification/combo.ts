@@ -40,6 +40,46 @@ export function nextCombo(combo: number, verdict: AnswerVerdict): number {
  */
 export function comboBonusXp(combo: number): number {
   if (combo <= 0) return 0
+  // O'nlik pog'ona ikki baravar: 10, 20, 30… — "to'xtamas" zarbasi
+  if (combo % (COMBO_BONUS_EVERY * 2) === 0) return COMBO_BONUS_XP * 2
 
   return combo % COMBO_BONUS_EVERY === 0 ? COMBO_BONUS_XP : 0
+}
+
+/**
+ * Kombo POG'ONALARI — aynan shu sonlarda kichik bayram bo'ladi.
+ *
+ * NEYROBIOLOGIYA: dofamin mukofotning o'zidan ko'ra uni KUTISHDA
+ * ko'proq ajraladi. Shuning uchun pog'ona oldindan ko'rinib turadi
+ * ("×5 gacha 2 ta") va unga yetganda alohida nishonlanadi. Pog'onalar
+ * oraliqlari o'sib boradi — har safar biroz ko'proq harakat, biroz
+ * kattaroq quvonch.
+ */
+export const COMBO_MILESTONES = [3, 5, 10, 15, 20, 30, 50] as const
+
+/** Pog'onaga yetilgan bo'lsa uning bayram matni, aks holda `null` */
+export function comboMilestone(combo: number): { title: string; emoji: string } | null {
+  switch (combo) {
+    case 3:
+      return { title: 'Combo ×3', emoji: '🔥' }
+    case 5:
+      return { title: 'On fire! ×5', emoji: '⚡' }
+    case 10:
+      return { title: 'Unstoppable! ×10', emoji: '🌟' }
+    case 15:
+      return { title: 'Legendary ×15', emoji: '💎' }
+    case 20:
+      return { title: 'Godlike ×20', emoji: '👑' }
+    case 30:
+      return { title: 'Mythic ×30', emoji: '🚀' }
+    case 50:
+      return { title: 'Infinity ×50', emoji: '🌌' }
+    default:
+      return null
+  }
+}
+
+/** Keyingi pog'ona — kutish uchun. Oxirgisidan o'tilgan bo'lsa `null` */
+export function nextComboMilestone(combo: number): number | null {
+  return COMBO_MILESTONES.find((milestone) => milestone > combo) ?? null
 }

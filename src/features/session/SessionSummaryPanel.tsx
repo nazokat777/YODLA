@@ -3,7 +3,8 @@ import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
 import { loadGsap } from '@/lib/motion'
 import { Confetti } from './Confetti'
-import { BADGE_BY_ID } from '@/core/gamification'
+import { BADGE_BY_ID, CHEST_MIN_ANSWERS } from '@/core/gamification'
+import { SessionChest } from './SessionChest'
 import type { SessionSummary } from './SessionRunner'
 
 interface SessionSummaryPanelProps {
@@ -116,6 +117,12 @@ export function SessionSummaryPanel({
           </div>
         </div>
       </Panel>
+
+      {/*
+        Sandiq faqat HAQIQIY seansdan keyin: bir-ikki javobli mini-seansni
+        qayta-qayta ochib mukofot yig'ib bo'lmasin.
+      */}
+      {summary.answered >= CHEST_MIN_ANSWERS && <SessionChest />}
 
       {newBadges.length > 0 && (
         <Panel tone="brand">

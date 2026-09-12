@@ -19,6 +19,7 @@ import {
   claimChallengeBonus,
   recordLessonCompleted,
   saveGameBest,
+  applyChestReward,
   syncBadges,
 } from './progress.repo'
 
@@ -416,5 +417,36 @@ describe('claimChallengeBonus', () => {
 
     expect(second).toBe(false)
     expect((await ensureProfile()).totalXp).toBe(50)
+  })
+})
+
+describe('applyChestReward', () => {
+  it('XP mukofoti profil va kunlik hisobga yoziladi', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+
+    await applyChestReward({ kind: 'xp', amount: 25 })
+
+    expect((await ensureProfile()).totalXp).toBe(25)
+    expect((await getDailyStat()).xp).toBe(25)
+  })
+
+  it('muzlatish zaxiraga qo‘shiladi, lekin chegaradan oshmaydi', async () => {
+    await db.profile.clear()
+
+    await applyChestReward({ kind: 'freeze' })
+    await applyChestReward({ kind: 'freeze' })
+    await applyChestReward({ kind: 'freeze' })
+
+    expect((await ensureProfile()).freezesAvailable).toBe(2)
+  })
+
+  it('maqtov hech nimani yozmaydi', async () => {
+    await db.profile.clear()
+    const before = (await ensureProfile()).totalXp
+
+    await applyChestReward({ kind: 'praise', text: 'Zo‘r!' })
+
+    expect((await ensureProfile()).totalXp).toBe(before)
   })
 })

@@ -32,6 +32,14 @@ interface FeedbackBarProps {
   xpGained: number
   /** Kunlik maqsad aynan shu javob bilan bajarildimi */
   goalJustCompleted: boolean
+  /**
+   * So'z aynan shu javob bilan O'ZLASHTIRILDI (ikki xil mashqda to'g'ri).
+   *
+   * Bu darsdagi eng muhim "yutuq lahzasi": bola so'zni nafaqat topdi,
+   * balki uni ikki tomondan bildi. Uni ko'rinmas qoldirish — eng katta
+   * mukofotni yashirish. Alohida nishon va akkord bilan belgilanadi.
+   */
+  mastered?: boolean
   onContinue: () => void
 }
 
@@ -130,6 +138,7 @@ export function FeedbackBar({
   gradedCard = null,
   xpGained,
   goalJustCompleted,
+  mastered = false,
   onContinue,
 }: FeedbackBarProps) {
   const tone = TONE[verdict]
@@ -212,6 +221,19 @@ export function FeedbackBar({
       {goalJustCompleted && (
         <p className="rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-bold text-flame-700">
           🎯 Kunlik maqsad bajarildi!
+        </p>
+      )}
+
+      {mastered && (
+        <p
+          data-testid="mastered-ribbon"
+          role="status"
+          className="mastered-pop flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-500 to-sky-500 px-3 py-2 text-sm font-extrabold text-white shadow-pop"
+        >
+          <span aria-hidden="true" className="text-lg">
+            ⭐
+          </span>
+          Word mastered! Bu so‘z endi seniki.
         </p>
       )}
 
