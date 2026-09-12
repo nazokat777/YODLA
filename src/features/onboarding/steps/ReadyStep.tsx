@@ -22,6 +22,20 @@ export function ReadyStep({ onFinish }: { onFinish: (destination: 'lesson' | 'ho
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <Emblem kind="rocket" size="lg" className="mb-3" />
         <h1 className="text-2xl font-extrabold">Tayyor!</h1>
+
+        {/*
+          Yo'ldosh birinchi daqiqadan: tuxum "ichida kimdir bor" — birinchi
+          dars uni uyg'otadi. G'amxo'rlik halqasi darsdan OLDIN boshlanadi.
+        */}
+        <p
+          data-testid="onboarding-companion"
+          className="mt-3 flex items-center gap-2 rounded-full bg-flame-500/15 px-3 py-1.5 text-sm font-bold text-flame-700"
+        >
+          <span aria-hidden="true" className="flicker text-xl">
+            🥚
+          </span>
+          Yo‘ldoshing tuxumda — birinchi dars uni uyg‘otadi
+        </p>
         <p className="mt-2 text-sm text-ink-600">
           Boshlang'ich daraja: <strong>{startingLevel}</strong> · Kuniga{' '}
           <strong>{dailyGoalWords} so'z</strong>
