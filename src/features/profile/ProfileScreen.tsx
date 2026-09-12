@@ -87,7 +87,7 @@ export function ProfileScreen() {
             <Metric
               icon="🧊"
               value={progress.profile.freezesAvailable}
-              label={`Muzlatish (max ${MAX_STREAK_FREEZES})`}
+              label={`Muzlatish (ko‘pi bilan ${MAX_STREAK_FREEZES})`}
             />
           </div>
           {/* Olov darajasi va KEYINGISI — "3 kundan keyin ⚡" (kutish) */}
