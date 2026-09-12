@@ -491,7 +491,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'المطار بعيد',
+      sentence: 'الْمَطَارُ بَعِيدٌ',
       sentenceTranslation: 'Aeroport uzoqda',
     },
     {
@@ -500,7 +500,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'اشتريت تذكرة',
+      sentence: 'اِشْتَرَيْتُ تَذْكِرَةً',
       sentenceTranslation: 'Men chipta sotib oldim',
     },
     {
@@ -509,7 +509,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'القطار متأخر',
+      sentence: 'الْقِطَارُ مُتَأَخِّرٌ',
       sentenceTranslation: 'Poyezd kechikmoqda',
     },
     {
@@ -518,7 +518,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'الفندق نظيف',
+      sentence: 'الْفُنْدُقُ نَظِيفٌ',
       sentenceTranslation: 'Mehmonxona toza',
     },
     {
@@ -527,7 +527,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'حقيبتي ثقيلة',
+      sentence: 'حَقِيبَتِي ثَقِيلَةٌ',
       sentenceTranslation: "Chamadonim og'ir",
     },
     {
@@ -536,7 +536,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Sayohat',
       level: 'A2',
-      sentence: 'انظر إلى الخريطة',
+      sentence: 'اُنْظُرْ إِلَى الْخَرِيطَةِ',
       sentenceTranslation: 'Xaritaga qarang',
     },
     {
@@ -545,7 +545,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'المتجر مفتوح',
+      sentence: 'الْمَتْجَرُ مَفْتُوحٌ',
       sentenceTranslation: "Do'kon ochiq",
     },
     {
@@ -554,7 +554,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'أحتاج مالا أكثر',
+      sentence: 'أَحْتَاجُ مَالًا أَكْثَرَ',
       sentenceTranslation: "Menga ko'proq pul kerak",
     },
     {
@@ -563,7 +563,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'السعر مرتفع',
+      sentence: 'السِّعْرُ مُرْتَفِعٌ',
       sentenceTranslation: 'Narx baland',
     },
     {
@@ -572,7 +572,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'أريد أن أشتري خبزا',
+      sentence: 'أُرِيدُ أَنْ أَشْتَرِيَ خُبْزًا',
       sentenceTranslation: 'Men non sotib olmoqchiman',
     },
     {
@@ -581,7 +581,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'هذا القميص رخيص',
+      sentence: 'هَذَا الْقَمِيصُ رَخِيصٌ',
       sentenceTranslation: "Bu ko'ylak arzon",
     },
     {
@@ -590,7 +590,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Xarid',
       level: 'A2',
-      sentence: 'هذه السيارة غالية',
+      sentence: 'هَذِهِ السَّيَّارَةُ غَالِيَةٌ',
       sentenceTranslation: 'Bu mashina qimmat',
     },
     {
@@ -599,7 +599,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'عملي ممتع',
+      sentence: 'عَمَلِي مُمْتِعٌ',
       sentenceTranslation: 'Mening ishim qiziqarli',
     },
     {
@@ -608,7 +608,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'المكتب مغلق',
+      sentence: 'الْمَكْتَبُ مُغْلَقٌ',
       sentenceTranslation: 'Ofis yopiq',
     },
     {
@@ -617,7 +617,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'معلمنا طيب',
+      sentence: 'مُعَلِّمُنَا طَيِّبٌ',
       sentenceTranslation: "O'qituvchimiz mehribon",
     },
     {
@@ -626,7 +626,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'الطبيب مشغول',
+      sentence: 'الطَّبِيبُ مَشْغُولٌ',
       sentenceTranslation: 'Shifokor band',
     },
     {
@@ -635,7 +635,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'الاجتماع يبدأ الآن',
+      sentence: 'الِاجْتِمَاعُ يَبْدَأُ الْآنَ',
       sentenceTranslation: 'Uchrashuv hozir boshlanadi',
     },
     {
@@ -644,7 +644,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ish',
       level: 'A2',
-      sentence: 'الشركة جديدة',
+      sentence: 'الشَّرِكَةُ جَدِيدَةٌ',
       sentenceTranslation: 'Kompaniya yangi',
     },
     {
@@ -653,7 +653,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Sog'liq",
       level: 'A2',
-      sentence: 'الصحة مهمة',
+      sentence: 'الصِّحَّةُ مُهِمَّةٌ',
       sentenceTranslation: 'Salomatlik muhim',
     },
     {
@@ -662,7 +662,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Sog'liq",
       level: 'A2',
-      sentence: 'خذ هذا الدواء',
+      sentence: 'خُذْ هَذَا الدَّوَاءَ',
       sentenceTranslation: 'Bu dorini iching',
     },
     {
@@ -671,7 +671,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Sog'liq",
       level: 'A2',
-      sentence: 'المستشفى قريب',
+      sentence: 'الْمُسْتَشْفَى قَرِيبٌ',
       sentenceTranslation: 'Kasalxona yaqin',
     },
     {
@@ -680,7 +680,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Sog'liq",
       level: 'A2',
-      sentence: 'الألم ذهب',
+      sentence: 'الْأَلَمُ ذَهَبَ',
       sentenceTranslation: "Og'riq o'tdi",
     },
     {
@@ -689,7 +689,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Sog'liq",
       level: 'A2',
-      sentence: 'أنا متعب جدا',
+      sentence: 'أَنَا مُتْعَبٌ جِدًّا',
       sentenceTranslation: 'Men juda charchaganman',
     },
     {
@@ -698,7 +698,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'الطقس جميل',
+      sentence: 'الطَّقْسُ جَمِيلٌ',
       sentenceTranslation: 'Ob-havo yaxshi',
     },
     {
@@ -707,7 +707,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'توقف المطر',
+      sentence: 'تَوَقَّفَ الْمَطَرُ',
       sentenceTranslation: "Yomg'ir to'xtadi",
     },
     {
@@ -716,7 +716,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'الثلج غطى المدينة',
+      sentence: 'الثَّلْجُ غَطَّى الْمَدِينَةَ',
       sentenceTranslation: 'Qor shaharni qopladi',
     },
     {
@@ -725,7 +725,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'الريح قوية',
+      sentence: 'الرِّيحُ قَوِيَّةٌ',
       sentenceTranslation: 'Shamol kuchli',
     },
     {
@@ -734,7 +734,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'الشمس دافئة',
+      sentence: 'الشَّمْسُ دَافِئَةٌ',
       sentenceTranslation: 'Quyosh iliq',
     },
     {
@@ -743,7 +743,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Ob-havo',
       level: 'A2',
-      sentence: 'الماء بارد',
+      sentence: 'الْمَاءُ بَارِدٌ',
       sentenceTranslation: 'Suv sovuq',
     },
     {
@@ -752,7 +752,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'أعمل كل أسبوع',
+      sentence: 'أَعْمَلُ كُلَّ أُسْبُوعٍ',
       sentenceTranslation: 'Men har hafta ishlayman',
     },
     {
@@ -761,7 +761,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'هذه السنة أفضل',
+      sentence: 'هَذِهِ السَّنَةُ أَفْضَلُ',
       sentenceTranslation: 'Bu yil yaxshiroq',
     },
     {
@@ -770,7 +770,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'انتظر ساعة واحدة',
+      sentence: 'اِنْتَظِرْ سَاعَةً وَاحِدَةً',
       sentenceTranslation: 'Bir soat kuting',
     },
     {
@@ -779,7 +779,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'كان اليوم طويلا',
+      sentence: 'كَانَ الْيَوْمُ طَوِيلًا',
       sentenceTranslation: "Kun uzoq bo'ldi",
     },
     {
@@ -788,7 +788,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'نلتقي غدا',
+      sentence: 'نَلْتَقِي غَدًا',
       sentenceTranslation: 'Biz ertaga uchrashamiz',
     },
     {
@@ -797,7 +797,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Vaqt',
       level: 'A2',
-      sentence: 'هي تساعد دائما',
+      sentence: 'هِيَ تُسَاعِدُ دَائِمًا',
       sentenceTranslation: 'U doim yordam beradi',
     },
     {
@@ -806,7 +806,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Uy-ro'zg'or",
       level: 'A2',
-      sentence: 'أغلق الباب',
+      sentence: 'أَغْلِقِ الْبَابَ',
       sentenceTranslation: "Eshikni yoping",
     },
     {
@@ -815,7 +815,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Uy-ro'zg'or",
       level: 'A2',
-      sentence: 'افتح النافذة',
+      sentence: 'اِفْتَحِ النَّافِذَةَ',
       sentenceTranslation: 'Derazani oching',
     },
     {
@@ -824,7 +824,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Uy-ro'zg'or",
       level: 'A2',
-      sentence: 'الطاولة نظيفة',
+      sentence: 'الطَّاوِلَةُ نَظِيفَةٌ',
       sentenceTranslation: 'Stol toza',
     },
     {
@@ -833,7 +833,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Uy-ro'zg'or",
       level: 'A2',
-      sentence: 'اجلس على الكرسي',
+      sentence: 'اِجْلِسْ عَلَى الْكُرْسِيِّ',
       sentenceTranslation: "Stulga o'tiring",
     },
     {
@@ -842,7 +842,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Uy-ro'zg'or",
       level: 'A2',
-      sentence: 'فقدت المفتاح',
+      sentence: 'فَقَدْتُ الْمِفْتَاحَ',
       sentenceTranslation: "Kalitimni yo'qotdim",
     },
     {
@@ -851,7 +851,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Kiyim',
       level: 'A2',
-      sentence: 'هذا القميص جديد',
+      sentence: 'هَذَا الْقَمِيصُ جَدِيدٌ',
       sentenceTranslation: "Bu ko'ylak yangi",
     },
     {
@@ -860,7 +860,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Kiyim',
       level: 'A2',
-      sentence: 'حذائي أسود',
+      sentence: 'حِذَائِي أَسْوَدُ',
       sentenceTranslation: 'Poyabzalim qora',
     },
     {
@@ -869,7 +869,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Kiyim',
       level: 'A2',
-      sentence: 'هو يلبس قبعة',
+      sentence: 'هُوَ يَلْبَسُ قُبَّعَةً',
       sentenceTranslation: 'U shapka kiyadi',
     },
     {
@@ -878,7 +878,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Kiyim',
       level: 'A2',
-      sentence: 'المعطف دافئ',
+      sentence: 'الْمِعْطَفُ دَافِئٌ',
       sentenceTranslation: 'Palto issiq',
     },
     {
@@ -887,7 +887,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Kiyim',
       level: 'A2',
-      sentence: 'فستانها أحمر',
+      sentence: 'فُسْتَانُهَا أَحْمَرُ',
       sentenceTranslation: 'Uning libosi qizil',
     },
   ],
@@ -899,7 +899,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Fikr bildirish',
       level: 'B1',
-      sentence: 'كان قرارا صعبا',
+      sentence: 'كَانَ قَرَارًا صَعْبًا',
       sentenceTranslation: 'Bu qiyin qaror edi',
     },
     {
@@ -908,7 +908,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Fikr bildirish',
       level: 'B1',
-      sentence: 'قل رأيك',
+      sentence: 'قُلْ رَأْيَكَ',
       sentenceTranslation: 'Fikringizni ayting',
     },
     {
@@ -917,7 +917,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Fikr bildirish',
       level: 'B1',
-      sentence: 'أوافقك الرأي',
+      sentence: 'أُوَافِقُكَ الرَّأْيَ',
       sentenceTranslation: 'Men siz bilan roziman',
     },
     {
@@ -926,7 +926,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Fikr bildirish',
       level: 'B1',
-      sentence: 'من فضلك اشرح القاعدة',
+      sentence: 'مِنْ فَضْلِكَ اشْرَحِ الْقَاعِدَةَ',
       sentenceTranslation: 'Iltimos, qoidani tushuntiring',
     },
     {
@@ -935,7 +935,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Fikr bildirish',
       level: 'B1',
-      sentence: 'أقترح خطة أخرى',
+      sentence: 'أَقْتَرِحُ خُطَّةً أُخْرَى',
       sentenceTranslation: 'Men boshqa reja taklif qilaman',
     },
     {
@@ -944,7 +944,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "His-tuyg'u",
       level: 'B1',
-      sentence: 'هي سعيدة اليوم',
+      sentence: 'هِيَ سَعِيدَةٌ الْيَوْمَ',
       sentenceTranslation: 'U bugun baxtli',
     },
     {
@@ -953,7 +953,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "His-tuyg'u",
       level: 'B1',
-      sentence: 'كان حزينا',
+      sentence: 'كَانَ حَزِينًا',
       sentenceTranslation: 'U xafa edi',
     },
     {
@@ -962,7 +962,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "His-tuyg'u",
       level: 'B1',
-      sentence: 'الخوف يوقف كثيرين',
+      sentence: 'الْخَوْفُ يُوقِفُ كَثِيرِينَ',
       sentenceTranslation: "Qo'rquv ko'p odamni to'xtatadi",
     },
     {
@@ -971,7 +971,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "His-tuyg'u",
       level: 'B1',
-      sentence: 'فرحها كان حقيقيا',
+      sentence: 'فَرَحُهَا كَانَ حَقِيقِيًّا',
       sentenceTranslation: 'Uning quvonchi chin edi',
     },
     {
@@ -980,7 +980,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "His-tuyg'u",
       level: 'B1',
-      sentence: 'الخبر سبب دهشة',
+      sentence: 'الْخَبَرُ سَبَّبَ دَهْشَةً',
       sentenceTranslation: "Yangilik hayrat uyg'otdi",
     },
     {
@@ -989,7 +989,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Jamiyat',
       level: 'B1',
-      sentence: 'المجتمع يتغير ببطء',
+      sentence: 'الْمُجْتَمَعُ يَتَغَيَّرُ بِبُطْءٍ',
       sentenceTranslation: "Jamiyat sekin o'zgaradi",
     },
     {
@@ -998,7 +998,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Jamiyat',
       level: 'B1',
-      sentence: 'القانون واضح',
+      sentence: 'الْقَانُونُ وَاضِحٌ',
       sentenceTranslation: 'Qonun aniq',
     },
     {
@@ -1007,7 +1007,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Jamiyat',
       level: 'B1',
-      sentence: 'الحكومة وضعت قواعد',
+      sentence: 'الْحُكُومَةُ وَضَعَتْ قَوَاعِدَ',
       sentenceTranslation: 'Hukumat qoidalar chiqardi',
     },
     {
@@ -1016,7 +1016,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Jamiyat',
       level: 'B1',
-      sentence: 'لكل مواطن واجبات',
+      sentence: 'لِكُلِّ مُوَاطِنٍ وَاجِبَاتٌ',
       sentenceTranslation: 'Har bir fuqaroning burchi bor',
     },
     {
@@ -1025,7 +1025,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Jamiyat',
       level: 'B1',
-      sentence: 'الحرية تتطلب مسؤولية',
+      sentence: 'الْحُرِّيَّةُ تَتَطَلَّبُ مَسْؤُولِيَّةً',
       sentenceTranslation: "Erkinlik mas'uliyat talab qiladi",
     },
     {
@@ -1034,7 +1034,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Texnologiya',
       level: 'B1',
-      sentence: 'حاسوبي بطيء',
+      sentence: 'حَاسُوبِي بَطِيءٌ',
       sentenceTranslation: 'Kompyuterim sekin',
     },
     {
@@ -1043,7 +1043,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Texnologiya',
       level: 'B1',
-      sentence: 'الشبكة لا تعمل',
+      sentence: 'الشَّبَكَةُ لَا تَعْمَلُ',
       sentenceTranslation: 'Tarmoq ishlamayapti',
     },
     {
@@ -1052,7 +1052,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Texnologiya',
       level: 'B1',
-      sentence: 'فقدنا البيانات',
+      sentence: 'فَقَدْنَا الْبَيَانَاتِ',
       sentenceTranslation: "Biz ma'lumotni yo'qotdik",
     },
     {
@@ -1061,7 +1061,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Texnologiya',
       level: 'B1',
-      sentence: 'الشاشة مضيئة',
+      sentence: 'الشَّاشَةُ مُضِيئَةٌ',
       sentenceTranslation: 'Ekran yorqin',
     },
     {
@@ -1070,7 +1070,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Texnologiya',
       level: 'B1',
-      sentence: 'هذا الجهاز مفيد',
+      sentence: 'هَذَا الْجِهَازُ مُفِيدٌ',
       sentenceTranslation: 'Bu qurilma foydali',
     },
     {
@@ -1079,7 +1079,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Mavhum tushunchalar',
       level: 'B1',
-      sentence: 'هذه فكرة جيدة',
+      sentence: 'هَذِهِ فِكْرَةٌ جَيِّدَةٌ',
       sentenceTranslation: "Bu yaxshi g'oya",
     },
     {
@@ -1088,7 +1088,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Mavhum tushunchalar',
       level: 'B1',
-      sentence: 'قل لي السبب',
+      sentence: 'قُلْ لِي السَّبَبَ',
       sentenceTranslation: 'Menga sababni ayting',
     },
     {
@@ -1097,7 +1097,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Mavhum tushunchalar',
       level: 'B1',
-      sentence: 'الخبرة تعلمنا',
+      sentence: 'الْخِبْرَةُ تُعَلِّمُنَا',
       sentenceTranslation: "Tajriba bizni o'rgatadi",
     },
     {
@@ -1106,7 +1106,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Mavhum tushunchalar',
       level: 'B1',
-      sentence: 'المعرفة تنمو ببطء',
+      sentence: 'الْمَعْرِفَةُ تَنْمُو بِبُطْءٍ',
       sentenceTranslation: "Bilim sekin o'sadi",
     },
     {
@@ -1115,7 +1115,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Mavhum tushunchalar',
       level: 'B1',
-      sentence: 'التغيير يحتاج وقتا',
+      sentence: 'التَّغْيِيرُ يَحْتَاجُ وَقْتًا',
       sentenceTranslation: "O'zgarish vaqt talab qiladi",
     },
     {
@@ -1124,7 +1124,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Tabiat',
       level: 'B1',
-      sentence: 'الشجرة طويلة',
+      sentence: 'الشَّجَرَةُ طَوِيلَةٌ',
       sentenceTranslation: 'Daraxt baland',
     },
     {
@@ -1133,7 +1133,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Tabiat',
       level: 'B1',
-      sentence: 'النهر عميق',
+      sentence: 'النَّهْرُ عَمِيقٌ',
       sentenceTranslation: 'Daryo chuqur',
     },
     {
@@ -1142,7 +1142,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Tabiat',
       level: 'B1',
-      sentence: 'الجبل عال',
+      sentence: 'الْجَبَلُ عَالٍ',
       sentenceTranslation: "Tog' baland",
     },
     {
@@ -1151,7 +1151,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Tabiat',
       level: 'B1',
-      sentence: 'البحر هادئ',
+      sentence: 'الْبَحْرُ هَادِئٌ',
       sentenceTranslation: 'Dengiz tinch',
     },
     {
@@ -1160,7 +1160,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: 'Tabiat',
       level: 'B1',
-      sentence: 'الغابة خضراء',
+      sentence: 'الْغَابَةُ خَضْرَاءُ',
       sentenceTranslation: "O'rmon yashil",
     },
     {
@@ -1169,7 +1169,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Ta'lim",
       level: 'B1',
-      sentence: 'هي تدرس في الجامعة',
+      sentence: 'هِيَ تَدْرُسُ فِي الْجَامِعَةِ',
       sentenceTranslation: 'U universitetda o’qiydi',
     },
     {
@@ -1178,7 +1178,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Ta'lim",
       level: 'B1',
-      sentence: 'الطالب مجتهد',
+      sentence: 'الطَّالِبُ مُجْتَهِدٌ',
       sentenceTranslation: 'Talaba tirishqoq',
     },
     {
@@ -1187,7 +1187,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Ta'lim",
       level: 'B1',
-      sentence: 'الامتحان صعب',
+      sentence: 'الِامْتِحَانُ صَعْبٌ',
       sentenceTranslation: 'Imtihon qiyin',
     },
     {
@@ -1196,7 +1196,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Ta'lim",
       level: 'B1',
-      sentence: 'عندي سؤال',
+      sentence: 'عِنْدِي سُؤَالٌ',
       sentenceTranslation: 'Menda savol bor',
     },
     {
@@ -1205,7 +1205,7 @@ export const AR_DECK: Record<LevelCode, NewCardRecordInput[]> = {
       language: 'ar',
       topic: "Ta'lim",
       level: 'B1',
-      sentence: 'جوابك صحيح',
+      sentence: 'جَوَابُكَ صَحِيحٌ',
       sentenceTranslation: "Javobingiz to'g'ri",
     },
   ],
