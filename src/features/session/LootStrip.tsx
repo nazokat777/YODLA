@@ -52,12 +52,14 @@ export function LootStrip({ words }: LootStripProps) {
         <span className="text-sm text-ink-600">{words.length} so‘z</span>
       </div>
       {/* Gorizontal lenta: 375 px da 3–4 kartochka ko'rinadi, qolgani suriladi */}
-      <ul ref={rootRef} className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+      <ul ref={rootRef} className="scrollbar-none -mx-1 flex items-stretch gap-2 overflow-x-auto px-1 pb-1">
         {words.map((word) => (
           <li
             key={word.id}
             data-loot
-            className="flex w-24 shrink-0 flex-col items-center gap-1 rounded-2xl border border-brand-100 bg-brand-50 px-2 py-3 text-center"
+            // `min-h` + `justify-end`: rasmsiz so'z kartochkasi ham bir xil bo'yda,
+            // matn pastda tekis turadi
+            className="flex min-h-32 w-24 shrink-0 flex-col items-center justify-end gap-1 rounded-2xl border border-brand-100 bg-brand-50 px-2 py-3 text-center"
           >
             <WordImage translation={word.translation} size="sm" />
             <span

@@ -331,3 +331,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .lightning-pulse { animation: none; }
 }
+
+/* Gorizontal lentalarda skroll chizig'i ko'rinmaydi (surish saqlanadi) */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
