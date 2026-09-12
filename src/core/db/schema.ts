@@ -126,6 +126,8 @@ export interface ProfileRecord {
   weeklyQuestClaims?: Record<string, number[]>
   /** Nishonlangan olov darajalari (minDays) — har biri BIR marta */
   celebratedStreakTiers?: number[]
+  /** Nishonlangan yo'ldosh bosqichlari (minWords) — har biri BIR marta */
+  celebratedCompanionStages?: number[]
   /**
    * O'yinlardagi shaxsiy rekordlar.
    *

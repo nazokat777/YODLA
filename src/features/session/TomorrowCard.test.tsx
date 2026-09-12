@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { addMissingCards, db, gradeCard, recordAnswer } from '@/core/db'
+import { MemoryRouter } from 'react-router-dom'
+import { addMissingCards, db, ensureProfile, gradeCard, recordAnswer } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { TomorrowCard } from './TomorrowCard'
 
@@ -25,7 +26,11 @@ describe('TomorrowCard', () => {
     await gradeCard('en:bread', 4)
     await recordAnswer({ cardId: 'en:bread', verdict: 'correct', dailyGoalWords: 99 })
 
-    render(<TomorrowCard />)
+    render(
+      <MemoryRouter>
+        <TomorrowCard />
+      </MemoryRouter>,
+    )
 
     const card = await screen.findByTestId('tomorrow-card')
     expect(card).toHaveTextContent(/2 ta so‘z takrorga chiqadi/)
@@ -37,7 +42,11 @@ describe('TomorrowCard', () => {
     await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
     await recordAnswer({ cardId: 'en:apple', verdict: 'correct', dailyGoalWords: 99 })
 
-    const { unmount } = render(<TomorrowCard />)
+    const { unmount } = render(
+      <MemoryRouter>
+        <TomorrowCard />
+      </MemoryRouter>,
+    )
     await screen.findByTestId('tomorrow-card')
     expect(screen.queryByTestId('record-day')).not.toBeInTheDocument()
     unmount()
@@ -51,8 +60,29 @@ describe('TomorrowCard', () => {
       cardIds: [],
       goalBonusAwarded: false,
     })
-    render(<TomorrowCard />)
+    render(
+      <MemoryRouter>
+        <TomorrowCard />
+      </MemoryRouter>,
+    )
 
     expect(await screen.findByTestId('record-day')).toHaveTextContent(/yangi kunlik rekord/i)
+  })
+
+  it('daraja 30 XP dan yaqin va takrorlanadigan so‘z bo‘lsa — "hozir" taklifi', async () => {
+    await addMissingCards([{ word: 'apple', translation: 'olma', language: 'en' }])
+    await gradeCard('en:apple', 4)
+    await db.cards.update('en:apple', { dueDate: 0 })
+    // 2-daraja 100 XP da: 80 XP → 20 qoldi
+    await ensureProfile()
+    await db.profile.update('me', { totalXp: 80 })
+
+    render(
+      <MemoryRouter>
+        <TomorrowCard />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByTestId('almost-level')).toHaveTextContent('2-darajagacha atigi 20 XP')
   })
 })

@@ -6,7 +6,7 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
-import { computeLanguageStats, getAllCards, getNextDueDate } from '@/core/db'
+import { computeLanguageStats, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
 import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
@@ -25,6 +25,8 @@ import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
+import { Companion } from './Companion'
+import { WordOfDay } from './WordOfDay'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -70,6 +72,9 @@ export function HomeScreen() {
     () => (cards ? computeLanguageStats(cards, now) : undefined),
     [cards, now],
   )
+
+  /* Yo'ldosh BARCHA tillardagi ko'rilgan so'zlardan oziqlanadi — u bitta */
+  const globalStats = useLiveQuery(() => getGlobalCardStats(), [])
 
   const nextDueAt = useLiveQuery(
     () => (learningLanguage ? getNextDueDate(learningLanguage, now) : undefined),
@@ -140,9 +145,15 @@ export function HomeScreen() {
         isLoading={isLoading}
       />
 
+      {/* Yo'ldosh — so'zlar bilan o'sadigan jonzot (g'amxo'rlik effekti) */}
+      {globalStats && <Companion seenWords={globalStats.learned} />}
+
       {/* Til almashtirgich: har til alohida progress bilan — istalgan payt
           o'tish mumkin, so'zlar yo'qolmaydi */}
       <LanguageSwitcher />
+
+      {/* Kunning so'zi — qiziquvchanlik bo'shlig'i, har kuni yangi sir */}
+      {cards && <WordOfDay cards={cards} />}
 
       <Panel interactive>
         <div className="mb-1 flex items-baseline justify-between">

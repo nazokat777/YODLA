@@ -3,7 +3,9 @@ import { Button } from '@/components/ui/Button'
 import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import type { CardRecord } from '@/core/db'
-import { setMnemonic } from '@/core/db'
+import { getGlobalCardStats, setMnemonic } from '@/core/db'
+import { companionStage } from '@/core/gamification'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
 import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
@@ -147,6 +149,7 @@ export function FeedbackBar({
 }: FeedbackBarProps) {
   const tone = TONE[verdict]
   const language = LANGUAGES[exercise.card.language]
+  const companion = useCompanionEmoji()
   const { answer, context } = resolveAnswerLines(exercise)
   const answerReading = answer.isTarget ? transliterate(answer.text, language.script) : null
   const panelRef = useRef<HTMLDivElement>(null)
@@ -235,6 +238,20 @@ export function FeedbackBar({
           {tone.icon}
         </span>
         <p className={cn('text-lg font-extrabold', tone.text)}>{tone.title}</p>
+        {/*
+          YO'LDOSH javobga munosabat bildiradi: to'g'rida sakraydi, xatoda
+          yelka qisadi (jazo emas — "yana urinamiz"). Bola javobni faqat
+          o'zi uchun emas, yo'ldoshi uchun ham beradi.
+        */}
+        {companion && (
+          <span
+            aria-hidden="true"
+            data-testid="companion-react"
+            className={cn('ms-1 text-2xl', verdict === 'wrong' ? 'shrug' : 'combo-pop')}
+          >
+            {companion}
+          </span>
+        )}
 
         {/*
           SO'Z KUCHI — bola bugun qilgan ishi so'zni oldinga
@@ -453,4 +470,16 @@ function MnemonicEditor({
       </Button>
     </div>
   )
+}
+
+/**
+ * Yo'ldoshning hozirgi ko'rinishi — barcha tillardagi ko'rilgan
+ * so'zlardan. Tuxum bosqichida ko'rsatilmaydi: tuxum "munosabat"
+ * bildirolmaydi.
+ */
+function useCompanionEmoji(): string | null {
+  const stats = useLiveQuery(() => getGlobalCardStats(), [])
+  if (!stats) return null
+  const stage = companionStage(stats.learned)
+  return stage.minWords === 0 ? null : stage.emoji
 }

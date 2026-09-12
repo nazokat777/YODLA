@@ -512,3 +512,15 @@ export async function markStreakTierCelebrated(minDays: number): Promise<boolean
     return true
   })
 }
+
+/** Yo'ldosh bosqichi nishonlandi — bir marta. Qaytaradi: hozir belgilandimi */
+export async function markCompanionStageCelebrated(minWords: number): Promise<boolean> {
+  return db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const done = profile.celebratedCompanionStages ?? []
+    if (done.includes(minWords)) return false
+
+    await db.profile.put({ ...profile, celebratedCompanionStages: [...done, minWords] })
+    return true
+  })
+}
