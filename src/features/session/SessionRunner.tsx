@@ -949,7 +949,11 @@ export function SessionRunner({
   if (introCard) {
     return (
       <div className="flex flex-1 flex-col gap-4">
-        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
+        <ProgressHeader
+          value={progressValue}
+          max={progressMax}
+          answersPerWord={mode === 'mastery' ? requiredStreak : 1}
+        />
 
         <WordIntro
           card={introCard}
@@ -969,7 +973,11 @@ export function SessionRunner({
   if (exercise.type === 'matching') {
     return (
       <div className="flex flex-1 flex-col gap-4">
-        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
+        <ProgressHeader
+          value={progressValue}
+          max={progressMax}
+          answersPerWord={mode === 'mastery' ? requiredStreak : 1}
+        />
 
         <ExerciseHelpButton type="matching" />
 
@@ -984,7 +992,11 @@ export function SessionRunner({
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="flex items-center gap-3">
-        <ProgressHeader value={progressValue} max={progressMax} mode={mode} />
+        <ProgressHeader
+          value={progressValue}
+          max={progressMax}
+          answersPerWord={mode === 'mastery' ? requiredStreak : 1}
+        />
 
         {/*
           Kombo 2 dan boshlab ko'rinadi: "🔥 1" har to'g'ri javobdan keyin
@@ -1144,10 +1156,18 @@ function ComboDots({ combo }: { combo: number }) {
  * O'zlashtirish rejimida "0/4 so'z" yana qancha davom etishini aytmaydi
  * (savollar soni o'zgaruvchan) — "≈ 2 daq" shu bo'shliqni yopadi.
  */
-function ProgressHeader({ value, max, mode }: { value: number; max: number; mode: 'fixed' | 'mastery' }) {
+function ProgressHeader({
+  value,
+  max,
+  answersPerWord,
+}: {
+  value: number
+  max: number
+  /** O'zlashtirishda — talab qilingan ketma-ketlik (2; aralash takrorda 1) */
+  answersPerWord: number
+}) {
   const remaining = Math.max(0, max - value)
-  // Oddiy takrorda har qadam bitta javob
-  const minutes = estimateMinutes(remaining, mode === 'mastery' ? 2 : 1)
+  const minutes = estimateMinutes(remaining, answersPerWord)
 
   return (
     <>
