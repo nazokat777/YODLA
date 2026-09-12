@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ExerciseHelpButton } from './ExerciseHelpButton'
@@ -7,6 +8,7 @@ import { LANGUAGES } from '@/core/config/languages'
 import {
   db,
   finalizeSession,
+  getGlobalCardStats,
   gradeCard,
   recordAnswer,
   recordTypeResult,
@@ -36,6 +38,7 @@ import {
 import {
   COMBO_MILESTONES,
   comboBonusXp,
+  companionStage,
   comboMilestone,
   nextCombo,
   levelFromXp,
@@ -262,6 +265,16 @@ export function SessionRunner({
    * mukofoti, uni jimgina o'tkazib yuborish bo'lmaydi.
    */
   const levelAtStartRef = useRef<number | null>(null)
+  /*
+   * Yo'ldosh — seansda BIR marta o'qiladi (har javobda emas: uch indeks
+   * sanog'i × har javob ortiqcha). Tuxum bosqichida ko'rsatilmaydi.
+   */
+  const globalStats = useLiveQuery(() => getGlobalCardStats(), [])
+  const companionEmoji = useMemo(() => {
+    if (!globalStats) return null
+    const stage = companionStage(globalStats.learned)
+    return stage.minWords === 0 ? null : stage.emoji
+  }, [globalStats])
   useEffect(() => {
     void db.profile
       .get('me')
@@ -1113,6 +1126,7 @@ export function SessionRunner({
             xpGained={lastXpGained}
             goalJustCompleted={goalJustCompleted}
             firstWinOfDay={firstWinOfDay}
+            companion={companionEmoji}
             mastered={justMastered}
             onContinue={handleContinue}
           />

@@ -3,9 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import type { CardRecord } from '@/core/db'
-import { getGlobalCardStats, setMnemonic } from '@/core/db'
-import { companionStage } from '@/core/gamification'
-import { useLiveQuery } from 'dexie-react-hooks'
+import { setMnemonic } from '@/core/db'
 import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
 import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
@@ -45,6 +43,8 @@ interface FeedbackBarProps {
   mastered?: boolean
   /** Kunning birinchi to'g'ri javobi — qaytib kelgani uchun ×2 */
   firstWinOfDay?: boolean
+  /** Yo'ldoshning ko'rinishi (seans boshida bir marta o'qiladi); tuxumda `null` */
+  companion?: string | null
   onContinue: () => void
 }
 
@@ -145,11 +145,11 @@ export function FeedbackBar({
   goalJustCompleted,
   mastered = false,
   firstWinOfDay = false,
+  companion = null,
   onContinue,
 }: FeedbackBarProps) {
   const tone = TONE[verdict]
   const language = LANGUAGES[exercise.card.language]
-  const companion = useCompanionEmoji()
   const { answer, context } = resolveAnswerLines(exercise)
   const answerReading = answer.isTarget ? transliterate(answer.text, language.script) : null
   const panelRef = useRef<HTMLDivElement>(null)
@@ -470,16 +470,4 @@ function MnemonicEditor({
       </Button>
     </div>
   )
-}
-
-/**
- * Yo'ldoshning hozirgi ko'rinishi — barcha tillardagi ko'rilgan
- * so'zlardan. Tuxum bosqichida ko'rsatilmaydi: tuxum "munosabat"
- * bildirolmaydi.
- */
-function useCompanionEmoji(): string | null {
-  const stats = useLiveQuery(() => getGlobalCardStats(), [])
-  if (!stats) return null
-  const stage = companionStage(stats.learned)
-  return stage.minWords === 0 ? null : stage.emoji
 }
