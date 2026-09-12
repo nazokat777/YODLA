@@ -43,10 +43,16 @@ export function WeakSpots() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
-  const cards = useLiveQuery(
-    () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
+  // Til bilan birga — almashtirilganda eski tilning qiyin so'zlari
+  // yangi til sarlavhasi ostida bir lahza ko'rinmasin (bosh ekrandagi kabi)
+  const result = useLiveQuery(
+    async () =>
+      learningLanguage
+        ? { language: learningLanguage, cards: await getAllCards(learningLanguage) }
+        : undefined,
     [learningLanguage],
   )
+  const cards = result?.language === learningLanguage ? result.cards : undefined
 
   if (!cards) return null
 
