@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { haptic } from './haptics'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 
 describe('haptic', () => {
   afterEach(() => vi.unstubAllGlobals())
@@ -22,6 +23,18 @@ describe('haptic', () => {
     haptic('success')
 
     expect(vibrate).not.toHaveBeenCalled()
+  })
+
+  it('sozlamada o‘chirilgan bo‘lsa tebranmaydi', () => {
+    const vibrate = vi.fn()
+    vi.stubGlobal('navigator', { vibrate })
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    useSettingsStore.getState().setHapticsEnabled(false)
+
+    haptic('success')
+
+    expect(vibrate).not.toHaveBeenCalled()
+    useSettingsStore.getState().setHapticsEnabled(true)
   })
 
   it('vibrate bo‘lmasa (iOS) xato bermaydi', () => {

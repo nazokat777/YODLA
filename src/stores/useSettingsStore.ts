@@ -24,6 +24,8 @@ interface SettingsState {
   onboardingCompleted: boolean
   /** Javob feedback tovushlari (TZ 4: instant feedback) */
   soundEnabled: boolean
+  /** Tebranish (to'g'ri javob, pog'onalar, sandiq) — telefonda */
+  hapticsEnabled: boolean
   /** Eslatma soati (0..23), mahalliy vaqt */
   reminderHour: number
   /**
@@ -41,6 +43,7 @@ interface SettingsState {
   joinLeague: (name: string) => void
   completeOnboarding: () => void
   setSoundEnabled: (enabled: boolean) => void
+  setHapticsEnabled: (enabled: boolean) => void
   setReminderHour: (hour: number) => void
   setPushEndpoint: (endpoint: string | null) => void
   /** Barcha sozlamalarni boshlang'ich holatga qaytarish (test/debug uchun) */
@@ -55,6 +58,7 @@ const INITIAL = {
   leagueName: '',
   onboardingCompleted: false,
   soundEnabled: true,
+  hapticsEnabled: true,
   reminderHour: 19,
   pushEndpoint: null,
 } satisfies Partial<SettingsState>
@@ -90,6 +94,7 @@ export const useSettingsStore = create<SettingsState>()(
         })),
       completeOnboarding: () => set({ onboardingCompleted: true }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
+      setHapticsEnabled: (hapticsEnabled) => set({ hapticsEnabled }),
       setReminderHour: (reminderHour) => set({ reminderHour }),
       setPushEndpoint: (pushEndpoint) => set({ pushEndpoint }),
       reset: () => set(INITIAL),

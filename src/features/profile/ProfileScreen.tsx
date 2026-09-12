@@ -31,6 +31,8 @@ export function ProfileScreen() {
   const setDailyGoalWords = useSettingsStore((s) => s.setDailyGoalWords)
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const setSoundEnabled = useSettingsStore((s) => s.setSoundEnabled)
+  const hapticsEnabled = useSettingsStore((s) => s.hapticsEnabled)
+  const setHapticsEnabled = useSettingsStore((s) => s.setHapticsEnabled)
 
   const progress = useProgress()
   const cardStats = useLiveQuery(() => getGlobalCardStats(), [])
@@ -187,6 +189,23 @@ export function ProfileScreen() {
             type="checkbox"
             checked={soundEnabled}
             onChange={(event) => setSoundEnabled(event.target.checked)}
+            className="h-6 w-6 accent-brand-500"
+          />
+        </label>
+      </Panel>
+
+      <Panel>
+        <label className="flex cursor-pointer items-center justify-between gap-4">
+          <span>
+            <span className="block font-bold">Tebranish</span>
+            <span className="text-sm text-ink-600">
+              To'g'ri javob va bayramlarda qisqa tebranish (telefonda)
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            checked={hapticsEnabled}
+            onChange={(event) => setHapticsEnabled(event.target.checked)}
             className="h-6 w-6 accent-brand-500"
           />
         </label>

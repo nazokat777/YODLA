@@ -10,6 +10,8 @@
  *
  * `navigator.vibrate` iOS Safari'da yo'q — u yerda jimgina o'tadi.
  */
+import { useSettingsStore } from '@/stores/useSettingsStore'
+
 export type HapticKind = 'tap' | 'success' | 'milestone' | 'celebrate'
 
 const PATTERNS: Record<HapticKind, number[]> = {
@@ -20,6 +22,8 @@ const PATTERNS: Record<HapticKind, number[]> = {
 }
 
 export function haptic(kind: HapticKind): void {
+  // Sozlamada o'chirilgan bo'lsa — jim (ota-ona xohlashi mumkin)
+  if (!useSettingsStore.getState().hapticsEnabled) return
   if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return
   if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
