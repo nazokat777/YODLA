@@ -122,4 +122,23 @@ describe('SessionSummaryPanel — o‘zlashtirish hisoboti', () => {
 
     expect(screen.queryByTestId('loot-strip')).not.toBeInTheDocument()
   })
+
+  it('harakat tugmalari sandiqdan KEYIN, o‘lja va ertangi kundan OLDIN', () => {
+    /*
+     * NN/g #8: ilgari tugmalar 7 blokdan keyin, 3–4 skroll pastda edi.
+     * "Keyin nima?" darhol ko'rinishi kerak.
+     */
+    render(
+      <SessionSummaryPanel
+        summary={{ ...SUMMARY, learnedWords: [{ id: 'en:a', word: 'a', translation: 'b' }] }}
+        actions={<button type="button">Yana bir dars</button>}
+      />,
+    )
+
+    const action = screen.getByRole('button', { name: 'Yana bir dars' })
+    const chest = screen.getByTestId('chest-closed')
+    const loot = screen.getByTestId('loot-strip')
+    expect(chest.compareDocumentPosition(action) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(action.compareDocumentPosition(loot) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
 })

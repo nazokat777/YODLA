@@ -155,6 +155,18 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
                 : NOTHING_SEEN_YET
               : undefined
           }
+          actions={
+            summary !== null ? (
+              <>
+                <LinkButton to={PATHS.home} block>
+                  Bosh sahifaga
+                </LinkButton>
+                <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
+                  Yana bor-yo‘qligini tekshirish
+                </Button>
+              </>
+            ) : undefined
+          }
         />
 
         {/* Muddat qiyin so'zlar rejimiga aloqasiz — u yerda chalg'itadi */}
@@ -173,14 +185,17 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
           </p>
         )}
 
-        <div className="flex flex-col gap-2">
-          <LinkButton to={PATHS.home} block>
-            Bosh sahifaga
-          </LinkButton>
-          <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
-            Yana bor-yo‘qligini tekshirish
-          </Button>
-        </div>
+        {/* Seans bo'lmaganda tugmalar shu yerda; bo'lganda — panel ichida */}
+        {summary === null && (
+          <div className="flex flex-col gap-2">
+            <LinkButton to={PATHS.home} block>
+              Bosh sahifaga
+            </LinkButton>
+            <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
+              Yana bor-yo‘qligini tekshirish
+            </Button>
+          </div>
+        )}
       </div>
     )
   }

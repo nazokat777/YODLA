@@ -359,29 +359,33 @@ export function LessonScreen() {
       </ConfirmSheet>
 
       {summary !== null && (
-        <div className="flex flex-col gap-3">
-          <SessionSummaryPanel summary={summary} />
-          {/*
-            KUTILMAGAN taklif: ~har uchinchi darsdan keyin 20 soniyalik
-            chaqmoq raund (XP ×2). O'zgaruvchan — "balki shu safar".
-          */}
-          {lightningOffered && (
-            <LinkButton
-              to={`${PATHS.speedGame}?bonus=1`}
-              block
-              variant="lightning"
-              data-testid="lightning-offer"
-            >
-              ⚡ Chaqmoq raund — 20 soniya, XP ×2!
-            </LinkButton>
-          )}
-          <LinkButton to={PATHS.home} block>
-            Bosh sahifaga
-          </LinkButton>
-          <Button variant="ghost" block onClick={() => setLessonKey((key) => key + 1)}>
-            Yana bir dars
-          </Button>
-        </div>
+        <SessionSummaryPanel
+          summary={summary}
+          actions={
+            <>
+              {/*
+                KUTILMAGAN taklif: ~har uchinchi darsdan keyin 20 soniyalik
+                chaqmoq raund (XP ×2). O'zgaruvchan — "balki shu safar".
+              */}
+              {lightningOffered && (
+                <LinkButton
+                  to={`${PATHS.speedGame}?bonus=1`}
+                  block
+                  variant="lightning"
+                  data-testid="lightning-offer"
+                >
+                  ⚡ Chaqmoq raund — 20 soniya, XP ×2!
+                </LinkButton>
+              )}
+              <Button block size="lg" onClick={() => setLessonKey((key) => key + 1)}>
+                Yana bir dars
+              </Button>
+              <LinkButton to={PATHS.home} block variant="ghost">
+                Bosh sahifaga
+              </LinkButton>
+            </>
+          }
+        />
       )}
     </div>
   )

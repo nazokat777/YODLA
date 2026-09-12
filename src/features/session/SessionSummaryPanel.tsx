@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
 import { loadGsap } from '@/lib/motion'
@@ -19,6 +19,12 @@ interface SessionSummaryPanelProps {
    * (u yerda so'z yo'qligi YUTUQ, muddat emas).
    */
   emptyMessage?: { icon: string; title: string; hint: string }
+  /**
+   * Asosiy harakatlar (tugmalar). NN/g #8: ilgari ular 7 blokdan KEYIN,
+   * 3–4 skroll pastda edi. Endi natija va sandiqdan keyin, qolgan
+   * ma'lumot bloklaridan OLDIN — "keyin nima?" darhol ko'rinadi.
+   */
+  actions?: ReactNode
 }
 
 const DEFAULT_EMPTY = {
@@ -35,6 +41,7 @@ const DEFAULT_EMPTY = {
 export function SessionSummaryPanel({
   summary,
   emptyMessage = DEFAULT_EMPTY,
+  actions,
 }: SessionSummaryPanelProps) {
   // Hook erta `return` dan OLDIN chaqiriladi: React hook'lar har renderda
   // bir xil tartibda bo'lishi shart
@@ -126,18 +133,6 @@ export function SessionSummaryPanel({
         </div>
       </Panel>
 
-      {/*
-        Sandiq faqat HAQIQIY seansdan keyin: bir-ikki javobli mini-seansni
-        qayta-qayta ochib mukofot yig'ib bo'lmasin.
-      */}
-      {/* Bilingan so'zlar — to'plam hissi va yengil qayta ko'rish */}
-      {summary.learnedWords && <LootStrip words={summary.learnedWords} />}
-
-      {summary.answered >= CHEST_MIN_ANSWERS && <SessionChest />}
-
-      {/* Halqa ochiq qoladi: ertangi kun va rekord (Zeigarnik) */}
-      <TomorrowCard />
-
       {newBadges.length > 0 && (
         <Panel tone="brand">
           <p className="mb-2 text-sm font-bold text-brand-700">
@@ -158,6 +153,22 @@ export function SessionSummaryPanel({
           </ul>
         </Panel>
       )}
+
+      {/*
+        Sandiq faqat HAQIQIY seansdan keyin: bir-ikki javobli mini-seansni
+        qayta-qayta ochib mukofot yig'ib bo'lmasin.
+      */}
+      {summary.answered >= CHEST_MIN_ANSWERS && <SessionChest />}
+
+      {/* Asosiy harakatlar — ma'lumot bloklaridan oldin */}
+      {actions && <div className="flex flex-col gap-2">{actions}</div>}
+
+      {/* Bilingan so'zlar — to'plam hissi va yengil qayta ko'rish */}
+      {summary.learnedWords && <LootStrip words={summary.learnedWords} />}
+
+      {/* Halqa ochiq qoladi: ertangi kun va rekord (Zeigarnik) */}
+      <TomorrowCard />
+
     </div>
   )
 }
