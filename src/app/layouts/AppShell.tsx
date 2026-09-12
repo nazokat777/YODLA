@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { useSettingsStore } from '@/stores/useSettingsStore'
 import { PATHS } from '@/app/paths'
 import { cn } from '@/lib/cn'
 import { RouteTransition } from './RouteTransition'
@@ -22,20 +20,6 @@ const NAV_ITEMS = [
  * katta ekranlarda ham telefon ko'rinishini saqlaydi.
  */
 export function AppShell() {
-  const learningLanguage = useSettingsStore((s) => s.learningLanguage)
-
-  /*
-   * Til aksenti: `html[data-lang]` — CSS o'zgaruvchilari shundan rang
-   * oladi (qahramon karta, faol navigatsiya). Ilova o'rganilayotgan
-   * tilga qarab "kiyinadi" — bu til almashganini ko'rsatadigan eng
-   * kuchli, lekin so'zsiz belgi.
-   */
-  useEffect(() => {
-    const root = document.documentElement
-    if (learningLanguage) root.dataset.lang = learningLanguage
-    else delete root.dataset.lang
-  }, [learningLanguage])
-
   return (
     <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col bg-slate-50">
       {/* Kontent — pastki panel balandligi (4rem) qadar joy qoldiriladi */}

@@ -5,6 +5,7 @@ import { AppShell } from '@/app/layouts/AppShell'
 import { FocusLayout } from '@/app/layouts/FocusLayout'
 import { useStarterDeck } from '@/hooks/useStarterDeck'
 import { useDailyMaintenance } from '@/hooks/useProgress'
+import { useLanguageAccent } from '@/hooks/useLanguageAccent'
 import { HomeScreen } from '@/features/home/HomeScreen'
 import { LeagueScreen } from '@/features/league/LeagueScreen'
 import { LessonScreen } from '@/features/lesson/LessonScreen'
@@ -31,6 +32,8 @@ export function App() {
   useStarterDeck()
   // Streak muzlatishi va bosqich mukofotlari (kun almashganda ham qayta ishlaydi)
   useDailyMaintenance()
+  // Til aksenti — butun ilova bo'ylab (dars ekrani ham)
+  useLanguageAccent()
 
   return (
     <BrowserRouter>
