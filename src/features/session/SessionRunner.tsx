@@ -156,6 +156,11 @@ interface SessionRunnerProps {
    */
   requiredStreak?: number
   onFinish: (summary: SessionSummary) => void
+  /**
+   * Ko'rsatkich o'zgarganda — chaqiruvchi "chiqishdan oldin tasdiq"da
+   * nechta so'z o'zlashtirilganini ko'rsatishi uchun.
+   */
+  onProgressChange?: (done: number, total: number) => void
 }
 
 /**
@@ -183,6 +188,7 @@ export function SessionRunner({
   mode = 'fixed',
   requiredStreak = REQUIRED_STREAK,
   onFinish,
+  onProgressChange,
 }: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
@@ -894,6 +900,19 @@ export function SessionRunner({
     const timer = setTimeout(handleContinue, AUTO_ADVANCE_MS)
     return () => clearTimeout(timer)
   }, [verdict, handleContinue])
+
+  /*
+   * Ko'rsatkich chaqiruvchiga ham xabar qilinadi (chiqish tasdig'i uchun).
+   * ERTA `return` DAN OLDIN: hook'lar har renderda bir xil tartibda.
+   */
+  const doneForParent =
+    mode === 'mastery'
+      ? [...mastery.values()].filter((item) => item.mastered).length
+      : Math.min(doneSteps.size, plannedSteps)
+  const totalForParent = mode === 'mastery' ? cards.length : plannedSteps
+  useEffect(() => {
+    onProgressChange?.(doneForParent, totalForParent)
+  }, [doneForParent, totalForParent, onProgressChange])
 
   if (!exercise) return null
 

@@ -5,6 +5,7 @@ import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
+import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { countCards, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { mergeLevelUp } from '@/core/gamification'
@@ -89,6 +90,27 @@ export function LessonScreen() {
   const [isMissingUnit, setIsMissingUnit] = useState(false)
   /** Qiymati o'zgarganda yangi dars yuklanadi */
   const [lessonKey, setLessonKey] = useState(0)
+  /** Chiqish tasdig'i ochiqmi */
+  const [exitAsked, setExitAsked] = useState(false)
+  /** Joriy bosqich ko'rsatkichi — tasdiqda "3/4 so'z" deb aytish uchun */
+  const [sessionProgress, setSessionProgress] = useState<{ done: number; total: number } | null>(
+    null,
+  )
+  const handleProgress = useCallback((done: number, total: number) => {
+    setSessionProgress({ done, total })
+  }, [])
+
+  /*
+   * NN/g #3 va #5: ✕ bir bosishda darsni yo'qotmaydi. Seans hali
+   * ketayotgan bo'lsa tasdiq so'raladi (o'zlashtirish halqasi xotirada —
+   * chiqilsa noldan boshlanadi); yakun ekranida esa to'g'ridan-to'g'ri.
+   */
+  const inProgress = cards !== null && cards.length > 0 && summary === null
+  const handleExit = useCallback(() => {
+    if (inProgress) setExitAsked(true)
+    else navigate(PATHS.home)
+  }, [inProgress, navigate])
+
   /** Chaqmoq raund taklifi — har dars uchun BIR marta tashlanadi */
   const [lightningOffered, setLightningOffered] = useState(isLightningOffered)
 
@@ -234,7 +256,7 @@ export function LessonScreen() {
       <div className="mb-4 flex items-center gap-3">
         <button
           type="button"
-          onClick={() => navigate(PATHS.home)}
+          onClick={handleExit}
           aria-label="Darsdan chiqish"
           /*
            * 44×44 — barmoq uchun eng kichik ishonchli o'lcham.
@@ -292,6 +314,7 @@ export function LessonScreen() {
             cho'zilib, "kuniga 5 daqiqa" va'dasidan chiqib ketgandi.
           */
           requiredStreak={REVIEW_STREAK}
+          onProgressChange={handleProgress}
           onFinish={handleMixedFinish}
         />
       )}
@@ -317,9 +340,23 @@ export function LessonScreen() {
             son emas.
           */
           mode="mastery"
+          onProgressChange={handleProgress}
           onFinish={handleLessonFinish}
         />
       )}
+
+      <ConfirmSheet
+        open={exitAsked}
+        title="Darsni tugatmasdan chiqasizmi?"
+        primaryLabel="Davom etish"
+        dangerLabel="Chiqish"
+        onPrimary={() => setExitAsked(false)}
+        onDanger={() => navigate(PATHS.home)}
+      >
+        {sessionProgress && sessionProgress.done > 0
+          ? `${sessionProgress.done}/${sessionProgress.total} so‘z o‘zlashtirildi — chiqsangiz dars boshidan boshlanadi. Berilgan javoblar saqlanib qoladi.`
+          : 'Chiqsangiz dars boshidan boshlanadi. Berilgan javoblar saqlanib qoladi.'}
+      </ConfirmSheet>
 
       {summary !== null && (
         <div className="flex flex-col gap-3">

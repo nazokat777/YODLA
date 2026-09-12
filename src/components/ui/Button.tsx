@@ -1,7 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { buttonStyles, type ButtonSize, type ButtonVariant } from './buttonStyles'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+// `ComponentProps<'button'>`: React 19 da `ref` oddiy prop — fokusni
+// tashqaridan boshqarish uchun (tasdiq varaqasi)
+interface ButtonProps extends ComponentProps<'button'> {
   variant?: ButtonVariant
   size?: ButtonSize
   /** Butun kenglikni egallasinmi (mobil ekranlarda asosiy tugma uchun) */

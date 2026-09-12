@@ -56,6 +56,23 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     expect((await screen.findAllByRole('button', { name: /ona|ota/ })).length).toBeGreaterThan(0)
   })
 
+  it('dars ketayotganda ✕ tasdiq so‘raydi va "Davom etish" darsni saqlab qoladi', async () => {
+    /*
+     * NN/g #3/#5: o'zlashtirish halqasi xotirada — bir tasodifiy bosish
+     * 9 ta to'g'ri javobni yo'qqa chiqarardi.
+     */
+    renderLesson('/lesson/a1-oila')
+    await screen.findByTestId('session-progress')
+
+    fireEvent.click(screen.getByRole('button', { name: /darsdan chiqish/i }))
+
+    expect(await screen.findByRole('dialog')).toHaveTextContent(/tugatmasdan chiqasizmi/i)
+    fireEvent.click(screen.getByRole('button', { name: 'Davom etish' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByTestId('session-progress')).toBeInTheDocument()
+  })
+
   it('bo‘limsiz ochilganda butun to‘plamdan tanlaydi', async () => {
     renderLesson('/lesson')
 
