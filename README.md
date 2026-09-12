@@ -599,6 +599,16 @@ uzatiladi: past darajadagi ko'rilmagan so'zlar **o'chirilmaydi**, faqat
 zaxiraga suriladi — shunda A2 dan boshlagan foydalanuvchi so'zlari
 tugaganda ham dars bo'sh qaytmaydi.
 
+## Zaxira nusxa
+
+Progress faqat qurilmadagi IndexedDB'da — server yo'q. Profildagi "Zaxira
+nusxa" bitta JSON fayl beradi ([backup.ts](src/core/db/backup.ts)):
+FAQAT ko'rilgan kartalarning progressi (kontentsiz — fayl kichik),
+kunlik statistika, profil va sozlamalar. Tiklash tasdiq bilan, bitta
+tranzaksiyada, bazada topilmagan karta (kontent o'zgargan) o'tkazib
+yuboriladi va soni aytiladi. Tiklashdan keyin ilova qayta yuklanadi —
+Zustand sozlamalari faqat shunda o'qiladi.
+
 ## Ma'lumotlar bazasi
 
 IndexedDB, Dexie orqali. Asosiy indeks — `[language+dueDate]` qo'shma indeksi:

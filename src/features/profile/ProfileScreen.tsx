@@ -16,6 +16,7 @@ import {
 import { useProgress } from '@/hooks/useProgress'
 import { WeakSpots } from './WeakSpots'
 import { HowItWorks } from './HowItWorks'
+import { BackupPanel } from './BackupPanel'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReminderSettings } from './ReminderSettings'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -230,6 +231,8 @@ export function ProfileScreen() {
       </Panel>
 
       <HowItWorks />
+
+      <BackupPanel />
     </div>
   )
 }
