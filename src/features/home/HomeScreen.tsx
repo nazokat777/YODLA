@@ -16,6 +16,7 @@ import { HomeHero } from './HomeHero'
 import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
+import { StreakTierToast } from './StreakTierToast'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -98,6 +99,9 @@ export function HomeScreen() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-4">
+      {/* Yangi olov darajasi — bir marta, bosh ekranga kirganda */}
+      {progress && <StreakTierToast streak={streak} />}
+
       {/* Qahramon: salom, streak, kunlik halqa, daraja, bitta katta tugma */}
       <HomeHero
         language={language}

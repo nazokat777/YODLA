@@ -494,3 +494,21 @@ export async function claimWeeklyMilestone(
     return true
   })
 }
+
+/**
+ * Olov darajasi nishonlandi deb belgilaydi. Qaytaradi: aynan hozir
+ * belgilandimi (ya'ni bayramni ko'rsatish kerakmi).
+ *
+ * Bayram BIR MARTA: har ochilishda "Uchqun darajasiga chiqding!" deb
+ * turishi uni qadrsizlantirardi.
+ */
+export async function markStreakTierCelebrated(minDays: number): Promise<boolean> {
+  return db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const done = profile.celebratedStreakTiers ?? []
+    if (done.includes(minDays)) return false
+
+    await db.profile.put({ ...profile, celebratedStreakTiers: [...done, minDays] })
+    return true
+  })
+}

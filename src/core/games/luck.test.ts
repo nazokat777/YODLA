@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { LUCKY_CHANCE, LUCKY_MULTIPLIER, applyLuck, isLucky } from './luck'
+import { isLightningOffered } from './luck'
 
 describe('isLucky', () => {
   it('chegaradan KICHIK tasodifda omadli', () => {
@@ -31,5 +32,12 @@ describe('applyLuck', () => {
 
   it('oddiy holatda o‘zgarishsiz', () => {
     expect(applyLuck(10, false)).toBe(10)
+  })
+})
+
+describe('isLightningOffered', () => {
+  it('30% ehtimol bilan taklif', () => {
+    expect(isLightningOffered(() => 0.1)).toBe(true)
+    expect(isLightningOffered(() => 0.5)).toBe(false)
   })
 })

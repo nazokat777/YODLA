@@ -207,4 +207,30 @@ describe('SpeedGame — ovoz', () => {
       expect(playCorrectSound).toHaveBeenCalledTimes(1)
     })
   })
+
+  it('chaqmoq raund: 20 soniya, XP ×2, rekord saqlanmaydi', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    await addMissingCards(WORDS)
+    await markSeen()
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    render(
+      <MemoryRouter>
+        <SpeedGame lightning seconds={1} />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText(/chaqmoq raund/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /boshlash/i }))
+    answer('correct')
+
+    // 10 (javob) + 10 (kunning birinchi g'alabasi) + 10 (chaqmoq bonusi)
+    await waitFor(async () => {
+      expect((await ensureProfile()).totalXp).toBe(30)
+    })
+    await screen.findByTestId('speed-score', undefined, { timeout: 3000 })
+    expect((await ensureProfile()).gameBests?.speed).toBeUndefined()
+  })
 })

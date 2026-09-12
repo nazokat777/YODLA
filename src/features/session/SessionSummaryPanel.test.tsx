@@ -97,4 +97,29 @@ describe('SessionSummaryPanel — o‘zlashtirish hisoboti', () => {
 
     expect(screen.queryByTestId('level-up')).not.toBeInTheDocument()
   })
+
+  it('bilingan so‘zlar "bugungi o‘lja" lentasida chiqadi', () => {
+    render(
+      <SessionSummaryPanel
+        summary={{
+          ...SUMMARY,
+          learnedWords: [
+            { id: 'en:apple', word: 'apple', translation: 'olma' },
+            { id: 'en:bread', word: 'bread', translation: 'non' },
+          ],
+        }}
+      />,
+    )
+
+    const strip = screen.getByTestId('loot-strip')
+    expect(strip).toHaveTextContent('2 so‘z')
+    expect(strip).toHaveTextContent('apple')
+    expect(strip).toHaveTextContent('non')
+  })
+
+  it('bilingan so‘z bo‘lmasa lenta yo‘q', () => {
+    render(<SessionSummaryPanel summary={{ ...SUMMARY, learnedWords: [] }} />)
+
+    expect(screen.queryByTestId('loot-strip')).not.toBeInTheDocument()
+  })
 })

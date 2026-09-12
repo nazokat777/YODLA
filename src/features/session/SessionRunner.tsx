@@ -60,6 +60,13 @@ import { FeedbackBar } from './FeedbackBar'
 import { MatchingView, type MatchingResult } from './MatchingView'
 
 /** Seans yakunidagi hisobot */
+/** Yakundagi so'z kartochkasi uchun minimal ma'lumot */
+export interface LearnedWord {
+  id: string
+  word: string
+  translation: string
+}
+
 export interface SessionSummary {
   /** Jami javoblar (takroran chiqqanlar ham sanaladi) */
   answered: number
@@ -77,6 +84,11 @@ export interface SessionSummary {
    * `undefined` — oshmadi (yoki o'lchab bo'lmadi).
    */
   levelUp?: LevelUp
+  /**
+   * Shu seansda BILINGAN so'zlar — yakundagi "bugungi o'lja" uchun.
+   * Ixtiyoriy: eski chaqiruvchilar bermasligi mumkin.
+   */
+  learnedWords?: LearnedWord[]
   /** O'zlashtirilgan so'zlar (faqat `mastery` rejimida) */
   masteredWords: number
   /**
@@ -444,6 +456,8 @@ export function SessionRunner({
    * "esladim" deb hisoblash intervalni asossiz uzaytirardi.
    */
   const gradedRef = useRef(new Set<string>())
+  /** Kamida bir marta to'g'ri javob berilgan kartalar — yakun ro'yxati uchun */
+  const knownRef = useRef(new Set<string>())
 
   const finishedRef = useRef(false)
   useEffect(() => {
@@ -466,6 +480,17 @@ export function SessionRunner({
     const counts = {
       masteredWords: mastered,
       pendingWords: mode === 'mastery' ? cards.length - mastered : 0,
+      /*
+       * "Bugungi o'lja": o'zlashtirish rejimida — o'zlashtirilganlar,
+       * oddiy takrorda — kamida bir marta to'g'ri javob berilganlar.
+       * Ro'yxat BOLANING O'ZINIKI: u so'zlarni qayta ko'radi (yana bir
+       * eslab chaqirish) va "mana bularni bilaman" hissi bilan chiqadi.
+       */
+      learnedWords: cards
+        .filter((card) =>
+          mode === 'mastery' ? mastery.get(card.id)?.mastered : knownRef.current.has(card.id),
+        )
+        .map((card) => ({ id: card.id, word: card.word, translation: card.translation })),
     }
 
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
@@ -653,6 +678,7 @@ export function SessionRunner({
        * ko'rsatkichi joyida qoladi — foydalanuvchi qayta urinib ko'radi.
        */
       if (result !== 'wrong') {
+        knownRef.current.add(cardId)
         const step = queue[index]
         if (step) {
           setDoneSteps((current) => new Set(current).add(`${step.card.id}:${step.stage}`))
@@ -812,8 +838,10 @@ export function SessionRunner({
           console.error('XP ni yozib bo‘lmadi:', error)
         }
 
-        if (verdict === 'correct') correct += 1
-        else wrong += 1
+        if (verdict === 'correct') {
+          correct += 1
+          knownRef.current.add(cardId)
+        } else wrong += 1
       }
 
       setSummary((current) => ({

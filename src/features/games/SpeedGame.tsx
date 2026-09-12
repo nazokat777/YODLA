@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { LANGUAGES } from '@/core/config/languages'
 import { Button } from '@/components/ui/Button'
@@ -15,6 +15,7 @@ import {
   saveGameBest,
 } from '@/core/db'
 import { generateExercise, type Exercise } from '@/core/exercises'
+import { xpForAnswer } from '@/core/gamification'
 import {
   SPEED_SECONDS,
   WRONG_PAUSE_MS,
@@ -47,9 +48,26 @@ interface SpeedGameProps {
    * hech kimga tegishli bo'lmagan xatolar chiqardi.
    */
   seconds?: number
+  /**
+   * CHAQMOQ RAUND — darsdan keyingi kutilmagan bonus: qisqa, XP ×2.
+   * Rekord SAQLANMAYDI: 20 soniyalik raund 60 soniyalik bilan bir
+   * jadvalda bo'lolmaydi.
+   */
+  lightning?: boolean
 }
 
-export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
+/** Chaqmoq raund davomiyligi */
+export const LIGHTNING_SECONDS = 20
+/** Chaqmoq raundda XP ko'paytmasi */
+export const LIGHTNING_MULTIPLIER = 2
+
+export function SpeedGame({
+  seconds: secondsProp,
+  lightning: lightningProp,
+}: SpeedGameProps = {}) {
+  const [searchParams] = useSearchParams()
+  const lightning = lightningProp ?? searchParams.get('bonus') === '1'
+  const seconds = secondsProp ?? (lightning ? LIGHTNING_SECONDS : SPEED_SECONDS)
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
@@ -107,11 +125,12 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
     if (!state.finished || bestSavedRef.current) return
 
     bestSavedRef.current = true
-    void saveGameBest('speed', state.score).then(setIsRecord)
+    // Chaqmoq raund rekordga kirmaydi — jadval 60 soniya uchun
+    if (!lightning) void saveGameBest('speed', state.score).then(setIsRecord)
     // Nishonlar o'yindan keyin ham yangilanadi: aks holda faqat o'yin
     // o'ynagan kuni 'Streak ×7' yoki 'XP Legend' keyingi darsgacha ochilmasdi
     void refreshBadges()
-  }, [state.finished, state.score])
+  }, [state.finished, state.score, lightning])
 
   const exercise = useMemo<Exercise | null>(() => {
     const card = cards?.[index % Math.max(1, cards.length)]
@@ -146,7 +165,13 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
       const cardId = exercise.card.id
       void gradeCard(cardId, gameGrade(correct))
       void recordTypeResult(cardId, 'recognition', !correct)
-      void recordAnswer({ cardId, verdict: correct ? 'correct' : 'wrong', dailyGoalWords })
+      void recordAnswer({
+        cardId,
+        verdict: correct ? 'correct' : 'wrong',
+        dailyGoalWords,
+        // Chaqmoq raund: bonus XP shu tranzaksiyada (×2)
+        bonusXp: lightning && correct ? xpForAnswer('correct') * (LIGHTNING_MULTIPLIER - 1) : 0,
+      })
 
       // To'g'ri javobda darhol keyingisi, xatoda qisqa qizil pauza
       window.setTimeout(
@@ -157,7 +182,7 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
         correct ? 150 : WRONG_PAUSE_MS,
       )
     },
-    [exercise, flash, state.finished, dailyGoalWords, soundEnabled],
+    [exercise, flash, state.finished, dailyGoalWords, soundEnabled, lightning],
   )
 
   if (cards === null) {
@@ -184,9 +209,13 @@ export function SpeedGame({ seconds = SPEED_SECONDS }: SpeedGameProps = {}) {
           <p className="text-5xl" aria-hidden="true">
             ⚡
           </p>
-          <h2 className="mt-2 text-xl font-extrabold">Vaqtga qarshi</h2>
+          <h2 className="mt-2 text-xl font-extrabold">
+            {lightning ? 'Chaqmoq raund!' : 'Vaqtga qarshi'}
+          </h2>
           <p className="mt-1 text-sm text-ink-600">
-            {seconds} soniyada nechta so‘zni bilasiz? Har to‘g‘ri javob — 1 ochko.
+            {lightning
+              ? `${seconds} soniya, har to‘g‘ri javob ×${LIGHTNING_MULTIPLIER} XP. Tayyor?`
+              : `${seconds} soniyada nechta so‘zni bilasiz? Har to‘g‘ri javob — 1 ochko.`}
           </p>
         </Panel>
         <Button block size="lg" onClick={() => setRunning(true)}>

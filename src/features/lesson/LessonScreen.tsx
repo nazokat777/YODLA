@@ -8,6 +8,7 @@ import { Panel } from '@/components/ui/Panel'
 import { countCards, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
 import { pickLessonCards } from '@/core/lesson/order'
 import { mergeLevelUp } from '@/core/gamification'
+import { isLightningOffered } from '@/core/games'
 import { buildUnits, unitIdOf } from '@/core/path'
 import { pickWeakest, REVIEW_STREAK } from '@/core/mastery'
 import { readTopicOrder } from '@/content/topicOrderCache'
@@ -88,6 +89,8 @@ export function LessonScreen() {
   const [isMissingUnit, setIsMissingUnit] = useState(false)
   /** Qiymati o'zgarganda yangi dars yuklanadi */
   const [lessonKey, setLessonKey] = useState(0)
+  /** Chaqmoq raund taklifi — har dars uchun BIR marta tashlanadi */
+  const [lightningOffered, setLightningOffered] = useState(isLightningOffered)
 
   /**
    * Shu tildagi kartalar soni — JONLI.
@@ -111,6 +114,7 @@ export function LessonScreen() {
     setCards(null)
     setSummary(null)
     setIsMissingUnit(false)
+    setLightningOffered(isLightningOffered())
 
     getAllCards(learningLanguage)
       .then((all) => {
@@ -212,6 +216,13 @@ export function LessonScreen() {
         // Daraja IKKALA bosqich davomida oshgan bo'lishi mumkin —
         // boshlang'ich birinchi bosqichdan, yakuniy ikkinchisidan
         levelUp: mergeLevelUp(first.levelUp, result.levelUp),
+        // Ikkala bosqichning so'zlari — takrorlanmasin
+        learnedWords: [
+          ...(first.learnedWords ?? []),
+          ...(result.learnedWords ?? []).filter(
+            (word) => !(first.learnedWords ?? []).some((known) => known.id === word.id),
+          ),
+        ],
       })
     },
     [lessonSummary],
@@ -313,6 +324,20 @@ export function LessonScreen() {
       {summary !== null && (
         <div className="flex flex-col gap-3">
           <SessionSummaryPanel summary={summary} />
+          {/*
+            KUTILMAGAN taklif: ~har uchinchi darsdan keyin 20 soniyalik
+            chaqmoq raund (XP ×2). O'zgaruvchan — "balki shu safar".
+          */}
+          {lightningOffered && (
+            <LinkButton
+              to={`${PATHS.speedGame}?bonus=1`}
+              block
+              variant="lightning"
+              data-testid="lightning-offer"
+            >
+              ⚡ Chaqmoq raund — 20 soniya, XP ×2!
+            </LinkButton>
+          )}
           <LinkButton to={PATHS.home} block>
             Bosh sahifaga
           </LinkButton>

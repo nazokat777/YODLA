@@ -34,3 +34,16 @@ export function isLucky(random: RandomSource = Math.random): boolean {
 export function applyLuck(xp: number, lucky: boolean): number {
   return lucky ? xp * LUCKY_MULTIPLIER : xp
 }
+
+/**
+ * Darsdan keyin CHAQMOQ RAUND taklif qilinish ehtimoli.
+ *
+ * Har darsdan keyin bo'lsa — odat, kutilmagan bo'lmay qoladi; ~har
+ * uchinchi dars — "balki shu safar" hissi. Taklif — taklif: bola
+ * o'tkazib yuborishi mumkin, hech nima yo'qotmaydi.
+ */
+export const LIGHTNING_CHANCE = 0.3
+
+export function isLightningOffered(random: RandomSource = Math.random): boolean {
+  return random() < LIGHTNING_CHANCE
+}

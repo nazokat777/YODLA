@@ -321,3 +321,13 @@ body {
   -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, transparent 30%, #000 100%);
   mask-image: radial-gradient(70% 70% at 50% 50%, transparent 30%, #000 100%);
 }
+
+/* Chaqmoq taklifi — yumshoq nafas: diqqatni tortadi, lekin bezovta qilmaydi */
+@keyframes lightning-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+.lightning-pulse { animation: lightning-pulse 1.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lightning-pulse { animation: none; }
+}

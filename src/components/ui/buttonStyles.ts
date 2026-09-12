@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'lightning'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 /** Ko'rinish bo'yicha uslublar */
@@ -13,6 +13,9 @@ const VARIANTS: Record<ButtonVariant, string> = {
   // Ghost ATAYLAB tekis: u matn tugmasi, chuqurlik ierarxiyani buzardi
   ghost: 'bg-transparent text-ink-600 hover:bg-slate-100',
   danger: 'bg-wrong-500 text-white shadow-[0_4px_0_0] shadow-wrong-600 hover:bg-wrong-600',
+  // Bonus/kutilmagan taklif: olov→yashil gradient, yumshoq pulsatsiya
+  lightning:
+    'shine lightning-pulse bg-gradient-to-r from-flame-500 to-brand-500 text-white shadow-[0_4px_0_0] shadow-flame-700',
 }
 
 /** O'lcham bo'yicha uslublar — barmoq uchun qulay balandliklar */

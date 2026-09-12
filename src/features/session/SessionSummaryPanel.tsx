@@ -7,6 +7,7 @@ import { BADGE_BY_ID, CHEST_MIN_ANSWERS } from '@/core/gamification'
 import { SessionChest } from './SessionChest'
 import { LevelUpBanner } from './LevelUpBanner'
 import { TomorrowCard } from './TomorrowCard'
+import { LootStrip } from './LootStrip'
 import type { SessionSummary } from './SessionRunner'
 
 interface SessionSummaryPanelProps {
@@ -127,6 +128,9 @@ export function SessionSummaryPanel({
         Sandiq faqat HAQIQIY seansdan keyin: bir-ikki javobli mini-seansni
         qayta-qayta ochib mukofot yig'ib bo'lmasin.
       */}
+      {/* Bilingan so'zlar — to'plam hissi va yengil qayta ko'rish */}
+      {summary.learnedWords && <LootStrip words={summary.learnedWords} />}
+
       {summary.answered >= CHEST_MIN_ANSWERS && <SessionChest />}
 
       {/* Halqa ochiq qoladi: ertangi kun va rekord (Zeigarnik) */}
