@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, recordAnswer, syncBadges, type NewCardRecordInput } from '@/core/db'
 import { addDays, startOfDay } from '@/lib/date'
@@ -141,5 +141,35 @@ describe('HomeScreen — o‘yinlar qulfi', () => {
 
     expect(await screen.findByTestId('games-locked')).toHaveTextContent('1/4 so‘z')
     expect(screen.queryByRole('link', { name: /o‘yinlar/i })).not.toBeInTheDocument()
+  })
+
+  it('til almashtirilganda eski tilning so‘zlari bir lahza ham ko‘rinmaydi', async () => {
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en' },
+      { word: 'b', translation: 'bb', language: 'en' },
+      { word: 'c', translation: 'cc', language: 'en' },
+      { word: 'd', translation: 'dd', language: 'en' },
+      { word: 'e', translation: 'ee', language: 'en' },
+    ])
+    for (const id of ['en:a', 'en:b', 'en:c', 'en:d', 'en:e']) {
+      await db.cards.update(id, { totalReviews: 1 })
+    }
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <HomeScreen />
+      </MemoryRouter>,
+    )
+    // Inglizcha: 5 ta ko'rilgan → o'yinlar ochiq
+    expect(await screen.findByRole('link', { name: /o‘yinlar/i })).toBeInTheDocument()
+
+    // Rus tiliga o'tildi: rus so'zlari yo'q → qulf. Eski (inglizcha)
+    // natija bilan "ochiq" holat bir lahza ham chizilmasligi kerak
+    act(() => useSettingsStore.getState().setLearningLanguage('ru'))
+    expect(screen.queryByRole('link', { name: /o‘yinlar/i })).not.toBeInTheDocument()
+    expect(await screen.findByTestId('games-locked')).toBeInTheDocument()
   })
 })

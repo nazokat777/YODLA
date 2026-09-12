@@ -45,10 +45,21 @@ export function HomeScreen() {
    * o'qirdi — bitta ekran uchun butun jadval (4000+ yozuv) ikki marta
    * skanerlanardi.
    */
-  const cards = useLiveQuery(
-    () => (learningLanguage ? getAllCards(learningLanguage) : undefined),
+  /*
+   * Natija TIL BILAN BIRGA qaytadi. `useLiveQuery` bog'liqlik o'zgarganda
+   * yangi so'rov tugaguncha ESKI natijani ushlab turadi — til
+   * almashtirilganda bir lahza "Arab tili" sarlavhasi ostida inglizcha
+   * so'zlar soni ko'rinardi (auditda qayd etilgan). Til mos kelmasa
+   * natija "yuklanmoqda" deb hisoblanadi.
+   */
+  const cardsResult = useLiveQuery(
+    async () =>
+      learningLanguage
+        ? { language: learningLanguage, cards: await getAllCards(learningLanguage) }
+        : undefined,
     [learningLanguage],
   )
+  const cards = cardsResult?.language === learningLanguage ? cardsResult.cards : undefined
 
   const stats = useMemo(
     () => (cards ? computeLanguageStats(cards, now) : undefined),
@@ -66,7 +77,7 @@ export function HomeScreen() {
 
   const streak = progress?.streak.current ?? 0
   /** Ko'rilgan so'zlar — o'yinlar shundan ochiladi */
-  const seenCount = cards ? cards.filter((card) => card.totalReviews > 0).length : GAMES_MIN_WORDS
+  const seenCount = cards ? cards.filter((card) => card.totalReviews > 0).length : null
   const wordsToday = progress?.daily.cardIds.length ?? 0
   const level = progress?.level
 
@@ -162,7 +173,7 @@ export function HomeScreen() {
         foydalanuvchi ichkarida uch marta "bo'lmaydi" ko'rardi. Qulf
         holati ham ma'lumot beradi: nima qilish kerak va qancha qoldi.
       */}
-      {seenCount < GAMES_MIN_WORDS ? (
+      {seenCount === null ? null : seenCount < GAMES_MIN_WORDS ? (
         <Panel data-home-card data-testid="games-locked" className="flex items-center gap-3 opacity-90">
           <span aria-hidden="true" className="text-3xl grayscale">
             🎮
