@@ -172,4 +172,27 @@ describe('HomeScreen — o‘yinlar qulfi', () => {
     expect(screen.queryByRole('link', { name: /o‘yinlar/i })).not.toBeInTheDocument()
     expect(await screen.findByTestId('games-locked')).toBeInTheDocument()
   })
+
+  it('kamida 2 ta qiyin so‘z bo‘lsa bosh ekranda mashq taklifi chiqadi', async () => {
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en' },
+      { word: 'b', translation: 'bb', language: 'en' },
+      { word: 'c', translation: 'cc', language: 'en' },
+    ])
+    await db.cards.update('en:a', { totalReviews: 4, lapses: 3, interval: 1 })
+    await db.cards.update('en:b', { totalReviews: 4, lapses: 2, interval: 1 })
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <HomeScreen />
+      </MemoryRouter>,
+    )
+
+    const card = await screen.findByTestId('weak-card')
+    expect(card).toHaveTextContent('2 ta qiyin so‘z')
+    expect(card.closest('a')).toHaveAttribute('href', '/review/weak')
+  })
 })

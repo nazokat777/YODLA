@@ -13,9 +13,14 @@ import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { countUp, enterStagger, withMotion } from '@/lib/motion'
 import { HomeHero } from './HomeHero'
+import { isStillStruggling } from '@/core/mastery'
 
 /** O'yinlar ochilishi uchun kerakli ko'rilgan so'zlar (tezlik o'yini chegarasi) */
 const GAMES_MIN_WORDS = 4
+/** Qiyin so'z hisoblanish uchun eng kam unutishlar (profil bilan bir xil) */
+const WEAK_MIN_LAPSES = 2
+/** Bosh ekranda taklif chiqishi uchun eng kam qiyin so'zlar */
+const WEAK_CARD_MIN = 2
 import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
@@ -78,6 +83,10 @@ export function HomeScreen() {
   const streak = progress?.streak.current ?? 0
   /** Ko'rilgan so'zlar — o'yinlar shundan ochiladi */
   const seenCount = cards ? cards.filter((card) => card.totalReviews > 0).length : null
+  /** Hozir ham qiyin so'zlar — kamida 2 marta unutilgan va hali mustahkam emas */
+  const strugglingCount = cards
+    ? cards.filter((card) => isStillStruggling(card, WEAK_MIN_LAPSES)).length
+    : 0
   const wordsToday = progress?.daily.cardIds.length ?? 0
   const level = progress?.level
 
@@ -195,6 +204,30 @@ export function HomeScreen() {
               <span className="block font-bold">O‘yinlar</span>
               <span className="block text-sm text-ink-600">
                 Bilganingizni tez va qiziqarli mustahkamlang
+              </span>
+            </span>
+            <span aria-hidden="true" className="shrink-0 text-ink-600">
+              ›
+            </span>
+          </Panel>
+        </Link>
+      )}
+
+      {/*
+        Qiyin so'zlar bo'lsa — bosh ekranda taklif. Profildagi "Ustida
+        ishlash kerak" bo'limini hamma ham topmaydi; eng foydali mashq
+        (aynan qoqilayotgan so'zlar) bir bosishda bo'lishi kerak.
+      */}
+      {strugglingCount >= WEAK_CARD_MIN && (
+        <Link to={PATHS.weakReview} className="tap-highlight-none block">
+          <Panel data-home-card data-testid="weak-card" tone="warning" interactive className="flex items-center gap-3">
+            <span aria-hidden="true" className="text-3xl">
+              🧠
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold">{strugglingCount} ta qiyin so‘z</span>
+              <span className="block text-sm text-ink-600">
+                Qoqilayotgan so‘zlaringizni alohida mashq qiling
               </span>
             </span>
             <span aria-hidden="true" className="shrink-0 text-ink-600">
