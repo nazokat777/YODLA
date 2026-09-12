@@ -748,6 +748,25 @@ Uchta QATTIQ qoida ([chest.ts](src/core/gamification/chest.ts),
 Hammasi `prefers-reduced-motion` da o'chadi; mikro-bayramlar CSS
 keyframe — GSAP yuklanishini kutmaydi.
 
+## Foydalanish qulayligi qoidalari (NN/g auditidan)
+
+- **Qaytarib bo'lmaydigan harakatdan oldin tasdiq** — darsdan ✕ bilan
+  chiqish `ConfirmSheet` orqali: xavfsiz tugma asosiy va fokusda, Esc va
+  fon ham xavfsiz tomon. Yakun ekranida tasdiq yo'q.
+- **O'lik yo'l bo'lmasin** — liga formasi faqat server javob berganda;
+  aks holda "Liga tez kunda" + qayta tekshirish. O'yinlar kartasi 4 so'z
+  ko'rilmaguncha qulf va sababi yozilgan.
+- **Tizim holati** — seans ko'rsatkichi yonida taxminiy vaqt (`≈2 daq`,
+  [eta.ts](src/core/lesson/eta.ts)); streak xavfi rang bilan EMAS, matn
+  bilan; qahramon kartada "5-darajagacha 217 XP".
+- **Bola tili** — inglizcha brend so'zlar (Perfect, Level complete,
+  Mystery box…) har doim o'zbekcha izoh bilan; jargon yo'q ("navbat"
+  o'rniga "yana bor-yo'qligini tekshirish").
+- **Yordam** — mashq ichida "Qanday bajariladi?", profilda "Qanday
+  ishlaydi?" (8 atama).
+- **Yakun ekrani tartibi** — natija → nishon → sandiq → **tugmalar** →
+  o'lja → ertaga. Asosiy harakat 3 skroll pastda emas.
+
 ## Til aksenti
 
 `html[data-lang]` ([useLanguageAccent](src/hooks/useLanguageAccent.ts))
