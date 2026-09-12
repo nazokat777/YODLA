@@ -124,19 +124,29 @@ export function WeeklyQuest() {
 
       {claimable.length === 0 && justClaimed === null && (
         <p className="text-center text-xs text-ink-600">
-          {nextHint(data.active, data.claimed)}
+          {nextHint(data.active, data.claimed, daysLeftInWeek())}
         </p>
       )}
     </Panel>
   )
 }
 
-/** Keyingi sandiqgacha nechta kun — kutish */
-function nextHint(active: number, claimed: readonly number[]): string {
+/** Bugundan keyin bu haftada nechta kun qoldi (bugun hisobga kirmaydi) */
+function daysLeftInWeek(now: number = Date.now()): number {
+  return 6 - ((new Date(now).getDay() + 6) % 7)
+}
+
+/**
+ * Keyingi sandiqgacha nechta kun — kutish.
+ *
+ * HALOL: hafta oxirigacha yetib bo'lmasa "2 kundan keyin" deb
+ * aldamaydi — "keyingi hafta yangi xarita" deydi.
+ */
+function nextHint(active: number, claimed: readonly number[], daysLeft: number): string {
   const next = WEEKLY_MILESTONES.find((m) => m.days > active || !claimed.includes(m.days))
   if (!next) return 'Bu hafta hammasi ochildi. Zo‘r!'
   const left = next.days - active
-  return left > 0
-    ? `${next.icon} Keyingi sandiq ${left} kundan keyin`
-    : `${next.icon} Sandiq tayyor!`
+  if (left <= 0) return `${next.icon} Sandiq tayyor!`
+  if (left > daysLeft) return '🗺️ Dushanbada yangi xarita — yana boshlaymiz'
+  return `${next.icon} Keyingi sandiq ${left} kundan keyin`
 }
