@@ -52,6 +52,11 @@ describe('transliterate — arab yozuvi', () => {
     expect(transliterate('الطفل', 'arabic')).toBe('altfl')
   })
 
+  it('arab tinish belgilari lotinchaga o‘tadi', () => {
+    expect(transliterate('لَا، شُكْرًا', 'arabic')).toBe('la, shukran')
+    expect(transliterate('هل معك قلم؟', 'arabic')?.endsWith('?')).toBe(true)
+  })
+
   it('so‘z ichidagi hamza — bo‘g‘iz to‘xtami', () => {
     expect(ar('يَأْكُل')).toBe("ya'kul")
     expect(ar('مَاء')).toBe("ma'")

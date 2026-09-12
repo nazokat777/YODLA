@@ -16,6 +16,10 @@ import type { ScriptCode } from '@/core/types'
 
 /** Arab undoshlari va uzun unlilari */
 const ARABIC_LETTERS: Record<string, string> = {
+  // Arab tinish belgilari — lotin o'qilishida lotin belgilar
+  '،': ',',
+  '؟': '?',
+  '؛': ';',
   ا: 'a',
   أ: 'a',
   إ: 'i',
