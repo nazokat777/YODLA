@@ -42,6 +42,12 @@ export function WordSky({ cards }: WordSkyProps) {
           {total} yulduz
         </span>
       </div>
+      {/* Yorqinlik nimani anglatadi — usiz osmon shunchaki bezak */}
+      {total > 0 && (
+        <p className="-mt-1 text-[11px] text-ink-600/80">
+          xira — yangi · yorqin — mustahkam · sariq — takrorlash vaqti
+        </p>
+      )}
 
       <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-b from-[#0b1a3a] via-[#122a5c] to-[#1d3f7a] shadow-pop">
         <svg
