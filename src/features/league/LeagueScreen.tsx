@@ -47,9 +47,60 @@ export function LeagueScreen() {
   const leagueName = useSettingsStore((s) => s.leagueName)
   const joinLeague = useSettingsStore((s) => s.joinLeague)
 
-  if (!leagueCode) return <JoinCard onJoin={joinLeague} />
+  if (!leagueCode) return <JoinGate onJoin={joinLeague} />
 
   return <Standings myCode={leagueCode} myName={leagueName} />
+}
+
+/**
+ * QO'SHILISHDAN OLDIN server tekshiriladi.
+ *
+ * Ilgari bola ism kiritib "Qo'shilish"ni bosar, keyin "server javob
+ * bermadi" ko'rardi — ishonchni sindiradigan o'lik yo'l. Endi server
+ * bo'lmasa (bulut sozlanmagan yoki uxlab qolgan) forma UMUMAN
+ * ko'rsatilmaydi: halol "tez kunda" holati va qayta tekshirish.
+ */
+function JoinGate({ onJoin }: { onJoin: (name: string) => void }) {
+  const [status, setStatus] = useState<'checking' | 'up' | 'down'>('checking')
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    let cancelled = false
+    setStatus('checking')
+
+    void fetchWeeklyLeague().then((rows) => {
+      if (!cancelled) setStatus(rows === null ? 'down' : 'up')
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [attempt])
+
+  if (status === 'up') return <JoinCard onJoin={onJoin} />
+
+  return (
+    <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-extrabold">Liga</h1>
+      <Panel data-testid="league-unavailable" className="flex flex-col gap-3 text-center">
+        <Emblem kind="trophy" size="md" className="mx-auto" />
+        {status === 'checking' ? (
+          <p className="text-ink-600">Server tekshirilmoqda…</p>
+        ) : (
+          <>
+            <p className="text-lg font-extrabold">Liga tez kunda</p>
+            <p className="text-sm text-ink-600">
+              Reyting serveri hozircha ishlamayapti. Darslaringiz va XP qurilmada
+              saqlanmoqda — liga ochilganda hammasi hisobga kiradi.
+            </p>
+            <Button variant="secondary" block onClick={() => setAttempt((n) => n + 1)}>
+              Qayta tekshirish
+            </Button>
+          </>
+        )}
+      </Panel>
+    </div>
+  )
 }
 
 /** Rozilik kartasi — nima yuborilishi ochiq aytiladi */
