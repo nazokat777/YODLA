@@ -36,3 +36,28 @@ export function registerServiceWorker(): void {
     })
   })
 }
+
+/**
+ * Yangi versiya o'rnatilganda xabar beradi.
+ *
+ * SW `skipWaiting` + `clients.claim` bilan ishlaydi: yangi worker darhol
+ * nazoratni oladi, lekin OCHIQ sahifa eski JS bilan qolaveradi — ilova
+ * ikki xil holatda bo'lishi mumkin. Shuning uchun foydalanuvchiga
+ * "yangilash" taklif qilinadi (majburan qayta yuklanmaydi — dars o'rtasida
+ * bo'lishi mumkin).
+ *
+ * BIRINCHI o'rnatishda ham `controllerchange` keladi (`claim` tufayli) —
+ * u yangilanish emas, shuning uchun oldin nazoratchi bo'lgan holatgina
+ * hisoblanadi.
+ */
+export function onUpdateAvailable(callback: () => void): () => void {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return () => {}
+
+  const container = navigator.serviceWorker
+  const hadController = Boolean(container.controller)
+  const handler = () => {
+    if (hadController) callback()
+  }
+  container.addEventListener('controllerchange', handler)
+  return () => container.removeEventListener('controllerchange', handler)
+}

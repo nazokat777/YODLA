@@ -13,6 +13,7 @@ import { NotFoundScreen } from '@/features/misc/NotFoundScreen'
 import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen'
 import { ReviewScreen } from '@/features/review/ReviewScreen'
 import { Panel } from '@/components/ui/Panel'
+import { UpdateToast } from '@/components/ui/UpdateToast'
 
 /*
  * IKKINCHI DARAJALI ekranlar DANGASA yuklanadi.
@@ -70,6 +71,8 @@ export function App() {
 
   return (
     <BrowserRouter>
+      {/* Yangi versiya o'rnatilganda — yangilash taklifi (majburiy emas) */}
+      <UpdateToast />
       <Routes>
         {/* --- Chalg'itmaydigan ekranlar --- */}
         <Route element={<FocusLayout />}>
