@@ -721,6 +721,41 @@ uchun ham ochiladi.
 > Geymifikatsiya yozuvi o'z xatosini o'zi yutadi: XP yozilmasa ham
 > takrorlash progressi (SRS) saqlanib qoladi. Ular alohida tranzaksiyalarda.
 
+## Dofamin halqasi
+
+Mukofotlar TO'RT vaqt o'lchamida ishlaydi — har biri boshqa neyrobiologik
+mexanizmga tayanadi. Umumiy qoida: **dofamin mukofotning o'zidan emas, uni
+KUTISHDAN ajraladi**, shuning uchun har mukofot oldindan ko'rinib turadi.
+
+| O'lcham | Mexanika | Nega |
+| --- | --- | --- |
+| Soniya | Kombo pog'onalari 3/5/10/15/20/30/50, keyingisigacha nuqtalar; to'g'ri javob ohangi kombo bilan ko'tariladi; tebranish | Kutish + ko'p kanalli signal |
+| Seans | ⭐ "Word mastered" (ikki xil mashqda bilindi); 🎁 sirli sandiq (≥5 javob, o'zgaruvchan mukofot, BOSILGANDA ochiladi); LEVEL UP banner; "Bugungi o'lja" kartochkalari; ⚡ chaqmoq raund (30%) | Agentlik, variable ratio, recency |
+| Kun | ☀️ bugungi birinchi g'alaba (×2); 🏅 kunlik rekord (kechagi o'zing bilan); 🔮 "Ertaga seni nima kutadi" | Odat halqasi, xavfsiz musobaqa, Zeigarnik |
+| Hafta | 🗺️ haftalik sayohat (3/5/7 faol kun → sandiq); olov darajalari (Uchqun 3 → Alanga 7 → Chaqmoq 14 → Yulduz 30 → Afsona 100) va bayrami; 🌌 so'z osmoni (xiralashayotgan yulduzlar → takrorlash) | Yetib borish motivi, endowed progress, ko'rinadigan unutish |
+
+Uchta QATTIQ qoida ([chest.ts](src/core/gamification/chest.ts),
+[SessionChest.tsx](src/features/session/SessionChest.tsx)):
+
+1. **Avval yoziladi, keyin ko'rsatiladi.** Ekrandagi har mukofot bazaga
+   tushgan bo'lishi shart; yozilmasa sandiq yopiq qoladi.
+2. **Xatoda hech qanday signal jazo emas.** Tebranish faqat to'g'rida,
+   ohang past va yumshoq, kombo uzilsa hech nima olib qo'yilmaydi.
+3. **Mukofot kichik va yig'ib bo'lmaydi.** Sandiq ≥5 javobdan keyin,
+   haftalik pog'ona haftada bir, birinchi g'alaba kunda bir. Maqtovlar
+   harakatga qaratilgan ("mehnat qilding"), natijaga emas (Dweck).
+
+Hammasi `prefers-reduced-motion` da o'chadi; mikro-bayramlar CSS
+keyframe — GSAP yuklanishini kutmaydi.
+
+## Til aksenti
+
+`html[data-lang]` ([useLanguageAccent](src/hooks/useLanguageAccent.ts))
+→ `--accent-from/via/to`: EN zumrad, RU osmon ko'k, AR firuza + oltin.
+Bosh ekran qahramoni, faol navigatsiya va arabcha so'z tanishtiruvidagi
+girih naqshi shundan rang oladi. Hook ilova ILDIZIDA — dars ekrani
+`AppShell` dan tashqarida.
+
 ## O'quv yo'li
 
 Bosh sahifadagi zanjir — **bo'lim = daraja + mavzu**. Ikkalasi ham
