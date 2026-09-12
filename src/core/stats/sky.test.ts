@@ -59,4 +59,17 @@ describe('skyStars', () => {
     expect(stars.map((s) => s.id)).toEqual(['mature', 'mid'])
     expect(total).toBe(3)
   })
+
+  it('muddati yetgan so‘z "xiralashmoqda" va chegaradan chiqib ketmaydi', () => {
+    const now = 1000
+    const cards = [
+      card('fresh', { dueDate: 5000, interval: 40, repetitions: 5 }),
+      card('fading', { dueDate: 500, interval: 1 }),
+    ]
+    const { stars, dueTotal } = skyStars(cards, 1, now)
+
+    expect(dueTotal).toBe(1)
+    expect(stars[0]!.id).toBe('fading')
+    expect(stars[0]!.due).toBe(true)
+  })
 })

@@ -1,6 +1,9 @@
 import { useMemo, useState, type CSSProperties } from 'react'
 import type { CardRecord } from '@/core/db'
 import { skyStars } from '@/core/stats'
+import { Link } from 'react-router-dom'
+import { PATHS } from '@/app/paths'
+import { cn } from '@/lib/cn'
 
 interface WordSkyProps {
   cards: readonly CardRecord[]
@@ -25,7 +28,7 @@ const STAR_LOOK = [
  * (`prefers-reduced-motion` da o'chadi).
  */
 export function WordSky({ cards }: WordSkyProps) {
-  const { stars, total } = useMemo(() => skyStars(cards), [cards])
+  const { stars, total, dueTotal } = useMemo(() => skyStars(cards), [cards])
   const [picked, setPicked] = useState<string | null>(null)
   const pickedStar = stars.find((star) => star.id === picked) ?? null
 
@@ -56,15 +59,16 @@ export function WordSky({ cards }: WordSkyProps) {
                 cx={star.x}
                 cy={(star.y / 100) * 56}
                 r={look.r}
-                fill="#fff7d6"
+                // Xiralashayotgan yulduz — sarg'ish va tez-tez so'nadi
+                fill={star.due ? '#fbbf24' : '#fff7d6'}
                 opacity={look.opacity}
-                className="sky-twinkle cursor-pointer"
+                className={cn('cursor-pointer', star.due ? 'sky-fading' : 'sky-twinkle')}
                 // Miltillash BAZAVIY yorqinlikdan boshlanadi — aks holda CSS
                 // animatsiya kuchga qarab berilgan opacity ni yeb qo'yardi
                 style={
                   {
                     animationDelay: `${(index % 12) * 0.35}s`,
-                    '--twinkle-base': look.opacity,
+                    '--twinkle-base': star.due ? 0.5 : look.opacity,
                   } as CSSProperties
                 }
                 onClick={() => setPicked(star.id)}
@@ -81,6 +85,20 @@ export function WordSky({ cards }: WordSkyProps) {
           <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm font-semibold text-white/80">
             Hali yulduz yo‘q. Birinchi darsdan keyin shu yerda yonadi ✨
           </p>
+        )}
+
+        {/*
+          YUMSHOQ yo'qotish signali: unutish egri chizig'i ko'rinadigan
+          bo'ladi, lekin jazo sifatida emas — "qutqarish mumkin" taklifi.
+        */}
+        {dueTotal > 0 && (
+          <Link
+            to={PATHS.review}
+            data-testid="sky-rescue"
+            className="tap-highlight-none absolute left-2 top-2 rounded-full bg-amber-400/90 px-2.5 py-1 text-xs font-bold text-ink-900 shadow-pop"
+          >
+            🌠 {dueTotal} yulduz xiralashmoqda — yorqinlashtirish
+          </Link>
         )}
 
         {pickedStar && (

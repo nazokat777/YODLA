@@ -468,3 +468,29 @@ export async function applyChestReward(reward: ChestReward, now: number = Date.n
     })
   }
 }
+
+/**
+ * Haftalik sayohat pog'onasini oladi — hafta ichida BIR MARTA.
+ *
+ * Qaytaradi: aynan shu chaqiruvda berildimi. Bosilganda XP haqiqatan
+ * yoziladi; qayta bosish hech nima bermaydi.
+ */
+export async function claimWeeklyMilestone(
+  key: string,
+  days: number,
+  xp: number,
+  now: number = Date.now(),
+): Promise<boolean> {
+  return db.transaction('rw', db.profile, db.dailyStats, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const claimed = profile.weeklyQuestClaims?.[key] ?? []
+    if (claimed.includes(days)) return false
+
+    await db.profile.put({
+      ...profile,
+      weeklyQuestClaims: { ...profile.weeklyQuestClaims, [key]: [...claimed, days] },
+    })
+    await awardBonusXp(xp, now)
+    return true
+  })
+}

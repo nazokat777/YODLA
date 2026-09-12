@@ -18,6 +18,7 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { countUp, enterStagger, withMotion } from '@/lib/motion'
 import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
+import { WeeklyQuest } from './WeeklyQuest'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -221,6 +222,9 @@ export function HomeScreen() {
           {dueCount > 0 ? 'Takrorlashni boshlash' : 'Takrorlashni ochish'}
         </LinkButton>
       </Panel>
+
+      {/* Haftalik sayohat — 7 qadam, 3 sandiq: "yetib borish" motivi */}
+      <WeeklyQuest />
 
       {/*
         O'yinlar — mashqning boshqa formati. Bosh ekranda o'quv

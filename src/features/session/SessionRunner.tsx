@@ -50,6 +50,7 @@ import { requestPersistentStorage } from '@/lib/storage'
 import { useHasVoice } from '@/hooks/useHasVoice'
 import { playCorrectSound, playMasteredSound, playMilestoneSound, playWrongSound } from '@/lib/sound'
 import { cn } from '@/lib/cn'
+import { haptic } from '@/lib/haptics'
 import { useLeagueSync } from '@/hooks/useLeagueSync'
 import { usePushActivity } from '@/hooks/usePushActivity'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -698,6 +699,8 @@ export function SessionRunner({
         // Ohang kombo bilan ko'tariladi — quloq o'sishni his qiladi
         else playCorrectSound(streak - 1)
       }
+      // Qo'l ham his qiladi — xatoda YO'Q (jazo kanali bo'lmasin)
+      if (grade >= PASSING_GRADE) haptic(masteredNow || reached ? 'milestone' : 'success')
     } catch (error) {
       // Baho saqlanmasa feedback ko'rsatilmaydi — aks holda ekranda
       // "keyingi takrorlash 6 kun" yozilib, aslida hech narsa yozilmagan bo'lardi

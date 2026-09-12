@@ -250,3 +250,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .sky-twinkle { animation: none; }
 }
+
+/* Xiralashayotgan yulduz — tezroq va chuqurroq so'nadi */
+@keyframes sky-fading {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.1; }
+}
+.sky-fading { animation: sky-fading 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sky-fading { animation: none; }
+}

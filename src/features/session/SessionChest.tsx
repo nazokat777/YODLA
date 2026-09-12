@@ -5,6 +5,7 @@ import { applyChestReward, db } from '@/core/db'
 import { MAX_STREAK_FREEZES, rollChest, type ChestReward } from '@/core/gamification'
 import { particleBurst, withMotion } from '@/lib/motion'
 import { playChestSound } from '@/lib/sound'
+import { haptic } from '@/lib/haptics'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 /**
@@ -39,6 +40,7 @@ export function SessionChest() {
       await applyChestReward(rolled)
       setReward(rolled)
       if (soundEnabled) playChestSound()
+      haptic('celebrate')
     } catch (error) {
       console.error('Sandiq mukofotini yozib bo‘lmadi:', error)
       // Yozilmagan mukofotni ko'rsatish yolg'on bo'lardi — sandiq yopiq qoladi

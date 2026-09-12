@@ -26,6 +26,14 @@ export interface SkyStar {
   y: number
   /** 0..3 — so'z kuchi (yorqinlik) */
   strength: number
+  /**
+   * Muddati yetgan — yulduz "xiralashmoqda".
+   *
+   * Unutish egri chizig'i ko'rinadigan bo'ladi: takrorlanmagan so'z
+   * osmonda so'nib boradi. Bu YUMSHOQ yo'qotish signali — jazo emas,
+   * "qutqarish mumkin" degan taklif (takrorlash tugmasi bilan).
+   */
+  due: boolean
 }
 
 /** Ekranga chiziladigan yulduzlarning yuqori chegarasi — 4400 ta DOM tuguni og'ir */
@@ -51,7 +59,8 @@ export function hashString(text: string): number {
 export function skyStars(
   cards: readonly CardRecord[],
   limit: number = SKY_STAR_LIMIT,
-): { stars: SkyStar[]; total: number } {
+  now: number = Date.now(),
+): { stars: SkyStar[]; total: number; dueTotal: number } {
   const learned = cards.filter((card) => card.totalReviews > 0)
 
   const stars = learned
@@ -65,10 +74,16 @@ export function skyStars(
         x: 4 + (h % 1000) / 1000 * 92,
         y: 4 + ((h >>> 10) % 1000) / 1000 * 92,
         strength: wordStrength(card),
+        due: card.dueDate <= now,
       }
     })
-    .sort((a, b) => b.strength - a.strength)
+    // Xiralashayotganlar OLDIN — ular chegaradan tashqarida qolmasin
+    .sort((a, b) => Number(b.due) - Number(a.due) || b.strength - a.strength)
     .slice(0, limit)
 
-  return { stars, total: learned.length }
+  return {
+    stars,
+    total: learned.length,
+    dueTotal: learned.filter((card) => card.dueDate <= now).length,
+  }
 }

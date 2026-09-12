@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { particleBurst, withMotion } from '@/lib/motion'
+import { haptic } from '@/lib/haptics'
 import { playMilestoneSound } from '@/lib/sound'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
@@ -27,6 +28,7 @@ export function LevelUpBanner({ from, to, title }: LevelUpBannerProps) {
 
   useEffect(() => {
     if (soundEnabled) playMilestoneSound()
+    haptic('celebrate')
 
     let cancelled = false
     let revert = () => {}

@@ -20,6 +20,7 @@ import {
   recordLessonCompleted,
   saveGameBest,
   applyChestReward,
+  claimWeeklyMilestone,
   syncBadges,
 } from './progress.repo'
 
@@ -496,5 +497,20 @@ describe('bugungi birinchi g‘alaba', () => {
     })
 
     expect(tomorrow.firstWinOfDay).toBe(true)
+  })
+})
+
+describe('claimWeeklyMilestone', () => {
+  it('bir haftada bir marta beriladi va XP yoziladi', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+
+    expect(await claimWeeklyMilestone('2026-09-07', 3, 30)).toBe(true)
+    expect(await claimWeeklyMilestone('2026-09-07', 3, 30)).toBe(false)
+    // Boshqa pog'ona va boshqa hafta — mustaqil
+    expect(await claimWeeklyMilestone('2026-09-07', 5, 60)).toBe(true)
+    expect(await claimWeeklyMilestone('2026-09-14', 3, 30)).toBe(true)
+
+    expect((await ensureProfile()).totalXp).toBe(120)
   })
 })

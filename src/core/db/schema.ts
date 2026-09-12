@@ -120,6 +120,11 @@ export interface ProfileRecord {
   /** Bitta ham xatosiz tugatilgan seanslar soni */
   perfectSessions: number
   /**
+   * Haftalik sayohat: hafta kaliti → olingan pog'onalar (kunlar).
+   * Ixtiyoriy: eski profillarda yo'q.
+   */
+  weeklyQuestClaims?: Record<string, number[]>
+  /**
    * O'yinlardagi shaxsiy rekordlar.
    *
    * Ixtiyoriy: eski profillarda yo'q va shu holicha ishlaydi.
