@@ -178,7 +178,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
             Bosh sahifaga
           </LinkButton>
           <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
-            Navbatni yangilash
+            Yana bor-yo‘qligini tekshirish
           </Button>
         </div>
       </div>

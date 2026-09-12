@@ -184,6 +184,16 @@ export function HomeHero({
         </div>
       </div>
 
+      {/* NN/g #1: xavf faqat rang bilan emas — matn bilan (title mobil'da yo'q) */}
+      {streakAtRisk && streak > 0 && (
+        <p
+          data-testid="streak-risk"
+          className="relative mt-4 rounded-xl bg-white/15 px-3 py-2 text-sm font-semibold backdrop-blur-md"
+        >
+          🔥 Bugun hali mashq qilmading — {streak} kunlik streak uzilishi mumkin. Bitta dars yetadi!
+        </p>
+      )}
+
       {goalDone && (
         <p
           data-testid="goal-done"

@@ -13,6 +13,9 @@ import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { countUp, enterStagger, withMotion } from '@/lib/motion'
 import { HomeHero } from './HomeHero'
+
+/** O'yinlar ochilishi uchun kerakli ko'rilgan so'zlar (tezlik o'yini chegarasi) */
+const GAMES_MIN_WORDS = 4
 import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
@@ -62,6 +65,8 @@ export function HomeScreen() {
   const dueCount = stats?.due ?? 0
 
   const streak = progress?.streak.current ?? 0
+  /** Ko'rilgan so'zlar — o'yinlar shundan ochiladi */
+  const seenCount = cards ? cards.filter((card) => card.totalReviews > 0).length : GAMES_MIN_WORDS
   const wordsToday = progress?.daily.cardIds.length ?? 0
   const level = progress?.level
 
@@ -152,22 +157,41 @@ export function HomeScreen() {
         yo'lidan OLDIN turadi: bola kunlik darsni bajargach shu
         yerdan davom etishi mumkin.
       */}
-      <Link to={PATHS.games} className="tap-highlight-none block">
-        <Panel data-home-card interactive className="flex items-center gap-3">
-          <span aria-hidden="true" className="text-3xl">
+      {/*
+        NN/g #5: 4 ta so'z ko'rilmaguncha o'yinlar QULF — aks holda yangi
+        foydalanuvchi ichkarida uch marta "bo'lmaydi" ko'rardi. Qulf
+        holati ham ma'lumot beradi: nima qilish kerak va qancha qoldi.
+      */}
+      {seenCount < GAMES_MIN_WORDS ? (
+        <Panel data-home-card data-testid="games-locked" className="flex items-center gap-3 opacity-90">
+          <span aria-hidden="true" className="text-3xl grayscale">
             🎮
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block font-bold">O‘yinlar</span>
+            <span className="block font-bold">🔒 O‘yinlar</span>
             <span className="block text-sm text-ink-600">
-              Bilganingizni tez va qiziqarli mustahkamlang
+              Birinchi darsdan keyin ochiladi · {seenCount}/{GAMES_MIN_WORDS} so‘z
             </span>
           </span>
-          <span aria-hidden="true" className="shrink-0 text-ink-600">
-            ›
-          </span>
         </Panel>
-      </Link>
+      ) : (
+        <Link to={PATHS.games} className="tap-highlight-none block">
+          <Panel data-home-card interactive className="flex items-center gap-3">
+            <span aria-hidden="true" className="text-3xl">
+              🎮
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold">O‘yinlar</span>
+              <span className="block text-sm text-ink-600">
+                Bilganingizni tez va qiziqarli mustahkamlang
+              </span>
+            </span>
+            <span aria-hidden="true" className="shrink-0 text-ink-600">
+              ›
+            </span>
+          </Panel>
+        </Link>
+      )}
 
       <LearningPath cards={cards} />
 

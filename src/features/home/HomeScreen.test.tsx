@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, recordAnswer, syncBadges, type NewCardRecordInput } from '@/core/db'
+import { addMissingCards, db, recordAnswer, syncBadges, type NewCardRecordInput } from '@/core/db'
 import { addDays, startOfDay } from '@/lib/date'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { HomeScreen } from './HomeScreen'
@@ -119,5 +119,27 @@ describe('nishonlar', () => {
 
     expect(result.newlyUnlocked).toContain('first-10-words')
     expect(result.newlyUnlocked).toContain('first-steps')
+  })
+})
+
+describe('HomeScreen — o‘yinlar qulfi', () => {
+  it('4 ta so‘z ko‘rilmaguncha o‘yinlar qulf va sabab yoziladi', async () => {
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en' },
+      { word: 'b', translation: 'bb', language: 'en' },
+    ])
+    await db.cards.update('en:a', { totalReviews: 1 })
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <HomeScreen />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByTestId('games-locked')).toHaveTextContent('1/4 so‘z')
+    expect(screen.queryByRole('link', { name: /o‘yinlar/i })).not.toBeInTheDocument()
   })
 })
