@@ -5,6 +5,7 @@ import { buildWeekComparison, buildWeeklySeries, type DayPoint } from '@/core/st
 import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
+import { LanguagesPanel } from './LanguagesPanel'
 
 /** Hafta kunlari — diagramma ostidagi belgilar */
 const WEEKDAYS = ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh']
@@ -65,6 +66,9 @@ export function StatsScreen() {
       </Panel>
 
       <WeekComparison current={comparison.current.xp} previous={comparison.previous.xp} />
+
+      {/* So'zlar tilga bog'liq — streak/XP dan farqli */}
+      <LanguagesPanel />
 
       <p className="text-xs text-ink-600">
         Nishonlar Profil bo'limida — bu yerda takrorlanmaydi.
