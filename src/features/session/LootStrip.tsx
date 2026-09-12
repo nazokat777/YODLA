@@ -2,6 +2,9 @@ import { useEffect, useRef } from 'react'
 import { Panel } from '@/components/ui/Panel'
 import { WordImage } from '@/components/ui/WordImage'
 import { LANGUAGES } from '@/core/config/languages'
+import { getGlobalCardStats } from '@/core/db'
+import { companionStage } from '@/core/gamification'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { enterStagger, withMotion } from '@/lib/motion'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { LearnedWord } from './SessionRunner'
@@ -25,6 +28,9 @@ export function LootStrip({ words }: LootStripProps) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
   const rootRef = useRef<HTMLUListElement>(null)
+  const stats = useLiveQuery(() => getGlobalCardStats(), [])
+  const stage = stats ? companionStage(stats.learned) : null
+  const companion = stage && stage.minWords > 0 ? stage.emoji : null
 
   useEffect(() => {
     let cancelled = false
@@ -49,7 +55,10 @@ export function LootStrip({ words }: LootStripProps) {
     <Panel data-testid="loot-strip" className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between">
         <h3 className="font-bold">Bugungi o‘lja</h3>
-        <span className="text-sm text-ink-600">{words.length} so‘z</span>
+        {/* Yo'ldosh oziqlandi — o'lja shunchaki raqam emas, unga don */}
+        <span className="text-sm text-ink-600">
+          {companion ? `${companion} ${words.length} ta don yedi` : `${words.length} so‘z`}
+        </span>
       </div>
       {/* Gorizontal lenta: 375 px da 3–4 kartochka ko'rinadi, qolgani suriladi */}
       <ul ref={rootRef} className="scrollbar-none -mx-1 flex items-stretch gap-2 overflow-x-auto px-1 pb-1">

@@ -3,6 +3,9 @@ import { haptic } from './haptics'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
 describe('haptic', () => {
+  // Birinchi teginish — brauzer shundan keyingina tebranishga ruxsat beradi
+  window.dispatchEvent(new Event('pointerdown'))
+
   afterEach(() => vi.unstubAllGlobals())
 
   it('naqshni navigator.vibrate ga beradi', () => {

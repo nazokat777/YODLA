@@ -21,7 +21,18 @@ const PATTERNS: Record<HapticKind, number[]> = {
   celebrate: [24, 60, 24, 60, 48],
 }
 
+/**
+ * Brauzer foydalanuvchi hali bosmagan sahifada `vibrate` ni bloklaydi va
+ * konsolga xato yozadi (bosh ekran ochilishidagi bayramlar). Birinchi
+ * teginishgacha jim turamiz.
+ */
+let interacted = false
+if (typeof window !== 'undefined') {
+  window.addEventListener('pointerdown', () => (interacted = true), { once: true, passive: true })
+}
+
 export function haptic(kind: HapticKind): void {
+  if (!interacted) return
   // Sozlamada o'chirilgan bo'lsa — jim (ota-ona xohlashi mumkin)
   if (!useSettingsStore.getState().hapticsEnabled) return
   if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return

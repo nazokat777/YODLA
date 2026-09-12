@@ -40,6 +40,16 @@ const TOPICS: Array<{ icon: string; title: string; text: string }> = [
     text: 'Haftada 3, 5 va 7 kun mashq qilsang — sandiqlar ochiladi. Dushanbada xarita yangilanadi.',
   },
   {
+    icon: '🐣',
+    title: 'Yo‘ldosh',
+    text: 'So‘zlar bilan o‘sadigan do‘sting: 4 so‘zda tuxumdan chiqadi, 20 da polapon, 50 da qush… 500 so‘zda ajdar. Har o‘rgangan so‘z — unga don.',
+  },
+  {
+    icon: '🔮',
+    title: 'Kunning so‘zi',
+    text: 'Har kuni bitta yangi so‘z — ma‘nosi yopiq. Ochib ko‘r, keyin darsda uchraganda “buni bilaman!” deysan.',
+  },
+  {
     icon: '🌌',
     title: 'So‘z osmoni',
     text: 'Har o‘rgangan so‘zing — yulduz. Takrorlash vaqti kelgan so‘z xiralashadi; takrorlasang yana yonadi.',
