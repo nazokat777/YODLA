@@ -2,20 +2,17 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
-import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
-import { Emblem } from '@/components/ui/Emblem'
 import { Panel } from '@/components/ui/Panel'
-import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
 import { computeLanguageStats, getAllCards, getNextDueDate } from '@/core/db'
-import { levelTitle, nextStreakTier, streakTier } from '@/core/gamification'
 import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { countUp, enterStagger, withMotion } from '@/lib/motion'
+import { HomeHero } from './HomeHero'
 import { LearningPath } from './LearningPath'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
@@ -101,102 +98,22 @@ export function HomeScreen() {
 
   return (
     <div ref={rootRef} className="flex flex-col gap-4">
-      <header className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-ink-600">O'rganilmoqda</p>
-          <h1 className="flex items-center gap-2 text-xl font-extrabold">
-            {language ? (
-              <>
-                <LanguageBadge language={language} size="sm" />
-                {language.name}
-              </>
-            ) : (
-              'Til tanlanmagan'
-            )}
-          </h1>
-        </div>
-
-        <div
-          data-testid="streak-badge"
-          className={cnStreak(progress?.streak.atRisk ?? false)}
-          title={
-            progress?.streak.atRisk
-              ? 'Streak xavf ostida — bugun hali mashq qilmadingiz'
-              : undefined
-          }
-        >
-          {/*
-            Alanga streak bilan "o'sadi": daraja belgisi va nomi o'zgaradi.
-            Endowed progress — katta alangani o'chirish og'irroq tuyuladi,
-            keyingi daraja esa ko'rinib turadi (kutish).
-          */}
-          <span aria-hidden="true" className="flicker">
-            {streakTier(streak).emoji}
-          </span>
-          <span>{streak}</span>
-          <span className="sr-only">
-            kunlik streak · {streakTier(streak).name}
-            {nextStreakTier(streak) &&
-              ` · ${nextStreakTier(streak)!.name} gacha ${nextStreakTier(streak)!.minDays - streak} kun`}
-          </span>
-        </div>
-      </header>
+      {/* Qahramon: salom, streak, kunlik halqa, daraja, bitta katta tugma */}
+      <HomeHero
+        language={language}
+        streak={streak}
+        streakAtRisk={progress?.streak.atRisk ?? false}
+        level={level ?? null}
+        totalXp={totalXp}
+        wordsToday={wordsToday}
+        dailyGoalWords={dailyGoalWords}
+        dueCount={dueCount}
+        isLoading={isLoading}
+      />
 
       {/* Til almashtirgich: har til alohida progress bilan — istalgan payt
           o'tish mumkin, so'zlar yo'qolmaydi */}
       <LanguageSwitcher />
-
-      {/* Daraja va XP */}
-      {level && (
-        <Panel data-home-card>
-          <div className="mb-2 flex items-baseline justify-between">
-            <h2 className="min-w-0 truncate font-bold">
-              {/*
-                `whitespace-nowrap`: brauzer chiziqchadan keyin qator
-                bo'lishi mumkin deb hisoblaydi va tor ekranda "1-daraja"
-                "1-" va "daraja" bo'lib ikkiga bo'linardi
-              */}
-              <span className="whitespace-nowrap">{level.level}-daraja</span>
-              {/* Daraja nomi ikkinchi darajali: tor ekranda kesiladi */}
-              <span className="ms-2 text-sm font-normal text-ink-600">
-                {levelTitle(level.level)}
-              </span>
-            </h2>
-            <span
-              data-testid="total-xp"
-              // `whitespace-nowrap`: 320 px li ekranda "0 XP" ikki qatorga
-              // bo'linib, tanga bilan raqam ajralib qolardi
-              className="inline-flex shrink-0 items-center gap-1 self-center whitespace-nowrap text-sm font-bold text-ink-600"
-            >
-              <Emblem kind="coin" size="sm" className="h-5 w-5" />
-              {/* Raqam alohida: `countUp` aynan uni sanaydi, "XP" so'ziga
-                  tegmaydi */}
-              <span data-xp-value>{totalXp}</span> XP
-            </span>
-          </div>
-          <ProgressBar
-            value={level.xpIntoLevel}
-            max={level.xpForNextLevel}
-            label={`Keyingi darajagacha: ${level.xpForNextLevel - level.xpIntoLevel} XP`}
-          />
-          <p className="mt-1 text-xs text-ink-600">
-            Keyingi darajagacha {level.xpForNextLevel - level.xpIntoLevel} XP
-          </p>
-        </Panel>
-      )}
-
-      <Panel data-home-card>
-        <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="font-bold">Kunlik maqsad</h2>
-          <span data-testid="daily-goal" className="text-sm text-ink-600">
-            {wordsToday} / {dailyGoalWords} so'z
-          </span>
-        </div>
-        <ProgressBar value={wordsToday} max={dailyGoalWords} label="Kunlik maqsad progressi" />
-        {wordsToday >= dailyGoalWords && (
-          <p className="mt-2 text-sm font-bold text-brand-700">🎯 Daily goal — done!</p>
-        )}
-      </Panel>
 
       <Panel interactive>
         <div className="mb-1 flex items-baseline justify-between">
@@ -266,15 +183,6 @@ export function HomeScreen() {
   )
 }
 
-/** Streak nishoni uslubi — xavf ostida bo'lsa diqqatni tortadi */
-function cnStreak(atRisk: boolean): string {
-  return [
-    'flex items-center gap-1 rounded-full px-3 py-1.5 font-bold',
-    atRisk
-      ? 'bg-flame-500/25 text-flame-700 ring-2 ring-flame-500'
-      : 'bg-flame-500/10 text-flame-700',
-  ].join(' ')
-}
 
 /** Bitta statistika katakchasi */
 function StatTile({

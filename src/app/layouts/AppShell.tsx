@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { useSettingsStore } from '@/stores/useSettingsStore'
 import { PATHS } from '@/app/paths'
 import { cn } from '@/lib/cn'
 import { RouteTransition } from './RouteTransition'
@@ -20,6 +22,20 @@ const NAV_ITEMS = [
  * katta ekranlarda ham telefon ko'rinishini saqlaydi.
  */
 export function AppShell() {
+  const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+
+  /*
+   * Til aksenti: `html[data-lang]` — CSS o'zgaruvchilari shundan rang
+   * oladi (qahramon karta, faol navigatsiya). Ilova o'rganilayotgan
+   * tilga qarab "kiyinadi" — bu til almashganini ko'rsatadigan eng
+   * kuchli, lekin so'zsiz belgi.
+   */
+  useEffect(() => {
+    const root = document.documentElement
+    if (learningLanguage) root.dataset.lang = learningLanguage
+    else delete root.dataset.lang
+  }, [learningLanguage])
+
   return (
     <div className="mx-auto flex min-h-full w-full max-w-[480px] flex-col bg-slate-50">
       {/* Kontent — pastki panel balandligi (4rem) qadar joy qoldiriladi */}
@@ -52,13 +68,19 @@ export function AppShell() {
                     'tap-highlight-none relative flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold transition-colors',
                     // Faol bo'limda ikonka kattaroq va ustida chiziq turadi:
                     // rangdan tashqari ikkinchi belgi (WCAG 1.4.1)
+                    // Faol bo'lim: ikonka ostida yumshoq "tabletka" va
+                    // yuqoridagi chiziq — rangdan tashqari ikkinchi belgi
+                    // (WCAG 1.4.1); ikonka biroz ko'tariladi
                     isActive
-                      ? 'text-brand-600 before:absolute before:top-0 before:h-1 before:w-10 before:rounded-b-full before:bg-brand-500 [&>span]:scale-110'
+                      ? 'text-brand-700 before:absolute before:top-0 before:h-1 before:w-10 before:rounded-b-full before:bg-[var(--accent-from)] [&>span:first-of-type]:-translate-y-0.5 [&>span:first-of-type]:scale-110 [&>span:first-of-type]:bg-[var(--accent-from)]/15'
                       : 'text-ink-600 hover:text-ink-900',
                   )
                 }
               >
-                <span aria-hidden="true" className="text-xl transition-transform duration-200">
+                <span
+                  aria-hidden="true"
+                  className="flex h-8 w-12 items-center justify-center rounded-2xl text-xl transition-[transform,background-color] duration-200"
+                >
                   {item.icon}
                 </span>
                 {/*

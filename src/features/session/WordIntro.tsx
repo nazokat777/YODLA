@@ -71,7 +71,15 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
       >
         ✨ Yangi so‘z
       </p>
-      <Panel data-intro className="flex flex-col items-center gap-3 py-6 text-center">
+      <Panel
+        data-intro
+        className={cn(
+          'relative flex flex-col items-center gap-3 overflow-hidden py-6 text-center',
+          // Arab so'zi uchun girih (geometrik) naqsh — arab yozuvining
+          // madaniy muhiti, 6% shaffoflikda: matnga xalaqit bermaydi
+          language.dir === 'rtl' && 'arabesque',
+        )}
+      >
         {/* Rasmi bor so'zlarda ma'no matndan OLDIN ko'rinadi */}
         <WordImage translation={card.translation} size="lg" />
 
