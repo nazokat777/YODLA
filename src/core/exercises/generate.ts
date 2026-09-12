@@ -177,6 +177,9 @@ function clozeBlank(sentence: string, word: string): string | null {
   const bare = word.replace(ARABIC_MARKS, '')
   if (bare.length === 0) return null
 
+  const M = ARABIC_MARKS_CLASS
+  const isArabic = /[؀-ۿ]/.test(bare)
+
   /*
    * Har harf orasiga IXTIYORIY harakat qo'yiladi.
    *
@@ -186,12 +189,31 @@ function clozeBlank(sentence: string, word: string): string | null {
    * yaratilmasdi. Lotin va kirill matnida bunday belgilar uchramaydi,
    * shuning uchun qo'shimcha ularga zarar qilmaydi.
    */
-  const flexible = [...bare]
-    .map((letter) => letter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .join(`${ARABIC_MARKS_CLASS}*`)
+  const letters = [...bare].map((letter) => letter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  /*
+   * ARAB MORFOLOGIYASI: hozirgi zamon fe'li lug'atda "u" shaklida
+   * (يَأْكُل), jumlada esa "men/biz/sen" shaklida (أَشْرَبُ, نَأْكُلُ) —
+   * faqat birinchi harf farq qiladi. Shu harf almashishiga ruxsat.
+   */
+  if (isArabic && letters[0] === 'ي') letters[0] = '[يأنت]'
+  const flexible = letters.join(`${M}*`)
+
+  /*
+   * Old qo'shimchalar (وَ، فَ، بِ، كَ، لِ) va aniqlik artikli (ال), orqa
+   * qo'shimchalar (egalik va ko'plik: ـي، ـك، ـه، ـها، ـنا، ـات، ـون، ـين،
+   * ـان). Bo'shliq butun shaklni qamraydi: "___ يَعْمَلُ هُنَا" uchun javob
+   * "أَب" — ma'no saqlanadi, bola esa o'zak so'zni tanlaydi. Usiz arab
+   * A1 kartalarining uchdan ikkisiga cloze umuman chiqmasdi (o'lchandi:
+   * 137/433 → ancha ko'p).
+   */
+  const prefix = isArabic ? `(?:[وفبكل]${M}*)?(?:ا${M}*ل${M}*)?` : ''
+  const suffixForms = ['ي', 'ك', 'ه', 'ها', 'هم', 'كم', 'نا', 'ات', 'ون', 'ين', 'ان', 'يك']
+  const suffix = isArabic
+    ? `(?:${M}*(?:${suffixForms.map((form) => [...form].join(`${M}*`)).join('|')}))?`
+    : ''
 
   const pattern = new RegExp(
-    `(?<![\\p{L}\\p{M}])${flexible}${ARABIC_MARKS_CLASS}*(?![\\p{L}\\p{M}])`,
+    `(?<![\\p{L}\\p{M}])${prefix}${flexible}${suffix}${M}*(?![\\p{L}\\p{M}])`,
     'iu',
   )
 

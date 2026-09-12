@@ -448,6 +448,50 @@ describe('generateExercise — gap ichida (cloze)', () => {
     expect(cloze).not.toBeNull()
     expect(cloze!.prompt).toContain('___')
   })
+
+  it('arab morfologiyasi: artikl, egalik qo‘shimchasi va fe’l shaxsi bilan ham topiladi', () => {
+    /*
+     * Lug'atdagi shakl: كِتَاب, أَب, يَأْكُل. Jumlada: الْكِتَابَ (artikl),
+     * أَبِي (egalik), نَأْكُلُ (biz shakli). Usiz arab A1 kartalarining
+     * uchdan ikkisiga cloze chiqmasdi (o'lchandi: 137/433 → 168/433).
+     */
+    const arabicPool = POOL.map((card) => ({ ...card, language: 'ar' as const }))
+    const cases: Array<[string, string, string]> = [
+      ['كِتَاب', 'أَقْرَأُ الْكِتَابَ', 'أَقْرَأُ ___'],
+      ['أَب', 'أَبِي يَعْمَلُ هُنَا', '___ يَعْمَلُ هُنَا'],
+      ['يَأْكُل', 'نَأْكُلُ مَعًا', '___ مَعًا'],
+      ['عَيْن', 'أَغْمِضْ عَيْنَيْكَ', 'أَغْمِضْ ___'],
+    ]
+
+    for (const [word, sentence, expected] of cases) {
+      const card = makeCard({
+        id: `ar:${word}`,
+        word,
+        translation: 'x',
+        language: 'ar',
+        repetitions: 2,
+        sentence,
+        sentenceTranslation: 'tarjima',
+      })
+      const cloze = findCloze(card, [card, ...arabicPool])
+
+      expect(cloze, word).not.toBeNull()
+      expect(cloze!.prompt).toBe(expected)
+    }
+  })
+
+  it('lotin so‘zida arab qo‘shimcha qoidasi ISHLAMAYDI — "cat" "cats" ichida bo‘shliq bo‘lmaydi', () => {
+    const cat = makeCard({
+      id: 'en:cat',
+      word: 'cat',
+      translation: 'mushuk',
+      repetitions: 2,
+      sentence: 'The cats sleep',
+      sentenceTranslation: 'Mushuklar uxlaydi',
+    })
+
+    expect(findCloze(cat, [cat, ...POOL])).toBeNull()
+  })
 })
 
 describe('generateExercise — harfma-harf (spelling)', () => {
