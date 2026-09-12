@@ -7,7 +7,7 @@ import { WordImage } from '@/components/ui/WordImage'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { LANGUAGES } from '@/core/config/languages'
 import type { CardRecord } from '@/core/db'
-import { enterStagger, withMotion } from '@/lib/motion'
+import { enterStagger, scrambleReveal, withMotion } from '@/lib/motion'
 import { speak } from '@/lib/speech'
 import { WordDisplay } from './WordDisplay'
 
@@ -41,9 +41,20 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
     let cancelled = false
     let revert = () => {}
 
-    void withMotion(rootRef.current, (gsap) => {
-      enterStagger(gsap, '[data-intro]', { stagger: 0.08, duration: 0.4, y: 20 })
-    }).then((fn) => {
+    void withMotion(
+      rootRef.current,
+      (gsap) => {
+        enterStagger(gsap, '[data-intro]', { stagger: 0.08, duration: 0.4, y: 20 })
+        /*
+         * So'z "OCHILADI": harflar shovqindan asl holiga keladi.
+         * Kutish → aniqlik. Matn oxirida asliga teng — animatsiya
+         * to'xtab qolsa ham so'z to'g'ri.
+         */
+        const wordNode = rootRef.current?.querySelector('[data-testid="intro-word"]')
+        if (wordNode) scrambleReveal(gsap, wordNode, card.word)
+      },
+      ['scrambleText'],
+    ).then((fn) => {
       if (cancelled) fn()
       else revert = fn
     })
@@ -52,7 +63,7 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
       cancelled = true
       revert()
     }
-  }, [card.id])
+  }, [card.id, card.word])
 
   return (
     <div ref={rootRef} className="flex flex-1 flex-col gap-4">
@@ -84,7 +95,12 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         <WordImage translation={card.translation} size="lg" />
 
         <div dir={language.dir} lang={language.code}>
-          <WordDisplay text={card.word} language={language} testId="intro-word" />
+          {/*
+            `key={card.id}`: ScrambleText `<p>` ning matn tugunini
+            almashtiradi; React eski tugunni ushlab qolib, keyingi so'zni
+            YANGILAMASLIGI mumkin edi. Har so'zda element qaytadan yaratiladi.
+          */}
+          <WordDisplay key={card.id} text={card.word} language={language} testId="intro-word" />
         </div>
 
         <div className="flex items-center gap-2">

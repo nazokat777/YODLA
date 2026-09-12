@@ -8,6 +8,7 @@ import {
   shake,
   withMotion,
 } from './motion'
+import { scriptOf } from './motion'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -197,5 +198,13 @@ describe('plaginli presetlar', () => {
 
     expect(fn).toHaveBeenCalledTimes(1)
     attached.remove()
+  })
+})
+
+describe('scriptOf', () => {
+  it('arab, kirill va lotin yozuvini ajratadi — shovqin o‘sha alifbodan', () => {
+    expect(scriptOf('كِتَاب')).toBe('arabic')
+    expect(scriptOf('вода')).toBe('cyrillic')
+    expect(scriptOf('water')).toBe('latin')
   })
 })

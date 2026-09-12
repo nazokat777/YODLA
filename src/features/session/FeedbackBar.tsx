@@ -8,6 +8,7 @@ import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
 import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
 import { cn } from '@/lib/cn'
+import { coinFlight, withMotion } from '@/lib/motion'
 import { formatInterval } from '@/lib/format'
 import { PronounceButton } from '@/components/ui/PronounceButton'
 import { SpeakButton } from '@/components/ui/SpeakButton'
@@ -162,6 +163,37 @@ export function FeedbackBar({
   useEffect(() => {
     panelRef.current?.focus()
   }, [])
+
+  /*
+   * TANGA UCHADI: XP nishonidan seans ko'rsatkichiga egri yo'l bo'ylab.
+   * XP qaerga ketganini ko'rsatadi — raqam "narsa"ga aylanadi.
+   * Faqat to'g'ri javobda: xatoda ham XP bor, lekin uni nishonlash
+   * "xato ham yaxshi" degan noto'g'ri signal berardi.
+   */
+  useEffect(() => {
+    if (verdict === 'wrong' || xpGained <= 0) return
+
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(
+      panelRef.current,
+      (gsap) => {
+        const from = panelRef.current?.querySelector('[data-testid="xp-gained"]')
+        const to = document.querySelector('[data-testid="session-progress"]')
+        if (from && to) coinFlight(gsap, from, to)
+      },
+      ['motionPath'],
+    ).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [verdict, xpGained])
 
   /** Talaffuz tugmasi — faqat o'rganilayotgan tildagi matn uchun */
   const speakButton = (text: string) => (

@@ -6,6 +6,8 @@ import type { LanguageMeta } from '@/core/types'
 import { levelTitle, nextStreakTier, streakTier, type LevelProgress } from '@/core/gamification'
 import { cn } from '@/lib/cn'
 import { greetingFor } from '@/lib/greeting'
+import { ringFill, withMotion } from '@/lib/motion'
+import { useEffect, useRef } from 'react'
 
 interface HomeHeroProps {
   language: LanguageMeta | null
@@ -50,6 +52,25 @@ export function HomeHero({
   const goalDone = wordsToday >= dailyGoalWords
   const tier = streakTier(streak)
   const next = nextStreakTier(streak)
+  const ringRef = useRef<SVGCircleElement>(null)
+
+  // Halqa boshidan joriy qiymatgacha elastik to'ladi — o'sish SEZILADI
+  useEffect(() => {
+    let cancelled = false
+    let revert = () => {}
+
+    void withMotion(ringRef.current, (gsap) => {
+      if (ringRef.current) ringFill(gsap, ringRef.current, RING_C, RING_C * (1 - ratio))
+    }).then((fn) => {
+      if (cancelled) fn()
+      else revert = fn
+    })
+
+    return () => {
+      cancelled = true
+      revert()
+    }
+  }, [ratio])
 
   return (
     <section
@@ -100,6 +121,7 @@ export function HomeHero({
           <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
             <circle cx="50" cy="50" r={RING_R} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="10" />
             <circle
+              ref={ringRef}
               data-testid="goal-ring"
               cx="50"
               cy="50"

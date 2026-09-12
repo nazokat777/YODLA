@@ -28,7 +28,14 @@ export function prefersReducedMotion(): boolean {
  * bo'lakni ikki barobar kattalashtirardi, holbuki bitta ekranga
  * odatda bittasi kerak.
  */
-export type MotionPlugin = 'scrollTrigger' | 'drawSVG' | 'splitText' | 'physics2D'
+export type MotionPlugin =
+  | 'scrollTrigger'
+  | 'drawSVG'
+  | 'splitText'
+  | 'physics2D'
+  | 'scrambleText'
+  | 'motionPath'
+  | 'flip'
 
 /** Yuklangan plaginlar — ikkinchi marta yuklanmasin */
 const registered = new Set<MotionPlugin>()
@@ -41,6 +48,13 @@ const registered = new Set<MotionPlugin>()
  * jimgina ishlamay turdi. Klass yuklanganda shu yerda saqlanadi.
  */
 let SplitTextClass: SplitTextConstructor | null = null
+
+/** `Flip` ham `gsap` ga qo'shilmaydi — klass shu yerda saqlanadi */
+interface FlipLike {
+  getState: (targets: Target, vars?: Record<string, unknown>) => unknown
+  from: (state: unknown, vars: Record<string, unknown>) => unknown
+}
+let FlipClass: FlipLike | null = null
 
 type SplitTextConstructor = new (
   target: Element,
@@ -77,6 +91,22 @@ async function registerPlugin(gsap: GsapLike, plugin: MotionPlugin): Promise<voi
       case 'physics2D': {
         const module = await import('gsap/Physics2DPlugin')
         gsap.registerPlugin(module.Physics2DPlugin)
+        break
+      }
+      case 'scrambleText': {
+        const module = await import('gsap/ScrambleTextPlugin')
+        gsap.registerPlugin(module.ScrambleTextPlugin)
+        break
+      }
+      case 'motionPath': {
+        const module = await import('gsap/MotionPathPlugin')
+        gsap.registerPlugin(module.MotionPathPlugin)
+        break
+      }
+      case 'flip': {
+        const module = await import('gsap/Flip')
+        gsap.registerPlugin(module.Flip)
+        FlipClass = module.Flip as unknown as FlipLike
         break
       }
     }
@@ -393,5 +423,108 @@ export function drawPathOnScroll(gsap: GsapLike, target: Target, trigger: Elemen
         scrub: 0.6,
       },
     },
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Premium presetlar (ScrambleText, MotionPath, Flip)                   */
+/* ------------------------------------------------------------------ */
+
+/** Lotin, kirill va arab "shovqin" alifbolari — matn qaysi yozuvda bo'lsa */
+const SCRAMBLE_CHARS: Record<'latin' | 'cyrillic' | 'arabic', string> = {
+  latin: 'abcdefghijklmnopqrstuvwxyz',
+  cyrillic: 'абвгдежзийклмнопрстуфхцчшщэюя',
+  arabic: 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي',
+}
+
+/** Matn yozuvi — shovqin alifbosini tanlash uchun (test uchun ochiq) */
+export function scriptOf(text: string): keyof typeof SCRAMBLE_CHARS {
+  if (/[؀-ۿ]/.test(text)) return 'arabic'
+  if (/[Ѐ-ӿ]/.test(text)) return 'cyrillic'
+  return 'latin'
+}
+
+/**
+ * So'z "OCHILADI": harflar shovqindan asl holiga keladi (ScrambleText).
+ *
+ * Yangi so'z tanishtiruvida: bola so'zni bir zum "yig'ilayotgan" holda
+ * ko'radi — kutish, keyin aniq tasvir. 0.7 s — o'qishga xalaqit
+ * bermaydigan qisqa vaqt. Arab so'zida shovqin ham arab harflari:
+ * lotin harflari orasidan arab so'zi chiqishi g'alati bo'lardi.
+ *
+ * Plagin: `scrambleText`. Matn oxirida ASLIGA teng — animatsiya
+ * to'xtab qolsa ham so'z to'g'ri ko'rinadi.
+ */
+export function scrambleReveal(gsap: GsapLike, node: Element, text: string, duration = 0.7) {
+  gsap.to(node, {
+    duration,
+    ease: 'none',
+    scrambleText: { text, chars: SCRAMBLE_CHARS[scriptOf(text)], speed: 0.6, revealDelay: 0.15 },
+  })
+}
+
+/**
+ * TANGA UCHADI: `from` elementidan `to` elementigacha egri yo'l bo'ylab
+ * (MotionPath), tushganda `to` biroz "uradi".
+ *
+ * To'g'ri javobda XP qaerga ketganini KO'RSATADI — raqam shunchaki
+ * o'zgarmaydi, tanga ko'rinib borib qo'shiladi. Bu XP ni "narsa"ga
+ * aylantiradi. Tanga vaqtinchalik DOM tuguni: tugagach o'chiriladi.
+ */
+export function coinFlight(gsap: GsapLike, from: Element, to: Element, emoji = '🪙') {
+  const a = from.getBoundingClientRect()
+  const b = to.getBoundingClientRect()
+  const coin = document.createElement('span')
+  coin.textContent = emoji
+  coin.setAttribute('aria-hidden', 'true')
+  coin.style.cssText =
+    'position:fixed;left:0;top:0;z-index:60;font-size:22px;pointer-events:none;will-change:transform'
+  document.body.appendChild(coin)
+
+  const start = { x: a.left + a.width / 2 - 11, y: a.top + a.height / 2 - 11 }
+  const end = { x: b.left + b.width / 2 - 11, y: b.top + b.height / 2 - 11 }
+  // Egri: o'rtada yuqoriga ko'tarilib tushadi — "otish" hissi
+  const mid = { x: (start.x + end.x) / 2, y: Math.min(start.y, end.y) - 80 }
+
+  gsap.set(coin, { x: start.x, y: start.y, scale: 0.6 })
+  gsap.to(coin, {
+    duration: 0.65,
+    ease: 'power2.inOut',
+    scale: 1,
+    motionPath: { path: [start, mid, end], curviness: 1.4 },
+    onComplete: () => {
+      coin.remove()
+      gsap.fromTo(to, { scale: 1 }, { scale: 1.18, duration: 0.12, yoyo: true, repeat: 1 })
+    },
+  })
+}
+
+/**
+ * FLIP: elementning eski holatidan yangi holatiga silliq o'tish.
+ *
+ * Chaqiruvchi avval `flipState(targets)` oladi, DOM'ni o'zgartiradi,
+ * keyin `flipFrom(state)` — GSAP farqni hisoblab, elementni eski
+ * joyidan yangi joyiga "olib boradi". Til almashtirgichdagi faol
+ * tabletka shunday suzadi.
+ */
+export function flipState(targets: Target): unknown {
+  return FlipClass?.getState(targets) ?? null
+}
+
+export function flipFrom(state: unknown, duration = 0.35): void {
+  if (!state || !FlipClass) return
+  FlipClass.from(state, { duration, ease: 'power3.out', absolute: true })
+}
+
+/**
+ * HALQA TO'LADI: `stroke-dashoffset` boshidan joriy qiymatgacha elastik
+ * (bosh ekrandagi kunlik maqsad halqasi). Yakuniy qiymat JSX'da —
+ * animatsiya bo'lmasa halqa to'g'ri holatda turadi.
+ */
+export function ringFill(gsap: GsapLike, circle: Element, fullLength: number, targetOffset: number) {
+  gsap.fromTo(
+    circle,
+    { strokeDashoffset: fullLength },
+    { strokeDashoffset: targetOffset, duration: 1.1, ease: 'elastic.out(1, 0.7)', delay: 0.15 },
   )
 }

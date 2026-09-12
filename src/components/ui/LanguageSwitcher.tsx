@@ -2,6 +2,8 @@ import { LANGUAGE_LIST } from '@/core/config/languages'
 import { LanguageBadge } from './LanguageBadge'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
+import { useLayoutEffect, useRef } from 'react'
+import { flipFrom, flipState, withMotion } from '@/lib/motion'
 
 /**
  * Ixcham til almashtirgich (segment nazorati).
@@ -16,9 +18,35 @@ import { cn } from '@/lib/cn'
 export function LanguageSwitcher({ className }: { className?: string }) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const setLearningLanguage = useSettingsStore((s) => s.setLearningLanguage)
+  const rootRef = useRef<HTMLDivElement>(null)
+  /** Bosishdan OLDINGI tabletka holati — Flip uchun */
+  const pendingState = useRef<unknown>(null)
+
+  /*
+   * FLIP: faol tabletka eski tugmadan yangisiga SUZIB o'tadi (sakramaydi).
+   * Bosishda eski holat olinadi, React DOM'ni yangilagach (`useLayoutEffect`
+   * — chizishdan oldin) farq animatsiya qilinadi. Tabletka `absolute`
+   * emas — u shunchaki faol tugmaning foni, Flip ikkala tugmani ham
+   * o'lchab, ko'chishni "chizadi".
+   */
+  const handlePick = (code: typeof learningLanguage) => {
+    if (!code || code === learningLanguage) return
+    pendingState.current = flipState(
+      rootRef.current?.querySelectorAll('[data-lang-pill]') ?? [],
+    )
+    setLearningLanguage(code)
+  }
+
+  useLayoutEffect(() => {
+    const state = pendingState.current
+    pendingState.current = null
+    if (!state) return
+    void withMotion(rootRef.current, () => flipFrom(state), ['flip'])
+  }, [learningLanguage])
 
   return (
     <div
+      ref={rootRef}
       role="group"
       aria-label="O'rganilayotgan tilni tanlash"
       className={cn(
@@ -36,14 +64,25 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           <button
             key={lang.code}
             type="button"
-            onClick={() => setLearningLanguage(lang.code)}
+            onClick={() => handlePick(lang.code)}
             aria-pressed={isActive}
             aria-label={lang.name}
             className={cn(
-              'tap-highlight-none flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-sm font-bold transition-colors',
-              isActive ? 'bg-brand-700 text-white' : 'text-ink-600 hover:bg-brand-50',
+              'tap-highlight-none relative flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-sm font-bold transition-colors',
+              isActive ? 'text-white' : 'text-ink-600 hover:bg-brand-50',
             )}
           >
+            {/* Tabletka — faol tugmaning foni; Flip aynan shuni ko'chiradi */}
+            {isActive && (
+              <span
+                data-lang-pill
+                // Eski va yangi tabletka — bitta "shaxs": Flip shu id bilan
+                // ularni bog'laydi va ko'chishni chizadi
+                data-flip-id="lang-pill"
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 rounded-xl bg-[var(--accent-to)]"
+              />
+            )}
             <LanguageBadge language={lang} size="sm" active={isActive} />
             <span>{shortName}</span>
           </button>
