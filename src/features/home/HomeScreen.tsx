@@ -10,7 +10,7 @@ import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { LANGUAGES } from '@/core/config/languages'
 import { computeLanguageStats, getAllCards, getNextDueDate } from '@/core/db'
-import { levelTitle } from '@/core/gamification'
+import { levelTitle, nextStreakTier, streakTier } from '@/core/gamification'
 import { formatTimeUntil } from '@/lib/format'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
@@ -123,11 +123,20 @@ export function HomeScreen() {
               : undefined
           }
         >
+          {/*
+            Alanga streak bilan "o'sadi": daraja belgisi va nomi o'zgaradi.
+            Endowed progress — katta alangani o'chirish og'irroq tuyuladi,
+            keyingi daraja esa ko'rinib turadi (kutish).
+          */}
           <span aria-hidden="true" className="flicker">
-            🔥
+            {streakTier(streak).emoji}
           </span>
           <span>{streak}</span>
-          <span className="sr-only">kunlik streak</span>
+          <span className="sr-only">
+            kunlik streak · {streakTier(streak).name}
+            {nextStreakTier(streak) &&
+              ` · ${nextStreakTier(streak)!.name} gacha ${nextStreakTier(streak)!.minDays - streak} kun`}
+          </span>
         </div>
       </header>
 

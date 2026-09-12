@@ -56,7 +56,8 @@ describe('HomeScreen — geymifikatsiya', () => {
     renderScreen()
 
     await waitFor(() => {
-      expect(screen.getByTestId('total-xp')).toHaveTextContent('100 XP')
+      // 10 × 10 + birinchi g'alaba bonusi 10
+      expect(screen.getByTestId('total-xp')).toHaveTextContent('110 XP')
     })
     expect(screen.getByText(/2-daraja/)).toBeInTheDocument()
   })

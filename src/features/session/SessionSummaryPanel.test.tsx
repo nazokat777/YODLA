@@ -75,4 +75,26 @@ describe('SessionSummaryPanel — o‘zlashtirish hisoboti', () => {
 
     expect(screen.queryByTestId('pending-words')).not.toBeInTheDocument()
   })
+
+  it('daraja oshgan bo‘lsa katta banner ENG TEPADA chiqadi', () => {
+    render(
+      <SessionSummaryPanel
+        summary={{ ...SUMMARY, levelUp: { from: 1, to: 2, title: 'Yangi boshlovchi' } }}
+      />,
+    )
+
+    const banner = screen.getByTestId('level-up')
+    expect(banner).toHaveTextContent('2')
+    expect(banner).toHaveTextContent(/yangi boshlovchi/i)
+    // Yakun panelidan OLDIN — eng katta yangilik birinchi
+    expect(banner.compareDocumentPosition(screen.getByTestId('session-xp'))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    )
+  })
+
+  it('daraja oshmagan bo‘lsa banner yo‘q', () => {
+    render(<SessionSummaryPanel summary={SUMMARY} />)
+
+    expect(screen.queryByTestId('level-up')).not.toBeInTheDocument()
+  })
 })

@@ -40,6 +40,8 @@ interface FeedbackBarProps {
    * mukofotni yashirish. Alohida nishon va akkord bilan belgilanadi.
    */
   mastered?: boolean
+  /** Kunning birinchi to'g'ri javobi — qaytib kelgani uchun ×2 */
+  firstWinOfDay?: boolean
   onContinue: () => void
 }
 
@@ -139,6 +141,7 @@ export function FeedbackBar({
   xpGained,
   goalJustCompleted,
   mastered = false,
+  firstWinOfDay = false,
   onContinue,
 }: FeedbackBarProps) {
   const tone = TONE[verdict]
@@ -221,6 +224,19 @@ export function FeedbackBar({
       {goalJustCompleted && (
         <p className="rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-bold text-flame-700">
           🎯 Kunlik maqsad bajarildi!
+        </p>
+      )}
+
+      {firstWinOfDay && (
+        <p
+          data-testid="first-win"
+          role="status"
+          className="mastered-pop flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-flame-500 px-3 py-2 text-sm font-extrabold text-white shadow-pop"
+        >
+          <span aria-hidden="true" className="text-lg">
+            ☀️
+          </span>
+          Bugungi birinchi g‘alaba — XP ×2! Qaytib kelganing uchun.
         </p>
       )}
 

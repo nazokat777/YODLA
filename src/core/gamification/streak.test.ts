@@ -7,6 +7,7 @@ import {
   computeStreak,
   MAX_STREAK_FREEZES,
 } from './streak'
+import { nextStreakTier, streakTier } from './streak'
 
 /** 15-yanvar 2026, soat 10:00 (lokal) */
 const NOW = new Date(2026, 0, 15, 10, 0, 0).getTime()
@@ -260,5 +261,21 @@ describe('awardFreezes', () => {
   it('7 kundan kam streakda bermaydi', () => {
     expect(awardFreezes(6, 0, 0).freezesAvailable).toBe(0)
     expect(awardFreezes(0, 0, 0).freezesAvailable).toBe(0)
+  })
+})
+
+describe('olov darajalari', () => {
+  it('streak o‘sgani sari daraja o‘sadi', () => {
+    expect(streakTier(0).name).toBe('Boshlanish')
+    expect(streakTier(3).name).toBe('Uchqun')
+    expect(streakTier(7).name).toBe('Alanga')
+    expect(streakTier(30).name).toBe('Yulduz')
+    expect(streakTier(500).name).toBe('Afsona')
+  })
+
+  it('keyingi daraja — kutish uchun; eng yuqorida yo‘q', () => {
+    expect(nextStreakTier(1)?.minDays).toBe(3)
+    expect(nextStreakTier(7)?.minDays).toBe(14)
+    expect(nextStreakTier(100)).toBeNull()
   })
 })

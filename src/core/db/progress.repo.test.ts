@@ -48,7 +48,8 @@ describe('ensureProfile', () => {
 
     const profile = await ensureProfile()
 
-    expect(profile.totalXp).toBe(XP_PER_VERDICT.correct)
+    // Kunning birinchi to'g'ri javobi ×2 ("bugungi birinchi g'alaba")
+    expect(profile.totalXp).toBe(XP_PER_VERDICT.correct * 2)
   })
 })
 
@@ -56,8 +57,10 @@ describe('recordAnswer', () => {
   it('XP beradi va kunlik statistikani yangilaydi', async () => {
     const result = await answer('en:hello', 'correct')
 
-    expect(result.xpGained).toBe(XP_PER_VERDICT.correct)
-    expect(result.totalXp).toBe(XP_PER_VERDICT.correct)
+    // Birinchi g'alaba bonusi bilan ×2
+    expect(result.firstWinOfDay).toBe(true)
+    expect(result.xpGained).toBe(XP_PER_VERDICT.correct * 2)
+    expect(result.totalXp).toBe(XP_PER_VERDICT.correct * 2)
     expect(result.daily.answered).toBe(1)
     expect(result.daily.correct).toBe(1)
     expect(result.daily.cardIds).toEqual(['en:hello'])
@@ -75,7 +78,8 @@ describe('recordAnswer', () => {
     const result = await answer('en:hello', 'almost')
 
     expect(result.daily.correct).toBe(1)
-    expect(result.xpGained).toBe(XP_PER_VERDICT.almost)
+    // "Deyarli" ham g'alaba — birinchi g'alaba bonusi unga ham tegishli
+    expect(result.xpGained).toBe(XP_PER_VERDICT.almost * 2)
   })
 
   it('bir xil karta takroran javob berilsa noyob ro‘yxatga bir marta tushadi', async () => {
@@ -192,14 +196,14 @@ describe('getProgressSnapshot', () => {
   })
 
   it('XP darajaga aylanadi', async () => {
-    // 10 ta to'g'ri javob = 100 XP = 2-daraja
+    // 10 ta to'g'ri javob = 100 XP + birinchi g'alaba 10 = 110 → 2-daraja
     for (let i = 0; i < 10; i += 1) {
       await answer(`card-${i}`, 'correct')
     }
 
     const snapshot = await getProgressSnapshot(NOW)
 
-    expect(snapshot.profile.totalXp).toBe(100)
+    expect(snapshot.profile.totalXp).toBe(110)
     expect(snapshot.level.level).toBe(2)
   })
 
@@ -273,6 +277,8 @@ describe('syncBadges', () => {
 
 describe('kombo va benuqson bonusi', () => {
   it('kombo bonusi javob XP siga QO‘SHILADI', async () => {
+    // Birinchi g'alaba bonusi taqqoslashni buzmasin — oldin sarflanadi
+    await recordAnswer({ cardId: 'en:prime', verdict: 'correct', dailyGoalWords: 999 })
     const withoutBonus = await recordAnswer({
       cardId: 'en:a',
       verdict: 'correct',
@@ -448,5 +454,47 @@ describe('applyChestReward', () => {
     await applyChestReward({ kind: 'praise', text: 'Zo‘r!' })
 
     expect((await ensureProfile()).totalXp).toBe(before)
+  })
+})
+
+describe('bugungi birinchi g‘alaba', () => {
+  it('kunning birinchi to‘g‘ri javobi ×2, ikkinchisi oddiy', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+
+    const first = await recordAnswer({ cardId: 'en:a', verdict: 'correct', dailyGoalWords: 999 })
+    const second = await recordAnswer({ cardId: 'en:b', verdict: 'correct', dailyGoalWords: 999 })
+
+    expect(first.firstWinOfDay).toBe(true)
+    expect(first.xpGained).toBe(XP_PER_VERDICT.correct * 2)
+    expect(second.firstWinOfDay).toBe(false)
+    expect(second.xpGained).toBe(XP_PER_VERDICT.correct)
+  })
+
+  it('xato javob birinchi g‘alaba emas — bonus keyingi to‘g‘riga qoladi', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+
+    const wrong = await recordAnswer({ cardId: 'en:a', verdict: 'wrong', dailyGoalWords: 999 })
+    const correct = await recordAnswer({ cardId: 'en:b', verdict: 'correct', dailyGoalWords: 999 })
+
+    expect(wrong.firstWinOfDay).toBe(false)
+    expect(correct.firstWinOfDay).toBe(true)
+  })
+
+  it('ertasi kuni yana beriladi', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    const DAY = 24 * 60 * 60 * 1000
+
+    await recordAnswer({ cardId: 'en:a', verdict: 'correct', dailyGoalWords: 999, now: NOW })
+    const tomorrow = await recordAnswer({
+      cardId: 'en:a',
+      verdict: 'correct',
+      dailyGoalWords: 999,
+      now: NOW + DAY,
+    })
+
+    expect(tomorrow.firstWinOfDay).toBe(true)
   })
 })

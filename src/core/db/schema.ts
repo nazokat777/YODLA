@@ -98,6 +98,8 @@ export interface DailyStat {
    * qiladi — shuning uchun kunlik yozuv alohida.
    */
   gameBests?: Partial<Record<GameId, number>>
+  /** Bugungi birinchi g'alaba bonusi berilganmi (kunda bir marta) */
+  firstWinAwarded?: boolean
 }
 
 /** Foydalanuvchi profili — bazada bitta yozuv */

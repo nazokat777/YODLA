@@ -5,6 +5,7 @@ import { ExerciseHelpButton } from './ExerciseHelpButton'
 import { WordIntro } from './WordIntro'
 import { LANGUAGES } from '@/core/config/languages'
 import {
+  db,
   finalizeSession,
   gradeCard,
   recordAnswer,
@@ -36,6 +37,8 @@ import {
   comboBonusXp,
   comboMilestone,
   nextCombo,
+  levelFromXp,
+  levelTitle,
   nextComboMilestone,
   xpForAnswer,
 } from '@/core/gamification'
@@ -67,6 +70,11 @@ export interface SessionSummary {
   perfectBonusXp: number
   /** Shu seansda ochilgan nishonlar id lari */
   newBadges: string[]
+  /**
+   * Seans davomida DARAJA oshdi — yakunda katta bayram uchun.
+   * `undefined` — oshmadi (yoki o'lchab bo'lmadi).
+   */
+  levelUp?: { from: number; to: number; title: string }
   /** O'zlashtirilgan so'zlar (faqat `mastery` rejimida) */
   masteredWords: number
   /**
@@ -226,6 +234,23 @@ export function SessionRunner({
   /** Oxirgi javob uchun berilgan XP — feedbackda ko'rsatiladi */
   const [lastXpGained, setLastXpGained] = useState(0)
   const [goalJustCompleted, setGoalJustCompleted] = useState(false)
+  const [firstWinOfDay, setFirstWinOfDay] = useState(false)
+  /**
+   * Seans BOSHIDAGI daraja — yakunda oshgan-oshmaganini bilish uchun.
+   * `null` — hali o'qilmadi. Daraja oshishi darsning eng katta
+   * mukofoti, uni jimgina o'tkazib yuborish bo'lmaydi.
+   */
+  const levelAtStartRef = useRef<number | null>(null)
+  useEffect(() => {
+    void db.profile
+      .get('me')
+      .then((profile) => {
+        levelAtStartRef.current = levelFromXp(profile?.totalXp ?? 0).level
+      })
+      .catch(() => {
+        levelAtStartRef.current = null
+      })
+  }, [])
   /** Ketma-ket to'g'ri javoblar — seans ichidagi holat, saqlanmaydi */
   const [combo, setCombo] = useState(0)
   /** Shu javob bilan so'z O'ZLASHTIRILDI — bayram uchun */
@@ -442,7 +467,13 @@ export function SessionRunner({
     }
 
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
-      .then(({ newlyUnlocked, perfectBonusXp }) =>
+      .then(async ({ newlyUnlocked, perfectBonusXp }) => {
+        // Daraja oshdimi — HAQIQIY jami XP dan (bonuslar yozilgandan keyin)
+        const from = levelAtStartRef.current
+        const totalXp = (await db.profile.get('me'))?.totalXp ?? 0
+        const to = levelFromXp(totalXp).level
+        const levelUp = from !== null && to > from ? { from, to, title: levelTitle(to) } : undefined
+
         onFinish({
           ...summary,
           ...counts,
@@ -451,8 +482,9 @@ export function SessionRunner({
           xpEarned: summary.xpEarned + perfectBonusXp,
           perfectBonusXp,
           newBadges: newlyUnlocked,
-        }),
-      )
+          levelUp,
+        })
+      })
       .catch((error: unknown) => {
         // Nishonlarni hisoblab bo'lmasa ham seans yakuni ko'rsatiladi:
         // geymifikatsiya o'quv jarayonini to'sib qo'ymasligi kerak
@@ -587,6 +619,7 @@ export function SessionRunner({
       // XP yozilmasa ham takrorlash progressi saqlanib qolishi kerak
       let xpGained = 0
       let goalCompleted = false
+      let firstWin = false
       try {
         const progress = await recordAnswer({
           cardId: exercise.card.id,
@@ -605,6 +638,7 @@ export function SessionRunner({
         })
         xpGained = progress.xpGained
         goalCompleted = progress.goalJustCompleted
+        firstWin = progress.firstWinOfDay
       } catch (error) {
         console.error('XP ni yozib bo‘lmadi:', error)
       }
@@ -646,6 +680,7 @@ export function SessionRunner({
       setVerdict(result)
       setLastXpGained(xpGained)
       setGoalJustCompleted(goalCompleted)
+      setFirstWinOfDay(firstWin)
       setSummary((current) => ({
         ...current,
         answered: current.answered + 1,
@@ -1026,6 +1061,7 @@ export function SessionRunner({
             gradedCard={gradedCard}
             xpGained={lastXpGained}
             goalJustCompleted={goalJustCompleted}
+            firstWinOfDay={firstWinOfDay}
             mastered={justMastered}
             onContinue={handleContinue}
           />

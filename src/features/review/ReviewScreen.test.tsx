@@ -369,12 +369,15 @@ describe('ReviewScreen — geymifikatsiya', () => {
     await screen.findByTestId('session-progress')
     await answerRecognition('correct')
 
+    // Kunning birinchi to'g'ri javobi — "bugungi birinchi g'alaba" ×2,
+    // va bu ekranda ham ko'rsatiladi
     const xp = await screen.findByTestId('xp-gained')
-    expect(xp).toHaveTextContent(`+${XP_PER_VERDICT.correct} XP`)
+    expect(xp).toHaveTextContent(`+${XP_PER_VERDICT.correct * 2} XP`)
+    expect(screen.getByTestId('first-win')).toBeInTheDocument()
 
     await waitFor(async () => {
       const profile = await db.profile.get('me')
-      expect(profile?.totalXp).toBe(XP_PER_VERDICT.correct)
+      expect(profile?.totalXp).toBe(XP_PER_VERDICT.correct * 2)
     })
   })
 

@@ -77,6 +77,14 @@ export interface RecordAnswerResult {
   xpGained: number
   /** Kunlik maqsad AYNAN shu javob bilan bajarildimi */
   goalJustCompleted: boolean
+  /**
+   * BUGUNGI BIRINCHI G'ALABA — kunning birinchi to'g'ri javobi.
+   *
+   * Odat halqasi (cue → routine → reward): qaytib kelishning o'zi
+   * darhol mukofotlanadi, kun oxirigacha kutilmaydi. Bonus = o'sha
+   * javobning XP si (ya'ni ×2). Kunda bir marta, bazada belgilanadi.
+   */
+  firstWinOfDay: boolean
   daily: DailyStat
   totalXp: number
 }
@@ -113,7 +121,15 @@ export async function recordAnswer({
     const goalJustCompleted =
       !wasGoalReached && !daily.goalBonusAwarded && daily.cardIds.length >= dailyGoalWords
 
-    const xpGained = baseXp + bonusXp + (goalJustCompleted ? DAILY_GOAL_BONUS_XP : 0)
+    // Kunning birinchi to'g'ri javobi — qaytib kelganing uchun ×2
+    const firstWinOfDay = verdict !== 'wrong' && !daily.firstWinAwarded
+    if (firstWinOfDay) daily.firstWinAwarded = true
+
+    const xpGained =
+      baseXp +
+      bonusXp +
+      (goalJustCompleted ? DAILY_GOAL_BONUS_XP : 0) +
+      (firstWinOfDay ? baseXp : 0)
     if (goalJustCompleted) daily.goalBonusAwarded = true
 
     daily.xp += xpGained
@@ -122,7 +138,7 @@ export async function recordAnswer({
     await db.dailyStats.put(daily)
     await db.profile.put(profile)
 
-    return { xpGained, goalJustCompleted, daily, totalXp: profile.totalXp }
+    return { xpGained, goalJustCompleted, firstWinOfDay, daily, totalXp: profile.totalXp }
   })
 }
 

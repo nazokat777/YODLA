@@ -5,7 +5,14 @@ import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
-import { BADGES, levelTitle, MAX_STREAK_FREEZES, type BadgeStats } from '@/core/gamification'
+import {
+  BADGES,
+  levelTitle,
+  MAX_STREAK_FREEZES,
+  nextStreakTier,
+  streakTier,
+  type BadgeStats,
+} from '@/core/gamification'
 import { useProgress } from '@/hooks/useProgress'
 import { WeakSpots } from './WeakSpots'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -80,6 +87,20 @@ export function ProfileScreen() {
               label={`Muzlatish (max ${MAX_STREAK_FREEZES})`}
             />
           </div>
+          {/* Olov darajasi va KEYINGISI — "3 kundan keyin ⚡" (kutish) */}
+          <p data-testid="streak-tier" className="mt-3 flex items-center justify-between text-sm">
+            <span className="font-bold">
+              {streakTier(progress.streak.current).emoji} {streakTier(progress.streak.current).name}
+            </span>
+            {nextStreakTier(progress.streak.current) && (
+              <span className="text-ink-600">
+                {nextStreakTier(progress.streak.current)!.emoji}{' '}
+                {nextStreakTier(progress.streak.current)!.name} —{' '}
+                {nextStreakTier(progress.streak.current)!.minDays - progress.streak.current} kundan
+                keyin
+              </span>
+            )}
+          </p>
           {progress.streak.atRisk && (
             <p className="mt-3 rounded-xl bg-flame-500/15 px-3 py-2 text-sm font-semibold text-flame-700">
               Bugun hali mashq qilmadingiz — ketma-ketlik uzilib qolishi mumkin.

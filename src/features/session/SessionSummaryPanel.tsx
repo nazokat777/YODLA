@@ -5,6 +5,7 @@ import { loadGsap } from '@/lib/motion'
 import { Confetti } from './Confetti'
 import { BADGE_BY_ID, CHEST_MIN_ANSWERS } from '@/core/gamification'
 import { SessionChest } from './SessionChest'
+import { LevelUpBanner } from './LevelUpBanner'
 import type { SessionSummary } from './SessionRunner'
 
 interface SessionSummaryPanelProps {
@@ -63,6 +64,9 @@ export function SessionSummaryPanel({
      * topolmasdi — GSAP jimgina "target not found" deb o'tib ketardi.
      */
     <div ref={panelRef} className="flex flex-col gap-3">
+      {/* Eng katta yangilik — eng tepada, boshqa hamma narsadan oldin */}
+      {summary.levelUp && <LevelUpBanner {...summary.levelUp} />}
+
       <Panel className="relative overflow-hidden text-center">
         <div>
           <Confetti />

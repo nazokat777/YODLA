@@ -175,3 +175,37 @@ export function awardFreezes(
     lastAwardedAtStreak: milestone,
   }
 }
+
+/**
+ * OLOV DARAJALARI — streak o'sgani sari alanga "o'sadi".
+ *
+ * PSIXOLOGIYA: endowed progress — odam boshlangan narsani tashlab
+ * ketishni yoqtirmaydi; alanga qanchalik katta bo'lsa, uni o'chirish
+ * shunchalik og'ir tuyuladi. Har daraja nomlangan va KEYINGISI
+ * ko'rinib turadi ("3 kundan keyin ⚡") — kutish.
+ */
+export interface StreakTier {
+  /** Shu darajaga kirish uchun kerakli kun */
+  minDays: number
+  name: string
+  emoji: string
+}
+
+export const STREAK_TIERS: readonly StreakTier[] = [
+  { minDays: 100, name: 'Afsona', emoji: '🌟' },
+  { minDays: 30, name: 'Yulduz', emoji: '👑' },
+  { minDays: 14, name: 'Chaqmoq', emoji: '⚡' },
+  { minDays: 7, name: 'Alanga', emoji: '🔥' },
+  { minDays: 3, name: 'Uchqun', emoji: '✨' },
+  { minDays: 1, name: 'Boshlanish', emoji: '🔥' },
+]
+
+/** Joriy daraja (streak 0 — eng pastki) */
+export function streakTier(streak: number): StreakTier {
+  return STREAK_TIERS.find((tier) => streak >= tier.minDays) ?? STREAK_TIERS[STREAK_TIERS.length - 1]!
+}
+
+/** Keyingi daraja — yo'q bo'lsa `null` (eng yuqorida) */
+export function nextStreakTier(streak: number): StreakTier | null {
+  return [...STREAK_TIERS].reverse().find((tier) => tier.minDays > streak) ?? null
+}
