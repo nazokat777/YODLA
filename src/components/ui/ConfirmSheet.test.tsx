@@ -42,4 +42,17 @@ describe('ConfirmSheet', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Chiqish' }))
     expect(onDanger).toHaveBeenCalledTimes(1)
   })
+
+  it('Tab fokusni varaqa ichida aylantiradi', () => {
+    renderSheet()
+    const primary = screen.getByRole('button', { name: 'Davom etish' })
+    const danger = screen.getByRole('button', { name: 'Chiqish' })
+
+    danger.focus()
+    fireEvent.keyDown(window, { key: 'Tab' })
+    expect(primary).toHaveFocus()
+
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true })
+    expect(danger).toHaveFocus()
+  })
 })

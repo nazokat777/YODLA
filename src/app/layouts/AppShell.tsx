@@ -1,13 +1,16 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { cn } from '@/lib/cn'
+import { isCloudEnabled } from '@/lib/supabase'
 import { RouteTransition } from './RouteTransition'
 
 /** Pastki navigatsiya elementlari */
 const NAV_ITEMS = [
   { to: PATHS.home, label: 'Bosh sahifa', icon: '🏠', end: true },
   { to: PATHS.review, label: 'Takrorlash', icon: '🔁', end: false },
-  { to: PATHS.league, label: 'Liga', icon: '🏆', end: false },
+  // Liga faqat bulut sozlangan bo'lsa: kalitlar yo'q joyda (lokal
+  // nusxa) navigatsiyadagi bo'lim hech qachon ishlamas edi
+  ...(isCloudEnabled() ? [{ to: PATHS.league, label: 'Liga', icon: '🏆', end: false }] : []),
   { to: PATHS.stats, label: 'Statistika', icon: '📊', end: false },
   { to: PATHS.profile, label: 'Profil', icon: '👤', end: false },
 ]

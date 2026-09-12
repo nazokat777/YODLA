@@ -30,6 +30,7 @@ export function ConfirmSheet({
   onDanger,
 }: ConfirmSheetProps) {
   const primaryRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
@@ -37,6 +38,20 @@ export function ConfirmSheet({
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onPrimary()
+      // Fokus varaqa ichida aylanadi: Tab orqa fondagi tugmalarga chiqib ketmasin
+      if (event.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>('button, [href], input')
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (!first || !last) return
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault()
+          last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first.focus()
+        }
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -54,6 +69,7 @@ export function ConfirmSheet({
         className="absolute inset-0 bg-ink-900/40 backdrop-blur-sm"
       />
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
