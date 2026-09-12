@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { useLanguageAccent } from './useLanguageAccent'
 
@@ -16,7 +16,7 @@ describe('useLanguageAccent', () => {
 
     expect(document.documentElement.dataset.lang).toBe('ar')
 
-    useSettingsStore.getState().setLearningLanguage('ru')
+    act(() => useSettingsStore.getState().setLearningLanguage('ru'))
     expect(document.documentElement.dataset.lang).toBe('ru')
   })
 })
