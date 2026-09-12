@@ -43,6 +43,31 @@ describe('WordIntro', () => {
     expect(onContinue).toHaveBeenCalledTimes(1)
   })
 
+  it('arabcha namuna jumlaning O‘QILISHI ko‘rsatiladi, inglizchada esa yo‘q', () => {
+    render(
+      <WordIntro
+        card={{
+          ...CARD,
+          id: 'ar:kitob',
+          word: 'كِتَاب',
+          language: 'ar',
+          sentence: 'أقرأ الكتاب',
+          sentenceTranslation: "Men kitob o'qiyman",
+        }}
+        onContinue={vi.fn()}
+      />,
+    )
+    expect(screen.getByTestId('intro-sentence-reading')).toHaveAttribute('dir', 'ltr')
+    expect(screen.getByTestId('intro-sentence-reading').textContent?.length).toBeGreaterThan(3)
+  })
+
+  it('lotin yozuvida jumla o‘qilishi CHIZILMAYDI', () => {
+    render(
+      <WordIntro card={{ ...CARD, sentence: 'Hello, my friend' }} onContinue={vi.fn()} />,
+    )
+    expect(screen.queryByTestId('intro-sentence-reading')).not.toBeInTheDocument()
+  })
+
   it('so‘z o‘rganilayotgan til yo‘nalishida chiziladi', () => {
     render(<WordIntro card={{ ...CARD, language: 'ar', word: 'سَلَام' }} onContinue={() => {}} />)
 

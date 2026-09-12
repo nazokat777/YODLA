@@ -10,6 +10,7 @@ import type { CardRecord } from '@/core/db'
 import { enterStagger, scrambleReveal, withMotion } from '@/lib/motion'
 import { speak } from '@/lib/speech'
 import { WordDisplay } from './WordDisplay'
+import { transliterate } from '@/core/text/transliterate'
 
 interface WordIntroProps {
   card: CardRecord
@@ -30,6 +31,7 @@ interface WordIntroProps {
  */
 export function WordIntro({ card, onContinue }: WordIntroProps) {
   const language = LANGUAGES[card.language]
+  const sentenceReading = card.sentence ? transliterate(card.sentence, language.script) : null
   const rootRef = useRef<HTMLDivElement>(null)
 
   // Yangi so'z darhol O'QIB beriladi: eshitmasdan yodlash qiyin
@@ -136,6 +138,21 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
           >
             {card.sentence}
           </p>
+          {/*
+            Jumlaning O'QILISHI — so'zdagi kabi. Arab yozuvini endi
+            o'rganayotgan bola jumlani ko'radi, lekin o'qiy olmaydi;
+            transliteratsiya uni ovoz chiqarib o'qishga imkon beradi.
+          */}
+          {sentenceReading && (
+            <p
+              dir="ltr"
+              lang="uz"
+              data-testid="intro-sentence-reading"
+              className="mt-0.5 text-xs text-ink-600"
+            >
+              {sentenceReading}
+            </p>
+          )}
           {card.sentenceTranslation && (
             <p className="mt-1 text-sm text-ink-600">{card.sentenceTranslation}</p>
           )}
