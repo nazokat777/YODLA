@@ -236,7 +236,7 @@ export function ProfileScreen() {
 
       <HowItWorks />
 
-      <BackupPanel />
+      <BackupPanel seenWords={cardStats?.learned ?? 0} />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { addMissingCards, db, gradeCard } from '@/core/db'
 import { BackupPanel } from './BackupPanel'
+import { shouldNudgeBackup } from './backupNudge'
 
 describe('BackupPanel', () => {
   beforeEach(async () => {
@@ -59,5 +60,26 @@ describe('BackupPanel', () => {
 
     expect(await screen.findByTestId('backup-message')).toHaveTextContent(/emas yoki buzilgan/i)
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('eslatma: 30+ so‘z va 14 kundan beri zaxira yo‘q', () => {
+    const DAY = 24 * 60 * 60 * 1000
+    const now = 1_800_000_000_000
+    expect(shouldNudgeBackup(null, 10, now)).toBe(false)
+    expect(shouldNudgeBackup(null, 30, now)).toBe(true)
+    expect(shouldNudgeBackup(now - 3 * DAY, 100, now)).toBe(false)
+    expect(shouldNudgeBackup(now - 20 * DAY, 100, now)).toBe(true)
+  })
+
+  it('eslatma panelda ko‘rinadi va yuklab olgach yo‘qoladi', async () => {
+    localStorage.removeItem('polyglotpro:lastBackup')
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    render(<BackupPanel seenWords={50} />)
+
+    expect(screen.getByTestId('backup-nudge')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /yuklab olish/i }))
+    await screen.findByTestId('backup-message')
+
+    expect(screen.queryByTestId('backup-nudge')).not.toBeInTheDocument()
   })
 })

@@ -3,9 +3,20 @@ import { Button } from '@/components/ui/Button'
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { Panel } from '@/components/ui/Panel'
 import { createBackup, parseBackup, restoreBackup, type Backup } from '@/core/db'
+import { shouldNudgeBackup } from './backupNudge'
 
 /** Zustand persist kaliti — sozlamalar ham zaxiraga kiradi */
 const SETTINGS_KEY = 'polyglotpro:settings'
+/** Oxirgi zaxira vaqti — eslatma uchun */
+const LAST_BACKUP_KEY = 'polyglotpro:lastBackup'
+function readLastBackup(): number | null {
+  try {
+    const raw = localStorage.getItem(LAST_BACKUP_KEY)
+    return raw ? Number(raw) : null
+  } catch {
+    return null
+  }
+}
 
 function fileName(now: Date): string {
   const mm = String(now.getMonth() + 1).padStart(2, '0')
@@ -20,8 +31,10 @@ function fileName(now: Date): string {
  * (qaytarib bo'lmaydi: shu qurilmadagi progress fayldagisi bilan
  * almashtiriladi) → natija.
  */
-export function BackupPanel() {
+export function BackupPanel({ seenWords = 0 }: { seenWords?: number }) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const [lastBackup, setLastBackup] = useState<number | null>(readLastBackup)
+  const nudge = shouldNudgeBackup(lastBackup, seenWords)
   const [pending, setPending] = useState<Backup | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
@@ -34,6 +47,12 @@ export function BackupPanel() {
     link.download = fileName(new Date())
     link.click()
     URL.revokeObjectURL(url)
+    try {
+      localStorage.setItem(LAST_BACKUP_KEY, String(Date.now()))
+    } catch {
+      // eslatma shunchaki qolaveradi
+    }
+    setLastBackup(Date.now())
     setMessage(`Saqlandi: ${backup.cards.length} ta so‘z progressi`)
   }
 
@@ -60,9 +79,15 @@ export function BackupPanel() {
   }
 
   return (
-    <Panel data-testid="backup-panel" className="flex flex-col gap-3">
+    <Panel data-testid="backup-panel" tone={nudge ? 'warning' : 'default'} className="flex flex-col gap-3">
       <div>
         <h2 className="font-bold">Zaxira nusxa</h2>
+        {/* Ko'p so'z, uzoq vaqt zaxirasiz — yo'qotish xavfi yumshoq aytiladi */}
+        {nudge && (
+          <p data-testid="backup-nudge" className="mb-1 text-sm font-bold text-flame-700">
+            ⚠️ {seenWords} ta so‘z progressi faqat shu qurilmada. Zaxira olib qo‘ying.
+          </p>
+        )}
         <p className="text-sm text-ink-600">
           Progress faqat shu qurilmada saqlanadi. Telefon almashtirsangiz — faylni
           yuklab oling va yangi qurilmada tiklang.
