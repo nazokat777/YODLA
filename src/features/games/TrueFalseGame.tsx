@@ -20,6 +20,7 @@ import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
+import { haptic } from '@/lib/haptics'
 
 /** Bir o'yinda nechta savol */
 const ROUND_SIZE = 15
@@ -102,6 +103,7 @@ export function TrueFalseGame() {
       setFeedback(correct ? 'correct' : 'wrong')
       setScore((current) => current + (correct ? 1 : 0))
       if (soundEnabled) (correct ? playCorrectSound : playWrongSound)()
+      if (correct) haptic('success')
 
       // SM-2 ga yumshoq baho: takrorlashning o'zi foydali, lekin
       // 50% taxmin qilinadigan formatga qattiq tayanib bo'lmaydi

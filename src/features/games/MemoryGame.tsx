@@ -27,6 +27,7 @@ import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
+import { haptic } from '@/lib/haptics'
 
 /** Juft bo'lmagan kataklar necha ms ochiq turadi */
 const FLIP_BACK_MS = 900
@@ -125,6 +126,7 @@ export function MemoryGame() {
         dailyGoalWords,
       })
       if (soundEnabled) (isPair ? playCorrectSound : playWrongSound)()
+      if (isPair) haptic('success')
     }
 
     const timer = window.setTimeout(

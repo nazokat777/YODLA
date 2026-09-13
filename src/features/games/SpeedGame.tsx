@@ -28,6 +28,7 @@ import { shuffle } from '@/lib/random'
 import { cn } from '@/lib/cn'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { playCorrectSound, playWrongSound } from '@/lib/sound'
+import { haptic } from '@/lib/haptics'
 
 /** O'yinga nechta karta tayyorlanadi — 60 soniyaga yetib ortadi */
 const POOL_SIZE = 60
@@ -161,6 +162,7 @@ export function SpeedGame({
       // Ovoz — seansdagi kabi. O'yinda ayniqsa kerak: bola ekranga
       // emas, tugmaga qaraydi va natijani QULOQ bilan oladi
       if (soundEnabled) (correct ? playCorrectSound : playWrongSound)()
+      if (correct) haptic('success')
 
       const cardId = exercise.card.id
       void gradeCard(cardId, gameGrade(correct))
