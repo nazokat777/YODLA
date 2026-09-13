@@ -940,6 +940,22 @@ Ma'lumot taxallusli (6 belgilik kod + o'zi yozgan ism), lekin ilova ichidagi
 "faqat ism va XP yuboriladi" va'dasidan bu bir oz kengroq. Buni yopish uchun
 autentifikatsiya kerak bo'ladi — o'shanda RLS `auth.uid()` ga tayana oladi.
 
+## Android APK (TWA)
+
+`YODLA.apk` — Trusted Web Activity: ilova o'zi emas, `yodla-five.vercel.app`
+ni to'liq ekranda ochadigan qobiq (Bubblewrap). **Har deploy'dan keyin
+telefon ilovani ochganda yangi versiya o'zi keladi — yangi APK kerak
+emas** (faqat nom/ikonka/paket o'zgarsa). Offline rejim ichida ishlaydi.
+
+- Loyiha: `D:\YODLA-android` (repo tashqarisida): `twa-manifest.json`,
+  `android.keystore` (alias `yodla`), Gradle. Qayta qurish:
+  `gradlew.bat assembleRelease` → `zipalign` → `apksigner sign`.
+- `public/.well-known/assetlinks.json` — imzo SHA-256 (Digital Asset
+  Links). Shu fayl jonli bo'lmasa Android ilovani brauzer ichida (manzil
+  qatori bilan) ochadi; bo'lsa — to'liq ekran.
+- Keystore YO'QOLMASIN: Play Store'ga chiqarilsa keyingi yangilanishlar
+  faqat shu kalit bilan imzolanadi.
+
 ## Offline rejim (PWA)
 
 Ilova telefonga o'rnatiladi va internetsiz ishlaydi — kontent ham,

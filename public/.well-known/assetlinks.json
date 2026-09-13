@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.yodla.twa",
+      "sha256_cert_fingerprints": [
+        "86:99:ED:7C:B2:DB:BA:CB:ED:06:FC:E4:FF:78:82:0D:F0:49:AE:03:26:08:39:5D:7B:2F:AE:93:C4:73:F0:B9"
+      ]
+    }
+  }
+]
