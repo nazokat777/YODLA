@@ -28,6 +28,7 @@ import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
 import { Companion } from './Companion'
 import { WordOfDay } from './WordOfDay'
+import { InstallCard } from '@/components/ui/InstallCard'
 import { currentUnitId } from '@/features/lesson/currentUnit'
 
 /**
@@ -166,6 +167,9 @@ export function HomeScreen() {
       {/* Til almashtirgich: har til alohida progress bilan — istalgan payt
           o'tish mumkin, so'zlar yo'qolmaydi */}
       <LanguageSwitcher />
+
+      {/* O'rnatish — faqat brauzer taklif qilsa; bosh ekran ikonkasi = kunlik signal */}
+      <InstallCard />
 
       {/* Kunning so'zi — qiziquvchanlik bo'shlig'i, har kuni yangi sir */}
       {cards && learningLanguage && (

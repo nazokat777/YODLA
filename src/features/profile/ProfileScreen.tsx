@@ -18,6 +18,7 @@ import { useProgress } from '@/hooks/useProgress'
 import { WeakSpots } from './WeakSpots'
 import { HowItWorks } from './HowItWorks'
 import { BackupPanel } from './BackupPanel'
+import { InstallCard } from '@/components/ui/InstallCard'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { ReminderSettings } from './ReminderSettings'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -233,6 +234,8 @@ export function ProfileScreen() {
           <span aria-hidden="true">💡</span>
         </Link>
       </Panel>
+
+      <InstallCard />
 
       <HowItWorks />
 
