@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { Button } from '@/components/ui/Button'
+import { shareText, weeklyReportText } from '@/lib/share'
 import { Panel } from '@/components/ui/Panel'
 import { getDailyStatsSince } from '@/core/db'
 import { buildWeekComparison, buildWeeklySeries, type DayPoint } from '@/core/stats'
@@ -30,6 +33,7 @@ const WEEKDAY_NAMES = [
 export function StatsScreen() {
   const now = useNowTick()
   const progress = useProgress()
+  const [shareNote, setShareNote] = useState<string | null>(null)
 
   const weekStats = useLiveQuery(
     () => getDailyStatsSince(addDays(startOfDay(now), -6)),
@@ -66,6 +70,43 @@ export function StatsScreen() {
       </Panel>
 
       <WeekComparison current={comparison.current.xp} previous={comparison.previous.xp} />
+
+      {/*
+        Ulashish — ota-onaga ko'rsatish, do'stga maqtanish. Ijtimoiy
+        mukofot: natija ko'rsatilganda u "haqiqiy" bo'ladi. Faqat matn —
+        hech qanday shaxsiy ma'lumot yo'q.
+      */}
+      <Button
+        variant="secondary"
+        block
+        data-testid="share-week"
+        onClick={() => {
+          void shareText(
+            'YODLA — haftalik natija',
+            weeklyReportText({
+              activeDays: series.filter((point) => point.xp > 0).length,
+              words: weekWords,
+              xp: weekXp,
+              streak: progress?.streak.current ?? 0,
+            }),
+          ).then((outcome) =>
+            setShareNote(
+              outcome === 'copied'
+                ? 'Nusxa olindi — xabarga qo‘ying'
+                : outcome === 'shared'
+                  ? 'Ulashildi'
+                  : null,
+            ),
+          )
+        }}
+      >
+        📤 Haftalik natijani ulashish
+      </Button>
+      {shareNote && (
+        <p role="status" className="-mt-2 text-center text-sm text-ink-600">
+          {shareNote}
+        </p>
+      )}
 
       {/* So'zlar tilga bog'liq — streak/XP dan farqli */}
       <LanguagesPanel />
