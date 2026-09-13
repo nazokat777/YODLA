@@ -27,6 +27,7 @@ import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
 import { Companion } from './Companion'
 import { WordOfDay } from './WordOfDay'
+import { currentUnitId } from '@/features/lesson/currentUnit'
 
 /**
  * Bosh ekran (TZ 6.2): streak, kunlik maqsad progressi,
@@ -37,6 +38,7 @@ import { WordOfDay } from './WordOfDay'
  */
 export function HomeScreen() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const startingLevel = useSettingsStore((s) => s.startingLevel)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
   const language = learningLanguage ? LANGUAGES[learningLanguage] : null
 
@@ -162,7 +164,9 @@ export function HomeScreen() {
       <LanguageSwitcher />
 
       {/* Kunning so'zi — qiziquvchanlik bo'shlig'i, har kuni yangi sir */}
-      {cards && <WordOfDay cards={cards} />}
+      {cards && learningLanguage && (
+        <WordOfDay cards={cards} unitId={currentUnitId(cards, learningLanguage, startingLevel)} />
+      )}
 
       <Panel interactive>
         <div className="mb-1 flex items-baseline justify-between">

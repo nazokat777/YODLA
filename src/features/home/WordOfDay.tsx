@@ -14,6 +14,8 @@ import { unitIdOf } from '@/core/path'
 
 interface WordOfDayProps {
   cards: readonly CardRecord[]
+  /** O'quv yo'lidagi joriy bo'lim — uning so'zlari afzal (tez orada darsda uchraydi) */
+  unitId?: string | null
 }
 
 /**
@@ -24,12 +26,20 @@ interface WordOfDayProps {
  * har kuni bitta yangi "sir". Bola bosh ekranga aynan shuning uchun
  * ham qaytadi.
  */
-export function WordOfDay({ cards }: WordOfDayProps) {
-  // Rasmi bor so'zlar afzal: "olma" ko'rinadi va esda qoladi, "hers" emas
-  const card = useMemo(
-    () => wordOfDay(cards, Date.now(), (item) => imageCodeFor(item.translation) !== null),
-    [cards],
-  )
+export function WordOfDay({ cards, unitId = null }: WordOfDayProps) {
+  /*
+   * Afzallik: JORIY bo'limning rasmli so'zi — u keyingi darsda uchraydi va
+   * "buni bilaman!" lahzasi tez keladi. Bo'limda bunday so'z bo'lmasa —
+   * istalgan rasmli A1 so'z ("olma" ko'rinadi va esda qoladi, "hers" emas).
+   */
+  const card = useMemo(() => {
+    const now = Date.now()
+    const inUnit = (item: CardRecord) =>
+      unitId !== null && Boolean(item.level && item.topic) && unitIdOf(item.level!, item.topic!) === unitId
+    const withImage = (item: CardRecord) => imageCodeFor(item.translation) !== null
+    const unitPool = cards.filter((item) => inUnit(item) && withImage(item) && item.totalReviews === 0)
+    return unitPool.length > 0 ? wordOfDay(unitPool, now) : wordOfDay(cards, now, withImage)
+  }, [cards, unitId])
   const [revealed, setRevealed] = useState(false)
 
   if (!card) return null

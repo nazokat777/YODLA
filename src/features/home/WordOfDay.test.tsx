@@ -41,4 +41,17 @@ describe('WordOfDay', () => {
     )
     expect(container).toBeEmptyDOMElement()
   })
+
+  it('joriy bo‘limning rasmli so‘zi afzal — keyingi darsda uchraydi', () => {
+    const cards = [
+      card('apple', { topic: 'Ovqat', translation: 'olma' }),
+      card('mother', { topic: 'Oila', translation: 'ona' }),
+    ]
+    render(
+      <MemoryRouter>
+        <WordOfDay cards={cards} unitId="a1-oila" />
+      </MemoryRouter>,
+    )
+    expect(screen.getByTestId('word-of-day')).toHaveTextContent('mother')
+  })
 })
