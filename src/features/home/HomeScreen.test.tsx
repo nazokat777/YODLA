@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { addMissingCards, db, recordAnswer, syncBadges, type NewCardRecordInput } from '@/core/db'
+import { addMissingCards, db, ensureProfile, recordAnswer, syncBadges, type NewCardRecordInput } from '@/core/db'
 import { addDays, startOfDay } from '@/lib/date'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { HomeScreen } from './HomeScreen'
@@ -194,5 +194,21 @@ describe('HomeScreen — o‘yinlar qulfi', () => {
     const card = await screen.findByTestId('weak-card')
     expect(card).toHaveTextContent('2 ta qiyin so‘z')
     expect(card.closest('a')).toHaveAttribute('href', '/review/weak')
+  })
+
+  it('kecha muzlatish ishlatilgan bo‘lsa bosh ekranda aytiladi', async () => {
+    await db.cards.clear()
+    await ensureProfile()
+    await db.profile.update('me', { frozenDays: [startOfDay(addDays(Date.now(), -1))], freezesAvailable: 0 })
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter>
+        <HomeScreen />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByTestId('freeze-used')).toHaveTextContent('Zaxira: 0')
   })
 })

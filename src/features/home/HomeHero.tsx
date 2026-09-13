@@ -19,6 +19,9 @@ interface HomeHeroProps {
   dailyGoalWords: number
   dueCount: number
   isLoading: boolean
+  /** Kecha muzlatish ishlatilgan — foydalanuvchi buni bilishi kerak */
+  frozenYesterday?: boolean
+  freezesLeft?: number
 }
 
 /** Halqa geometriyasi */
@@ -47,6 +50,8 @@ export function HomeHero({
   dailyGoalWords,
   dueCount,
   isLoading,
+  frozenYesterday = false,
+  freezesLeft = 0,
 }: HomeHeroProps) {
   const ratio = dailyGoalWords > 0 ? Math.min(1, wordsToday / dailyGoalWords) : 0
   const goalDone = wordsToday >= dailyGoalWords
@@ -183,6 +188,20 @@ export function HomeHero({
           </p>
         </div>
       </div>
+
+      {/*
+        Muzlatish JIMGINA ishlatilmaydi: bola kecha o'tkazib yuborganini
+        va streak nima uchun saqlanganini bilishi kerak — shaffoflik va
+        "zaxira kamaydi" ogohlantirishi (loss aversion, lekin yumshoq).
+      */}
+      {frozenYesterday && (
+        <p
+          data-testid="freeze-used"
+          className="relative mt-4 rounded-xl bg-white/15 px-3 py-2 text-sm font-semibold backdrop-blur-md"
+        >
+          🧊 Kecha muzlatish ishlatildi — streak saqlandi. Zaxira: {freezesLeft}
+        </p>
+      )}
 
       {/* NN/g #1: xavf faqat rang bilan emas — matn bilan (title mobil'da yo'q) */}
       {streakAtRisk && streak > 0 && (

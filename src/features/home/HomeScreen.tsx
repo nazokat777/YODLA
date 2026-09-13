@@ -8,6 +8,7 @@ import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
 import { computeLanguageStats, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
 import { formatTimeUntil } from '@/lib/format'
+import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
 import { useProgress } from '@/hooks/useProgress'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -145,6 +146,8 @@ export function HomeScreen() {
         dailyGoalWords={dailyGoalWords}
         dueCount={dueCount}
         isLoading={isLoading}
+        frozenYesterday={progress?.profile.frozenDays.includes(addDays(startOfDay(now), -1)) ?? false}
+        freezesLeft={progress?.profile.freezesAvailable ?? 0}
       />
 
       {/* Yo'ldosh — so'zlar bilan o'sadigan jonzot (g'amxo'rlik effekti) */}
