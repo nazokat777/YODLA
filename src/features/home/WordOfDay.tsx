@@ -8,6 +8,9 @@ import { wordOfDay } from '@/core/stats'
 import { imageCodeFor } from '@/content/wordImages'
 import { transliterate } from '@/core/text/transliterate'
 import { haptic } from '@/lib/haptics'
+import { Link } from 'react-router-dom'
+import { PATHS } from '@/app/paths'
+import { unitIdOf } from '@/core/path'
 
 interface WordOfDayProps {
   cards: readonly CardRecord[]
@@ -31,6 +34,7 @@ export function WordOfDay({ cards }: WordOfDayProps) {
 
   if (!card) return null
   const language = LANGUAGES[card.language]
+  const lessonId = card.level && card.topic ? unitIdOf(card.level, card.topic) : null
   const reading = transliterate(card.word, language.script)
 
   return (
@@ -56,7 +60,18 @@ export function WordOfDay({ cards }: WordOfDayProps) {
         <div data-testid="word-of-day-meaning" className="mastered-pop flex items-center gap-3 rounded-xl bg-brand-50 px-3 py-2">
           <WordImage translation={card.translation} size="sm" />
           <p className="text-lg font-extrabold text-brand-700">{card.translation}</p>
-          <p className="ms-auto text-xs text-ink-600">darsda uchraydi</p>
+          {/* Qiziqish → darhol harakat: shu so'z bo'lgan darsga */}
+          {lessonId ? (
+            <Link
+              to={PATHS.lessonById(lessonId)}
+              data-testid="word-of-day-lesson"
+              className="tap-highlight-none ms-auto shrink-0 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white"
+            >
+              Shu darsga →
+            </Link>
+          ) : (
+            <p className="ms-auto text-xs text-ink-600">darsda uchraydi</p>
+          )}
         </div>
       ) : (
         <button

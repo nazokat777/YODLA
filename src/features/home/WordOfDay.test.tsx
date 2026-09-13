@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import type { CardRecord } from '@/core/db'
+import { MemoryRouter } from 'react-router-dom'
 import { WordOfDay } from './WordOfDay'
 
 vi.mock('@/lib/speech', async (importOriginal) => ({
@@ -17,7 +18,11 @@ function card(id: string, fields: Partial<CardRecord> = {}): CardRecord {
 
 describe('WordOfDay', () => {
   it('ma’no YOPIQ turadi, bosilganda ochiladi', () => {
-    render(<WordOfDay cards={[card('apple')]} />)
+    render(
+      <MemoryRouter>
+        <WordOfDay cards={[card('apple', { topic: 'Ovqat' })]} />
+      </MemoryRouter>,
+    )
 
     expect(screen.getByTestId('word-of-day')).toHaveTextContent('apple')
     expect(screen.queryByTestId('word-of-day-meaning')).not.toBeInTheDocument()
@@ -25,10 +30,15 @@ describe('WordOfDay', () => {
     fireEvent.click(screen.getByRole('button', { name: /ma.nosini ko.rish/i }))
 
     expect(screen.getByTestId('word-of-day-meaning')).toHaveTextContent('apple-uz')
+    expect(screen.getByTestId('word-of-day-lesson')).toHaveAttribute('href', '/lesson/a1-ovqat')
   })
 
   it('ko‘rilmagan so‘z qolmasa karta yo‘q', () => {
-    const { container } = render(<WordOfDay cards={[card('a', { totalReviews: 2 })]} />)
+    const { container } = render(
+      <MemoryRouter>
+        <WordOfDay cards={[card('a', { totalReviews: 2 })]} />
+      </MemoryRouter>,
+    )
     expect(container).toBeEmptyDOMElement()
   })
 })
