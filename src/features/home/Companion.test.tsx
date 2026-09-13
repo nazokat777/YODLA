@@ -36,4 +36,9 @@ describe('Companion', () => {
     await new Promise((resolve) => setTimeout(resolve, 80))
     expect(screen.queryByText(/yangi bosqich/i)).not.toBeInTheDocument()
   })
+
+  it('bezaklar eng uzun streak bilan', () => {
+    render(<Companion seenWords={12} longestStreak={7} />)
+    expect(screen.getByTestId('companion-accessories')).toHaveTextContent('✨🎀')
+  })
 })

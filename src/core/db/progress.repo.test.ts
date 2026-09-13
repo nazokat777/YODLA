@@ -21,6 +21,9 @@ import {
   saveGameBest,
   applyChestReward,
   claimWeeklyMilestone,
+  claimSecretWord,
+  recordBestCombo,
+  countPerfectWeeks,
   syncBadges,
 } from './progress.repo'
 
@@ -512,5 +515,27 @@ describe('claimWeeklyMilestone', () => {
     expect(await claimWeeklyMilestone('2026-09-14', 3, 30)).toBe(true)
 
     expect((await ensureProfile()).totalXp).toBe(120)
+  })
+})
+
+describe('yashirin nishonlar manbalari', () => {
+  it('eng uzun kombo faqat oshganda yoziladi', async () => {
+    await db.profile.clear()
+    await recordBestCombo(7)
+    await recordBestCombo(3)
+    expect((await ensureProfile()).bestCombo).toBe(7)
+  })
+
+  it('sehrli so‘z haftada bir marta va XP yoziladi', async () => {
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    expect(await claimSecretWord('2026-09-07', 30)).toBe(true)
+    expect(await claimSecretWord('2026-09-07', 30)).toBe(false)
+    expect((await ensureProfile()).totalXp).toBe(30)
+  })
+
+  it('7/7 haftalar sanaladi', () => {
+    expect(countPerfectWeeks({ a: [3, 5, 7], b: [3], c: [7] })).toBe(2)
+    expect(countPerfectWeeks(undefined)).toBe(0)
   })
 })

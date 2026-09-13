@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Panel } from '@/components/ui/Panel'
 import { db, markCompanionStageCelebrated } from '@/core/db'
 import {
+  companionAccessories,
   companionLine,
   companionProgress,
   companionStage,
@@ -18,6 +19,8 @@ interface CompanionProps {
   seenWords: number
   /** Gap uchun holat (bosh ekran biladi) */
   context?: CompanionContext
+  /** Eng uzun streak — bezaklar shundan */
+  longestStreak?: number
 }
 
 /**
@@ -29,7 +32,8 @@ interface CompanionProps {
  */
 const QUIET: CompanionContext = { streakAtRisk: false, goalDone: false, dueCount: 0 }
 
-export function Companion({ seenWords, context = QUIET }: CompanionProps) {
+export function Companion({ seenWords, context = QUIET, longestStreak = 0 }: CompanionProps) {
+  const accessories = companionAccessories(longestStreak)
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const stage = companionStage(seenWords)
   const next = nextCompanionStage(seenWords)
@@ -101,6 +105,18 @@ export function Companion({ seenWords, context = QUIET }: CompanionProps) {
         >
           {stage.emoji}
         </span>
+        {/* Bezaklar — streak bilan ochilgan to'plam, yo'ldosh ustida */}
+        {accessories.length > 0 && (
+          <span
+            data-testid="companion-accessories"
+            aria-label={`Bezaklar: ${accessories.map((a) => a.name).join(', ')}`}
+            className="absolute -right-1 -top-1 flex gap-0.5 text-base"
+          >
+            {accessories.map((a) => (
+              <span key={a.emoji}>{a.emoji}</span>
+            ))}
+          </span>
+        )}
       </div>
 
       <div className="min-w-0 flex-1">

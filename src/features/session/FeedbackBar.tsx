@@ -4,6 +4,7 @@ import { LANGUAGES } from '@/core/config/languages'
 import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import type { CardRecord } from '@/core/db'
 import { setMnemonic } from '@/core/db'
+import { SECRET_WORD_XP } from '@/core/games'
 import { transliterate } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
 import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
@@ -45,6 +46,8 @@ interface FeedbackBarProps {
   firstWinOfDay?: boolean
   /** Yo'ldoshning ko'rinishi (seans boshida bir marta o'qiladi); tuxumda `null` */
   companion?: string | null
+  /** Haftaning sehrli so'zi shu javob bilan topildi — kutilmagan bayram */
+  secretFound?: boolean
   onContinue: () => void
 }
 
@@ -146,6 +149,7 @@ export function FeedbackBar({
   mastered = false,
   firstWinOfDay = false,
   companion = null,
+  secretFound = false,
   onContinue,
 }: FeedbackBarProps) {
   const tone = TONE[verdict]
@@ -286,6 +290,17 @@ export function FeedbackBar({
             ☀️
           </span>
           Bugungi birinchi g‘alaba — XP ×2! Qaytib kelganing uchun.
+        </p>
+      )}
+
+      {secretFound && (
+        <p
+          data-testid="secret-word"
+          role="status"
+          className="levelup-in relative overflow-hidden rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-3 py-2 text-sm font-extrabold text-white shadow-pop"
+        >
+          <span aria-hidden="true" className="levelup-sweep pointer-events-none absolute inset-0" />
+          🪄 SEHRLI SO‘Z! Haftaning yashirin so‘zini topding — +{SECRET_WORD_XP} XP
         </p>
       )}
 

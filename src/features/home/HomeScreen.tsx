@@ -151,6 +151,7 @@ export function HomeScreen() {
       {globalStats && (
         <Companion
           seenWords={globalStats.learned}
+          longestStreak={progress?.longestStreak ?? 0}
           context={{
             streakAtRisk: progress?.streak.atRisk ?? false,
             goalDone: wordsToday >= dailyGoalWords,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { companionLine, companionProgress, companionStage, nextCompanionStage } from './companion'
+import { companionAccessories, companionLine, companionProgress, companionStage, nextCompanionStage } from './companion'
 
 describe('yo‘ldosh', () => {
   it('birinchi o‘zgarish birinchi darsdan keyin — bog‘lanish tez boshlanadi', () => {
@@ -24,5 +24,10 @@ describe('yo‘ldosh', () => {
     expect(companionLine(chick, base)).toBe(chick.line)
     // Tuxum gapirmaydi — holatdan qat'i nazar o'z gapi
     expect(companionLine(companionStage(0), { ...base, streakAtRisk: true })).toBe(companionStage(0).line)
+  })
+
+  it('bezaklar eng uzun streak bo‘yicha — uzilsa ham qoladi', () => {
+    expect(companionAccessories(2)).toEqual([])
+    expect(companionAccessories(14).map((a) => a.emoji)).toEqual(['✨', '🎀', '🎩'])
   })
 })

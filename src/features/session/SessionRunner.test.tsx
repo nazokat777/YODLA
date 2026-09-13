@@ -11,7 +11,14 @@ vi.mock('@/core/db', async (importOriginal) => {
     gradeCard: vi.fn(async (id: string) => ({ id, interval: 1 }) as CardRecord),
     recordAnswer: vi.fn(async () => ({ xpGained: 5, goalJustCompleted: false })),
     finalizeSession: vi.fn(async () => ({ newlyUnlocked: [] })),
+    claimSecretWord: vi.fn(async () => true),
   }
+})
+
+// Haftaning sehrli so'zi — testda birinchi karta
+vi.mock('@/core/games', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core/games')>()
+  return { ...actual, secretWordId: () => 'en:water' }
 })
 
 import { gradeCard, recordAnswer } from '@/core/db'
@@ -521,6 +528,17 @@ describe('SessionRunner — o‘zlashtirish rejimi', () => {
       expect(stillRunning()).toBe(true)
     })
     expect(screen.getByTestId('session-progress')).toHaveTextContent('0/1')
+  })
+
+  it('haftaning SEHRLI so‘zi to‘g‘ri topilganda kutilmagan bayram va +XP', async () => {
+    renderMastery()
+    await screen.findByTestId('session-progress')
+
+    await answerOnly('correct')
+
+    expect(screen.getByTestId('secret-word')).toHaveTextContent(/sehrli so‘z/i)
+    // Bonus javob XP siga qo'shilib ko'rsatiladi (5 + 30)
+    expect(screen.getByTestId('xp-gained')).toHaveTextContent('+35 XP')
   })
 
   it('so‘z O‘ZLASHTIRILGAN lahzada alohida nishon chiqadi', async () => {

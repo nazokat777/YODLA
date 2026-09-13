@@ -71,3 +71,24 @@ export function companionLine(stage: CompanionStage, context: CompanionContext):
   if (context.goalDone) return 'Bugun to‘ydim! Ertaga yana kel 💚'
   return stage.line
 }
+
+/**
+ * YO'LDOSH BEZAKLARI — olov darajasi bilan ochiladi.
+ *
+ * To'plam (collection) hissi: bezak yo'ldoshga taqiladi va u yerda
+ * qoladi. Streak — "yo'qotmaslik" motivi; bezak esa unga "ega bo'lish"
+ * motivini qo'shadi: 7 kun — bant, 14 — shlyapa, 30 — toj, 100 — yulduz.
+ * Streak uzilsa bezak YO'QOLMAYDI: u erishilgan narsa, jarima emas.
+ */
+export const COMPANION_ACCESSORIES: readonly { minStreak: number; emoji: string; name: string }[] = [
+  { minStreak: 3, emoji: '✨', name: 'Uchqun' },
+  { minStreak: 7, emoji: '🎀', name: 'Bant' },
+  { minStreak: 14, emoji: '🎩', name: 'Shlyapa' },
+  { minStreak: 30, emoji: '👑', name: 'Toj' },
+  { minStreak: 100, emoji: '🌟', name: 'Yulduz' },
+]
+
+/** Eng uzun streak bo'yicha ochilgan bezaklar (uzilsa ham qoladi) */
+export function companionAccessories(longestStreak: number) {
+  return COMPANION_ACCESSORIES.filter((item) => longestStreak >= item.minStreak)
+}

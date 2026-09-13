@@ -1,5 +1,6 @@
 import type { BadgeDefinition, BadgeStats } from '@/core/gamification'
 import { cn } from '@/lib/cn'
+import { HIDDEN_BADGE } from '@/core/gamification'
 import { ProgressBar } from './ProgressBar'
 
 interface BadgeTileProps {
@@ -16,6 +17,9 @@ interface BadgeTileProps {
  */
 export function BadgeTile({ badge, stats, isUnlocked }: BadgeTileProps) {
   const { value, target } = badge.progress(stats)
+  // Yashirin nishon ochilmaguncha "?" — sharti ham, progressi ham yo'q
+  const secret = Boolean(badge.hidden) && !isUnlocked
+  const shown = secret ? HIDDEN_BADGE : badge
 
   return (
     <li
@@ -28,12 +32,14 @@ export function BadgeTile({ badge, stats, isUnlocked }: BadgeTileProps) {
         aria-hidden="true"
         className={cn('text-3xl', !isUnlocked && 'opacity-30 grayscale')}
       >
-        {badge.icon}
+        {shown.icon}
       </span>
 
-      <p className={cn('text-xs font-bold', !isUnlocked && 'text-ink-600')}>{badge.title}</p>
+      <p className={cn('text-xs font-bold', !isUnlocked && 'text-ink-600')}>{shown.title}</p>
 
-      {isUnlocked ? (
+      {secret ? (
+        <p className="text-[10px] text-ink-600">{HIDDEN_BADGE.description}</p>
+      ) : isUnlocked ? (
         // Rangdan tashqari matnli belgi ham bor (WCAG 1.4.1)
         <p className="text-[10px] font-semibold text-brand-700">✓ Unlocked</p>
       ) : (

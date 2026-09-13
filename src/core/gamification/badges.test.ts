@@ -11,6 +11,9 @@ function makeStats(overrides: Partial<BadgeStats> = {}): BadgeStats {
     level: 1,
     totalAnswers: 0,
     perfectSessions: 0,
+    bestCombo: 0,
+    perfectWeeks: 0,
+    secretWords: 0,
     ...overrides,
   }
 }
@@ -47,6 +50,9 @@ describe('BADGES ro‘yxati', () => {
       longestStreak: 10_000,
       totalXp: 10_000_000,
       perfectSessions: 500,
+      bestCombo: 500,
+      perfectWeeks: 500,
+      secretWords: 500,
     })
 
     for (const badge of BADGES) {
@@ -107,5 +113,19 @@ describe('newlyUnlockedBadgeIds', () => {
 
     expect(newly).toContain('hundred-words')
     expect(newly).toContain('streak-30')
+  })
+})
+
+describe('yashirin nishonlar', () => {
+  it('kombo 10, to‘liq hafta va sehrli so‘z — ochilmaguncha yashirin', () => {
+    expect(unlockedBadgeIds(makeStats({ bestCombo: 10 }))).toContain('combo-10')
+    expect(unlockedBadgeIds(makeStats({ bestCombo: 9 }))).not.toContain('combo-10')
+    expect(unlockedBadgeIds(makeStats({ perfectWeeks: 1 }))).toContain('perfect-week')
+    expect(unlockedBadgeIds(makeStats({ secretWords: 1 }))).toContain('secret-word')
+    expect(BADGES.filter((badge) => badge.hidden).map((badge) => badge.id)).toEqual([
+      'combo-10',
+      'perfect-week',
+      'secret-word',
+    ])
   })
 })

@@ -3,6 +3,7 @@ import { PATHS } from '@/app/paths'
 import { BadgeTile } from '@/components/ui/BadgeTile'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
+import { countPerfectWeeks } from '@/core/db'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import {
@@ -49,6 +50,9 @@ export function ProfileScreen() {
     level: progress?.level.level ?? 1,
     totalAnswers: progress?.daily.answered ?? 0,
     perfectSessions: progress?.profile.perfectSessions ?? 0,
+    bestCombo: progress?.profile.bestCombo ?? 0,
+    perfectWeeks: countPerfectWeeks(progress?.profile.weeklyQuestClaims),
+    secretWords: progress?.profile.secretWordWeeks?.length ?? 0,
   }
 
   const unlocked = new Set(progress?.profile.unlockedBadges ?? [])

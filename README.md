@@ -743,6 +743,7 @@ KUTISHDAN ajraladi**, shuning uchun har mukofot oldindan ko'rinib turadi.
 | Seans | ⭐ "Word mastered" (ikki xil mashqda bilindi); 🎁 sirli sandiq (≥5 javob, o'zgaruvchan mukofot, BOSILGANDA ochiladi); LEVEL UP banner; "Bugungi o'lja" kartochkalari; ⚡ chaqmoq raund (30%) | Agentlik, variable ratio, recency |
 | Kun | ☀️ bugungi birinchi g'alaba (×2); 🏅 kunlik rekord (kechagi o'zing bilan); 🔮 "Ertaga seni nima kutadi" | Odat halqasi, xavfsiz musobaqa, Zeigarnik |
 | Qaytish | 🐣 yo'ldosh (so'zlar bilan o'sadi, seansda javobga munosabat); 🔮 kunning so'zi (ma'nosi yopiq); 🎯 maqsad gradienti (daraja ≤30 XP yaqin bo'lsa "hozir") | G'amxo'rlik effekti, qiziquvchanlik bo'shlig'i, Hull |
+| Sir | 🪄 haftaning sehrli so'zi (yashirin, topilganda +30 XP, haftada bir); ❓ yashirin nishonlar (Combo ×10, Full Week, Word Hunter); yo'ldosh bezaklari (streak 3/7/14/30/100 — uzilsa ham qoladi) | Kutilmagan mukofot (eng kuchli dofamin signali), qiziquvchanlik, to'plam |
 | Hafta | 🗺️ haftalik sayohat (3/5/7 faol kun → sandiq); olov darajalari (Uchqun 3 → Alanga 7 → Chaqmoq 14 → Yulduz 30 → Afsona 100) va bayrami; 🌌 so'z osmoni (xiralashayotgan yulduzlar → takrorlash) | Yetib borish motivi, endowed progress, ko'rinadigan unutish |
 
 Uchta QATTIQ qoida ([chest.ts](src/core/gamification/chest.ts),

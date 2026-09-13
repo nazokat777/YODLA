@@ -9,6 +9,8 @@ import {
   db,
   finalizeSession,
   getGlobalCardStats,
+  claimSecretWord,
+  recordBestCombo,
   gradeCard,
   recordAnswer,
   recordTypeResult,
@@ -24,7 +26,7 @@ import {
 import type { ExerciseType } from '@/core/types'
 import { MAX_LESSON_STEPS, buildLessonQueue, type LessonStep } from '@/core/lesson/queue'
 import { estimateMinutes } from '@/core/lesson/eta'
-import { LUCKY_MULTIPLIER, gameGrade, isLucky } from '@/core/games'
+import { LUCKY_MULTIPLIER, SECRET_WORD_XP, gameGrade, isLucky, secretWordId } from '@/core/games'
 import {
   applyAnswer,
   emptyProgress,
@@ -43,6 +45,7 @@ import {
   nextCombo,
   levelFromXp,
   levelTitle,
+  weekKey,
   type LevelUp,
   nextComboMilestone,
   xpForAnswer,
@@ -299,6 +302,10 @@ export function SessionRunner({
    * (tasodifiy kelishi) barqarordan kuchliroq ta'sir qiladi.
    */
   const [lucky, setLucky] = useState(false)
+  /** Shu javob bilan haftaning SEHRLI so'zi topildi — kutilmagan bayram */
+  const [secretFound, setSecretFound] = useState(false)
+  /** Haftaning sehrli so'zi — seans boshida bir marta (pool = butun lug'at) */
+  const secretId = useMemo(() => secretWordId(pool, Date.now()), [pool])
 
   /**
    * Shu seansda TANISHTIRILGAN so'zlar.
@@ -401,6 +408,7 @@ export function SessionRunner({
     setErrorMessage(null)
     setGradedCard(null)
     setJustMastered(false)
+    setSecretFound(false)
     setLucky(isLucky())
   // `mastery` ataylab bog'liqlikda EMAS: u har javobda o'zgaradi va
   // mashqni javob berilgan zahoti qayta yaratib yuborardi
@@ -476,6 +484,8 @@ export function SessionRunner({
    * "esladim" deb hisoblash intervalni asossiz uzaytirardi.
    */
   const gradedRef = useRef(new Set<string>())
+  /** Seansdagi eng uzun kombo */
+  const bestComboRef = useRef(0)
   /** Kamida bir marta to'g'ri javob berilgan kartalar — yakun ro'yxati uchun */
   const knownRef = useRef(new Set<string>())
 
@@ -512,6 +522,9 @@ export function SessionRunner({
         )
         .map((card) => ({ id: card.id, word: card.word, translation: card.translation })),
     }
+
+    // Eng uzun kombo — yashirin nishon uchun (yozuv o'z xatosini o'zi yutadi)
+    void recordBestCombo(bestComboRef.current).catch(() => {})
 
     finalizeSession({ answered: summary.answered, wrong: summary.wrong })
       .then(async ({ newlyUnlocked, perfectBonusXp }) => {
@@ -653,6 +666,7 @@ export function SessionRunner({
     // javobning XP siga qo'shiladi va bitta tranzaksiyada saqlanadi
     const streak = nextCombo(combo, result)
     setCombo(streak)
+    if (streak > bestComboRef.current) bestComboRef.current = streak
 
     setIsSaving(true)
     try {
@@ -686,6 +700,19 @@ export function SessionRunner({
         xpGained = progress.xpGained
         goalCompleted = progress.goalJustCompleted
         firstWin = progress.firstWinOfDay
+
+        /*
+         * SEHRLI SO'Z: to'g'ri javob va bu so'z haftaning yashirin so'zi
+         * bo'lsa — haftada bir marta bonus. Avval yoziladi, keyin
+         * ko'rsatiladi; yozilmasa (allaqachon topilgan) — hech nima.
+         */
+        if (result !== 'wrong' && secretId === cardId) {
+          const found = await claimSecretWord(weekKey(Date.now()), SECRET_WORD_XP)
+          if (found) {
+            xpGained += SECRET_WORD_XP
+            setSecretFound(true)
+          }
+        }
       } catch (error) {
         console.error('XP ni yozib bo‘lmadi:', error)
       }
@@ -779,6 +806,7 @@ export function SessionRunner({
     applyToMastery,
     mastery,
     lucky,
+    secretId,
   ])
 
   /** Feedback'dan keyin keyingi mashqqa o'tish */
@@ -1127,6 +1155,7 @@ export function SessionRunner({
             goalJustCompleted={goalJustCompleted}
             firstWinOfDay={firstWinOfDay}
             companion={companionEmoji}
+            secretFound={secretFound}
             mastered={justMastered}
             onContinue={handleContinue}
           />

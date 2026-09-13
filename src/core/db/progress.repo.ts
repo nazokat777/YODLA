@@ -240,8 +240,16 @@ export async function recordPerfectSession(): Promise<void> {
  * tekshiriladi — shuning uchun keyinchalik qo'shilgan nishon ham eski
  * yutuqlar uchun ochiladi.
  */
+/** Profildan hisoblanadigan nishon ko'rsatkichlari */
+export type ProfileBadgeStats = 'totalXp' | 'level' | 'perfectSessions' | 'bestCombo' | 'perfectWeeks' | 'secretWords'
+
+/** 7/7 o'tkazilgan haftalar — haftalik sayohatning 7-pog'onasi olinganlar */
+export function countPerfectWeeks(claims: Record<string, number[]> | undefined): number {
+  return Object.values(claims ?? {}).filter((days) => days.includes(7)).length
+}
+
 export async function syncBadges(
-  stats: Omit<BadgeStats, 'totalXp' | 'level' | 'perfectSessions'>,
+  stats: Omit<BadgeStats, ProfileBadgeStats>,
   now: number = Date.now(),
 ): Promise<{ unlocked: string[]; newlyUnlocked: string[] }> {
   return db.transaction('rw', db.profile, async () => {
@@ -252,6 +260,9 @@ export async function syncBadges(
       totalXp: profile.totalXp,
       level: levelFromXp(profile.totalXp).level,
       perfectSessions: profile.perfectSessions,
+      bestCombo: profile.bestCombo ?? 0,
+      perfectWeeks: countPerfectWeeks(profile.weeklyQuestClaims),
+      secretWords: profile.secretWordWeeks?.length ?? 0,
     }
 
     const newly = newlyUnlockedBadgeIds(full, profile.unlockedBadges)
@@ -521,6 +532,31 @@ export async function markCompanionStageCelebrated(minWords: number): Promise<bo
     if (done.includes(minWords)) return false
 
     await db.profile.put({ ...profile, celebratedCompanionStages: [...done, minWords] })
+    return true
+  })
+}
+
+/** Seansdagi eng uzun kombo profil rekordidan oshsa — yoziladi */
+export async function recordBestCombo(combo: number): Promise<void> {
+  if (combo <= 0) return
+  await db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    if (combo <= (profile.bestCombo ?? 0)) return
+    await db.profile.put({ ...profile, bestCombo: combo })
+  })
+}
+
+/**
+ * Sehrli so'z topildi — haftada BIR marta. Bonus XP shu yerda yoziladi.
+ * Qaytaradi: aynan hozir topildimi.
+ */
+export async function claimSecretWord(week: string, bonusXp: number, now: number = Date.now()): Promise<boolean> {
+  return db.transaction('rw', db.profile, db.dailyStats, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const weeks = profile.secretWordWeeks ?? []
+    if (weeks.includes(week)) return false
+    await db.profile.put({ ...profile, secretWordWeeks: [...weeks, week] })
+    await awardBonusXp(bonusXp, now)
     return true
   })
 }

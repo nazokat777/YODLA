@@ -22,6 +22,12 @@ export interface BadgeStats {
   totalAnswers: number
   /** Bir seansda hech xato qilmagan holatlar soni */
   perfectSessions: number
+  /** Eng uzun kombo */
+  bestCombo: number
+  /** To'liq (7/7) o'tkazilgan haftalar */
+  perfectWeeks: number
+  /** Topilgan sehrli so'zlar */
+  secretWords: number
 }
 
 export interface BadgeDefinition {
@@ -29,6 +35,12 @@ export interface BadgeDefinition {
   title: string
   description: string
   icon: string
+  /**
+   * YASHIRIN nishon: ochilmaguncha "?" bo'lib turadi, sharti aytilmaydi.
+   * Qiziquvchanlik — "bu nima ekan?" — va topganda kutilmagan quvonch.
+   * Ochilgach oddiy nishon kabi ko'rinadi.
+   */
+  hidden?: boolean
   /** Shart bajarildimi */
   isUnlocked: (stats: BadgeStats) => boolean
   /** Progressni ko'rsatish uchun: joriy qiymat va maqsad */
@@ -43,12 +55,14 @@ function threshold(
   icon: string,
   target: number,
   pick: (stats: BadgeStats) => number,
+  hidden = false,
 ): BadgeDefinition {
   return {
     id,
     title,
     description,
     icon,
+    hidden,
     isUnlocked: (stats) => pick(stats) >= target,
     progress: (stats) => ({ value: Math.min(pick(stats), target), target }),
   }
@@ -117,7 +131,14 @@ export const BADGES: BadgeDefinition[] = [
     1,
     (s) => s.perfectSessions,
   ),
+  // Yashirin — sharti ochilgach ma'lum bo'ladi
+  threshold('combo-10', 'Unstoppable', 'Ketma-ket 10 ta to‘g‘ri javob', '⚡', 1, (s) => (s.bestCombo >= 10 ? 1 : 0), true),
+  threshold('perfect-week', 'Full Week', 'Haftaning 7 kuni ham mashq', '🗓️', 1, (s) => s.perfectWeeks, true),
+  threshold('secret-word', 'Word Hunter', 'Sehrli so‘zni topish', '🪄', 1, (s) => s.secretWords, true),
 ]
+
+/** Yashirin nishon ochilmaguncha shunday ko'rinadi */
+export const HIDDEN_BADGE = { title: '???', description: 'Yashirin nishon — top-chi!', icon: '❓' } as const
 
 /** Id bo'yicha tez qidirish */
 export const BADGE_BY_ID = new Map(BADGES.map((badge) => [badge.id, badge]))

@@ -42,7 +42,7 @@ const TOPICS: Array<{ icon: string; title: string; text: string }> = [
   {
     icon: '🐣',
     title: 'Yo‘ldosh',
-    text: 'So‘zlar bilan o‘sadigan do‘sting: 4 so‘zda tuxumdan chiqadi, 20 da polapon, 50 da qush… 500 so‘zda ajdar. Har o‘rgangan so‘z — unga don.',
+    text: 'So‘zlar bilan o‘sadigan do‘sting: 4 so‘zda tuxumdan chiqadi, 20 da polapon, 50 da qush… 500 so‘zda ajdar. Har o‘rgangan so‘z — unga don. Streak bilan bezaklar ochiladi (7 kun — bant, 14 — shlyapa, 30 — toj).',
   },
   {
     icon: '🔮',

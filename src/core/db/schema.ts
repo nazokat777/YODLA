@@ -128,6 +128,10 @@ export interface ProfileRecord {
   celebratedStreakTiers?: number[]
   /** Nishonlangan yo'ldosh bosqichlari (minWords) — har biri BIR marta */
   celebratedCompanionStages?: number[]
+  /** Eng uzun kombo (seans ichida ketma-ket to'g'ri) — yashirin nishon uchun */
+  bestCombo?: number
+  /** Topilgan sehrli so'zlar — hafta kaliti ro'yxati */
+  secretWordWeeks?: string[]
   /**
    * O'yinlardagi shaxsiy rekordlar.
    *
