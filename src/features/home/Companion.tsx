@@ -49,8 +49,13 @@ export function Companion({ seenWords, context = QUIET }: CompanionProps) {
         const fresh = await markCompanionStageCelebrated(stage.minWords)
         if (!fresh || cancelled) return
         setEvolved(true)
-        if (soundEnabled) playMasteredSound()
-        haptic('celebrate')
+        // Bir vaqtda ikki bayram (olov darajasi + yo'ldosh) — ikki ohang
+        // ustma-ust tushmasin: yo'ldoshniki biroz kechikadi
+        window.setTimeout(() => {
+          if (cancelled) return
+          if (soundEnabled) playMasteredSound()
+          haptic('celebrate')
+        }, 900)
       })
       .catch(() => {})
 
