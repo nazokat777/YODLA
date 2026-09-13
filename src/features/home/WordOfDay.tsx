@@ -8,6 +8,7 @@ import { wordOfDay } from '@/core/stats'
 import { imageCodeFor } from '@/content/wordImages'
 import { transliterate } from '@/core/text/transliterate'
 import { haptic } from '@/lib/haptics'
+import { rememberRevealedWord } from '@/lib/wordOfDayMemo'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { unitIdOf } from '@/core/path'
@@ -88,6 +89,7 @@ export function WordOfDay({ cards, unitId = null }: WordOfDayProps) {
           type="button"
           onClick={() => {
             setRevealed(true)
+            rememberRevealedWord(card.id)
             haptic('tap')
           }}
           className="tap-highlight-none rounded-xl border-2 border-dashed border-brand-500/60 px-3 py-2 text-sm font-bold text-brand-700"

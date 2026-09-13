@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/react'
 import type { CardRecord } from '@/core/db'
 import { WordIntro } from './WordIntro'
+import { rememberRevealedWord } from '@/lib/wordOfDayMemo'
 
 const CARD: CardRecord = {
   id: 'en:hello',
@@ -66,6 +67,13 @@ describe('WordIntro', () => {
       <WordIntro card={{ ...CARD, sentence: 'Hello, my friend' }} onContinue={vi.fn()} />,
     )
     expect(screen.queryByTestId('intro-sentence-reading')).not.toBeInTheDocument()
+  })
+
+  it('bugun ochilgan kunning so‘zi darsda "buni bilasan" belgisi bilan', () => {
+    rememberRevealedWord(CARD.id)
+    render(<WordIntro card={CARD} onContinue={vi.fn()} />)
+
+    expect(screen.getByText(/buni bilasan/i)).toBeInTheDocument()
   })
 
   it('so‘z o‘rganilayotgan til yo‘nalishida chiziladi', () => {

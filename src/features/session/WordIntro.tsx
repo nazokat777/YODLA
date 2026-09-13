@@ -11,6 +11,7 @@ import { enterStagger, scrambleReveal, withMotion } from '@/lib/motion'
 import { speak } from '@/lib/speech'
 import { WordDisplay } from './WordDisplay'
 import { transliterate } from '@/core/text/transliterate'
+import { revealedWordToday } from '@/lib/wordOfDayMemo'
 
 interface WordIntroProps {
   card: CardRecord
@@ -31,6 +32,7 @@ interface WordIntroProps {
  */
 export function WordIntro({ card, onContinue }: WordIntroProps) {
   const language = LANGUAGES[card.language]
+  const isRevealedWordOfDay = revealedWordToday() === card.id
   const sentenceReading = card.sentence ? transliterate(card.sentence, language.script) : null
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -82,7 +84,8 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         data-intro
         className="self-start rounded-full bg-flame-500/15 px-3 py-1 text-xs font-extrabold text-flame-700"
       >
-        ✨ Yangi so‘z
+        {/* Bosh ekranda ochilgan kunning so'zi darsda uchradi — "buni bilasan!" */}
+        {isRevealedWordOfDay ? '🔮 Kunning so‘zi — buni bilasan!' : '✨ Yangi so‘z'}
       </p>
       <Panel
         data-intro
