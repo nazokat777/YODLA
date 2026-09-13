@@ -45,3 +45,29 @@ export function companionProgress(seenWords: number): number {
   if (!next) return 1
   return (seenWords - current.minWords) / (next.minWords - current.minWords)
 }
+
+/** Yo'ldosh gapiradigan holat — bosh ekran uni shundan tanlaydi */
+export interface CompanionContext {
+  /** Bugun hali javob berilmagan va streak uzilishi mumkin */
+  streakAtRisk: boolean
+  /** Kunlik maqsad bajarilgan */
+  goalDone: boolean
+  /** Takrorlashga tayyor so'zlar */
+  dueCount: number
+}
+
+/**
+ * Yo'ldoshning gapi — HOLATGA qarab, bosqich gapi emas.
+ *
+ * Statik gap ikkinchi kuni "o'qilmaydi"; holatga bog'liq gap esa
+ * yo'ldoshni tirik qiladi va bolaga hozir nima qilishni aytadi
+ * (takrorlash bor, streak xavfda, maqsad bajarildi). Ustuvorlik:
+ * xavf → takrorlash → maqsad → bosqich gapi.
+ */
+export function companionLine(stage: CompanionStage, context: CompanionContext): string {
+  if (stage.minWords === 0) return stage.line
+  if (context.streakAtRisk) return 'Bugun hali mashq qilmadik… ketdikmi? 🔥'
+  if (context.dueCount > 0) return `${context.dueCount} ta so‘z qaytishini kutyapman — takrorlaymizmi?`
+  if (context.goalDone) return 'Bugun to‘ydim! Ertaga yana kel 💚'
+  return stage.line
+}

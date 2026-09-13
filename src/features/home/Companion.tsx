@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Panel } from '@/components/ui/Panel'
 import { db, markCompanionStageCelebrated } from '@/core/db'
-import { companionProgress, companionStage, nextCompanionStage } from '@/core/gamification'
+import {
+  companionLine,
+  companionProgress,
+  companionStage,
+  nextCompanionStage,
+  type CompanionContext,
+} from '@/core/gamification'
 import { haptic } from '@/lib/haptics'
 import { particleBurst, withMotion } from '@/lib/motion'
 import { playMasteredSound } from '@/lib/sound'
@@ -10,6 +16,8 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 interface CompanionProps {
   /** Ko'rilgan so'zlar (barcha tillar) — yo'ldosh shundan oziqlanadi */
   seenWords: number
+  /** Gap uchun holat (bosh ekran biladi) */
+  context?: CompanionContext
 }
 
 /**
@@ -19,7 +27,9 @@ interface CompanionProps {
  * sanaladi (kutish). Yangi bosqichga o'tilgan kuni BIR MARTA bayram:
  * zarrachalar, akkord, tebranish — va bazada belgilanadi.
  */
-export function Companion({ seenWords }: CompanionProps) {
+const QUIET: CompanionContext = { streakAtRisk: false, goalDone: false, dueCount: 0 }
+
+export function Companion({ seenWords, context = QUIET }: CompanionProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const stage = companionStage(seenWords)
   const next = nextCompanionStage(seenWords)
@@ -93,7 +103,9 @@ export function Companion({ seenWords }: CompanionProps) {
           {evolved ? '✨ Yangi bosqich!' : 'Yo‘ldoshing'}
         </p>
         <p className="text-lg font-extrabold">{stage.name}</p>
-        <p className="text-sm text-ink-600">“{stage.line}”</p>
+        <p data-testid="companion-line" className="text-sm text-ink-600">
+          “{companionLine(stage, context)}”
+        </p>
 
         {next ? (
           <>

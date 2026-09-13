@@ -146,7 +146,16 @@ export function HomeScreen() {
       />
 
       {/* Yo'ldosh — so'zlar bilan o'sadigan jonzot (g'amxo'rlik effekti) */}
-      {globalStats && <Companion seenWords={globalStats.learned} />}
+      {globalStats && (
+        <Companion
+          seenWords={globalStats.learned}
+          context={{
+            streakAtRisk: progress?.streak.atRisk ?? false,
+            goalDone: wordsToday >= dailyGoalWords,
+            dueCount,
+          }}
+        />
+      )}
 
       {/* Til almashtirgich: har til alohida progress bilan — istalgan payt
           o'tish mumkin, so'zlar yo'qolmaydi */}
