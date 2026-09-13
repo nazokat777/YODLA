@@ -5,6 +5,7 @@ import { WordImage } from '@/components/ui/WordImage'
 import { LANGUAGES } from '@/core/config/languages'
 import type { CardRecord } from '@/core/db'
 import { wordOfDay } from '@/core/stats'
+import { imageCodeFor } from '@/content/wordImages'
 import { transliterate } from '@/core/text/transliterate'
 import { haptic } from '@/lib/haptics'
 
@@ -21,7 +22,11 @@ interface WordOfDayProps {
  * ham qaytadi.
  */
 export function WordOfDay({ cards }: WordOfDayProps) {
-  const card = useMemo(() => wordOfDay(cards, Date.now()), [cards])
+  // Rasmi bor so'zlar afzal: "olma" ko'rinadi va esda qoladi, "hers" emas
+  const card = useMemo(
+    () => wordOfDay(cards, Date.now(), (item) => imageCodeFor(item.translation) !== null),
+    [cards],
+  )
   const [revealed, setRevealed] = useState(false)
 
   if (!card) return null

@@ -80,11 +80,16 @@ export function LanguageSwitcher({ className }: { className?: string }) {
                 // ularni bog'laydi va ko'chishni chizadi
                 data-flip-id="lang-pill"
                 aria-hidden="true"
-                className="absolute inset-0 -z-10 rounded-xl bg-[var(--accent-to)]"
+                // `-z-10` EMAS: u tugmaning fonidan ham orqaga tushib, oq matn oq
+                // fonda ko'rinmay qolardi (jonli tekshiruvda). Tabletka 0-qatlamda,
+                // matn esa `relative z-10` bilan ustida.
+                className="absolute inset-0 z-0 rounded-xl bg-[var(--accent-to)]"
               />
             )}
-            <LanguageBadge language={lang} size="sm" active={isActive} />
-            <span>{shortName}</span>
+            <span className="relative z-10 flex items-center gap-1.5">
+              <LanguageBadge language={lang} size="sm" active={isActive} />
+              <span>{shortName}</span>
+            </span>
           </button>
         )
       })}

@@ -29,4 +29,14 @@ describe('wordOfDay', () => {
   it('hamma so‘z ko‘rilgan bo‘lsa null', () => {
     expect(wordOfDay([card('a', { totalReviews: 1 })], NOW)).toBeNull()
   })
+
+  it('afzal mezon berilsa avval o‘shalardan tanlanadi', () => {
+    const cards = [card('hers'), card('apple'), card('bread')]
+    const withImage = new Set(['apple', 'bread'])
+
+    for (let d = 0; d < 5; d += 1) {
+      const pick = wordOfDay(cards, NOW + d * DAY, (c) => withImage.has(c.id))
+      expect(withImage.has(pick!.id)).toBe(true)
+    }
+  })
 })

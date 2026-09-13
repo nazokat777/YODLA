@@ -13,9 +13,20 @@ import { hashString } from './sky'
  *
  * Tanlov SANADAN deterministik: sahifa yangilanganda so'z o'zgarmaydi.
  */
-export function wordOfDay(cards: readonly CardRecord[], now: number): CardRecord | null {
-  const fresh = cards.filter((card) => card.totalReviews === 0 && card.level === 'A1')
-  const pool = fresh.length > 0 ? fresh : cards.filter((card) => card.totalReviews === 0)
+export function wordOfDay(
+  cards: readonly CardRecord[],
+  now: number,
+  /**
+   * Afzal so'zlar (masalan, rasmi borlar — "hers" emas, "olma"). `core`
+   * kontentni bilmaydi, shuning uchun mezon tashqaridan beriladi;
+   * afzallar bo'lmasa oddiy A1 so'zlar.
+   */
+  prefer: (card: CardRecord) => boolean = () => true,
+): CardRecord | null {
+  const unseen = cards.filter((card) => card.totalReviews === 0)
+  const a1 = unseen.filter((card) => card.level === 'A1')
+  const preferred = a1.filter(prefer)
+  const pool = preferred.length > 0 ? preferred : a1.length > 0 ? a1 : unseen
   if (pool.length === 0) return null
 
   // Barqaror tartib: id bo'yicha; kun soni → indeks
