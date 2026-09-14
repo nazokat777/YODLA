@@ -194,11 +194,16 @@ export function HomeScreen() {
                 ? `Hammasi bajarildi. Keyingi takrorlash — ${formatTimeUntil(nextDueAt, now)}.`
                 : 'Hozircha takrorlanadigan so‘z yo‘q.'}
         </p>
-        {/* Yangi so'zlar endi o'quv yo'lidan olinadi — takrorlash va
-            o'rganish alohida ishlar */}
-        <LinkButton to={PATHS.review} block variant={dueCount > 0 ? 'primary' : 'secondary'}>
-          {dueCount > 0 ? 'Takrorlashni boshlash' : 'Takrorlashni ochish'}
-        </LinkButton>
+        {/*
+          Takrorlash BOR bo'lsa asosiy tugma qahramon kartada — bu yerda
+          ikkinchi marta takrorlanmaydi (NN/g #8). Yo'q bo'lsa — ochish
+          havolasi shu yerda qoladi (qahramon tugmasi darsga olib boradi).
+        */}
+        {dueCount === 0 && (
+          <LinkButton to={PATHS.review} block variant="secondary">
+            Takrorlashni ochish
+          </LinkButton>
+        )}
       </Panel>
 
       {/* Haftalik sayohat — 7 qadam, 3 sandiq: "yetib borish" motivi */}
