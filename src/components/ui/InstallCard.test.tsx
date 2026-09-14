@@ -20,4 +20,11 @@ describe('InstallCard', () => {
     fireEvent.click(screen.getByRole('button', { name: /o‘rnatish/i }))
     expect(prompt).toHaveBeenCalled()
   })
+
+  it('Android brauzerida taklif bo‘lmasa APK havolasi', () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Linux; Android 13) Chrome/120' })
+    render(<InstallCard />)
+    expect(screen.getByTestId('apk-card').querySelector('a')).toHaveAttribute('href', '/YODLA.apk')
+    vi.unstubAllGlobals()
+  })
 })

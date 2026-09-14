@@ -25,4 +25,4 @@ dist-ssr
 
 .vercel
 .env*
-YODLA.apk
+/YODLA.apk
