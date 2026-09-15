@@ -22,6 +22,12 @@ interface HomeHeroProps {
   /** Kecha muzlatish ishlatilgan — foydalanuvchi buni bilishi kerak */
   frozenYesterday?: boolean
   freezesLeft?: number
+  /**
+   * Kutilayotgan yig'ma imtihon (bo'lim id + qamrab olgan darslar soni).
+   * Bo'lsa — asosiy tugma darsdan oldin imtihonga chaqiradi: yangi
+   * so'zlarni olishdan oldin eskilarini mustahkamlash muhimroq.
+   */
+  exam?: { unitId: string; count: number } | null
 }
 
 /** Halqa geometriyasi */
@@ -52,6 +58,7 @@ export function HomeHero({
   isLoading,
   frozenYesterday = false,
   freezesLeft = 0,
+  exam = null,
 }: HomeHeroProps) {
   const ratio = dailyGoalWords > 0 ? Math.min(1, wordsToday / dailyGoalWords) : 0
   const goalDone = wordsToday >= dailyGoalWords
@@ -227,12 +234,18 @@ export function HomeHero({
         so'zlar yangi so'zdan muhim), aks holda dars.
       */}
       <Link
-        to={dueCount > 0 ? PATHS.review : PATHS.lesson}
+        to={dueCount > 0 ? PATHS.review : exam ? PATHS.examById(exam.unitId) : PATHS.lesson}
         data-testid="hero-cta"
         className="hero-cta tap-highlight-none relative mt-5 flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-white px-5 py-3.5 text-base font-extrabold text-ink-900 shadow-[0_6px_0_0_rgb(0_0_0/0.18)] transition-transform active:translate-y-[3px] active:shadow-none"
       >
         <span aria-hidden="true" className="hero-shimmer pointer-events-none absolute inset-0" />
-        {isLoading ? 'Yuklanmoqda…' : dueCount > 0 ? `Takrorlash · ${dueCount} so‘z` : 'Darsni boshlash'}
+        {isLoading
+          ? 'Yuklanmoqda…'
+          : dueCount > 0
+            ? `Takrorlash · ${dueCount} so‘z`
+            : exam
+              ? `🏆 Imtihon · 1–${exam.count} darslar`
+              : 'Darsni boshlash'}
         <span aria-hidden="true">→</span>
       </Link>
     </section>

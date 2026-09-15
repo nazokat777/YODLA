@@ -233,6 +233,45 @@ va'dasiga mos.
 Ko'rsatkich `savol/savol` emas, `so'z/so'z` sanaydi va **hech qachon
 orqaga ketmaydi** — o'zlashtirilgan so'z shu seansda qayta "yo'qolmaydi".
 
+## Yig'ma imtihon
+
+**Har bo'lim tugagach — shu bo'limgacha bo'lgan HAMMASIDAN imtihon**
+([core/exam](src/core/exam), [features/exam](src/features/exam)):
+2-darsdan keyin 1–2, 10-darsdan keyin 1–10. Birinchi darsdan keyin yo'q
+(`EXAM_MIN_UNITS = 2`).
+
+Nega: eslab chaqirishga urinish (retrieval) qayta o'qishdan ikki barobar
+mustahkamroq iz qoldiradi (Roediger & Karpicke 2006), ayniqsa eski mavzu
+yangilari bilan ARALASH kelganda (Rohrer & Taylor 2007). Dars o'z so'zini
+o'rgatadi, imtihon esa unutila boshlaganini ushlab qoladi.
+
+Tanlash (`pickExamCards`), "birorta mavzu qolib ketmasin" shu yerda:
+
+1. eng ko'p **24 savol** (≈6 daqiqa — bola diqqati chegarasi);
+2. endigina tugagan bo'limdan 8 tagacha (eng zaiflari);
+3. oldingi **har** bo'limdan kamida bittadan — aylanma, eng zaifi birinchi;
+4. natija aralashtiriladi.
+
+Oqim: `intro → exam → (fix) → done`. `exam` — `fixed` rejim, har so'z bir
+marta. Xato so'zlar `fix` bosqichiga tushadi — o'zlashtirish rejimida
+(ikki xil mashqda to'g'ri) qaytadi. **Imtihon shu bosqich tugamaguncha
+topshirilgan hisoblanmaydi** — u har doim 100% bilan tugaydi, yakun har
+safar g'alaba. Natija `profile.examResults[unitId]` ga yoziladi
+(birinchi urinishdagi to'g'ri/jami), bonus `EXAM_BONUS_XP = 40` faqat
+birinchi topshirishda.
+
+Hisobot mavzular kesimida: har bo'lim uchun ✓/⚠ va adashilgan so'zlar,
+har biri yonida ✍️ — `/mnemonics?q=so'z` (o'z assotsiatsiyasini yozish;
+keyword method, Atkinson 1975).
+
+Kutilayotgan imtihon — `pendingExam`: eng OXIRGI tugallangan bo'lim
+uchun natija yo'q bo'lsa. Eski foydalanuvchi 1–5 ni imtihonsiz o'tgan
+bo'lsa beshta emas, bitta yig'ma "1–5" chiqadi. Bosh ekran qahramoni
+takrorlash yo'q bo'lsa avval imtihonga chaqiradi; yo'lda 🏆 tugun
+tugallangan bo'limdan keyin turadi (topshirilgani — foizli chip, qayta
+topshirish mumkin). O'tkazib yuborilgan (`skipped`) bo'limlar qamrovga
+kirmaydi — ular hech qachon o'qilmagan.
+
 ## Zaif nuqtalarni aniqlash
 
 Ilova ikki xil zaiflikni **alohida** kuzatadi:
@@ -656,6 +695,7 @@ rad javobidan keyin qayta-qayta so'rash bezor qiladi.
 | `/profile`           | Profil      | AppShell | onboarding kerak  |
 | `/mnemonics`         | Assotsiatsiyalar | AppShell | onboarding kerak |
 | `/lesson/:lessonId?` | Dars        | Focus    | onboarding kerak  |
+| `/exam/:unitId`      | Yig'ma imtihon | Focus | onboarding kerak  |
 | `*`                  | 404         | Focus    | —                 |
 
 > `/review` va `/lesson` bitta `SessionRunner` komponentini ishlatadi —

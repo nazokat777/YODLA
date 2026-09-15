@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, getAllCards, type NewCardRecordInput } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
+import { saveTopicOrder } from '@/content/topicOrderCache'
 import * as starterDecks from '@/content/starterDecks'
 import * as motion from '@/lib/motion'
 import { LearningPath } from './LearningPath'
@@ -228,5 +229,51 @@ describe('LearningPath — nomlar', () => {
     expect(screen.getAllByRole('heading', { name: 'Enterprise 1' })).toHaveLength(1)
     expect(screen.getByText('1-dars')).toBeInTheDocument()
     expect(screen.getByText('2-dars')).toBeInTheDocument()
+  })
+})
+
+describe('LearningPath — yig‘ma imtihon tugunlari', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+    await addMissingCards(WORDS)
+    await db.cards.update('en:hello', { totalReviews: 2 })
+    await db.cards.update('en:mother', { totalReviews: 2 })
+    saveTopicOrder('en', ['Salomlashish', 'Oila', 'Sayohat'])
+  })
+
+  it('kutilayotgan imtihon — katta tugun, ikkinchi bo‘limdan keyin', async () => {
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    const cards = await getAllCards('en')
+    render(
+      <MemoryRouter>
+        <LearningPath cards={cards} examResults={{}} pendingExamId="a1-oila" />
+      </MemoryRouter>,
+    )
+
+    const node = await screen.findByTestId('exam-a1-oila')
+    expect(node).toHaveAttribute('data-exam', 'pending')
+    expect(node).toHaveAttribute('href', '/exam/a1-oila')
+    // Birinchi bo'limdan keyin imtihon yo'q
+    expect(screen.queryByTestId('exam-a1-salomlashish')).not.toBeInTheDocument()
+  })
+
+  it('topshirilgan imtihon — foizli chip, qayta topshirish mumkin', async () => {
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    const cards = await getAllCards('en')
+    render(
+      <MemoryRouter>
+        <LearningPath
+          cards={cards}
+          examResults={{ 'a1-oila': { at: 1, correct: 3, total: 4 } }}
+          pendingExamId={null}
+        />
+      </MemoryRouter>,
+    )
+
+    const node = await screen.findByTestId('exam-a1-oila')
+    expect(node).toHaveAttribute('data-exam', 'passed')
+    expect(node).toHaveTextContent('75%')
   })
 })

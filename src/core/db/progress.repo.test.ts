@@ -539,3 +539,22 @@ describe('yashirin nishonlar manbalari', () => {
     expect(countPerfectWeeks(undefined)).toBe(0)
   })
 })
+
+describe('recordExamPassed', () => {
+  it('natijani yozadi va bonusni faqat BIRINCHI marta beradi', async () => {
+    const { recordExamPassed, EXAM_BONUS_XP } = await import('./progress.repo')
+    await db.profile.clear()
+
+    expect(await recordExamPassed('a1-oila', { correct: 3, total: 4 }, 1000)).toBe(EXAM_BONUS_XP)
+    expect((await db.profile.get('me'))?.examResults?.['a1-oila']).toEqual({
+      at: 1000,
+      correct: 3,
+      total: 4,
+    })
+
+    // Qayta topshirish — natija yangilanadi, bonus yo'q
+    expect(await recordExamPassed('a1-oila', { correct: 4, total: 4 }, 2000)).toBe(0)
+    expect((await db.profile.get('me'))?.examResults?.['a1-oila']?.correct).toBe(4)
+    expect((await db.profile.get('me'))?.totalXp).toBe(EXAM_BONUS_XP)
+  })
+})

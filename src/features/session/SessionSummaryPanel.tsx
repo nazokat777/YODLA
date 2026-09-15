@@ -25,6 +25,8 @@ interface SessionSummaryPanelProps {
    * ma'lumot bloklaridan OLDIN — "keyin nima?" darhol ko'rinadi.
    */
   actions?: ReactNode
+  /** Sarlavha ostidagi izoh — sukut "Dars tugadi"; imtihon o'zinikini beradi */
+  caption?: string
 }
 
 const DEFAULT_EMPTY = {
@@ -42,6 +44,7 @@ export function SessionSummaryPanel({
   summary,
   emptyMessage = DEFAULT_EMPTY,
   actions,
+  caption = 'Dars tugadi',
 }: SessionSummaryPanelProps) {
   // Hook erta `return` dan OLDIN chaqiriladi: React hook'lar har renderda
   // bir xil tartibda bo'lishi shart
@@ -83,7 +86,7 @@ export function SessionSummaryPanel({
             <Emblem kind="coin" size="lg" className="mx-auto mb-2 drop-shadow-[0_8px_16px_rgba(180,83,9,0.35)]" />
           </span>
           <p className="text-lg font-extrabold">Level complete!</p>
-          <p className="text-xs font-semibold text-ink-600/80">Dars tugadi</p>
+          <p className="text-xs font-semibold text-ink-600/80">{caption}</p>
           <p className="mt-1 text-sm text-ink-600">
             {summary.answered} ta javob · {accuracy}% aniqlik
           </p>

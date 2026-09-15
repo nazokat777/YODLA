@@ -138,6 +138,23 @@ export interface ProfileRecord {
    * Ixtiyoriy: eski profillarda yo'q va shu holicha ishlaydi.
    */
   gameBests?: Partial<Record<GameId, number>>
+  /**
+   * Topshirilgan yig'ma imtihonlar: bo'lim id → natija.
+   *
+   * Imtihon "topshirilgan" — savollar tugagan VA xato so'zlar qayta
+   * o'zlashtirilgan bo'lsa. Ixtiyoriy: eski profillarda yo'q.
+   */
+  examResults?: Record<string, ExamResult>
+}
+
+/** Yig'ma imtihon natijasi */
+export interface ExamResult {
+  /** Qachon topshirildi */
+  at: number
+  /** Birinchi urinishda to'g'ri javoblar */
+  correct: number
+  /** Savollar soni */
+  total: number
 }
 
 /** O'yin identifikatorlari */

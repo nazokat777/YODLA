@@ -22,7 +22,12 @@ const GAMES_MIN_WORDS = 4
 const WEAK_MIN_LAPSES = 2
 /** Bosh ekranda taklif chiqishi uchun eng kam qiyin so'zlar */
 const WEAK_CARD_MIN = 2
+/** Barqaror bo'sh obyekt — har renderda yangi `{}` yo'lni qayta hisoblatmasin */
+const EMPTY_EXAMS: Record<string, never> = {}
 import { LearningPath } from './LearningPath'
+import { useTopicOrder } from './useTopicOrder'
+import { buildUnits } from '@/core/path'
+import { pendingExam } from '@/core/exam'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
@@ -103,6 +108,20 @@ export function HomeScreen() {
   const totalXp = progress?.profile.totalXp ?? 0
 
   /*
+   * Kutilayotgan YIG'MA IMTIHON: oxirgi tugallangan bo'lim uchun
+   * imtihon topshirilmagan bo'lsa. Yo'l bilan bir xil bo'limlar —
+   * ikkalasi bir manbadan (`buildUnits`) hisoblanadi.
+   */
+  const topicOrder = useTopicOrder(learningLanguage)
+  const examResults = progress?.profile.examResults
+  const exam = useMemo(() => {
+    if (!cards || topicOrder === null) return null
+    const units = buildUnits(cards, { minLevel: startingLevel, topicOrder })
+    const pending = pendingExam(units, examResults ?? {})
+    return pending ? { unitId: pending.unitId, count: pending.covered.length } : null
+  }, [cards, topicOrder, startingLevel, examResults])
+
+  /*
    * Kirish animatsiyasi: kartalar ketma-ket chiqadi, XP sanaladi.
    *
    * XP JSXda YAKUNIY qiymati bilan chiziladi — animatsiya bo'lmasa
@@ -149,6 +168,7 @@ export function HomeScreen() {
         isLoading={isLoading}
         frozenYesterday={progress?.profile.frozenDays.includes(addDays(startOfDay(now), -1)) ?? false}
         freezesLeft={progress?.profile.freezesAvailable ?? 0}
+        exam={exam}
       />
 
       {/* Yo'ldosh — so'zlar bilan o'sadigan jonzot (g'amxo'rlik effekti) */}
@@ -274,7 +294,7 @@ export function HomeScreen() {
         </Link>
       )}
 
-      <LearningPath cards={cards} />
+      <LearningPath cards={cards} examResults={examResults ?? EMPTY_EXAMS} pendingExamId={exam?.unitId ?? null} />
 
       {/* O'rganilgan so'zlar — shaxsiy osmon: raqam emas, tasvir */}
       {cards && <WordSky cards={cards} />}

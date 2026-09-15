@@ -560,3 +560,32 @@ export async function claimSecretWord(week: string, bonusXp: number, now: number
     return true
   })
 }
+
+/** Imtihon topshirilganda beriladigan bonus XP (savollar XP dan tashqari) */
+export const EXAM_BONUS_XP = 40
+
+/**
+ * Yig'ma imtihon TOPSHIRILDI — natija yoziladi va bonus beriladi.
+ *
+ * Qayta topshirilsa natija yangilanadi, lekin bonus faqat BIRINCHI
+ * marta: aks holda bitta oson imtihonni qayta-qayta topshirib XP
+ * yig'ish mumkin bo'lardi. Qaytaradi: aynan hozir berilgan bonus.
+ */
+export async function recordExamPassed(
+  unitId: string,
+  result: { correct: number; total: number },
+  now: number = Date.now(),
+): Promise<number> {
+  const isFirst = await db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const results = profile.examResults ?? {}
+    const first = !(unitId in results)
+    await db.profile.put({
+      ...profile,
+      examResults: { ...results, [unitId]: { at: now, ...result } },
+    })
+    return first
+  })
+
+  return isFirst ? awardBonusXp(EXAM_BONUS_XP, now) : 0
+}

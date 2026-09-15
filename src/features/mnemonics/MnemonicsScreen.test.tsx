@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { addMissingCards, db, getCard, setMnemonic, type NewCardRecordInput } from '@/core/db'
+import { MemoryRouter } from 'react-router-dom'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { MnemonicsScreen } from './MnemonicsScreen'
 
@@ -10,11 +11,15 @@ const WORDS: NewCardRecordInput[] = [
   { word: 'book', translation: 'kitob', language: 'en' },
 ]
 
-function renderScreen() {
+function renderScreen(path = '/mnemonics') {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
 
-  return render(<MnemonicsScreen />)
+  return render(
+    <MemoryRouter initialEntries={[path]}>
+      <MnemonicsScreen />
+    </MemoryRouter>,
+  )
 }
 
 beforeEach(async () => {
@@ -85,5 +90,19 @@ describe('MnemonicsScreen', () => {
     await waitFor(async () => {
       expect((await getCard('en:water'))?.mnemonic).toBeUndefined()
     })
+  })
+})
+
+describe('MnemonicsScreen — imtihondan kelgan havola', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+    await addMissingCards(WORDS)
+  })
+
+  it('`?q=` bilan ochilsa qidiruv shu so‘z bilan to‘ldirilgan bo‘ladi', async () => {
+    renderScreen('/mnemonics?q=bread')
+
+    expect(screen.getByLabelText(/so'z qidirish/i)).toHaveValue('bread')
+    expect(await screen.findByText('bread')).toBeInTheDocument()
   })
 })

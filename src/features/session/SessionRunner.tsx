@@ -96,6 +96,11 @@ export interface SessionSummary {
    * Ixtiyoriy: eski chaqiruvchilar bermasligi mumkin.
    */
   learnedWords?: LearnedWord[]
+  /**
+   * Seansda kamida BIR marta xato qilingan so'zlar — imtihon ekrani
+   * ularni "xatolar ustida ishlash" bosqichiga beradi.
+   */
+  missedWords?: LearnedWord[]
   /** O'zlashtirilgan so'zlar (faqat `mastery` rejimida) */
   masteredWords: number
   /**
@@ -488,6 +493,8 @@ export function SessionRunner({
   const bestComboRef = useRef(0)
   /** Kamida bir marta to'g'ri javob berilgan kartalar — yakun ro'yxati uchun */
   const knownRef = useRef(new Set<string>())
+  /** Kamida bir marta xato qilingan kartalar */
+  const missedRef = useRef(new Set<string>())
 
   const finishedRef = useRef(false)
   useEffect(() => {
@@ -520,6 +527,9 @@ export function SessionRunner({
         .filter((card) =>
           mode === 'mastery' ? mastery.get(card.id)?.mastered : knownRef.current.has(card.id),
         )
+        .map((card) => ({ id: card.id, word: card.word, translation: card.translation })),
+      missedWords: cards
+        .filter((card) => missedRef.current.has(card.id))
         .map((card) => ({ id: card.id, word: card.word, translation: card.translation })),
     }
 
@@ -724,6 +734,7 @@ export function SessionRunner({
        * hisoblanadi. Xato javobda u navbat oxiriga qaytadi va progress
        * ko'rsatkichi joyida qoladi — foydalanuvchi qayta urinib ko'radi.
        */
+      if (result === 'wrong') missedRef.current.add(cardId)
       if (result !== 'wrong') {
         knownRef.current.add(cardId)
         const step = queue[index]
@@ -889,7 +900,10 @@ export function SessionRunner({
         if (verdict === 'correct') {
           correct += 1
           knownRef.current.add(cardId)
-        } else wrong += 1
+        } else {
+          wrong += 1
+          missedRef.current.add(cardId)
+        }
       }
 
       setSummary((current) => ({

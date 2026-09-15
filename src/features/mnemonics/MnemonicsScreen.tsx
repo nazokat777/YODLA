@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useSearchParams } from 'react-router-dom'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, setMnemonic } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -25,7 +26,9 @@ const MAX_RESULTS = 50
 export function MnemonicsScreen() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
 
-  const [query, setQuery] = useState('')
+  // `?q=so'z` — imtihon yakunidagi "assotsiatsiya yozish" havolasidan
+  const [searchParams] = useSearchParams()
+  const [query, setQuery] = useState(searchParams.get('q') ?? '')
 
   /*
    * JONLI so'rov (bir martalik o'qish emas).

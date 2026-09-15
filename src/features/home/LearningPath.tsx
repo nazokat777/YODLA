@@ -1,10 +1,10 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
-import { loadLanguageDeck } from '@/content/starterDecks'
-import { readTopicOrder, saveTopicOrder } from '@/content/topicOrderCache'
-import type { CardRecord } from '@/core/db'
-import { buildUnits, topicOrderFromDeck, type PathUnit } from '@/core/path'
+import type { CardRecord, ExamResult } from '@/core/db'
+import { examCoverage, hasExam } from '@/core/exam'
+import { buildUnits, type PathUnit } from '@/core/path'
+import { useTopicOrder } from './useTopicOrder'
 import {
   drawPathOnScroll,
   enterStagger,
@@ -54,68 +54,24 @@ interface LearningPathProps {
    * uchun butun jadvalni ikki marta skanerlardi.
    */
   cards: CardRecord[] | undefined
+  /** Topshirilgan imtihonlar (bo'lim id → natija) — yo'lda 🏆 tugunlar */
+  examResults?: Readonly<Record<string, ExamResult>>
+  /** Hozir kutilayotgan imtihonning bo'lim id si — u ajralib turadi */
+  pendingExamId?: string | null
 }
 
-export function LearningPath({ cards }: LearningPathProps) {
+export function LearningPath({ cards, examResults = {}, pendingExamId = null }: LearningPathProps) {
   /** Joriy bo'lim — ochilishda shu joyga suriladi */
   const currentRef = useRef<HTMLLIElement>(null)
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
   const startingLevel = useSettingsStore((s) => s.startingLevel)
 
-  /**
-   * Mavzu tartibi lug'atdan olinadi — lug'at dangasa yuklanadi.
-   * `null` — hali kelmagan.
-   *
+  /*
    * Kelgunicha yo'l CHIZILMAYDI: `buildUnits` tartibsiz qolganda alifboga
    * tushadi va bo'limlar avval noto'g'ri ketma-ketlikda ko'rinib, keyin
    * sakrab qayta saralanardi (arabchada "10-dars" "2-dars" dan oldin).
    */
-  const [topicOrder, setTopicOrder] = useState<string[] | null>(null)
-  useEffect(() => {
-    if (!learningLanguage) return
-
-    /*
-     * Avval KESH. Tartib lug'at bazaga yozilayotganda saqlab qo'yiladi,
-     * shuning uchun odatda shu yerda topiladi va butun lug'atni (inglizchada
-     * ~700 kB JS) qayta yuklash kerak bo'lmaydi.
-     *
-     * Kesh bo'sh bo'lishi mumkin: yangi versiya endi chiqqan yoki
-     * foydalanuvchi tilni endi almashtirgan. Unda lug'at yuklanadi va
-     * natija keyingi safar uchun saqlanadi.
-     */
-    const cached = readTopicOrder(learningLanguage)
-    if (cached) {
-      setTopicOrder(cached)
-      return
-    }
-
-    let cancelled = false
-    void loadLanguageDeck(learningLanguage)
-      .then((deck) => {
-        if (cancelled) return
-
-        const order = topicOrderFromDeck(deck)
-        saveTopicOrder(learningLanguage, order)
-        setTopicOrder(order)
-      })
-      .catch((error: unknown) => {
-        /*
-         * Lug'at bo'lagi yuklanmasligi MUMKIN: yangi versiya chiqqach eski
-         * sahifada bo'lak nomi o'zgargan bo'ladi, yoki foydalanuvchi
-         * oflaynda tilni almashtirgan va o'sha til keshda yo'q.
-         *
-         * `.catch` bo'lmasa `topicOrder` abadiy `null` qolardi va butun
-         * o'quv yo'li "yuklanmoqda" holatida qotib qolardi — ya'ni darsni
-         * boshlash imkoniyati yo'qolardi. Bo'sh tartib esa yo'lni ALIFBO
-         * bo'yicha chizadi: tartib ideal emas, lekin ekran ishlaydi.
-         */
-        console.error('Mavzular tartibini yuklab bo‘lmadi:', error)
-        if (!cancelled) setTopicOrder([])
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [learningLanguage])
+  const topicOrder = useTopicOrder(learningLanguage)
 
   const units = useMemo(() => {
     if (!cards || !learningLanguage || topicOrder === null) return []
@@ -413,11 +369,84 @@ export function LearningPath({ cards }: LearningPathProps) {
               </span>
             </div>
           </li>
+          {/*
+            YIG'MA IMTIHON tuguni — tugallangan bo'limdan keyin (2-bo'limdan
+            boshlab). Topshirilmagan bo'lsa — yo'ldagi keyingi qadam:
+            yangi so'zlarni olishdan oldin eskilarini mustahkamlash.
+          */}
+          {hasExam(units, unit) && (
+            <ExamNode
+              unitId={unit.id}
+              count={examCoverage(units, unit.id).length}
+              result={examResults[unit.id]}
+              pending={unit.id === pendingExamId}
+            />
+          )}
           </Fragment>
         ))}
         </ol>
       </div>
     </section>
+  )
+}
+
+interface ExamNodeProps {
+  unitId: string
+  /** Nechta dars qamraladi — "1–N" yozuvi uchun */
+  count: number
+  result: ExamResult | undefined
+  pending: boolean
+}
+
+/**
+ * Imtihon tuguni. Kutilayotgani — katta, halqali, "keyingi qadam";
+ * topshirilgani — kichik chip (foiz bilan), qayta topshirish mumkin.
+ */
+function ExamNode({ unitId, count, result, pending }: ExamNodeProps) {
+  const percent = result ? Math.round((result.correct / Math.max(1, result.total)) * 100) : null
+
+  if (!pending && result) {
+    return (
+      <li data-unit className="ms-5 flex items-center gap-3">
+        <Link
+          to={PATHS.examById(unitId)}
+          data-testid={`exam-${unitId}`}
+          data-exam="passed"
+          className="tap-highlight-none inline-flex items-center gap-1.5 rounded-full bg-flame-500/15 px-3 py-1 text-xs font-extrabold text-ink-900"
+          aria-label={`Imtihon 1–${count} — ${percent}%, qayta topshirish`}
+        >
+          🏆 Imtihon 1–{count} · {percent}%
+        </Link>
+      </li>
+    )
+  }
+
+  if (!pending) return null
+
+  return (
+    <li data-unit className="ms-5 flex items-center gap-3">
+      <div className="relative shrink-0">
+        <span
+          data-ring
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 rounded-full border-4 border-flame-500"
+        />
+        <Link
+          to={PATHS.examById(unitId)}
+          data-testid={`exam-${unitId}`}
+          data-exam="pending"
+          data-circle
+          aria-label={`Imtihon: 1–${count} darslar`}
+          className="tap-highlight-none flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-b from-flame-500 to-flame-600 text-2xl shadow-[0_6px_0_0] shadow-flame-700 ring-4 ring-flame-500/30 transition-transform active:translate-y-0.5"
+        >
+          <span aria-hidden="true">🏆</span>
+        </Link>
+      </div>
+      <div className="flex min-w-0 flex-col">
+        <span className="font-bold">Imtihon · 1–{count} darslar</span>
+        <span className="text-xs text-ink-600">O‘tilgan hamma so‘zdan yig‘ma tekshiruv</span>
+      </div>
+    </li>
   )
 }
 

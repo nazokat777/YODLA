@@ -36,6 +36,9 @@ const ProfileScreen = lazy(() =>
 const MnemonicsScreen = lazy(() =>
   import('@/features/mnemonics/MnemonicsScreen').then((m) => ({ default: m.MnemonicsScreen })),
 )
+const ExamScreen = lazy(() =>
+  import('@/features/exam/ExamScreen').then((m) => ({ default: m.ExamScreen })),
+)
 const GamesScreen = lazy(() =>
   import('@/features/games/GamesScreen').then((m) => ({ default: m.GamesScreen })),
 )
@@ -90,6 +93,14 @@ export function App() {
             element={
               <RequireOnboarding>
                 <LessonScreen />
+              </RequireOnboarding>
+            }
+          />
+          <Route
+            path={`${PATHS.exam}/:unitId`}
+            element={
+              <RequireOnboarding>
+                <Lazy><ExamScreen /></Lazy>
               </RequireOnboarding>
             }
           />
