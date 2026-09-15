@@ -233,6 +233,18 @@ va'dasiga mos.
 Ko'rsatkich `savol/savol` emas, `so'z/so'z` sanaydi va **hech qachon
 orqaga ketmaydi** — o'zlashtirilgan so'z shu seansda qayta "yo'qolmaydi".
 
+## Xotira usullari (so'z tanishtiruvida)
+
+Yangi so'z ko'rsatilganda BITTA mikro-ko'rsatma chiqadi
+([core/mnemonics/memoryTip.ts](src/core/mnemonics/memoryTip.ts)): obraz
+(dual coding), ovoz chiqarib aytish (production effect), o'zi bilan
+bog'lash (self-reference), o'xshash so'z (keyword method), harakat
+(enactment), g'alati obraz (bizarreness) va — jumlasi bor so'zlarning
+har uchinchisiga — o'zi gap tuzish (generation effect). O'qish sayoz iz
+qoldiradi; so'z ustida ish chuqur. Usul so'zga qarab BARQAROR (id
+xeshi): bir so'z har safar bir xil usul — usul so'zning "o'z"iga
+aylanadi.
+
 ## Yig'ma imtihon
 
 **Har bo'lim tugagach — shu bo'limgacha bo'lgan HAMMASIDAN imtihon**

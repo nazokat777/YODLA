@@ -12,6 +12,7 @@ import { speak } from '@/lib/speech'
 import { WordDisplay } from './WordDisplay'
 import { transliterate } from '@/core/text/transliterate'
 import { revealedWordToday } from '@/lib/wordOfDayMemo'
+import { memoryTip } from '@/core/mnemonics/memoryTip'
 
 interface WordIntroProps {
   card: CardRecord
@@ -35,6 +36,17 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
   const isRevealedWordOfDay = revealedWordToday() === card.id
   const sentenceReading = card.sentence ? transliterate(card.sentence, language.script) : null
   const rootRef = useRef<HTMLDivElement>(null)
+  /*
+   * XOTIRA USULI — bitta mikro-ko'rsatma. O'qish sayoz iz qoldiradi;
+   * so'z ustida ISH (obraz, ovoz, o'zi bilan bog'lash…) chuqur
+   * (`core/mnemonics/memoryTip`). So'zga qarab barqaror.
+   */
+  const tip = memoryTip({
+    id: card.id,
+    word: card.word,
+    translation: card.translation,
+    hasSentence: Boolean(card.sentence),
+  })
 
   // Yangi so'z darhol O'QIB beriladi: eshitmasdan yodlash qiyin
   useEffect(() => {
@@ -161,6 +173,14 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
           )}
         </Panel>
       )}
+      <Panel data-intro padding="sm" tone="brand" className="flex items-start gap-2 text-sm" data-testid="memory-tip">
+        <span aria-hidden="true" className="text-xl leading-none">
+          {tip.icon}
+        </span>
+        <p>
+          <b className="text-brand-700">{tip.method}:</b> {tip.text}
+        </p>
+      </Panel>
       </div>
 
       <div className="pt-2">
