@@ -3,7 +3,7 @@ import { PATHS } from '@/app/paths'
 import { BadgeTile } from '@/components/ui/BadgeTile'
 import { LanguageBadge } from '@/components/ui/LanguageBadge'
 import { LANGUAGE_LIST } from '@/core/config/languages'
-import { countPerfectWeeks } from '@/core/db'
+import { countPerfectWeeks, type ExamResult } from '@/core/db'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import {
@@ -117,6 +117,11 @@ export function ProfileScreen() {
             </p>
           )}
         </Panel>
+      )}
+
+      {/* Imtihonlar — nechta topshirilgan, o'rtacha natija */}
+      {progress && Object.keys(progress.profile.examResults ?? {}).length > 0 && (
+        <ExamsPanel results={progress.profile.examResults ?? {}} />
       )}
 
       <WeakSpots />
@@ -246,6 +251,38 @@ export function ProfileScreen() {
 }
 
 /** Bitta ko'rsatkich katakchasi */
+/**
+ * Topshirilgan yig'ma imtihonlar. O'rtacha — BIRINCHI urinishdagi
+ * to'g'ri/jami: qayta topshirish yaxshilashi mumkin, lekin dastlabki
+ * natija haqiqiy holatni ko'rsatadi.
+ */
+function ExamsPanel({ results }: { results: Record<string, ExamResult> }) {
+  const entries = Object.entries(results).sort((a, b) => b[1].at - a[1].at)
+  const correct = entries.reduce((sum, [, r]) => sum + r.correct, 0)
+  const total = entries.reduce((sum, [, r]) => sum + r.total, 0)
+  const average = total === 0 ? 0 : Math.round((correct / total) * 100)
+
+  return (
+    <Panel data-testid="exams-panel">
+      <h2 className="mb-3 font-bold">Yig‘ma imtihonlar</h2>
+      <div className="grid grid-cols-2 gap-2 text-center">
+        <Metric icon="🏆" value={entries.length} label="Topshirilgan" />
+        <Metric icon="🎯" value={average} label="O‘rtacha %" />
+      </div>
+      <ul className="mt-3 flex flex-col gap-1 text-sm">
+        {entries.slice(0, 3).map(([unitId, r]) => (
+          <li key={unitId} className="flex items-center justify-between">
+            <span className="text-ink-600">{new Date(r.at).toLocaleDateString('uz-UZ')}</span>
+            <Link to={PATHS.examById(unitId)} className="font-bold text-brand-700">
+              {r.correct}/{r.total} · qayta topshirish →
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </Panel>
+  )
+}
+
 function Metric({ icon, value, label }: { icon: string; value: number; label: string }) {
   return (
     <div className="rounded-xl bg-slate-50 p-2">

@@ -28,3 +28,23 @@ describe('ProfileScreen — assotsiatsiyalar', () => {
     expect(link).toHaveAttribute('href', '/mnemonics')
   })
 })
+
+describe('ProfileScreen — imtihonlar paneli', () => {
+  it('imtihon topshirilgan bo‘lsa soni va o‘rtacha foiz ko‘rinadi', async () => {
+    const { createProfile } = await import('@/core/db')
+    await db.profile.put({
+      ...createProfile(),
+      examResults: {
+        'a1-oila': { at: 1, correct: 3, total: 4 },
+        'a1-ovqat': { at: 2, correct: 4, total: 4 },
+      },
+    })
+    renderScreen()
+
+    const panel = await screen.findByTestId('exams-panel')
+    expect(panel).toHaveTextContent('Topshirilgan')
+    // (3+4)/(4+4) = 87.5 → 88
+    expect(panel).toHaveTextContent('88')
+    expect(panel).toHaveTextContent('4/4 · qayta topshirish')
+  })
+})
