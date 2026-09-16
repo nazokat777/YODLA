@@ -28,6 +28,8 @@ export interface BadgeStats {
   perfectWeeks: number
   /** Topilgan sehrli so'zlar */
   secretWords: number
+  /** Topshirilgan yig'ma imtihonlar */
+  examsPassed: number
 }
 
 export interface BadgeDefinition {
@@ -135,6 +137,8 @@ export const BADGES: BadgeDefinition[] = [
   threshold('combo-10', 'Unstoppable', 'Ketma-ket 10 ta to‘g‘ri javob', '⚡', 1, (s) => (s.bestCombo >= 10 ? 1 : 0), true),
   threshold('perfect-week', 'Full Week', 'Haftaning 7 kuni ham mashq', '🗓️', 1, (s) => s.perfectWeeks, true),
   threshold('secret-word', 'Word Hunter', 'Sehrli so‘zni topish', '🪄', 1, (s) => s.secretWords, true),
+  threshold('exam-1', 'Exam Ace', 'Birinchi yig‘ma imtihonni topshiring', '🏆', 1, (s) => s.examsPassed),
+  threshold('exam-5', 'Exam Master', '5 ta yig‘ma imtihon', '🎓', 5, (s) => s.examsPassed),
 ]
 
 /** Yashirin nishon ochilmaguncha shunday ko'rinadi */

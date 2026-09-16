@@ -241,7 +241,7 @@ export async function recordPerfectSession(): Promise<void> {
  * yutuqlar uchun ochiladi.
  */
 /** Profildan hisoblanadigan nishon ko'rsatkichlari */
-export type ProfileBadgeStats = 'totalXp' | 'level' | 'perfectSessions' | 'bestCombo' | 'perfectWeeks' | 'secretWords'
+export type ProfileBadgeStats = 'totalXp' | 'level' | 'perfectSessions' | 'bestCombo' | 'perfectWeeks' | 'secretWords' | 'examsPassed'
 
 /** 7/7 o'tkazilgan haftalar — haftalik sayohatning 7-pog'onasi olinganlar */
 export function countPerfectWeeks(claims: Record<string, number[]> | undefined): number {
@@ -263,6 +263,7 @@ export async function syncBadges(
       bestCombo: profile.bestCombo ?? 0,
       perfectWeeks: countPerfectWeeks(profile.weeklyQuestClaims),
       secretWords: profile.secretWordWeeks?.length ?? 0,
+      examsPassed: Object.keys(profile.examResults ?? {}).length,
     }
 
     const newly = newlyUnlockedBadgeIds(full, profile.unlockedBadges)
@@ -575,7 +576,7 @@ export async function recordExamPassed(
   unitId: string,
   result: { correct: number; total: number },
   now: number = Date.now(),
-): Promise<number> {
+): Promise<{ bonusXp: number; newBadges: string[] }> {
   const isFirst = await db.transaction('rw', db.profile, async () => {
     const profile = (await db.profile.get('me')) ?? createProfile()
     const results = profile.examResults ?? {}
@@ -587,5 +588,9 @@ export async function recordExamPassed(
     return first
   })
 
-  return isFirst ? awardBonusXp(EXAM_BONUS_XP, now) : 0
+  const bonusXp = isFirst ? await awardBonusXp(EXAM_BONUS_XP, now) : 0
+  // "Exam Ace" nishoni imtihon yozilgandan KEYIN hisoblanadi — seans
+  // yakunidagi `finalizeSession` bundan oldin o'tib ketgan
+  const { newlyUnlocked } = await refreshBadges(now)
+  return { bonusXp, newBadges: newlyUnlocked }
 }

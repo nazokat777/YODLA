@@ -14,6 +14,7 @@ function makeStats(overrides: Partial<BadgeStats> = {}): BadgeStats {
     bestCombo: 0,
     perfectWeeks: 0,
     secretWords: 0,
+    examsPassed: 0,
     ...overrides,
   }
 }

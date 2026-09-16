@@ -54,6 +54,7 @@ export function ProfileScreen() {
     bestCombo: progress?.profile.bestCombo ?? 0,
     perfectWeeks: countPerfectWeeks(progress?.profile.weeklyQuestClaims),
     secretWords: progress?.profile.secretWordWeeks?.length ?? 0,
+    examsPassed: Object.keys(progress?.profile.examResults ?? {}).length,
   }
 
   const unlocked = new Set(progress?.profile.unlockedBadges ?? [])

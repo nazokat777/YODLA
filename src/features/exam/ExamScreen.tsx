@@ -140,9 +140,16 @@ export function ExamScreen() {
       if (!unitId) return
       const correct = examCards.length - (first.missedWords?.length ?? 0)
       try {
-        const bonus = await recordExamPassed(unitId, { correct, total: examCards.length })
+        const { bonusXp: bonus, newBadges } = await recordExamPassed(unitId, {
+          correct,
+          total: examCards.length,
+        })
         setBonusXp(bonus)
-        setSummary({ ...total, xpEarned: total.xpEarned + bonus })
+        setSummary({
+          ...total,
+          xpEarned: total.xpEarned + bonus,
+          newBadges: [...new Set([...total.newBadges, ...newBadges])],
+        })
       } catch (error) {
         console.error('Imtihon natijasini yozib bo‘lmadi:', error)
         setSummary(total)
