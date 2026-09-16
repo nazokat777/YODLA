@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { getAllCards, recordExamPassed, type CardRecord } from '@/core/db'
+import { getAllCards, recordExamPassed, recordLessonCompleted, type CardRecord } from '@/core/db'
 import { examCoverage, pickExamCards } from '@/core/exam'
 import { mergeLevelUp } from '@/core/gamification'
 import { estimateMinutes } from '@/core/lesson/eta'
@@ -139,6 +139,9 @@ export function ExamScreen() {
     async (first: SessionSummary, total: SessionSummary) => {
       if (!unitId) return
       const correct = examCards.length - (first.missedWords?.length ?? 0)
+      // Kunlik chaqiriq "bitta darsni o'zlashtir" — imtihon ham sanaladi:
+      // u darsdan kam emas, ko'p ish
+      void recordLessonCompleted()
       try {
         const { bonusXp: bonus, newBadges } = await recordExamPassed(unitId, {
           correct,
