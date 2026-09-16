@@ -252,6 +252,8 @@ export function ExamScreen() {
             cards={missedCards}
             pool={allCards}
             mode="mastery"
+            // Faqat adashilgan so'zlar — xatosiz tugatish "benuqson" emas
+            perfectEligible={false}
             onFinish={handleFixFinish}
           />
         </>

@@ -285,6 +285,14 @@ export interface FinalizeSessionInput {
   answered: number
   /** Xato javoblar soni */
   wrong: number
+  /**
+   * Benuqsonlik sanalishi mumkinmi (sukut — ha).
+   *
+   * `false` — imtihonning "xatolar ustida ishlash" bosqichi: u faqat
+   * ADASHILGAN so'zlardan iborat, shuning uchun uni xatosiz tugatish
+   * "benuqson seans" emas — bola imtihonda allaqachon xato qilgan.
+   */
+  perfectEligible?: boolean
   now?: number
 }
 
@@ -322,12 +330,13 @@ export async function refreshBadges(
 export async function finalizeSession({
   answered,
   wrong,
+  perfectEligible = true,
   now = Date.now(),
 }: FinalizeSessionInput): Promise<{ newlyUnlocked: string[]; perfectBonusXp: number }> {
   // Benuqson seans: nishon uchun sanaladi VA XP bonusi beriladi.
   // 15 — kunlik maqsad bonusidan (20) kichik: kunlik odat
   // benuqsonlikdan muhimroq.
-  const isPerfect = answered > 0 && wrong === 0
+  const isPerfect = perfectEligible && answered > 0 && wrong === 0
   let perfectBonusXp = 0
 
   if (isPerfect) {

@@ -560,3 +560,13 @@ describe('recordExamPassed', () => {
     expect((await db.profile.get('me'))?.totalXp).toBe(EXAM_BONUS_XP)
   })
 })
+
+describe('finalizeSession — perfectEligible', () => {
+  it('imtihonning xatolar bosqichi xatosiz tugasa ham benuqson sanalmaydi', async () => {
+    const { finalizeSession } = await import('./progress.repo')
+    await db.profile.clear()
+    const result = await finalizeSession({ answered: 5, wrong: 0, perfectEligible: false })
+    expect(result.perfectBonusXp).toBe(0)
+    expect((await db.profile.get('me'))?.perfectSessions ?? 0).toBe(0)
+  })
+})

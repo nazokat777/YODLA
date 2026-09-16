@@ -173,6 +173,12 @@ interface SessionRunnerProps {
    * nechta so'z o'zlashtirilganini ko'rsatishi uchun.
    */
   onProgressChange?: (done: number, total: number) => void
+  /**
+   * Xatosiz seans "benuqson" deb sanalsinmi (sukut — ha). Imtihonning
+   * "xatolar ustida ishlash" bosqichi `false` beradi: u faqat adashilgan
+   * so'zlardan iborat — uni xatosiz tugatish benuqsonlik emas.
+   */
+  perfectEligible?: boolean
 }
 
 /**
@@ -201,6 +207,7 @@ export function SessionRunner({
   requiredStreak = REQUIRED_STREAK,
   onFinish,
   onProgressChange,
+  perfectEligible = true,
 }: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
@@ -536,7 +543,7 @@ export function SessionRunner({
     // Eng uzun kombo — yashirin nishon uchun (yozuv o'z xatosini o'zi yutadi)
     void recordBestCombo(bestComboRef.current).catch(() => {})
 
-    finalizeSession({ answered: summary.answered, wrong: summary.wrong })
+    finalizeSession({ answered: summary.answered, wrong: summary.wrong, perfectEligible })
       .then(async ({ newlyUnlocked, perfectBonusXp }) => {
         // Daraja oshdimi — HAQIQIY jami XP dan (bonuslar yozilgandan keyin)
         const from = levelAtStartRef.current
