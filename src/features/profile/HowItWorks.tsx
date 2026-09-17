@@ -25,6 +25,11 @@ const TOPICS: Array<{ icon: string; title: string; text: string }> = [
     text: 'Ilova har so‘zni unutish arafasida qaytaradi: yaxshi bilsang — kechroq, qiynalsang — tezroq. Shuning uchun so‘z uzoq esda qoladi.',
   },
   {
+    icon: '🏆',
+    title: 'Yig‘ma imtihon',
+    text: 'Har dars tugagach shu darsgacha bo‘lgan HAMMA darslardan tekshiruv: 2-darsdan keyin 1–2, 10-darsdan keyin 1–10. Xato so‘zlar darhol qaytadi va o‘zlashtirilguncha qo‘yib yubormaydi — imtihon har doim 100% bilan tugaydi. Birinchi topshirish +40 XP.',
+  },
+  {
     icon: '🎯',
     title: 'Kombo',
     text: 'Ketma-ket to‘g‘ri javoblar. 3, 5, 10 da bayram va bonus XP. Xato komboni to‘xtatadi, lekin hech nima olib qo‘ymaydi.',
