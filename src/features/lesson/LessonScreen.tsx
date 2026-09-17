@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
-import { countCards, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
+import { countCards, db, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
+import { pendingExam } from '@/core/exam'
+import { buildUnits } from '@/core/path'
+import { useTopicOrder } from '@/features/home/useTopicOrder'
 import { pickLessonCards } from '@/core/lesson/order'
 import { currentUnitId } from './currentUnit'
 import { mergeLevelUp } from '@/core/gamification'
@@ -109,6 +112,32 @@ export function LessonScreen() {
     if (inProgress) setExitAsked(true)
     else navigate(PATHS.home)
   }, [inProgress, navigate])
+
+  /**
+   * Dars tugagach YIG'MA IMTIHON kutilyaptimi — yakunda birinchi tugma.
+   *
+   * Bo'lim shu dars bilan tugallangan bo'lsa, keyingi qadam yangi dars
+   * emas, imtihon: yangi so'z olishdan oldin eskilarini mustahkamlash.
+   * `null` — imtihon yo'q yoki hali hisoblanmagan.
+   */
+  const topicOrder = useTopicOrder(learningLanguage)
+  const [examOffer, setExamOffer] = useState<{ unitId: string; count: number } | null>(null)
+  useEffect(() => {
+    if (!summary || !learningLanguage || topicOrder === null) return
+    let cancelled = false
+    setExamOffer(null)
+    void Promise.all([getAllCards(learningLanguage), db.profile.get('me')])
+      .then(([all, profile]) => {
+        if (cancelled) return
+        const units = buildUnits(all, { minLevel: startingLevel, topicOrder })
+        const pending = pendingExam(units, profile?.examResults ?? {})
+        if (pending) setExamOffer({ unitId: pending.unitId, count: pending.covered.length })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [summary, learningLanguage, topicOrder, startingLevel])
 
   /** Chaqmoq raund taklifi — har dars uchun BIR marta tashlanadi */
   const [lightningOffered, setLightningOffered] = useState(isLightningOffered)
@@ -366,6 +395,12 @@ export function LessonScreen() {
                 KUTILMAGAN taklif: ~har uchinchi darsdan keyin 20 soniyalik
                 chaqmoq raund (XP ×2). O'zgaruvchan — "balki shu safar".
               */}
+              {/* Bo'lim tugadi — keyingi qadam imtihon (yangi darsdan oldin) */}
+              {examOffer && (
+                <LinkButton to={PATHS.examById(examOffer.unitId)} block size="lg" data-testid="exam-offer">
+                  🏆 Imtihon · 1–{examOffer.count} darslar
+                </LinkButton>
+              )}
               {lightningOffered && (
                 <LinkButton
                   to={`${PATHS.speedGame}?bonus=1`}
@@ -376,7 +411,12 @@ export function LessonScreen() {
                   ⚡ Chaqmoq raund — 20 soniya, XP ×2!
                 </LinkButton>
               )}
-              <Button block size="lg" onClick={() => setLessonKey((key) => key + 1)}>
+              <Button
+                block
+                size="lg"
+                variant={examOffer ? 'secondary' : 'primary'}
+                onClick={() => setLessonKey((key) => key + 1)}
+              >
                 Yana bir dars
               </Button>
               <LinkButton to={PATHS.home} block variant="ghost">
