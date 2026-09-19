@@ -188,12 +188,23 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
         {/* Seans bo'lmaganda tugmalar shu yerda; bo'lganda — panel ichida */}
         {summary === null && (
           <div className="flex flex-col gap-2">
-            <LinkButton to={PATHS.home} block>
+            {/*
+              O'lik yo'l emas: takror yo'q — demak eng foydali keyingi
+              qadam YANGI so'z. "Bosh sahifaga" ikkinchi o'rinda.
+            */}
+            {focus === 'due' && (
+              <LinkButton to={PATHS.lesson} block data-testid="review-empty-lesson">
+                Darsni boshlash
+              </LinkButton>
+            )}
+            <LinkButton to={PATHS.home} block variant={focus === 'due' ? 'ghost' : 'primary'}>
               Bosh sahifaga
             </LinkButton>
-            <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
-              Yana bor-yo‘qligini tekshirish
-            </Button>
+            {focus !== 'due' && (
+              <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
+                Yana bor-yo‘qligini tekshirish
+              </Button>
+            )}
           </div>
         )}
       </div>

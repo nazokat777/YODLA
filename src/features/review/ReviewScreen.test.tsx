@@ -614,3 +614,22 @@ describe('ReviewScreen — qiyin so‘zlar rejimi', () => {
     expect(screen.queryByText(/hammasi mustahkam/i)).not.toBeInTheDocument()
   })
 })
+
+describe('ReviewScreen — bo‘sh holat o‘lik yo‘l emas', () => {
+  it('takror yo‘q bo‘lsa "Darsni boshlash" birinchi tugma', async () => {
+    const { render, screen } = await import('@testing-library/react')
+    const { MemoryRouter } = await import('react-router-dom')
+    const { db } = await import('@/core/db')
+    const { useSettingsStore } = await import('@/stores/useSettingsStore')
+    const { ReviewScreen } = await import('./ReviewScreen')
+    await db.cards.clear()
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    render(
+      <MemoryRouter initialEntries={['/review']}>
+        <ReviewScreen />
+      </MemoryRouter>,
+    )
+    expect(await screen.findByTestId('review-empty-lesson')).toHaveAttribute('href', '/lesson')
+  })
+})
