@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { addMissingCards, db, getAllCards, type NewCardRecordInput } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -225,10 +225,30 @@ describe('LearningPath — nomlar', () => {
     ])
     await renderPath()
 
-    expect(await screen.findByRole('heading', { name: 'Enterprise 1' })).toBeInTheDocument()
-    expect(screen.getAllByRole('heading', { name: 'Enterprise 1' })).toHaveLength(1)
+    const header = await screen.findByTestId('section-0-enterprise-1')
+    expect(screen.getAllByText('Enterprise 1')).toHaveLength(1)
+    expect(header).toHaveTextContent('2 bo‘lim')
+    // Joriy bo'lim shu seksiyada — u OCHIQ
+    expect(header).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText('1-dars')).toBeInTheDocument()
     expect(screen.getByText('2-dars')).toBeInTheDocument()
+  })
+
+  it('joriy bo‘limsiz seksiyalar YIG‘ILGAN, bosilsa ochiladi (audit #2 №3)', async () => {
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en', topic: 'Enterprise 1 · 1-dars', level: 'A1' },
+      { word: 'b', translation: 'bb', language: 'en', topic: 'Enterprise 2 · 1-dars', level: 'A2' },
+    ])
+    await renderPath()
+
+    const second = await screen.findByTestId('section-1-enterprise-2')
+    expect(second).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByTestId('unit-a2-enterprise-2-1-dars')).not.toBeInTheDocument()
+
+    fireEvent.click(second)
+    expect(second).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByTestId('unit-a2-enterprise-2-1-dars')).toBeInTheDocument()
   })
 })
 

@@ -105,3 +105,16 @@ describe('PlacementStep', () => {
     expect(['A1', 'A2', 'B1']).toContain(onDone.mock.calls[0][0])
   })
 })
+
+describe('PlacementStep — "Bilmayman"', () => {
+  it('"Bilmayman" xato sifatida sanaladi va keyingi savolga o‘tadi', async () => {
+    const { render, screen, fireEvent } = await import('@testing-library/react')
+    const { PlacementStep } = await import('./PlacementStep')
+    render(<PlacementStep language="en" onDone={() => {}} />)
+
+    await screen.findByTestId('placement-word')
+    expect(screen.getByTestId('placement-progress')).toHaveTextContent('1/')
+    fireEvent.click(screen.getByTestId('placement-unknown'))
+    expect(screen.getByTestId('placement-progress')).toHaveTextContent('2/')
+  })
+})

@@ -92,3 +92,24 @@ it('tarjima ekran o‘quvchi uchun BELGILANADI', () => {
 
   expect(screen.getByText(/ma.nosi:/i)).toBeInTheDocument()
 })
+
+describe('WordIntro — ovoz yo‘q bo‘lsa', () => {
+  it('🔇 tugma va bosilganda tushuntirish chiqadi (audit #2 №5)', async () => {
+    const { render, screen, fireEvent } = await import('@testing-library/react')
+    const { WordIntro } = await import('./WordIntro')
+    // jsdom'da nutq sintezi yo'q — aynan "ovoz o'rnatilmagan" holat
+    render(
+      <WordIntro
+        card={{
+          id: 'en:x', word: 'x', translation: 'y', language: 'en', interval: 0, repetitions: 0,
+          easeFactor: 2.5, dueDate: 0, createdAt: 0, lastReviewedAt: null, totalReviews: 0, lapses: 0,
+        }}
+        onContinue={() => {}}
+      />,
+    )
+
+    const muted = await screen.findByTestId('speak-unavailable')
+    fireEvent.click(muted)
+    expect(screen.getByRole('status')).toHaveTextContent(/ovoz o‘rnatilmagan/i)
+  })
+})

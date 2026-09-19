@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import type { CardRecord, ExamResult } from '@/core/db'
 import { examCoverage, hasExam } from '@/core/exam'
-import { buildUnits, type PathUnit } from '@/core/path'
+import { buildUnits, slugifyTopic, type PathUnit } from '@/core/path'
 import { useTopicOrder } from './useTopicOrder'
 import {
   drawPathOnScroll,
@@ -78,6 +78,49 @@ export function LearningPath({ cards, examResults = {}, pendingExamId = null }: 
 
     return buildUnits(cards, { minLevel: startingLevel, topicOrder })
   }, [cards, learningLanguage, startingLevel, topicOrder])
+
+  /**
+   * Seksiya guruhlari — ketma-ket bir xil `section` li bo'limlar.
+   * Seksiyasiz (qo'lda yozilgan) bo'limlar o'z guruhida, sarlavhasiz.
+   */
+  const groups = useMemo(() => {
+    const result: Array<{ key: string; section: string | null; units: PathUnit[] }> = []
+    for (const unit of units) {
+      const last = result[result.length - 1]
+      if (last && last.section === unit.section) last.units.push(unit)
+      else result.push({ key: `${result.length}-${slugifyTopic(unit.section ?? 'asosiy')}`, section: unit.section, units: [unit] })
+    }
+    return result
+  }, [units])
+
+  /**
+   * Ochiq seksiyalar. Sukut — JORIY bo'lim (yoki kutilayotgan imtihon)
+   * turgan seksiya; hammasi tugagan bo'lsa — oxirgisi. Foydalanuvchi
+   * bosgani qo'shiladi, qayta bosgani yopiladi.
+   */
+  const defaultOpen = useMemo(() => {
+    const active = groups.find((group) =>
+      group.units.some((unit) => unit.state === 'current' || unit.id === pendingExamId),
+    )
+    return (active ?? groups[groups.length - 1])?.key ?? null
+  }, [groups, pendingExamId])
+  const [toggled, setToggled] = useState<Set<string>>(() => new Set())
+  const openSections = useMemo(() => {
+    const open = new Set<string>()
+    if (defaultOpen) open.add(defaultOpen)
+    for (const key of toggled) {
+      if (open.has(key)) open.delete(key)
+      else open.add(key)
+    }
+    return open
+  }, [defaultOpen, toggled])
+  const toggleSection = (key: string) =>
+    setToggled((current) => {
+      const next = new Set(current)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
 
   // Kartalar yoki mavzu tartibi hali yo'lda. Buni "bo'lim yo'q" dan
   // farqlash kerak: birinchi ochilishda lug'at bazaga yozilayotgan bir-ikki
@@ -326,20 +369,45 @@ export function LearningPath({ cards, examResults = {}, pendingExamId = null }: 
         )}
 
         <ol ref={listRef} className="relative z-10 flex flex-col gap-3">
-        {units.map((unit, index) => (
-          <Fragment key={unit.id}>
-            {/*
-              Seksiya sarlavhasi FAQAT o'zgarganda chiziladi. Shu tufayli
-              "Enterprise 1" yuz marta emas, bir marta ko'rinadi va
-              foydalanuvchi yo'lning qayerida turganini biladi.
-            */}
-            {unit.section && unit.section !== units[index - 1]?.section && (
-              <li className="mt-4 first:mt-0">
-                <h3 className="rounded-full bg-brand-50 px-3 py-1 text-xs font-extrabold tracking-wide text-brand-700 uppercase">
-                  {unit.section}
-                </h3>
-              </li>
-            )}
+        {groups.map((group) => {
+          const isOpen = openSections.has(group.key)
+          const learned = group.units.reduce((sum, unit) => sum + unit.learned, 0)
+          const total = group.units.reduce((sum, unit) => sum + unit.total, 0)
+          const done = group.units.every((unit) => unit.state === 'completed')
+
+          return (
+            <Fragment key={group.key}>
+              {/*
+                SEKSIYA SARLAVHASI — yig'ma tugma. Audit #2 №3: 260+ qulflangan
+                bo'lim bir ro'yxatda bosh ekranni 40 ekranli skrollga
+                aylantirardi. Endi faqat JORIY seksiya ochiq, qolganlari bir
+                qatorda: nomi, bo'limlar soni, o'sish. Bosilsa ochiladi.
+              */}
+              {group.section && (
+                <li className="mt-4 first:mt-0">
+                  <button
+                    type="button"
+                    data-testid={`section-${group.key}`}
+                    aria-expanded={isOpen}
+                    onClick={() => toggleSection(group.key)}
+                    className="tap-highlight-none flex w-full items-center justify-between gap-2 rounded-2xl bg-brand-50 px-3 py-2 text-start"
+                  >
+                    <span className="text-xs font-extrabold tracking-wide text-brand-700 uppercase">
+                      {done && <span aria-hidden="true">✓ </span>}
+                      {group.section}
+                    </span>
+                    <span className="flex shrink-0 items-center gap-2 text-xs font-bold text-ink-600">
+                      {group.units.length} bo‘lim · {learned}/{total}
+                      <span aria-hidden="true" className={cn('transition-transform', isOpen && 'rotate-90')}>
+                        ▸
+                      </span>
+                    </span>
+                  </button>
+                </li>
+              )}
+              {isOpen &&
+                group.units.map((unit, index) => (
+                  <Fragment key={unit.id}>
           <li
             data-unit
             ref={unit.state === 'current' ? currentRef : undefined}
@@ -382,8 +450,11 @@ export function LearningPath({ cards, examResults = {}, pendingExamId = null }: 
               pending={unit.id === pendingExamId}
             />
           )}
-          </Fragment>
-        ))}
+                  </Fragment>
+                ))}
+            </Fragment>
+          )
+        })}
         </ol>
       </div>
     </section>

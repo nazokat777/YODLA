@@ -69,3 +69,14 @@ describe('buildPlacementQuiz', () => {
     expect(first).toEqual(second)
   })
 })
+
+describe('isCleanDistractor', () => {
+  it('bo‘lak va uzun tarjimalar variant bo‘lmaydi', async () => {
+    const { isCleanDistractor } = await import('./questions')
+    expect(isCleanDistractor('olma')).toBe(true)
+    expect(isCleanDistractor('... qilishingiz kerak')).toBe(false)
+    expect(isCleanDistractor('… kerak')).toBe(false)
+    expect(isCleanDistractor('yurmoq (piyoda)')).toBe(false)
+    expect(isCleanDistractor('juda uzun tarjima matni bu yerda turibdi')).toBe(false)
+  })
+})

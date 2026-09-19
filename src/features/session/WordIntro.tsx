@@ -121,7 +121,7 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <SpeakButton text={card.word} locale={language.speechLocale} size="lg" />
+          <SpeakButton text={card.word} locale={language.speechLocale} size="lg" fallback="hint" />
           <PronounceButton
             text={card.word}
             locale={language.speechLocale}

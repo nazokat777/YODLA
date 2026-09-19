@@ -27,12 +27,24 @@ const CHOICES = 4
  * Savollar oson darajadan boshlanadi: qiyin savol birinchi bo'lib chiqsa,
  * boshlovchi o'zini bilimsiz his qilib testni tashlab ketishi mumkin.
  */
+/** Variant sifatida yaroqli tarjima: to'liq, qisqa, "…" va qavssiz */
+export function isCleanDistractor(translation: string): boolean {
+  const text = translation.trim()
+  return text.length > 0 && text.length <= 24 && !/[…()\[\]/]|^\.{2,}/.test(text)
+}
+
 export function buildPlacementQuiz(
   deck: Record<LevelCode, NewCardRecordInput[]>,
   random: RandomSource = Math.random,
 ): PlacementQuestion[] {
+  /*
+   * Chalg'ituvchi manbai — faqat TOZA tarjimalar. Import qilingan
+   * lug'atda "… qilishingiz kerak" kabi bo'lak-tarjimalar bor; ular
+   * variant sifatida g'alati ko'rinadi va bolani chalg'itadi
+   * (audit #2, №4).
+   */
   const everyTranslation = LEVEL_ORDER.flatMap((level) =>
-    deck[level].map((card) => card.translation),
+    deck[level].map((card) => card.translation).filter(isCleanDistractor),
   )
 
   return LEVEL_ORDER.flatMap((level) => {

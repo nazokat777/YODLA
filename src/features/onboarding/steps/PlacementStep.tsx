@@ -96,6 +96,11 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
     )
   }
 
+  /**
+   * `choice === -1` — "Bilmayman". Xato deb sanaladi, lekin taxminni
+   * yo'q qiladi: 4 variantdan ko'r-ko'rona bosish 25% "to'g'ri" chiqib,
+   * darajani sun'iy ko'tarardi (audit #2, №4).
+   */
   function handleAnswer(choice: number) {
     const isCorrect = choice === question.correctIndex
     const nextScore = isCorrect
@@ -158,6 +163,16 @@ export function PlacementStep({ language, onDone }: PlacementStepProps) {
             </button>
           </li>
         ))}
+        <li>
+          <button
+            type="button"
+            data-testid="placement-unknown"
+            onClick={() => handleAnswer(-1)}
+            className="tap-highlight-none w-full rounded-2xl border-2 border-dashed border-ink-300 p-4 text-start font-semibold text-ink-600 transition-colors hover:border-brand-500"
+          >
+            🤷 Bilmayman
+          </button>
+        </li>
       </ul>
 
       <div className="mt-auto pt-6">
