@@ -99,15 +99,20 @@ export function LearningPath({ cards, examResults = {}, pendingExamId = null }: 
    * bosgani qo'shiladi, qayta bosgani yopiladi.
    */
   const defaultOpen = useMemo(() => {
-    const active = groups.find((group) =>
-      group.units.some((unit) => unit.state === 'current' || unit.id === pendingExamId),
-    )
-    return (active ?? groups[groups.length - 1])?.key ?? null
+    // Joriy bo'lim VA kutilayotgan imtihon boshqa-boshqa seksiyada bo'lishi
+    // mumkin (imtihon oldingi seksiyaning oxirida) — ikkalasi ham ochiq
+    const active = groups
+      .filter((group) =>
+        group.units.some((unit) => unit.state === 'current' || unit.id === pendingExamId),
+      )
+      .map((group) => group.key)
+    if (active.length > 0) return active
+    const last = groups[groups.length - 1]
+    return last ? [last.key] : []
   }, [groups, pendingExamId])
   const [toggled, setToggled] = useState<Set<string>>(() => new Set())
   const openSections = useMemo(() => {
-    const open = new Set<string>()
-    if (defaultOpen) open.add(defaultOpen)
+    const open = new Set<string>(defaultOpen)
     for (const key of toggled) {
       if (open.has(key)) open.delete(key)
       else open.add(key)
