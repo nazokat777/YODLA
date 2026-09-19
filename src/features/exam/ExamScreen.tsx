@@ -6,7 +6,7 @@ import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { getAllCards, recordExamPassed, recordLessonCompleted, type CardRecord } from '@/core/db'
-import { examCoverage, pickExamCards } from '@/core/exam'
+import { examCoverage, examKey, pickExamCards } from '@/core/exam'
 import { mergeLevelUp } from '@/core/gamification'
 import { estimateMinutes } from '@/core/lesson/eta'
 import { buildUnits, type PathUnit } from '@/core/path'
@@ -28,6 +28,9 @@ import { ExamReport } from './ExamReport'
  * qolmasin" talabi bajarilmasdi.
  */
 type Phase = 'intro' | 'exam' | 'fix' | 'done'
+
+/** Kirishda nechta bo'lim nomi chiziladi — 30-darsda ro'yxat ekranni to'ldirmasin */
+const INTRO_UNIT_CHIPS = 10
 
 /** Bo'sh yig'indi — bosqich natijalarini qo'shishda tayanch */
 const EMPTY: SessionSummary = {
@@ -137,13 +140,13 @@ export function ExamScreen() {
 
   const finish = useCallback(
     async (first: SessionSummary, total: SessionSummary) => {
-      if (!unitId) return
+      if (!unitId || !learningLanguage) return
       const correct = examCards.length - (first.missedWords?.length ?? 0)
       // Kunlik chaqiriq "bitta darsni o'zlashtir" — imtihon ham sanaladi:
       // u darsdan kam emas, ko'p ish
       void recordLessonCompleted()
       try {
-        const { bonusXp: bonus, newBadges } = await recordExamPassed(unitId, {
+        const { bonusXp: bonus, newBadges } = await recordExamPassed(examKey(learningLanguage, unitId), {
           correct,
           total: examCards.length,
         })
@@ -159,7 +162,7 @@ export function ExamScreen() {
       }
       setPhase('done')
     },
-    [unitId, examCards.length],
+    [unitId, learningLanguage, examCards.length],
   )
 
   /** Imtihon savollari tugadi */
@@ -331,7 +334,7 @@ function ExamIntro({ covered, questionCount, onStart }: ExamIntroProps) {
       <Panel padding="sm">
         <h3 className="mb-1 text-sm font-extrabold">Qaysi darslar?</h3>
         <ul className="flex flex-wrap gap-1.5" data-testid="exam-units">
-          {units.map((unit) => (
+          {units.slice(0, INTRO_UNIT_CHIPS).map((unit) => (
             <li
               key={unit.id}
               className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-bold text-brand-700"
@@ -339,6 +342,11 @@ function ExamIntro({ covered, questionCount, onStart }: ExamIntroProps) {
               {unit.title}
             </li>
           ))}
+          {units.length > INTRO_UNIT_CHIPS && (
+            <li className="rounded-full bg-ink-300/30 px-2.5 py-0.5 text-xs font-bold text-ink-600">
+              +{units.length - INTRO_UNIT_CHIPS} ta dars
+            </li>
+          )}
         </ul>
       </Panel>
 

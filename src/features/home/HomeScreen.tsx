@@ -6,7 +6,7 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
-import { computeLanguageStats, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
+import { computeLanguageStats, type ExamResult, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
 import { formatTimeUntil } from '@/lib/format'
 import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
@@ -23,11 +23,11 @@ const WEAK_MIN_LAPSES = 2
 /** Bosh ekranda taklif chiqishi uchun eng kam qiyin so'zlar */
 const WEAK_CARD_MIN = 2
 /** Barqaror bo'sh obyekt — har renderda yangi `{}` yo'lni qayta hisoblatmasin */
-const EMPTY_EXAMS: Record<string, never> = {}
+const EMPTY_EXAMS: Record<string, ExamResult> = {}
 import { LearningPath } from './LearningPath'
 import { useTopicOrder } from './useTopicOrder'
 import { buildUnits } from '@/core/path'
-import { pendingExam } from '@/core/exam'
+import { examResultsFor, pendingExam } from '@/core/exam'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
@@ -113,11 +113,16 @@ export function HomeScreen() {
    * ikkalasi bir manbadan (`buildUnits`) hisoblanadi.
    */
   const topicOrder = useTopicOrder(learningLanguage)
-  const examResults = progress?.profile.examResults
+  const allExamResults = progress?.profile.examResults
+  // Faqat SHU TIL natijalari — bo'lim id si tilsiz, kalit tilli
+  const examResults = useMemo(
+    () => (learningLanguage ? examResultsFor(allExamResults, learningLanguage) : EMPTY_EXAMS),
+    [allExamResults, learningLanguage],
+  )
   const exam = useMemo(() => {
     if (!cards || topicOrder === null) return null
     const units = buildUnits(cards, { minLevel: startingLevel, topicOrder })
-    const pending = pendingExam(units, examResults ?? {})
+    const pending = pendingExam(units, examResults)
     return pending ? { unitId: pending.unitId, count: pending.covered.length } : null
   }, [cards, topicOrder, startingLevel, examResults])
 
@@ -294,7 +299,7 @@ export function HomeScreen() {
         </Link>
       )}
 
-      <LearningPath cards={cards} examResults={examResults ?? EMPTY_EXAMS} pendingExamId={exam?.unitId ?? null} />
+      <LearningPath cards={cards} examResults={examResults} pendingExamId={exam?.unitId ?? null} />
 
       {/* O'rganilgan so'zlar — shaxsiy osmon: raqam emas, tasvir */}
       {cards && <WordSky cards={cards} />}

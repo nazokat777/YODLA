@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CardRecord } from '@/core/db'
 import type { PathUnit } from '@/core/path'
-import { examCoverage, hasExam, pendingExam } from './checkpoint'
+import { examCoverage, examKey, examResultsFor, hasExam, pendingExam } from './checkpoint'
 import { pickExamCards } from './select'
 
 function unit(id: string, state: PathUnit['state']): PathUnit {
@@ -95,5 +95,16 @@ describe('pickExamCards', () => {
 
   it('qamrov bo‘sh bo‘lsa — bo‘sh', () => {
     expect(pickExamCards([], cards, now)).toEqual([])
+  })
+})
+
+describe('examKey / examResultsFor', () => {
+  it('til prefiksi bilan kalitlaydi va faqat o‘sha tilnikini qaytaradi', () => {
+    expect(examKey('en', 'a1-oila')).toBe('en:a1-oila')
+    const all = { 'en:a1-oila': 1, 'ru:a1-oila': 2, 'a1-ovqat': 3 }
+    // Inglizcha + tilsiz eski yozuv; ruscha emas
+    expect(examResultsFor(all, 'en')).toEqual({ 'a1-oila': 1, 'a1-ovqat': 3 })
+    expect(examResultsFor(all, 'ru')).toEqual({ 'a1-oila': 2, 'a1-ovqat': 3 })
+    expect(examResultsFor(undefined, 'en')).toEqual({})
   })
 })

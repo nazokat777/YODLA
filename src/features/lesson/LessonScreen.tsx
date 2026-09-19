@@ -7,7 +7,7 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { countCards, db, getAllCards, recordLessonCompleted, type CardRecord } from '@/core/db'
-import { pendingExam } from '@/core/exam'
+import { examResultsFor, pendingExam } from '@/core/exam'
 import { buildUnits } from '@/core/path'
 import { useTopicOrder } from '@/features/home/useTopicOrder'
 import { pickLessonCards } from '@/core/lesson/order'
@@ -130,7 +130,7 @@ export function LessonScreen() {
       .then(([all, profile]) => {
         if (cancelled) return
         const units = buildUnits(all, { minLevel: startingLevel, topicOrder })
-        const pending = pendingExam(units, profile?.examResults ?? {})
+        const pending = pendingExam(units, examResultsFor(profile?.examResults, learningLanguage))
         if (pending) setExamOffer({ unitId: pending.unitId, count: pending.covered.length })
       })
       .catch(() => {})

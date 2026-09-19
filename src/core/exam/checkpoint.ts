@@ -63,3 +63,35 @@ export function pendingExam(
 export function hasExam(units: readonly PathUnit[], unit: PathUnit): boolean {
   return unit.state === 'completed' && examCoverage(units, unit.id).length >= EXAM_MIN_UNITS
 }
+
+/**
+ * Imtihon natijasining profil kaliti: `en:a1-oila`.
+ *
+ * Bo'lim id si TILSIZ (`a1-oila`) — inglizcha va ruscha "Oila" bir xil
+ * id oladi. Kalit faqat bo'lim id si bo'lsa, inglizcha imtihon ruschani
+ * ham "topshirilgan" qilib qo'yardi.
+ */
+export function examKey(language: string, unitId: string): string {
+  return `${language}:${unitId}`
+}
+
+/**
+ * Profildagi natijalardan SHU TILNIKINI ajratib, bo'lim id bilan
+ * kalitlangan xarita qaytaradi.
+ *
+ * Tilsiz eski kalitlar (`a1-oila`, birinchi kunlardagi yozuvlar) ham
+ * qabul qilinadi — ular qaysi tilga tegishli ekani noma'lum, lekin
+ * tashlab yuborilsa bola topshirgan imtihoni yo'qolardi.
+ */
+export function examResultsFor<T>(
+  results: Readonly<Record<string, T>> | undefined,
+  language: string,
+): Record<string, T> {
+  const own: Record<string, T> = {}
+  const prefix = `${language}:`
+  for (const [key, value] of Object.entries(results ?? {})) {
+    if (key.startsWith(prefix)) own[key.slice(prefix.length)] = value
+    else if (!key.includes(':')) own[key] = value
+  }
+  return own
+}
