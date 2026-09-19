@@ -30,7 +30,7 @@ const CHOICES = 4
 /** Variant sifatida yaroqli tarjima: to'liq, qisqa, "…" va qavssiz */
 export function isCleanDistractor(translation: string): boolean {
   const text = translation.trim()
-  return text.length > 0 && text.length <= 24 && !/[…()\[\]/]|^\.{2,}/.test(text)
+  return text.length > 0 && text.length <= 24 && !/[…()[\]/]|^\.{2,}/.test(text)
 }
 
 export function buildPlacementQuiz(
