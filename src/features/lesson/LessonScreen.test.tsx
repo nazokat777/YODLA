@@ -29,6 +29,10 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
   beforeEach(async () => {
     await db.cards.clear()
     await addMissingCards(WORDS)
+    // Mavzu tartibi keshi: dars ekranining o'zi (`useTopicOrder`) lug'atni
+    // yuklab keshga yozadi — oldingi testdan qolgan kesh "bo'limsiz dars"
+    // testini joriy bo'limga tortib ketmasin
+    localStorage.clear()
   })
 
   it('faqat o‘sha bo‘lim so‘zlarini beradi', async () => {
