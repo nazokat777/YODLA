@@ -32,9 +32,18 @@ interface TipInput {
   translation: string
   /** Kartada jumla bor — "gapda ishlat" usuli faqat shunda */
   hasSentence: boolean
+  /**
+   * So'z KO'RINADIGAN narsa (rasmi bor). Mavhum so'zga ("kerak", "balki")
+   * "ko'z oldingga keltir" deyish ma'nosiz — unga ovoz, gap, o'xshash
+   * so'z usullari beriladi. Ixtiyoriy: bilinmasa "ko'rinadi" deb olinadi.
+   */
+  isConcrete?: boolean
 }
 
 type TipTemplate = (input: TipInput) => MemoryTip
+
+/** Obrazga tayanadigan usullar — faqat aniq (rasmli) so'zlarga */
+const VISUAL_METHODS = new Set(['Obraz', 'G‘alati obraz', 'Harakat'])
 
 const TIPS: TipTemplate[] = [
   ({ translation }) => ({
@@ -92,5 +101,9 @@ function hash(text: string): number {
 export function memoryTip(input: TipInput & { id: string }): MemoryTip {
   const h = hash(input.id)
   if (input.hasSentence && h % 3 === 0) return SENTENCE_TIP(input)
-  return TIPS[h % TIPS.length]!(input)
+  const pool =
+    input.isConcrete === false
+      ? TIPS.filter((tip) => !VISUAL_METHODS.has(tip(input).method))
+      : TIPS
+  return pool[h % pool.length]!(input)
 }

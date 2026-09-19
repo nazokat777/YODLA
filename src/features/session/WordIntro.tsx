@@ -13,6 +13,7 @@ import { WordDisplay } from './WordDisplay'
 import { transliterate } from '@/core/text/transliterate'
 import { revealedWordToday } from '@/lib/wordOfDayMemo'
 import { memoryTip } from '@/core/mnemonics/memoryTip'
+import { imageCodeFor } from '@/content/wordImages'
 
 interface WordIntroProps {
   card: CardRecord
@@ -46,6 +47,7 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
     word: card.word,
     translation: card.translation,
     hasSentence: Boolean(card.sentence),
+    isConcrete: imageCodeFor(card.translation) !== null,
   })
 
   // Yangi so'z darhol O'QIB beriladi: eshitmasdan yodlash qiyin

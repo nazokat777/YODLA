@@ -28,3 +28,16 @@ describe('memoryTip', () => {
     expect(methods.size).toBeGreaterThan(3)
   })
 })
+
+describe('memoryTip — mavhum so‘z', () => {
+  it('rasmsiz (mavhum) so‘zga obraz usullari berilmaydi', () => {
+    const ids = Array.from({ length: 60 }, (_, i) => `en:abs${i}`)
+    const methods = ids.map(
+      (id) => memoryTip({ id, word: 'should', translation: 'kerak', hasSentence: false, isConcrete: false }).method,
+    )
+    expect(methods).not.toContain('Obraz')
+    expect(methods).not.toContain('G‘alati obraz')
+    expect(methods).not.toContain('Harakat')
+    expect(new Set(methods).size).toBeGreaterThan(1)
+  })
+})
