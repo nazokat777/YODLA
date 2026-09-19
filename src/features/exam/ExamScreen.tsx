@@ -116,12 +116,19 @@ export function ExamScreen() {
     }
   }, [learningLanguage, unitId])
 
+  const units = useMemo(
+    () => (allCards && topicOrder !== null ? buildUnits(allCards, { minLevel: startingLevel, topicOrder }) : null),
+    [allCards, topicOrder, startingLevel],
+  )
+
   /** Qamrov: bo'limgacha bo'lgan hammasi (o'tkazib yuborilganlar emas) */
-  const covered = useMemo<PathUnit[] | null>(() => {
-    if (!allCards || topicOrder === null || !unitId) return null
-    const units = buildUnits(allCards, { minLevel: startingLevel, topicOrder })
-    return examCoverage(units, unitId)
-  }, [allCards, topicOrder, unitId, startingLevel])
+  const covered = useMemo<PathUnit[] | null>(
+    () => (units && unitId ? examCoverage(units, unitId) : null),
+    [units, unitId],
+  )
+
+  /** Keyingi dars — yakun tugmasida NOMI bilan (audit #2 №9) */
+  const nextUnit = useMemo(() => units?.find((unit) => unit.state === 'current') ?? null, [units])
 
   /*
    * Savollar BIR MARTA tuziladi (`useMemo`): har renderda qayta
@@ -277,8 +284,8 @@ export function ExamScreen() {
                 missed={examSummary?.missedWords ?? []}
                 bonusXp={bonusXp}
               />
-              <LinkButton to={PATHS.lesson} block size="lg">
-                Keyingi dars
+              <LinkButton to={nextUnit ? PATHS.lessonById(nextUnit.id) : PATHS.lesson} block size="lg">
+                {nextUnit ? `Keyingi dars · ${nextUnit.title} →` : 'Keyingi dars'}
               </LinkButton>
               <LinkButton to={PATHS.home} block variant="ghost">
                 Bosh sahifaga

@@ -32,6 +32,7 @@ export function LanguageStep({ onNext }: { onNext: () => void }) {
                 type="button"
                 onClick={() => setLearningLanguage(lang.code)}
                 aria-pressed={isSelected}
+                aria-label={`${lang.name} — ${lang.nativeName}`}
                 className={cn(
                   'tap-highlight-none flex w-full items-center gap-4 rounded-2xl border-2 bg-white p-4 text-start transition-colors',
                   isSelected
@@ -53,6 +54,10 @@ export function LanguageStep({ onNext }: { onNext: () => void }) {
       </ul>
 
       <div className="mt-auto pt-8">
+        {/* Tugma nega o'chiq — aytiladi (audit #2 №8) */}
+        {!learningLanguage && (
+          <p className="mb-2 text-center text-sm text-ink-600">Avval tilni tanlang</p>
+        )}
         <Button block size="lg" disabled={!learningLanguage} onClick={onNext}>
           Davom etish
         </Button>
