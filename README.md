@@ -645,6 +645,12 @@ Darajadan 2 ta to'g'ri javob — o'tilgan; boshlang'ich daraja esa
 > turib bilmagan so'zlari "unutilgan" deb belgilanardi va streak/XP
 > sun'iy boshlanardi.
 
+Har savolda **"🤷 Bilmayman"** varianti bor: xato deb sanaladi, lekin
+taxminni yo'q qiladi — 4 variantdan ko'r-ko'rona bosish 25% "to'g'ri"
+chiqib darajani sun'iy ko'tarardi. Chalg'ituvchilar faqat TOZA
+tarjimalardan (`isCleanDistractor`: ≤24 belgi, "…", qavs, `/` siz) —
+importdagi "… qilishingiz kerak" kabi bo'laklar variant bo'lmaydi.
+
 Natija `startingLevel` sifatida saqlanadi va `pickLessonCards` ga
 uzatiladi: past darajadagi ko'rilmagan so'zlar **o'chirilmaydi**, faqat
 zaxiraga suriladi — shunda A2 dan boshlagan foydalanuvchi so'zlari
@@ -859,6 +865,14 @@ ochib o'rganish mumkin.
 
 Bo'lim bosilganda `/lesson/a1-oila` ochiladi va dars faqat o'sha mavzu
 so'zlaridan tuziladi.
+
+**Seksiyalar yig'iladi.** Import qilingan lug'atda 260+ bo'lim bor;
+hammasi bir ro'yxatda bosh ekranni 40 ekranli skrollga aylantirardi
+(audit #2). Ketma-ket bir xil `section` li bo'limlar guruh bo'ladi;
+faqat JORIY bo'lim (yoki kutilayotgan imtihon) turgan seksiya ochiq,
+qolganlari bir qator: "ENTERPRISE 1 · 58 bo'lim · 0/1092 ▸" — bosilsa
+ochiladi, hammasi tugagani ✓ bilan. Seksiyasiz (qo'lda yozilgan A1)
+bo'limlar sarlavhasiz o'z guruhida.
 
 ## Animatsiya
 
