@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
-import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
 import { computeLanguageStats, type ExamResult, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
@@ -201,6 +200,12 @@ export function HomeScreen() {
         <WordOfDay cards={cards} unitId={currentUnitId(cards, learningLanguage, startingLevel)} />
       )}
 
+      {/*
+        Takrorlash kartasi FAQAT ko'rilgan so'z bo'lsa: birinchi darsdan
+        oldin "takrorlanadigan so'z yo'q" bo'sh xabar va bo'sh ekranga
+        olib boruvchi tugma edi (audit #2, №1 — o'lik yo'l).
+      */}
+      {(seenCount ?? 0) > 0 && (
       <Panel interactive>
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-bold">Bugun takrorlash</h2>
@@ -224,12 +229,12 @@ export function HomeScreen() {
           ikkinchi marta takrorlanmaydi (NN/g #8). Yo'q bo'lsa — ochish
           havolasi shu yerda qoladi (qahramon tugmasi darsga olib boradi).
         */}
-        {dueCount === 0 && (
-          <LinkButton to={PATHS.review} block variant="secondary">
-            Takrorlashni ochish
-          </LinkButton>
-        )}
+        {/*
+          Takror 0 bo'lsa tugma YO'Q: u bo'sh ekranga olib borardi.
+          Keyingi takror vaqti matnda — bola qachon qaytishni biladi.
+        */}
       </Panel>
+      )}
 
       {/* Haftalik sayohat — 7 qadam, 3 sandiq: "yetib borish" motivi */}
       <WeeklyQuest />

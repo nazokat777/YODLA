@@ -121,8 +121,9 @@ export function HomeHero({
           </span>
           <span>{streak}</span>
           <span className="sr-only">
-            kunlik streak · {tier.name}
-            {next && ` · ${next.name} gacha ${next.minDays - streak} kun`}
+            {streak === 0
+              ? 'kunlik streak · bugun birinchi darsni tugatsangiz olov yonadi'
+              : `kunlik streak · ${tier.name}${next && next.name !== tier.name ? ` · ${next.name} gacha ${next.minDays - streak} kun` : ''}`}
           </span>
         </div>
       </header>

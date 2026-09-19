@@ -164,6 +164,9 @@ function nextHint(active: number, claimed: readonly number[], daysLeft: number):
   if (!next) return 'Bu hafta hammasi ochildi. Zo‘r!'
   const left = next.days - active
   if (left <= 0) return `${next.icon} Sandiq tayyor!`
+  // Hafta hali BOSHLANMAGAN bola uchun "yana boshlaymiz" yolg'on:
+  // u hech nima boshlamagan (audit #2, №7)
+  if (left > daysLeft && active === 0) return `🗺️ Bu hafta ${daysLeft} kun qoldi — birinchi pog‘onani bugun oling`
   if (left > daysLeft) return '🗺️ Dushanbada yangi xarita — yana boshlaymiz'
   return `${next.icon} Keyingi sandiq ${left} kundan keyin`
 }

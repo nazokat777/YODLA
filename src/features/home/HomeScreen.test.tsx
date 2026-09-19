@@ -103,7 +103,13 @@ describe('HomeScreen — geymifikatsiya', () => {
 
     renderScreen()
 
-    expect(await screen.findByText(/takrorlanadigan so.z yo.q/i)).toBeInTheDocument()
+    // Birinchi darsdan oldin takrorlash kartasi UMUMAN chiqmaydi — bo'sh
+    // xabar va bo'sh ekranga olib boruvchi tugma o'lik yo'l edi (audit #2)
+    await waitFor(() => {
+      expect(screen.getByTestId('hero-cta')).toHaveTextContent('Darsni boshlash')
+    })
+    expect(screen.queryByText('Bugun takrorlash')).not.toBeInTheDocument()
+    expect(screen.queryByText(/unutish arafasida/i)).not.toBeInTheDocument()
   })
 })
 

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Button } from '@/components/ui/Button'
+import { LinkButton } from '@/components/ui/LinkButton'
+import { PATHS } from '@/app/paths'
 import { shareText, weeklyReportText } from '@/lib/share'
 import { Panel } from '@/components/ui/Panel'
 import { getDailyStatsSince } from '@/core/db'
@@ -51,6 +53,37 @@ export function StatsScreen() {
   const series = buildWeeklySeries(weekStats ?? [], now)
   const weekXp = series.reduce((sum, point) => sum + point.xp, 0)
   const weekWords = series.reduce((sum, point) => sum + point.words, 0)
+
+  /*
+   * BO'SH HOLAT: hali bitta ham javob bo'lmasa, nol ustunlar va "0 faol
+   * kun" ma'lumot emas — bo'shliq (audit #2, №10). Bitta tushunarli
+   * karta va harakat tugmasi beriladi.
+   */
+  const isEmpty =
+    progress !== undefined &&
+    twoWeeks !== undefined &&
+    (progress?.profile.totalXp ?? 0) === 0 &&
+    twoWeeks.every((day) => day.answered === 0)
+
+  if (isEmpty) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-extrabold">Statistika</h1>
+        <Panel className="flex flex-col items-center gap-3 text-center" data-testid="stats-empty">
+          <span className="text-5xl" aria-hidden="true">
+            📈
+          </span>
+          <p className="font-bold">Birinchi darsdan keyin bu yerda haftalik o‘sishing ko‘rinadi</p>
+          <p className="text-sm text-ink-600">
+            Kunlik so‘zlar, XP, streak va faol kunlar xaritasi — hammasi shu yerda yig‘iladi.
+          </p>
+          <LinkButton to={PATHS.lesson} block>
+            Darsni boshlash
+          </LinkButton>
+        </Panel>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-4">

@@ -81,3 +81,14 @@ describe('XP grafigi', () => {
     expect(item?.className).toContain('h-full')
   })
 })
+
+describe('StatsScreen — bo‘sh holat', () => {
+  it('hali javob bo‘lmasa nol diagramma o‘rniga tushuntirish va "Darsni boshlash"', async () => {
+    renderStats()
+
+    const empty = await screen.findByTestId('stats-empty')
+    expect(empty).toHaveTextContent(/birinchi darsdan keyin/i)
+    expect(within(empty).getByRole('link', { name: 'Darsni boshlash' })).toHaveAttribute('href', '/lesson')
+    expect(screen.queryByText("So'nggi 7 kun")).not.toBeInTheDocument()
+  })
+})
