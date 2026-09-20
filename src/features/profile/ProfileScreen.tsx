@@ -272,7 +272,7 @@ function ExamsPanel({ results }: { results: Record<string, ExamResult> }) {
       <ul className="mt-3 flex flex-col gap-1 text-sm">
         {entries.slice(0, 3).map(([unitId, r]) => (
           <li key={unitId} className="flex items-center justify-between">
-            <span className="text-ink-600">{new Date(r.at).toLocaleDateString('uz-UZ')}</span>
+            <span className="text-ink-600">{new Date(r.at).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long' })}</span>
             <Link to={PATHS.examById(unitId.includes(':') ? unitId.split(':')[1]! : unitId)} className="font-bold text-brand-700">
               {r.correct}/{r.total} · qayta topshirish →
             </Link>
