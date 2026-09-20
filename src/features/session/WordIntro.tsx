@@ -42,9 +42,12 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
    * so'z ustida ISH (obraz, ovoz, o'zi bilan bog'lash…) chuqur
    * (`core/mnemonics/memoryTip`). So'zga qarab barqaror.
    */
+  // Notanish yozuvda (arab, kirill) maslahatdagi so'z o'qilishi bilan:
+  // «كِتَاب (kitab)» — bola uni ovoz chiqarib ayta oladi
+  const wordReading = transliterate(card.word, language.script)
   const tip = memoryTip({
     id: card.id,
-    word: card.word,
+    word: wordReading ? `${card.word} (${wordReading})` : card.word,
     translation: card.translation,
     hasSentence: Boolean(card.sentence),
     isConcrete: imageCodeFor(card.translation) !== null,
