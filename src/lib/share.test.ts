@@ -27,5 +27,9 @@ describe('shareText', () => {
 
   it('hisobot matni', () => {
     expect(weeklyReportText({ activeDays: 5, words: 120, xp: 480, streak: 7 })).toContain('5 kun')
+    expect(weeklyReportText({ activeDays: 5, words: 120, xp: 480, streak: 7 })).not.toContain('imtihon')
+    expect(weeklyReportText({ activeDays: 5, words: 120, xp: 480, streak: 7, exams: 2 })).toContain(
+      '2 ta imtihon',
+    )
   })
 })

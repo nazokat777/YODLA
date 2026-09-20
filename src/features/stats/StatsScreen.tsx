@@ -122,6 +122,9 @@ export function StatsScreen() {
               words: weekWords,
               xp: weekXp,
               streak: progress?.streak.current ?? 0,
+              exams: Object.values(progress?.profile.examResults ?? {}).filter(
+                (result) => result.at >= addDays(startOfDay(now), -6),
+              ).length,
             }),
           ).then((outcome) =>
             setShareNote(

@@ -33,6 +33,8 @@ export function weeklyReportText(input: {
   words: number
   xp: number
   streak: number
+  /** Shu hafta topshirilgan yig'ma imtihonlar (0 — qator chiqmaydi) */
+  exams?: number
 }): string {
   return [
     '📚 YODLA — bu hafta:',
@@ -40,5 +42,6 @@ export function weeklyReportText(input: {
     `📝 ${input.words} ta so‘z`,
     `⭐ ${input.xp} XP`,
     `🔥 ${input.streak} kunlik streak`,
+    ...(input.exams ? [`🏆 ${input.exams} ta imtihon topshirildi`] : []),
   ].join('\n')
 }
