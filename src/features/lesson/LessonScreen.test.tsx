@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import * as starterDecks from '@/content/starterDecks'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
@@ -33,6 +34,10 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     // yuklab keshga yozadi — oldingi testdan qolgan kesh "bo'limsiz dars"
     // testini joriy bo'limga tortib ketmasin
     localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   it('faqat o‘sha bo‘lim so‘zlarini beradi', async () => {
@@ -78,6 +83,13 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
   })
 
   it('bo‘limsiz ochilganda butun to‘plamdan tanlaydi', async () => {
+    /*
+     * Mavzu tartibi YO'Q holat: ekran lug'atni fonda yuklab keshga
+     * yozadi (`useTopicOrder`), shuning uchun stub qilinadi — aks holda
+     * kesh seans o'rtasida to'lib, dars joriy bo'limga o'tib ketardi
+     * (to'liq suitede flaky bo'lgan).
+     */
+    vi.spyOn(starterDecks, 'loadLanguageDeck').mockReturnValue(new Promise(() => {}))
     renderLesson('/lesson')
 
     // Butun lug'atdan uchala so'z ham darsga tushadi
@@ -105,6 +117,11 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
 })
 
 describe('LessonScreen — bo‘limsiz dars', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    vi.restoreAllMocks()
+  })
+
   it('o‘quv yo‘lidagi JORIY bo‘limdan boshlanadi', async () => {
     /*
      * Ilgari bo'limsiz dars butun lug'atdan tuzilardi va tartib karta
@@ -124,7 +141,8 @@ describe('LessonScreen — bo‘limsiz dars', () => {
     renderLesson('/lesson')
 
     // Birinchi savol "Salomlashish" bo'limidan chiqadi
-    expect(await screen.findByText(/salom|xayr/i)).toBeInTheDocument()
+    // Bir nechta joyda chiqishi mumkin (tarjima + xotira maslahati)
+    expect((await screen.findAllByText(/salom|xayr/i)).length).toBeGreaterThan(0)
     expect(screen.queryByText('qobiliyat')).not.toBeInTheDocument()
   })
 })
