@@ -49,6 +49,11 @@ export interface Card {
   dueDate: number
   /** Foydalanuvchi yaratgan mnemonik assotsiatsiya */
   mnemonic?: string
+  /**
+   * Assotsiatsiya qachon yozilgan — Mnemonika chek-ro'yxatidagi
+   * "bugun bitta ilgak yozdim" bandi shundan avtomatik belgilanadi.
+   */
+  mnemonicAt?: number
   /** Vizual bog'lanish uchun rasm */
   imageUrl?: string
 }

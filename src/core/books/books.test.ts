@@ -178,3 +178,42 @@ describe('planProgress / dailyTask', () => {
     expect(dailyTask(pace, progress, 0).newWords).toBe(0)
   })
 })
+
+describe('minimal planka', () => {
+  const book = {
+    id: 'b',
+    title: 'B',
+    words: 300,
+    learned: 0,
+    mature: 0,
+    lessons: 30,
+    lessonsDone: 0,
+    sentences: 0,
+    wordsPerLesson: 10,
+  }
+  const plan: StudyPlan = { bookId: 'b', days: 30, startedAt: 0, learnedAtStart: 0 }
+
+  it('eng yomon kunda ham bajariladigan kichik planka bor', async () => {
+    const { MIN_DAILY_WORDS } = await import('./plan')
+    const pace = planPace(book, 30)
+    const progress = planProgress(book, plan, 0)
+
+    expect(dailyTask(pace, progress, 0)).toMatchObject({
+      minWords: MIN_DAILY_WORDS,
+      minDone: false,
+    })
+    // Plankani bajargan bola zanjirni saqlaydi, vazifa to'liq bo'lmasa ham
+    expect(dailyTask(pace, progress, MIN_DAILY_WORDS)).toMatchObject({
+      minDone: true,
+      done: false,
+    })
+  })
+
+  it('planka kunlik vazifadan katta bo‘lmaydi', () => {
+    // 60 so'z / 30 kun = kuniga 2 — planka ham 2
+    const small = { ...book, words: 60 }
+    const pace = planPace(small, 30)
+    const progress = planProgress(small, { ...plan, days: 30 }, 0)
+    expect(dailyTask(pace, progress, 0).minWords).toBe(2)
+  })
+})

@@ -899,3 +899,37 @@ describe('forceType — turni majburan belgilash', () => {
     expect(type).not.toBe('construction')
   })
 })
+
+describe('pickActiveRecallType — faol eslash', () => {
+  it('faqat so‘zni o‘zi chiqaradigan turlar (variant tanlash yo‘q)', async () => {
+    const { pickActiveRecallType, ACTIVE_RECALL_TYPES } = await import('./generate')
+    const base = {
+      id: 'en:apple',
+      word: 'apple',
+      translation: 'olma',
+      language: 'en' as const,
+      interval: 0,
+      repetitions: 0,
+      easeFactor: 2.5,
+      dueDate: 0,
+      createdAt: 0,
+      lastReviewedAt: null,
+      totalReviews: 1,
+      lapses: 0,
+      sentence: 'I eat an apple',
+      sentenceTranslation: 'Men olma yeyman',
+    }
+    const others = ['pear', 'plum', 'fig'].map((word) => ({ ...base, id: `en:${word}`, word, translation: word }))
+    let seed = 1
+    const random = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280)
+    const types = new Set(
+      Array.from({ length: 60 }, () =>
+        pickActiveRecallType({ card: base, pool: [base, ...others], allowAudio: true }, random),
+      ),
+    )
+
+    for (const type of types) expect(ACTIVE_RECALL_TYPES).toContain(type)
+    expect(types.has('construction')).toBe(true)
+    expect(types.has('recall')).toBe(true)
+  })
+})

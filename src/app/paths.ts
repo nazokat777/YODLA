@@ -16,6 +16,8 @@ export const PATHS = {
    * mashq — muddati yetganini emas, eng ko'p unutilganini beradi.
    */
   weakReview: '/review/weak',
+  /** Faol eslash: o'zbekchasidan chet tilidagisini chiqarish, gap tuzish */
+  activeReview: '/review/active',
   stats: '/stats',
   profile: '/profile',
   /** Foydalanuvchi yozgan mnemonik assotsiatsiyalar */

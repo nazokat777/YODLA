@@ -126,6 +126,16 @@ export function planProgress(book: BookStats, plan: StudyPlan, now: number): Pla
   }
 }
 
+/**
+ * MINIMAL PLANKA — "eng yomon kuningizda ham" bajariladigan ulush.
+ *
+ * Manba: mnemonika darslaridagi eng amaliy qoida — bardavomlik
+ * intensivlikdan ustun. Haftada ikki kun uzoq o'tirgandan ko'ra har
+ * kuni 15 daqiqa. Planka shunchalik kichik bo'lishi kerakki, kasal,
+ * charchagan yoki band kunda ham bajarilsin — zanjir uzilmasin.
+ */
+export const MIN_DAILY_WORDS = 5
+
 /** Bugungi vazifa — chek-ro'yxat uchun */
 export interface DailyTask {
   /** Bugun olinishi kerak yangi so'zlar */
@@ -136,6 +146,10 @@ export interface DailyTask {
   leftWords: number
   /** Vazifa bajarildi */
   done: boolean
+  /** Minimal planka (eng yomon kunda ham shuncha) */
+  minWords: number
+  /** Planka bajarildi — zanjir saqlandi */
+  minDone: boolean
 }
 
 /**
@@ -149,11 +163,16 @@ export interface DailyTask {
 export function dailyTask(pace: PlanPace, progress: PlanProgress, doneToday: number): DailyTask {
   const catchUp = Math.min(pace.wordsPerDay * 2, pace.wordsPerDay + progress.behind)
   const newWords = progress.done ? 0 : catchUp
+  // Planka vazifadan katta bo'lolmaydi: kuniga 2 so'zlik rejada
+  // "kamida 5 ta" deyish mantiqsiz bo'lardi
+  const minWords = progress.done ? 0 : Math.min(MIN_DAILY_WORDS, newWords)
 
   return {
     newWords,
     doneWords: Math.min(doneToday, newWords),
     leftWords: Math.max(0, newWords - doneToday),
     done: doneToday >= newWords,
+    minWords,
+    minDone: doneToday >= minWords,
   }
 }

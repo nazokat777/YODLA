@@ -20,6 +20,7 @@ import {
   checkExercise,
   deriveGrade,
   generateExercise,
+  pickActiveRecallType,
   type AnswerVerdict,
   type Exercise,
 } from '@/core/exercises'
@@ -179,6 +180,13 @@ interface SessionRunnerProps {
    * so'zlardan iborat — uni xatosiz tugatish benuqsonlik emas.
    */
   perfectEligible?: boolean
+  /**
+   * FAOL ESLASH rejimi: faqat so'zni o'zi chiqaradigan mashqlar —
+   * o'zbekchasidan yozish, harflardan yig'ish, gap tuzish, bo'shliq.
+   * Variant tanlash (tanib olish) berilmaydi. Mnemonika bo'limidagi
+   * "o'zbekchasidan ayt" mashqi shu.
+   */
+  activeRecall?: boolean
 }
 
 /**
@@ -208,6 +216,7 @@ export function SessionRunner({
   onFinish,
   onProgressChange,
   perfectEligible = true,
+  activeRecall = false,
 }: SessionRunnerProps) {
   const soundEnabled = useSettingsStore((s) => s.soundEnabled)
   const dailyGoalWords = useSettingsStore((s) => s.dailyGoalWords)
@@ -403,17 +412,22 @@ export function SessionRunner({
       EXERCISE_TYPES.filter((type) => !excludeTypes.includes(type)),
     )
 
+    const baseOptions = {
+      card: step.card,
+      pool,
+      // Juftlar seansning O'Z so'zlaridan — begona so'z darsga kirmaydi
+      partners: cards,
+      allowAudio,
+      stage: step.stage,
+      excludeTypes,
+      preferType,
+    }
     setExercise(
-      generateExercise({
-        card: step.card,
-        pool,
-        // Juftlar seansning O'Z so'zlaridan — begona so'z darsga kirmaydi
-        partners: cards,
-        allowAudio,
-        stage: step.stage,
-        excludeTypes,
-        preferType,
-      }),
+      generateExercise(
+        activeRecall
+          ? { ...baseOptions, forceType: pickActiveRecallType(baseOptions) }
+          : baseOptions,
+      ),
     )
     setAnswer(EMPTY_ANSWER)
     setVerdict(null)

@@ -394,6 +394,47 @@ export function pickExerciseType(options: GenerateExerciseOptions): ExerciseType
 }
 
 /**
+ * FAOL ESLASH turlari — so'zni o'zi CHIQARISHI kerak (tanib olish emas).
+ *
+ * Mnemonika algoritmining 5-qadami: "o'zbekchasini ko'rib, chet
+ * tilidagisini qaramasdan esla" — gapirish yo'nalishi. Tanib olish
+ * (variant tanlash) tushunishni o'lchaydi; gapirish uchun esa so'zni
+ * xotiradan TORTIB CHIQARISH kerak, va aynan shu urinish izni doimiy
+ * xotiraga o'tkazadi (generation + testing effect).
+ *
+ *  - recall       — o'zbekchasidan yozish
+ *  - spelling     — harflardan yig'ish (yozilishni ham mustahkamlaydi)
+ *  - construction — so'zlardan gap tuzish
+ *  - cloze        — gapdagi bo'shliqni to'ldirish
+ */
+export const ACTIVE_RECALL_TYPES: readonly ExerciseType[] = [
+  'recall',
+  'spelling',
+  'construction',
+  'cloze',
+]
+
+/**
+ * Faol eslash uchun tur: shu kartada MUMKIN bo'lganlaridan.
+ *
+ * Gap tuzish (construction) bo'lsa — 40% ehtimol bilan u: so'z faqat
+ * gapda ishlatilgandagina chuqur birikadi. "Eslab yozish" har doim
+ * mumkin — oxirgi tayanch.
+ */
+export function pickActiveRecallType(
+  options: GenerateExerciseOptions,
+  random: () => number = Math.random,
+): ExerciseType {
+  const { excludeTypes = [] } = options
+  const available = ACTIVE_RECALL_TYPES.filter((type) => isTypeAvailable(type, options))
+  const allowed = available.filter((type) => !excludeTypes.includes(type))
+  const pool = allowed.length > 0 ? allowed : available
+  if (pool.length === 0) return 'recall'
+  if (pool.includes('construction') && random() < 0.4) return 'construction'
+  return pool[Math.floor(random() * pool.length)]!
+}
+
+/**
  * Karta uchun mashq yaratish.
  *
  * Sof funksiya: `random` argument sifatida beriladi, shuning uchun natija

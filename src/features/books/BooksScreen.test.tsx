@@ -15,12 +15,12 @@ const WORDS: NewCardRecordInput[] = [
   { word: 'f', translation: 'ff', language: 'en', topic: 'Kitob 2 · 1-dars', level: 'A1' },
 ]
 
-function renderBooks() {
+function renderBooks(path = '/books?tab=map') {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
 
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[path]}>
       <BooksScreen />
     </MemoryRouter>,
   )
@@ -80,5 +80,65 @@ describe('BooksScreen — kitob xaritasi', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('plan-kitob-1')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('BooksScreen — Bugun (chek-ro‘yxat)', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    localStorage.clear()
+    await addMissingCards(WORDS)
+  })
+
+  it('sukut bo‘yicha "Bugun" ochiladi va reja yo‘qligi aytiladi', async () => {
+    renderBooks('/books')
+
+    expect(await screen.findByTestId('today-summary')).toHaveTextContent('Bugungi chek-ro‘yxat')
+    expect(screen.getByText(/reja hali yo‘q/i)).toBeInTheDocument()
+    // Planka hali bajarilmagan
+    expect(screen.getByTestId('check-min')).toHaveAttribute('data-done', 'false')
+  })
+
+  it('bugun 5 ta so‘z ko‘rilsa minimal planka AVTOMATIK belgilanadi', async () => {
+    const { recordAnswer } = await import('@/core/db')
+    for (const id of ['a', 'b', 'c', 'd', 'e']) {
+      await recordAnswer({ cardId: `en:${id}`, verdict: 'correct', dailyGoalWords: 20 })
+    }
+    renderBooks('/books')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('check-min')).toHaveAttribute('data-done', 'true')
+    })
+  })
+
+  it('bugun ilgak yozilsa "ilgak" bandi belgilanadi', async () => {
+    const { setMnemonic } = await import('@/core/db')
+    await setMnemonic('en:a', 'a — olma kabi')
+    renderBooks('/books')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('check-hook')).toHaveAttribute('data-done', 'true')
+    })
+  })
+
+  it('"gap tuzish" qo‘lda belgilanadi va eslab qolinadi', async () => {
+    const { unmount } = renderBooks('/books')
+    fireEvent.click(await screen.findByTestId('check-sentence'))
+    expect(screen.getByTestId('check-sentence')).toHaveAttribute('data-done', 'true')
+    unmount()
+
+    renderBooks('/books')
+    expect(await screen.findByTestId('check-sentence')).toHaveAttribute('data-done', 'true')
+  })
+
+  it('"Usullar" bo‘limida yodlash algoritmi', async () => {
+    renderBooks('/books')
+    fireEvent.click(await screen.findByTestId('tab-methods'))
+    expect(screen.getByText('8 qadamli algoritm')).toBeInTheDocument()
+    // Qadamlar yig'ilgan — "Ilgak top" ochilganda misollar ko'rinadi
+    fireEvent.click(screen.getByTestId('step-3.'))
+    expect(screen.getByText(/pillow → pilov/)).toBeInTheDocument()
   })
 })

@@ -633,3 +633,56 @@ describe('ReviewScreen — bo‘sh holat o‘lik yo‘l emas', () => {
     expect(await screen.findByTestId('review-empty-lesson')).toHaveAttribute('href', '/lesson')
   })
 })
+
+describe('ReviewScreen — faol eslash (O‘zbekchasidan ayt)', () => {
+  it('bugun ko‘rilgan so‘zni o‘zbekchasidan so‘raydi — variant tanlash yo‘q', async () => {
+    const { render, screen } = await import('@testing-library/react')
+    const { MemoryRouter } = await import('react-router-dom')
+    const { addMissingCards, db } = await import('@/core/db')
+    const { useSettingsStore } = await import('@/stores/useSettingsStore')
+    const { ReviewScreen } = await import('./ReviewScreen')
+    await db.cards.clear()
+    await addMissingCards([
+      { word: 'apple', translation: 'olma', language: 'en' },
+      { word: 'pear', translation: 'nok', language: 'en' },
+      { word: 'plum', translation: 'olxo‘ri', language: 'en' },
+      { word: 'fig', translation: 'anjir', language: 'en' },
+    ])
+    await db.cards.update('en:apple', { totalReviews: 1, repetitions: 0, lastReviewedAt: Date.now() })
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter initialEntries={['/review/active']}>
+        <ReviewScreen focus="active" />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'O‘zbekchasidan ayt' })).toBeInTheDocument()
+    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
+    // repetitions = 0 bo'lsa oddiy takrorda "tanib olish" chiqardi; bu yerda
+    // o'zbekcha savol va chet tilidagi javobni o'zi chiqarish
+    expect(screen.getByText('olma')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'nok' })).not.toBeInTheDocument()
+  })
+
+  it('o‘rganilgan so‘z bo‘lmasa — tushuntirish va "Darsni boshlash"', async () => {
+    const { render, screen } = await import('@testing-library/react')
+    const { MemoryRouter } = await import('react-router-dom')
+    const { db } = await import('@/core/db')
+    const { useSettingsStore } = await import('@/stores/useSettingsStore')
+    const { ReviewScreen } = await import('./ReviewScreen')
+    await db.cards.clear()
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+
+    render(
+      <MemoryRouter initialEntries={['/review/active']}>
+        <ReviewScreen focus="active" />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByText(/avval bir nechta so‘z/i)).toBeInTheDocument()
+    expect(screen.getByTestId('review-empty-lesson')).toHaveAttribute('href', '/lesson')
+  })
+})

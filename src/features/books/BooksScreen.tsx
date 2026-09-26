@@ -1,40 +1,68 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Link } from 'react-router-dom'
-import { PATHS } from '@/app/paths'
+import { useSearchParams } from 'react-router-dom'
 import { Panel } from '@/components/ui/Panel'
-import { db, getAllCards, getDailyStat, planKey, removeStudyPlan, saveStudyPlan } from '@/core/db'
-import { buildBooks, type BookStats, type StudyPlan } from '@/core/books'
+import {
+  computeLanguageStats,
+  db,
+  getAllCards,
+  getDailyStat,
+  planKey,
+  removeStudyPlan,
+  saveStudyPlan,
+} from '@/core/db'
+import {
+  buildBooks,
+  dailyTask,
+  planPace,
+  planProgress,
+  type StudyPlan,
+} from '@/core/books'
+import { startOfDay } from '@/lib/date'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 import { BookPlanCard } from './BookPlanCard'
+import { MethodsPanel } from './MethodsPanel'
+import { TodayPanel } from './TodayPanel'
+
+type Tab = 'today' | 'map' | 'methods'
+
+const TABS: Array<{ id: Tab; label: string }> = [
+  { id: 'today', label: 'Bugun' },
+  { id: 'map', label: 'Xarita' },
+  { id: 'methods', label: 'Usullar' },
+]
 
 /**
- * MNEMONIKA — kitob xaritasi va o'quv rejasi.
+ * MNEMONIKA — kitobni kunlarga bo'lib, xotira usullari bilan yodlash.
  *
- * NEGA ALOHIDA EKRAN: "Enterprise 1 — 3640 ta so'z" degan son bolani
- * ham, ota-onani ham qo'rqitadi va hech narsa aytmaydi. Bu yerda o'sha
- * son BAJARILADIGAN rejaga aylanadi: "kuniga 20 ta so'z — 6 oyda
- * tugaysan", "bugun 20 tadan 12 tasi bajarildi".
+ * Uch qism:
+ *  - BUGUN — neyrobiologik chek-ro'yxat: minimal planka, rejadagi ulush,
+ *    takrorlash, ilgak, gap tuzish, teskari eslash + diqqat taymeri;
+ *  - XARITA — har kitobning aniq raqamlari (so'z, dars, jumla) va
+ *    "necha kunda tugataman" rejasi;
+ *  - USULLAR — yodlash algoritmi va har qadam ilovaning qayerida.
  *
- * Xarita bir necha psixologik tayanchga quriladi:
- *  - katta maqsadni kunlik ulushga bo'lish (implementation intentions);
- *  - bajarilgan ishni KO'RSATISH (progress bar, chek-belgi);
- *  - tugash SANASI — mavhum "bir kun" emas, aniq kun;
- *  - orqada qolganda ulush oshadi, lekin ikki baravardan ko'p emas:
- *    bajarib bo'lmaydigan vazifa bolani butunlay to'xtatadi.
+ * NEGA: "Enterprise 1 — 3640 ta so'z" degan son qo'rqitadi va hech
+ * narsa aytmaydi. Bu yerda u BAJARILADIGAN kunlik ishga aylanadi —
+ * mnemonika darslaridagi birinchi qoida: "hajmni bil".
  */
 export function BooksScreen() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab: Tab = (TABS.find((t) => t.id === searchParams.get('tab'))?.id ?? 'today') as Tab
+  const setTab = (next: Tab) => setSearchParams(next === 'today' ? {} : { tab: next }, { replace: true })
   const [openBookId, setOpenBookId] = useState<string | null>(null)
 
   const data = useLiveQuery(async () => {
     if (!learningLanguage) return null
+    const now = Date.now()
     const [cards, daily, profile] = await Promise.all([
       getAllCards(learningLanguage),
-      getDailyStat(),
+      getDailyStat(now),
       db.profile.get('me'),
     ])
+    const dayStart = startOfDay(now)
 
     return {
       language: learningLanguage,
@@ -42,6 +70,9 @@ export function BooksScreen() {
       plans: profile?.studyPlans ?? {},
       /** Bugun ko'rilgan NOYOB so'zlar — kunlik vazifa shuni sanaydi */
       doneToday: daily.cardIds.length,
+      dueCount: computeLanguageStats(cards, now).due,
+      hooksToday: cards.filter((card) => (card.mnemonicAt ?? 0) >= dayStart).length,
+      dayKey: dayStart,
     }
   }, [learningLanguage])
 
@@ -58,10 +89,24 @@ export function BooksScreen() {
     }
   }, [fresh])
 
+  /** Rejasi bor BIRINCHI kitobning bugungi vazifasi — "Bugun" uchun */
+  const activeTask = useMemo(() => {
+    if (!fresh) return null
+    for (const book of fresh.books) {
+      const record = fresh.plans[planKey(fresh.language, book.id)]
+      if (!record) continue
+      const plan: StudyPlan = { ...record }
+      const progress = planProgress(book, plan, Date.now())
+      const pace = planPace(book, Math.max(1, plan.days - (progress.dayNumber - 1)))
+      return dailyTask(pace, progress, fresh.doneToday)
+    }
+    return null
+  }, [fresh])
+
   if (!fresh) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">Mnemonika xaritasi</h1>
+        <h1 className="text-2xl font-extrabold">Mnemonika</h1>
         <Panel className="text-ink-600">Yuklanmoqda…</Panel>
       </div>
     )
@@ -70,93 +115,91 @@ export function BooksScreen() {
   return (
     <div className="flex flex-col gap-4">
       <header>
-        <h1 className="text-2xl font-extrabold">Mnemonika xaritasi</h1>
+        <h1 className="text-2xl font-extrabold">🧠 Mnemonika</h1>
         <p className="mt-1 text-sm text-ink-600">
-          Kitobni necha kunda tugatishni o‘zingiz tanlaysiz — ilova uni kunlik ulushga bo‘lib
-          beradi va har kuni nima qilishni aytadi.
+          Kitobni kunlarga bo‘lamiz, har kuni aniq ish beramiz va xotira usullari bilan yodlatamiz.
         </p>
       </header>
 
-      <Panel padding="sm" data-testid="books-totals">
-        <div className="grid grid-cols-4 gap-2 text-center">
-          <Total value={fresh.books.length} label="Kitob" />
-          <Total value={totals.words} label="So‘z" />
-          <Total value={totals.lessons} label="Dars" />
-          <Total value={totals.sentences} label="Jumla" />
-        </div>
-        <p className="mt-2 text-center text-xs text-ink-600">
-          {totals.learned} ta so‘z boshlandi · {totals.words - totals.learned} ta oldinda
-        </p>
-      </Panel>
+      <div role="tablist" aria-label="Mnemonika bo‘limlari" className="grid grid-cols-3 gap-1 rounded-2xl bg-ink-300/25 p-1">
+        {TABS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === item.id}
+            data-testid={`tab-${item.id}`}
+            onClick={() => setTab(item.id)}
+            className={cn(
+              'tap-highlight-none rounded-xl py-2 text-sm font-extrabold transition-colors',
+              tab === item.id ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-600',
+            )}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
-      <ul className="flex flex-col gap-3">
-        {fresh.books.map((book) => {
-          const key = planKey(fresh.language, book.id)
-          const record = fresh.plans[key]
-          const plan: StudyPlan | null = record
-            ? {
-                bookId: record.bookId,
-                days: record.days,
-                startedAt: record.startedAt,
-                learnedAtStart: record.learnedAtStart,
-              }
-            : null
+      {tab === 'today' && (
+        <TodayPanel
+          task={activeTask}
+          doneToday={fresh.doneToday}
+          dueCount={fresh.dueCount}
+          hooksToday={fresh.hooksToday}
+          dayKey={fresh.dayKey}
+          onOpenMap={() => setTab('map')}
+        />
+      )}
 
-          return (
-            <li key={book.id}>
-              <BookPlanCard
-                book={book}
-                plan={plan}
-                doneToday={fresh.doneToday}
-                open={openBookId === book.id}
-                onToggle={() => setOpenBookId(openBookId === book.id ? null : book.id)}
-                onChoose={(days) =>
-                  void saveStudyPlan(key, { bookId: book.id, days, learnedAtStart: book.learned })
-                }
-                onCancel={() => void removeStudyPlan(key)}
-              />
-            </li>
-          )
-        })}
-      </ul>
+      {tab === 'map' && (
+        <>
+          <Panel padding="sm" data-testid="books-totals">
+            <div className="grid grid-cols-4 gap-2 text-center">
+              <Total value={fresh.books.length} label="Kitob" />
+              <Total value={totals.words} label="So‘z" />
+              <Total value={totals.lessons} label="Dars" />
+              <Total value={totals.sentences} label="Jumla" />
+            </div>
+            <p className="mt-2 text-center text-xs text-ink-600">
+              {totals.learned} ta so‘z boshlandi · {totals.words - totals.learned} ta oldinda
+            </p>
+          </Panel>
 
-      <Panel padding="sm" className="text-sm text-ink-600">
-        <h2 className="mb-1 font-extrabold text-ink-900">Qanday yodlatamiz</h2>
-        <ul className="flex list-disc flex-col gap-1 ps-4">
-          <li>
-            <b>Eslab chaqirish:</b> o‘zbekchasini beramiz — inglizcha/arabchasini o‘zingiz
-            topasiz. Tanib olishdan ko‘ra qiyin, shuning uchun mustahkamroq.
-          </li>
-          <li>
-            <b>Gap ichida:</b> so‘z yolg‘iz emas, jumlada beriladi — kontekst xotirani
-            ikkilantiradi.
-          </li>
-          <li>
-            <b>Oraliqli takror:</b> har so‘z unutish arafasida qaytadi (SM-2).
-          </li>
-          <li>
-            <b>Mnemonik usul:</b> har yangi so‘zga bitta ko‘rsatma — obraz, ovoz, harakat yoki
-            o‘xshash so‘z.
-          </li>
-          <li>
-            <b>Yig‘ma imtihon:</b> har bo‘limdan keyin oldingi hamma darsdan tekshiruv.
-          </li>
-        </ul>
-        <Link to={PATHS.mnemonics} className="mt-2 inline-block font-bold text-brand-700">
-          Assotsiatsiyalarim →
-        </Link>
-      </Panel>
+          <ul className="flex flex-col gap-3">
+            {fresh.books.map((book) => {
+              const key = planKey(fresh.language, book.id)
+              const record = fresh.plans[key]
+
+              return (
+                <li key={book.id}>
+                  <BookPlanCard
+                    book={book}
+                    plan={record ? { ...record } : null}
+                    doneToday={fresh.doneToday}
+                    open={openBookId === book.id}
+                    onToggle={() => setOpenBookId(openBookId === book.id ? null : book.id)}
+                    onChoose={(days) =>
+                      void saveStudyPlan(key, { bookId: book.id, days, learnedAtStart: book.learned })
+                    }
+                    onCancel={() => void removeStudyPlan(key)}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )}
+
+      {tab === 'methods' && <MethodsPanel />}
     </div>
   )
 }
 
 function Total({ value, label }: { value: number; label: string }) {
   return (
-    <div className={cn('flex flex-col')}>
+    <div className="flex flex-col">
       <span className="text-lg font-extrabold">{value}</span>
       <span className="text-xs text-ink-600">{label}</span>
     </div>
   )
 }
-
-export type { BookStats }

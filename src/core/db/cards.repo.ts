@@ -251,6 +251,7 @@ export async function setMnemonic(cardId: string, mnemonic: string): Promise<voi
 
   const updated = await db.cards.update(cardId, {
     mnemonic: trimmed.length > 0 ? trimmed : undefined,
+    mnemonicAt: trimmed.length > 0 ? Date.now() : undefined,
   })
 
   if (updated === 0) {

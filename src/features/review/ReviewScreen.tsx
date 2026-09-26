@@ -51,7 +51,39 @@ interface ReviewScreenProps {
    * beradi ("Ustida ishlash kerak" bo'limidagi tugma shu yerga olib
    * keladi).
    */
-  focus?: 'due' | 'weak'
+  focus?: 'due' | 'weak' | 'active'
+}
+
+/** Ekran sarlavhasi — rejimga qarab */
+const TITLES = { due: 'Takrorlash', weak: 'Qiyin so‘zlar', active: 'O‘zbekchasidan ayt' } as const
+
+/** Faol eslash seansidagi so'zlar */
+const ACTIVE_SESSION_SIZE = 15
+
+/** Faol eslash uchun hali so'z yo'q */
+const NOTHING_TO_RECALL = {
+  icon: '🌱',
+  title: 'Avval bir nechta so‘z o‘rganing',
+  hint: 'Bu mashq bugun va shu hafta o‘rgangan so‘zlaringizni o‘zbekchasidan so‘raydi.',
+}
+
+/**
+ * FAOL ESLASH navbati: BUGUN ko'rilganlar birinchi (yangi iz shu kuni
+ * bir marta tortib chiqarilsa, ertaga ancha kuchli bo'ladi — "10 daqiqa"
+ * qadami), keyin shu HAFTA ko'rilganlar, har guruhda zaifi oldin.
+ */
+function pickActiveRecall(all: CardRecord[], now: number): CardRecord[] {
+  const dayStart = new Date(now).setHours(0, 0, 0, 0)
+  const weekAgo = now - 7 * 24 * 60 * 60 * 1000
+  const seen = all.filter((card) => card.totalReviews > 0 && card.lastReviewedAt !== null)
+  const today = seen.filter((card) => (card.lastReviewedAt ?? 0) >= dayStart)
+  const week = seen.filter(
+    (card) => (card.lastReviewedAt ?? 0) < dayStart && (card.lastReviewedAt ?? 0) >= weekAgo,
+  )
+  return [
+    ...pickWeakest(today, ACTIVE_SESSION_SIZE, now),
+    ...pickWeakest(week, ACTIVE_SESSION_SIZE, now),
+  ].slice(0, ACTIVE_SESSION_SIZE)
 }
 
 export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
@@ -103,7 +135,9 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
                 WEAK_SESSION_SIZE,
                 Date.now(),
               )
-            : pickDueCards(all, Date.now(), SESSION_LIMIT)
+            : focus === 'active'
+              ? pickActiveRecall(all, Date.now())
+              : pickDueCards(all, Date.now(), SESSION_LIMIT)
 
         setCards(queue)
         setPool(all)
@@ -125,7 +159,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (!learningLanguage) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
+        <h1 className="text-2xl font-extrabold">{TITLES[focus]}</h1>
         <Panel>Avval til tanlang.</Panel>
       </div>
     )
@@ -134,7 +168,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (cards === null) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
+        <h1 className="text-2xl font-extrabold">{TITLES[focus]}</h1>
         <Panel className="text-ink-600">Yuklanmoqda…</Panel>
       </div>
     )
@@ -144,7 +178,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
   if (summary !== null || cards.length === 0) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-extrabold">{focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}</h1>
+        <h1 className="text-2xl font-extrabold">{TITLES[focus]}</h1>
 
         <SessionSummaryPanel
           summary={summary}
@@ -153,7 +187,9 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
               ? pool.some((card) => card.totalReviews > 0)
                 ? NO_WEAK_WORDS
                 : NOTHING_SEEN_YET
-              : undefined
+              : focus === 'active'
+                ? NOTHING_TO_RECALL
+                : undefined
           }
           actions={
             summary !== null ? (
@@ -192,15 +228,15 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
               O'lik yo'l emas: takror yo'q — demak eng foydali keyingi
               qadam YANGI so'z. "Bosh sahifaga" ikkinchi o'rinda.
             */}
-            {focus === 'due' && (
+            {focus !== 'weak' && (
               <LinkButton to={PATHS.lesson} block data-testid="review-empty-lesson">
                 Darsni boshlash
               </LinkButton>
             )}
-            <LinkButton to={PATHS.home} block variant={focus === 'due' ? 'ghost' : 'primary'}>
+            <LinkButton to={PATHS.home} block variant={focus !== 'weak' ? 'ghost' : 'primary'}>
               Bosh sahifaga
             </LinkButton>
-            {focus !== 'due' && (
+            {focus === 'weak' && (
               <Button variant="ghost" block onClick={() => setSessionKey((key) => key + 1)}>
                 Yana bor-yo‘qligini tekshirish
               </Button>
@@ -220,7 +256,7 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
         ekranda faqat ko'rsatkich va savol turardi.
       */}
       <h1 className="text-2xl font-extrabold">
-        {focus === 'weak' ? 'Qiyin so‘zlar' : 'Takrorlash'}
+        {TITLES[focus]}
       </h1>
 
       {/*
@@ -238,6 +274,8 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
           esa har so'z bir marta chiqadi — u SM-2 o'lchovi.
         */
         mode={focus === 'weak' ? 'mastery' : 'fixed'}
+        // Faol eslash: faqat o'zi chiqaradigan mashqlar (variant tanlash yo'q)
+        activeRecall={focus === 'active'}
         onFinish={handleFinish}
       />
     </div>

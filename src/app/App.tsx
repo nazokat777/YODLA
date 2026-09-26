@@ -121,6 +121,7 @@ export function App() {
           <Route path={PATHS.review} element={<ReviewScreen />} />
           {/* Qiyin so'zlar mashqi — profildagi "Ustida ishlash kerak" dan */}
           <Route path={PATHS.weakReview} element={<ReviewScreen focus="weak" />} />
+          <Route path={PATHS.activeReview} element={<ReviewScreen focus="active" />} />
           <Route path={PATHS.games} element={<Lazy><GamesScreen /></Lazy>} />
           <Route path={PATHS.speedGame} element={<Lazy><SpeedGame /></Lazy>} />
           <Route path={PATHS.memoryGame} element={<Lazy><MemoryGame /></Lazy>} />

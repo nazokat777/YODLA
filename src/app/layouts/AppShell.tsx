@@ -8,6 +8,8 @@ import { RouteTransition } from './RouteTransition'
 const NAV_ITEMS = [
   { to: PATHS.home, label: 'Bosh sahifa', icon: '🏠', end: true },
   { to: PATHS.review, label: 'Takrorlash', icon: '🔁', end: false },
+  // Mnemonika — kitob xaritasi, kunlik chek-ro'yxat va yodlash usullari
+  { to: PATHS.books, label: 'Mnemonika', icon: '🧠', end: false },
   // Liga faqat bulut sozlangan bo'lsa: kalitlar yo'q joyda (lokal
   // nusxa) navigatsiyadagi bo'lim hech qachon ishlamas edi
   ...(isCloudEnabled() ? [{ to: PATHS.league, label: 'Liga', icon: '🏆', end: false }] : []),

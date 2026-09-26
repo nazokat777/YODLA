@@ -56,9 +56,10 @@ export function PlanCard({ cards }: PlanCardProps) {
             🗺️
           </span>
           <span className="flex min-w-0 flex-col">
-            <span className="font-bold">Mnemonika xaritasi</span>
+            <span className="font-bold">🧠 Mnemonika — kitobni tugatish rejasi</span>
             <span className="text-sm text-ink-600">
-              Kitobni necha kunda tugatasiz? Reja tuzing — kunlik ulush o‘zi hisoblanadi.
+              Kitobni necha kunda tugatasiz? Reja tuzing — kunlik ulush, chek-ro‘yxat va eslatma
+              o‘zi tayyorlanadi.
             </span>
           </span>
           <span aria-hidden="true" className="ms-auto text-ink-600">
