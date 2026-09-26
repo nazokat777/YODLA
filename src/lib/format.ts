@@ -23,3 +23,31 @@ export function formatTimeUntil(target: number, now: number = Date.now()): strin
   if (days === 1) return 'ertaga'
   return `${days} kundan keyin`
 }
+
+/** O'zbekcha oy nomlari */
+const UZ_MONTHS = [
+  'yanvar',
+  'fevral',
+  'mart',
+  'aprel',
+  'may',
+  'iyun',
+  'iyul',
+  'avgust',
+  'sentabr',
+  'oktabr',
+  'noyabr',
+  'dekabr',
+]
+
+/**
+ * "27-oktabr" — kun va oy.
+ *
+ * `toLocaleDateString('uz-UZ')` ga TAYANIB BO'LMAYDI: ba'zi brauzerlarda
+ * o'zbek tili ma'lumotlari yo'q va natija "M10 27" bo'lib chiqadi
+ * (o'lchandi — Chromium'ning ixcham qurilmasida).
+ */
+export function formatDayMonth(at: number): string {
+  const date = new Date(at)
+  return `${date.getDate()}-${UZ_MONTHS[date.getMonth()]}`
+}

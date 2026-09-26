@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useSearchParams } from 'react-router-dom'
+import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
 import {
   computeLanguageStats,
@@ -13,12 +14,15 @@ import {
 } from '@/core/db'
 import {
   buildBooks,
+  nextUnitOfBook,
   dailyTask,
   planPace,
   planProgress,
   type StudyPlan,
 } from '@/core/books'
 import { startOfDay } from '@/lib/date'
+import { buildUnits } from '@/core/path'
+import { useTopicOrder } from '@/features/home/useTopicOrder'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 import { BookPlanCard } from './BookPlanCard'
@@ -49,6 +53,9 @@ const TABS: Array<{ id: Tab; label: string }> = [
  */
 export function BooksScreen() {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const startingLevel = useSettingsStore((s) => s.startingLevel)
+  // O'quv yo'li tartibi — kitobning KEYINGI darsini topish uchun
+  const topicOrder = useTopicOrder(learningLanguage)
   const [searchParams, setSearchParams] = useSearchParams()
   const tab: Tab = (TABS.find((t) => t.id === searchParams.get('tab'))?.id ?? 'today') as Tab
   const setTab = (next: Tab) => setSearchParams(next === 'today' ? {} : { tab: next }, { replace: true })
@@ -67,6 +74,7 @@ export function BooksScreen() {
     return {
       language: learningLanguage,
       books: buildBooks(cards),
+      cards,
       plans: profile?.studyPlans ?? {},
       /** Bugun ko'rilgan NOYOB so'zlar — kunlik vazifa shuni sanaydi */
       doneToday: daily.cardIds.length,
@@ -90,6 +98,15 @@ export function BooksScreen() {
     }
   }, [fresh])
 
+  /** O'quv yo'li bo'limlari — reja tugmasi kitobning keyingi darsini ochadi */
+  const units = useMemo(
+    () =>
+      fresh && topicOrder !== null
+        ? buildUnits(fresh.cards, { minLevel: startingLevel, topicOrder })
+        : [],
+    [fresh, topicOrder, startingLevel],
+  )
+
   /** Rejasi bor BIRINCHI kitobning bugungi vazifasi — "Bugun" uchun */
   const activeTask = useMemo(() => {
     if (!fresh) return null
@@ -99,10 +116,16 @@ export function BooksScreen() {
       const plan: StudyPlan = { ...record }
       const progress = planProgress(book, plan, Date.now())
       const pace = planPace(book, Math.max(1, plan.days - (progress.dayNumber - 1)))
-      return dailyTask(pace, progress, fresh.doneToday)
+      return { task: dailyTask(pace, progress, fresh.doneToday), bookId: book.id }
     }
     return null
   }, [fresh])
+
+  /** Bugungi yangi so'zlar qayerdan — rejadagi kitobning keyingi darsi */
+  const lessonTo = useMemo(() => {
+    const unitId = activeTask ? nextUnitOfBook(units, activeTask.bookId) : null
+    return unitId ? PATHS.lessonById(unitId) : PATHS.lesson
+  }, [activeTask, units])
 
   if (!fresh) {
     return (
@@ -143,7 +166,8 @@ export function BooksScreen() {
 
       {tab === 'today' && (
         <TodayPanel
-          task={activeTask}
+          task={activeTask?.task ?? null}
+          lessonTo={lessonTo}
           doneToday={fresh.doneToday}
           dueCount={fresh.dueCount}
           hooksToday={fresh.hooksToday}
@@ -178,6 +202,7 @@ export function BooksScreen() {
                     book={book}
                     plan={record ? { ...record } : null}
                     doneToday={fresh.doneToday}
+                    nextUnitId={nextUnitOfBook(units, book.id)}
                     open={openBookId === book.id}
                     onToggle={() => setOpenBookId(openBookId === book.id ? null : book.id)}
                     onChoose={(days) =>

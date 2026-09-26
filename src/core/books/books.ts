@@ -120,3 +120,24 @@ export function cardsOfBook(cards: readonly CardRecord[], bookId: string): CardR
     (card) => bookIdOf(splitTopic(card.topic ?? '').section ?? OTHER_BOOK_TITLE) === bookId,
   )
 }
+
+/**
+ * Kitobning KEYINGI darsi — reja tugmasi shu yerga olib boradi.
+ *
+ * Umumiy "joriy dars" yaramaydi: bola "Qiroat 1-kitob"ni rejalagan,
+ * lekin yo'lda joriy bo'lim "Asosiy lug'at"da bo'lishi mumkin — tugma
+ * boshqa kitobning darsini ochib qo'yardi.
+ *
+ * `units` — o'quv yo'li tartibida (`buildUnits`). Tugallanmagan
+ * birinchi bo'lim; hammasi tugagan bo'lsa `null`.
+ */
+export function nextUnitOfBook(
+  units: readonly { id: string; section: string | null; learned: number; total: number }[],
+  bookId: string,
+): string | null {
+  const unit = units.find(
+    (candidate) =>
+      bookIdOf(candidate.section ?? OTHER_BOOK_TITLE) === bookId && candidate.learned < candidate.total,
+  )
+  return unit?.id ?? null
+}

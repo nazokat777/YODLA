@@ -4,7 +4,10 @@ import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { db, getDailyStat, planKey } from '@/core/db'
-import { buildBooks, dailyTask, planPace, planProgress } from '@/core/books'
+import { buildBooks, dailyTask, nextUnitOfBook, planPace, planProgress } from '@/core/books'
+import { LinkButton } from '@/components/ui/LinkButton'
+import { buildUnits } from '@/core/path'
+import { useTopicOrder } from './useTopicOrder'
 import type { CardRecord } from '@/core/db'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 
@@ -23,6 +26,8 @@ interface PlanCardProps {
  */
 export function PlanCard({ cards }: PlanCardProps) {
   const learningLanguage = useSettingsStore((s) => s.learningLanguage)
+  const startingLevel = useSettingsStore((s) => s.startingLevel)
+  const topicOrder = useTopicOrder(learningLanguage)
 
   const state = useLiveQuery(async () => {
     if (!learningLanguage) return null
@@ -81,6 +86,11 @@ export function PlanCard({ cards }: PlanCardProps) {
   // Qolgan kunlarga bo'linadi: bugun orqada qolinsa, ulush o'zi oshadi
   const pace = planPace(book, Math.max(1, plan.days - (progress.dayNumber - 1)))
   const task = dailyTask(pace, progress, state.doneToday)
+  // Tugma REJADAGI kitobning keyingi darsini ochadi, umumiy joriy darsni emas
+  const nextUnitId =
+    topicOrder === null
+      ? null
+      : nextUnitOfBook(buildUnits(cards, { minLevel: startingLevel, topicOrder }), book.id)
 
   return (
     <Panel data-home-card data-testid="plan-card" tone={task.done ? 'default' : 'brand'}>
@@ -119,6 +129,17 @@ export function PlanCard({ cards }: PlanCardProps) {
                 ? `${progress.ahead} so‘z oldinda 🚀`
                 : 'Rejada ketyapsiz'}
           </p>
+          {!task.done && (
+            <LinkButton
+              to={nextUnitId ? PATHS.lessonById(nextUnitId) : PATHS.lesson}
+              block
+              size="lg"
+              className="mt-3"
+              data-testid="plan-card-start"
+            >
+              {task.minDone ? 'Davom etish' : `Boshlash · kamida ${task.minWords} so‘z`}
+            </LinkButton>
+          )}
         </>
       )}
     </Panel>

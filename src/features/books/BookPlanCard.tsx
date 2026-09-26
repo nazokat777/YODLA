@@ -12,6 +12,7 @@ import {
   type StudyPlan,
 } from '@/core/books'
 import { cn } from '@/lib/cn'
+import { formatDayMonth } from '@/lib/format'
 
 interface BookPlanCardProps {
   book: BookStats
@@ -19,6 +20,8 @@ interface BookPlanCardProps {
   plan: StudyPlan | null
   /** Bugun ko'rilgan noyob so'zlar */
   doneToday: number
+  /** Shu kitobning keyingi darsi (bo'lim id) — tugma shu yerga */
+  nextUnitId?: string | null
   /** Muddat tanlash paneli ochiqmi */
   open: boolean
   onToggle: () => void
@@ -27,9 +30,7 @@ interface BookPlanCardProps {
 }
 
 /** Sana: "12-noyabr" */
-function formatDate(at: number): string {
-  return new Date(at).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long' })
-}
+const formatDate = formatDayMonth
 
 /**
  * Bitta kitob: raqamlari, rejasi va bugungi vazifasi.
@@ -41,6 +42,7 @@ export function BookPlanCard({
   book,
   plan,
   doneToday,
+  nextUnitId = null,
   open,
   onToggle,
   onChoose,
@@ -96,7 +98,12 @@ export function BookPlanCard({
                     : 'rejada'}{' '}
                 · tugash: {formatDate(progress.finishAt)}
               </p>
-              <LinkButton to={PATHS.lesson} block size="lg">
+              <LinkButton
+                to={nextUnitId ? PATHS.lessonById(nextUnitId) : PATHS.lesson}
+                block
+                size="lg"
+                data-testid={`plan-start-${book.id}`}
+              >
                 {task.done ? 'Yana bir dars' : `Bugungi darsni boshlash · ≈${pace.minutesPerDay} daq`}
               </LinkButton>
             </>

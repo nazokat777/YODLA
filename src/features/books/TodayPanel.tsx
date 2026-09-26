@@ -18,6 +18,8 @@ interface TodayPanelProps {
   hooksToday: number
   /** Umuman ko'rilgan so'zlar — 0 bo'lsa takrorlash bandi ma'nosiz */
   seenCount: number
+  /** Yangi so'zlar qayerdan olinadi (rejadagi kitobning keyingi darsi) */
+  lessonTo?: string
   /** Bugungi kun kaliti — qo'lda belgilanadigan bandlar shu bilan saqlanadi */
   dayKey: number
   onOpenMap: () => void
@@ -73,6 +75,7 @@ export function TodayPanel({
   dueCount,
   hooksToday,
   seenCount,
+  lessonTo = PATHS.lesson,
   dayKey,
   onOpenMap,
 }: TodayPanelProps) {
@@ -94,7 +97,7 @@ export function TodayPanel({
       hint: 'Eng yomon kuningizda ham shuncha. Bajarilsa — zanjir uzilmaydi.',
       done: doneToday >= minWords,
       auto: true,
-      to: PATHS.lesson,
+      to: lessonTo,
     },
     ...(task && task.newWords > minWords
       ? [
@@ -105,7 +108,7 @@ export function TodayPanel({
             hint: `${task.doneWords}/${task.newWords} bajarildi`,
             done: task.done,
             auto: true,
-            to: PATHS.lesson,
+            to: lessonTo,
           },
         ]
       : []),

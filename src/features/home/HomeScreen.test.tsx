@@ -261,5 +261,7 @@ describe('HomeScreen — bugungi reja', () => {
     // 2 so'z / 2 kun → kuniga 1
     expect(card).toHaveTextContent('1 ta yangi so‘z')
     expect(card).toHaveTextContent('1-kun / 2')
+    // Tugma rejadagi kitobning darsini ochadi
+    expect(await screen.findByTestId('plan-card-start')).toHaveTextContent('kamida 1 so‘z')
   })
 })

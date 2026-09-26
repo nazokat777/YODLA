@@ -232,3 +232,19 @@ describe('minimal planka', () => {
     expect(dailyTask(pace, progress, 0).minWords).toBe(2)
   })
 })
+
+describe('nextUnitOfBook', () => {
+  it('rejadagi kitobning tugallanmagan birinchi darsi', async () => {
+    const { nextUnitOfBook } = await import('./books')
+    const units = [
+      { id: 'a1-salom', section: null, learned: 0, total: 3 },
+      { id: 'a1-q1-1', section: 'Qiroat 1-kitob', learned: 5, total: 5 },
+      { id: 'a1-q1-2', section: 'Qiroat 1-kitob', learned: 1, total: 5 },
+      { id: 'a1-q2-1', section: 'Qiroat 2-kitob', learned: 0, total: 5 },
+    ]
+    // Umumiy joriy bo'lim "salom" — lekin reja 1-kitob uchun
+    expect(nextUnitOfBook(units, 'qiroat-1-kitob')).toBe('a1-q1-2')
+    expect(nextUnitOfBook(units, 'asosiy-lugat')).toBe('a1-salom')
+    expect(nextUnitOfBook([units[1]!], 'qiroat-1-kitob')).toBeNull()
+  })
+})

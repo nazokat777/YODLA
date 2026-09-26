@@ -57,3 +57,11 @@ describe('formatTimeUntil', () => {
     expect(formatTimeUntil(soonAfterMidnight, lateEvening)).toBe('ertaga')
   })
 })
+
+describe('formatDayMonth', () => {
+  it('brauzer tilidan qat’i nazar o‘zbekcha', async () => {
+    const { formatDayMonth } = await import('./format')
+    expect(formatDayMonth(new Date(2026, 9, 27).getTime())).toBe('27-oktabr')
+    expect(formatDayMonth(new Date(2026, 0, 1).getTime())).toBe('1-yanvar')
+  })
+})
