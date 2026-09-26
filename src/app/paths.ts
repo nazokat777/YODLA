@@ -20,6 +20,8 @@ export const PATHS = {
   profile: '/profile',
   /** Foydalanuvchi yozgan mnemonik assotsiatsiyalar */
   mnemonics: '/mnemonics',
+  /** Mnemonika xaritasi: kitoblar va o'quv rejasi */
+  books: '/books',
   /** Yig'ma imtihon: bo'lim tugagach, shu bo'limgacha bo'lgan hammasi */
   exam: '/exam',
   examById: (unitId: string) => `/exam/${unitId}`,

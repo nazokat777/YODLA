@@ -32,6 +32,7 @@ import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
 import { Companion } from './Companion'
 import { WordOfDay } from './WordOfDay'
+import { PlanCard } from './PlanCard'
 import { InstallCard } from '@/components/ui/InstallCard'
 import { currentUnitId } from '@/features/lesson/currentUnit'
 
@@ -194,6 +195,9 @@ export function HomeScreen() {
 
       {/* O'rnatish — faqat brauzer taklif qilsa; bosh ekran ikonkasi = kunlik signal */}
       <InstallCard />
+
+      {/* Bugungi reja — "nima qilishim kerak" savoliga bir qarashda javob */}
+      <PlanCard cards={cards} />
 
       {/* Kunning so'zi — qiziquvchanlik bo'shlig'i, har kuni yangi sir */}
       {cards && learningLanguage && (

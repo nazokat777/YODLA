@@ -218,3 +218,48 @@ describe('HomeScreen — o‘yinlar qulfi', () => {
     expect(await screen.findByTestId('freeze-used')).toHaveTextContent('Zaxira: 0')
   })
 })
+
+describe('HomeScreen — bugungi reja', () => {
+  it('reja yo‘q bo‘lsa xaritaga taklif chiqadi', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en', topic: 'Kitob 1 · 1-dars', level: 'A1' },
+      { word: 'b', translation: 'bb', language: 'en', topic: 'Kitob 1 · 1-dars', level: 'A1' },
+    ])
+
+    renderScreen()
+
+    expect(await screen.findByTestId('plan-invite')).toHaveAttribute('href', '/books')
+  })
+
+  it('reja bor bo‘lsa bugungi vazifa ko‘rinadi', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await addMissingCards([
+      { word: 'a', translation: 'aa', language: 'en', topic: 'Kitob 1 · 1-dars', level: 'A1' },
+      { word: 'b', translation: 'bb', language: 'en', topic: 'Kitob 1 · 1-dars', level: 'A1' },
+    ])
+    const { createProfile } = await import('@/core/db')
+    const { startOfDay } = await import('@/lib/date')
+    await db.profile.put({
+      ...createProfile(),
+      studyPlans: {
+        'en:kitob-1': {
+          bookId: 'kitob-1',
+          days: 2,
+          startedAt: startOfDay(Date.now()),
+          learnedAtStart: 0,
+        },
+      },
+    })
+
+    renderScreen()
+
+    const card = await screen.findByTestId('plan-card')
+    expect(card).toHaveTextContent('Bugungi vazifa')
+    // 2 so'z / 2 kun → kuniga 1
+    expect(card).toHaveTextContent('1 ta yangi so‘z')
+    expect(card).toHaveTextContent('1-kun / 2')
+  })
+})

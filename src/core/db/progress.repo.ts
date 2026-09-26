@@ -603,3 +603,51 @@ export async function recordExamPassed(
   const { newlyUnlocked } = await refreshBadges(now)
   return { bonusXp, newBadges: newlyUnlocked }
 }
+
+/** O'quv rejasi kaliti: `ar:qiroat-1-kitob` */
+export function planKey(language: string, bookId: string): string {
+  return `${language}:${bookId}`
+}
+
+/**
+ * Kitob uchun reja belgilanadi (yoki muddati o'zgartiriladi).
+ *
+ * `learnedAtStart` chaqiruvchidan keladi: reja O'SHA lahzadagi
+ * holatdan sanaydi, aks holda ilgari o'rganilgan so'zlar "bugungi ish"
+ * bo'lib ko'rinardi.
+ */
+export async function saveStudyPlan(
+  key: string,
+  plan: { bookId: string; days: number; learnedAtStart: number },
+  now: number = Date.now(),
+): Promise<void> {
+  await db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const plans = profile.studyPlans ?? {}
+    // Muddat o'zgarsa boshlanish sanasi SAQLANADI: aks holda "3-kun"
+    // dan yana "1-kun" ga tushib, bola yo'qotgandek his qilardi
+    const existing = plans[key]
+    await db.profile.put({
+      ...profile,
+      studyPlans: {
+        ...plans,
+        [key]: {
+          bookId: plan.bookId,
+          days: plan.days,
+          startedAt: existing?.startedAt ?? startOfDay(now),
+          learnedAtStart: existing?.learnedAtStart ?? plan.learnedAtStart,
+        },
+      },
+    })
+  })
+}
+
+/** Rejani bekor qiladi */
+export async function removeStudyPlan(key: string): Promise<void> {
+  await db.transaction('rw', db.profile, async () => {
+    const profile = (await db.profile.get('me')) ?? createProfile()
+    const plans = { ...(profile.studyPlans ?? {}) }
+    delete plans[key]
+    await db.profile.put({ ...profile, studyPlans: plans })
+  })
+}

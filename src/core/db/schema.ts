@@ -145,6 +145,24 @@ export interface ProfileRecord {
    * o'zlashtirilgan bo'lsa. Ixtiyoriy: eski profillarda yo'q.
    */
   examResults?: Record<string, ExamResult>
+  /**
+   * O'quv rejalari: `<til>:<kitob id>` → reja.
+   *
+   * Til prefiksi shart: kitob id si tilsiz va "Asosiy lug'at" uchala
+   * tilda ham bor. Ixtiyoriy: eski profillarda yo'q.
+   */
+  studyPlans?: Record<string, StudyPlanRecord>
+}
+
+/** Saqlanadigan o'quv rejasi (`core/books/plan.ts` dagi StudyPlan) */
+export interface StudyPlanRecord {
+  bookId: string
+  /** Necha kunda tugatish maqsadi */
+  days: number
+  /** Reja boshlangan kun boshi */
+  startedAt: number
+  /** Reja boshlanganda shu kitobdan nechta so'z bilingan edi */
+  learnedAtStart: number
 }
 
 /** Yig'ma imtihon natijasi */

@@ -36,6 +36,9 @@ const ProfileScreen = lazy(() =>
 const MnemonicsScreen = lazy(() =>
   import('@/features/mnemonics/MnemonicsScreen').then((m) => ({ default: m.MnemonicsScreen })),
 )
+const BooksScreen = lazy(() =>
+  import('@/features/books/BooksScreen').then((m) => ({ default: m.BooksScreen })),
+)
 const ExamScreen = lazy(() =>
   import('@/features/exam/ExamScreen').then((m) => ({ default: m.ExamScreen })),
 )
@@ -125,6 +128,7 @@ export function App() {
           <Route path={PATHS.league} element={<Lazy><LeagueScreen /></Lazy>} />
           <Route path={PATHS.stats} element={<Lazy><StatsScreen /></Lazy>} />
           <Route path={PATHS.profile} element={<Lazy><ProfileScreen /></Lazy>} />
+          <Route path={PATHS.books} element={<Lazy><BooksScreen /></Lazy>} />
           <Route path={PATHS.mnemonics} element={<Lazy><MnemonicsScreen /></Lazy>} />
         </Route>
 
