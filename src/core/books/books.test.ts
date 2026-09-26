@@ -35,12 +35,12 @@ describe('buildBooks', () => {
     const books = buildBooks(CARDS)
 
     expect(books.map((book) => book.title)).toEqual([
+      OTHER_BOOK_TITLE,
       'Qiroat 1-kitob',
       'Qiroat 2-kitob',
-      OTHER_BOOK_TITLE,
     ])
 
-    const first = books[0]!
+    const first = books[1]!
     expect(first).toMatchObject({
       id: 'qiroat-1-kitob',
       words: 3,
@@ -59,6 +59,21 @@ describe('buildBooks', () => {
     const other = buildBooks(CARDS).find((book) => book.title === OTHER_BOOK_TITLE)!
     expect(other.words).toBe(1)
     expect(other.learned).toBe(1)
+  })
+
+  it('kitoblar TABIIY tartibda — kartalar tartibidan qat’i nazar', () => {
+    const shuffled = [
+      card('x', { topic: 'Qiroat 3-kitob 1-dars' }),
+      card('y', { topic: 'Qiroat 10-kitob 1-dars' }),
+      card('z', { topic: 'Qiroat 2-kitob 1-dars' }),
+      card('w', { topic: 'Salomlashish' }),
+    ]
+    expect(buildBooks(shuffled).map((book) => book.title)).toEqual([
+      OTHER_BOOK_TITLE,
+      'Qiroat 2-kitob',
+      'Qiroat 3-kitob',
+      'Qiroat 10-kitob',
+    ])
   })
 
   it('bo‘sh ro‘yxatda kitob yo‘q', () => {

@@ -16,6 +16,8 @@ interface TodayPanelProps {
   dueCount: number
   /** Bugun yozilgan ilgaklar (assotsiatsiyalar) */
   hooksToday: number
+  /** Umuman ko'rilgan so'zlar — 0 bo'lsa takrorlash bandi ma'nosiz */
+  seenCount: number
   /** Bugungi kun kaliti — qo'lda belgilanadigan bandlar shu bilan saqlanadi */
   dayKey: number
   onOpenMap: () => void
@@ -65,7 +67,15 @@ interface CheckItem {
  * Birinchi band — MINIMAL PLANKA: eng yomon kunda ham bajariladigan
  * kichik ulush. U bajarilsa zanjir uzilmaydi.
  */
-export function TodayPanel({ task, doneToday, dueCount, hooksToday, dayKey, onOpenMap }: TodayPanelProps) {
+export function TodayPanel({
+  task,
+  doneToday,
+  dueCount,
+  hooksToday,
+  seenCount,
+  dayKey,
+  onOpenMap,
+}: TodayPanelProps) {
   const [manual, setManual] = useState<Record<string, boolean>>(() => readManual(dayKey))
   useEffect(() => setManual(readManual(dayKey)), [dayKey])
 
@@ -99,18 +109,27 @@ export function TodayPanel({ task, doneToday, dueCount, hooksToday, dayKey, onOp
           },
         ]
       : []),
-    {
-      id: 'review',
-      icon: '📅',
-      title: 'Takrorlash — unutish arafasidagilar',
-      hint: dueCount > 0 ? `${dueCount} ta so‘z kutyapti` : 'Hammasi takrorlangan',
-      done: dueCount === 0,
-      auto: true,
-      to: PATHS.review,
-    },
+    /*
+     * Takrorlash bandi faqat ko'rilgan so'z BO'LSA: aks holda hech narsa
+     * qilmagan bolaga "✓ takrorlandi" tekin belgisi berilardi — chek-ro'yxat
+     * yolg'on gapirmasligi kerak.
+     */
+    ...(seenCount > 0
+      ? [
+          {
+            id: 'review',
+            icon: '📅',
+            title: 'Takrorlash — unutish arafasidagilar',
+            hint: dueCount > 0 ? `${dueCount} ta so‘z kutyapti` : 'Hammasi takrorlangan',
+            done: dueCount === 0,
+            auto: true,
+            to: PATHS.review,
+          },
+        ]
+      : []),
     {
       id: 'hook',
-      icon: '🪝',
+      icon: '🔗',
       title: 'Bitta qiyin so‘zga ilgak yozing',
       hint: 'Tovushga o‘xshash o‘zbekcha so‘z + bitta kulgili sahna',
       done: hooksToday > 0,
@@ -140,7 +159,11 @@ export function TodayPanel({ task, doneToday, dueCount, hooksToday, dayKey, onOp
 
   return (
     <div className="flex flex-col gap-3">
-      <Panel padding="sm" tone={doneCount === items.length ? 'brand' : 'default'} data-testid="today-summary">
+      <Panel
+        padding="sm"
+        tone={doneCount === items.length ? 'brand' : 'default'}
+        data-testid="today-summary"
+      >
         <div className="flex items-baseline justify-between">
           <h2 className="font-extrabold">Bugungi chek-ro‘yxat</h2>
           <span className="text-sm font-bold text-ink-600">
@@ -169,7 +192,10 @@ export function TodayPanel({ task, doneToday, dueCount, hooksToday, dayKey, onOp
       <ul className="flex flex-col gap-2" data-testid="today-checklist">
         {items.map((item) => (
           <li key={item.id}>
-            <Panel padding="sm" className={cn('flex items-center gap-3', item.done && 'opacity-80')}>
+            <Panel
+              padding="sm"
+              className={cn('flex items-center gap-3', item.done && 'opacity-80')}
+            >
               {item.auto ? (
                 <span
                   data-testid={`check-${item.id}`}
@@ -192,7 +218,9 @@ export function TodayPanel({ task, doneToday, dueCount, hooksToday, dayKey, onOp
                   onClick={() => toggle(item.id)}
                   className={cn(
                     'tap-highlight-none flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-sm font-extrabold',
-                    item.done ? 'border-brand-500 bg-brand-500 text-white' : 'border-ink-300 bg-white',
+                    item.done
+                      ? 'border-brand-500 bg-brand-500 text-white'
+                      : 'border-ink-300 bg-white',
                   )}
                 >
                   {item.done ? '✓' : ''}

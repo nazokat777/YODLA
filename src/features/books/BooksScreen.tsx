@@ -72,6 +72,7 @@ export function BooksScreen() {
       doneToday: daily.cardIds.length,
       dueCount: computeLanguageStats(cards, now).due,
       hooksToday: cards.filter((card) => (card.mnemonicAt ?? 0) >= dayStart).length,
+      seenCount: cards.filter((card) => card.totalReviews > 0).length,
       dayKey: dayStart,
     }
   }, [learningLanguage])
@@ -146,6 +147,7 @@ export function BooksScreen() {
           doneToday={fresh.doneToday}
           dueCount={fresh.dueCount}
           hooksToday={fresh.hooksToday}
+          seenCount={fresh.seenCount}
           dayKey={fresh.dayKey}
           onOpenMap={() => setTab('map')}
         />

@@ -42,7 +42,7 @@ const STEPS: Step[] = [
     to: '/lesson',
   },
   {
-    icon: '🪝',
+    icon: '🔗',
     title: '3. Ilgak top (tovushga o‘xshatish)',
     text: 'Begona tovushni tanish tovushga ulang: pillow → pilov, kettle → katta, candle → qand, book → buqa. Mukammal qofiya shart emas — birinchi bo‘g‘in yetadi. Ilgak vaqtinchalik: so‘z o‘zlashgach o‘zi tushib qoladi.',
     where: 'Assotsiatsiyalarim: har so‘zga o‘z ilgagingizni yozing',

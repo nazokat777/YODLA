@@ -54,12 +54,20 @@ interface BookAccumulator {
 }
 
 /**
- * Kartalardan kitoblar ro'yxati.
+ * Kitoblar tartibi: avval asosiy lug'at, keyin nom bo'yicha TABIIY
+ * tartibda ("1-kitob" < "2-kitob" < "10-kitob").
  *
- * Tartib — so'zlar soni bo'yicha EMAS, kartalar tartibida: lug'at
- * qanday tuzilgan bo'lsa, kitoblar ham shunday ketma-ketlikda
- * ko'rinadi ("1-kitob", "2-kitob", "3-kitob").
+ * Kartalar tartibiga tayanib bo'lmaydi: bazadan ular id bo'yicha
+ * (alifbo) keladi va o'lchandi — "Qiroat 3-kitob" "2-kitob" dan oldin
+ * chiqib qolgandi.
  */
+function compareBooks(a: string, b: string): number {
+  if (a === OTHER_BOOK_TITLE) return -1
+  if (b === OTHER_BOOK_TITLE) return 1
+  return a.localeCompare(b, 'uz', { numeric: true, sensitivity: 'base' })
+}
+
+/** Kartalardan kitoblar ro'yxati */
 export function buildBooks(cards: readonly CardRecord[]): BookStats[] {
   const order: string[] = []
   const map = new Map<string, BookAccumulator>()
@@ -88,7 +96,7 @@ export function buildBooks(cards: readonly CardRecord[]): BookStats[] {
     }
   }
 
-  return order.map((title) => {
+  return [...order].sort(compareBooks).map((title) => {
     const book = map.get(title)!
     const lessons = book.units.size
 
