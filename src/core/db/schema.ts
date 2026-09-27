@@ -87,6 +87,11 @@ export interface DailyStat {
    * Ixtiyoriy: eski yozuvlarda yo'q va 0 deb o'qiladi.
    */
   lessonsCompleted?: number
+  /**
+   * Shu kuni tugatilgan FAOL ESLASH seanslari ("O'zbekchasidan ayt").
+   * Mnemonika chek-ro'yxatidagi band shundan avtomatik belgilanadi.
+   */
+  activeRecallSessions?: number
   /** Kunlik chaqiriq bonusi berilganmi (ikki marta berilmasligi uchun) */
   challengeBonusAwarded?: boolean
   /**

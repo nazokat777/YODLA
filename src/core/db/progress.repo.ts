@@ -651,3 +651,14 @@ export async function removeStudyPlan(key: string): Promise<void> {
     await db.profile.put({ ...profile, studyPlans: plans })
   })
 }
+
+/** Faol eslash seansi tugadi — Mnemonika chek-ro'yxati uchun */
+export async function recordActiveRecallSession(now: number = Date.now()): Promise<void> {
+  const day = startOfDay(now)
+
+  await db.transaction('rw', db.dailyStats, async () => {
+    const daily = (await db.dailyStats.get(day)) ?? createDailyStat(day)
+    daily.activeRecallSessions = (daily.activeRecallSessions ?? 0) + 1
+    await db.dailyStats.put(daily)
+  })
+}

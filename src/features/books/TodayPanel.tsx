@@ -6,6 +6,8 @@ import type { DailyTask } from '@/core/books'
 import { cn } from '@/lib/cn'
 import { FocusTimer } from './FocusTimer'
 import { DailyReminder } from './DailyReminder'
+import { HookWorkshop } from './HookWorkshop'
+import type { CardRecord } from '@/core/db'
 
 interface TodayPanelProps {
   /** Rejadagi bugungi vazifa (reja yo'q bo'lsa `null`) */
@@ -20,6 +22,10 @@ interface TodayPanelProps {
   seenCount: number
   /** Yangi so'zlar qayerdan olinadi (rejadagi kitobning keyingi darsi) */
   lessonTo?: string
+  /** Bugun tugatilgan faol eslash seanslari */
+  activeRecallToday?: number
+  /** Bugun ko'rilgan, lekin hali ilgagi yo'q so'zlar */
+  hookCandidates?: CardRecord[]
   /** Bugungi kun kaliti — qo'lda belgilanadigan bandlar shu bilan saqlanadi */
   dayKey: number
   onOpenMap: () => void
@@ -76,6 +82,8 @@ export function TodayPanel({
   hooksToday,
   seenCount,
   lessonTo = PATHS.lesson,
+  activeRecallToday = 0,
+  hookCandidates = [],
   dayKey,
   onOpenMap,
 }: TodayPanelProps) {
@@ -152,8 +160,9 @@ export function TodayPanel({
       icon: '🔁',
       title: 'O‘zbekchasidan ayting — faol eslash',
       hint: 'Tarjimani ko‘rib, so‘zni o‘zingiz yozasiz va gap tuzasiz — gapirish yo‘nalishi',
-      done: manual.reverse === true,
-      auto: false,
+      // Seans tugaganda ilova O'ZI belgilaydi — "bajardim" deb aldab bo'lmaydi
+      done: activeRecallToday > 0,
+      auto: true,
       to: PATHS.activeReview,
     },
   ]
@@ -245,6 +254,8 @@ export function TodayPanel({
           </li>
         ))}
       </ul>
+
+      {hookCandidates.length > 0 && <HookWorkshop cards={hookCandidates} />}
 
       <FocusTimer />
 

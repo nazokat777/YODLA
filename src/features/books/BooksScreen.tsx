@@ -78,6 +78,16 @@ export function BooksScreen() {
       plans: profile?.studyPlans ?? {},
       /** Bugun ko'rilgan NOYOB so'zlar — kunlik vazifa shuni sanaydi */
       doneToday: daily.cardIds.length,
+      activeRecallToday: daily.activeRecallSessions ?? 0,
+      /*
+       * Ilgak ustaxonasi: BUGUN ko'rilgan, hali ilgagi yo'q so'zlar —
+       * zaifi (ko'p unutilgani) birinchi. Yangi iz shu kuni bog'lansa
+       * eng kuchli bo'ladi.
+       */
+      hookCandidates: cards
+        .filter((card) => daily.cardIds.includes(card.id) && !card.mnemonic)
+        .sort((a, b) => b.lapses - a.lapses || a.easeFactor - b.easeFactor)
+        .slice(0, 3),
       dueCount: computeLanguageStats(cards, now).due,
       hooksToday: cards.filter((card) => (card.mnemonicAt ?? 0) >= dayStart).length,
       seenCount: cards.filter((card) => card.totalReviews > 0).length,
@@ -172,6 +182,8 @@ export function BooksScreen() {
           dueCount={fresh.dueCount}
           hooksToday={fresh.hooksToday}
           seenCount={fresh.seenCount}
+          activeRecallToday={fresh.activeRecallToday}
+          hookCandidates={fresh.hookCandidates}
           dayKey={fresh.dayKey}
           onOpenMap={() => setTab('map')}
         />

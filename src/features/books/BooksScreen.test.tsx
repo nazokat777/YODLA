@@ -142,3 +142,43 @@ describe('BooksScreen — Bugun (chek-ro‘yxat)', () => {
     expect(screen.getByText(/pillow → pilov/)).toBeInTheDocument()
   })
 })
+
+describe('BooksScreen — ilgak ustaxonasi va faol eslash', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    localStorage.clear()
+    await addMissingCards(WORDS)
+  })
+
+  it('bugun ko‘rilgan so‘zga shu yerda ilgak yoziladi va chek-ro‘yxat belgilanadi', async () => {
+    const { recordAnswer, getCard } = await import('@/core/db')
+    await recordAnswer({ cardId: 'en:a', verdict: 'correct', dailyGoalWords: 20 })
+    renderBooks('/books')
+
+    const workshop = await screen.findByTestId('hook-workshop')
+    expect(workshop).toHaveTextContent('aa')
+
+    fireEvent.change(screen.getByLabelText('a — o‘xshash so‘z'), { target: { value: 'ayiq' } })
+    fireEvent.change(screen.getByLabelText('a — sahna'), { target: { value: 'ayiq a harfini yeydi' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Saqlash' }))
+
+    await waitFor(async () => {
+      expect((await getCard('en:a'))?.mnemonic).toBe('ayiq — ayiq a harfini yeydi')
+    })
+    await waitFor(() => {
+      expect(screen.getByTestId('check-hook')).toHaveAttribute('data-done', 'true')
+    })
+  })
+
+  it('faol eslash seansi tugagach "O‘zbekchasidan ayting" o‘zi belgilanadi', async () => {
+    const { recordActiveRecallSession } = await import('@/core/db')
+    await recordActiveRecallSession()
+    renderBooks('/books')
+
+    await waitFor(() => {
+      expect(screen.getByTestId('check-reverse')).toHaveAttribute('data-done', 'true')
+    })
+  })
+})

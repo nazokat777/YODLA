@@ -4,7 +4,12 @@ import { PATHS } from '@/app/paths'
 import { Button } from '@/components/ui/Button'
 import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
-import { getAllCards, getNextDueDate, type CardRecord } from '@/core/db'
+import {
+  getAllCards,
+  getNextDueDate,
+  recordActiveRecallSession,
+  type CardRecord,
+} from '@/core/db'
 import { pickDueCards } from '@/core/srs'
 import { isStillStruggling, pickWeakest } from '@/core/mastery'
 import { formatTimeUntil } from '@/lib/format'
@@ -154,7 +159,16 @@ export function ReviewScreen({ focus = 'due' }: ReviewScreenProps = {}) {
     }
   }, [learningLanguage, sessionKey, focus])
 
-  const handleFinish = useCallback((result: SessionSummary) => setSummary(result), [])
+  const handleFinish = useCallback(
+    (result: SessionSummary) => {
+      // Faol eslash tugadi — Mnemonika chek-ro'yxati buni o'zi belgilaydi
+      if (focus === 'active' && result.answered > 0) {
+        void recordActiveRecallSession().catch(() => {})
+      }
+      setSummary(result)
+    },
+    [focus],
+  )
 
   if (!learningLanguage) {
     return (
