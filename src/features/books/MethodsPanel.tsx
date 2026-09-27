@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { PATHS } from '@/app/paths'
 import { Panel } from '@/components/ui/Panel'
 import { cn } from '@/lib/cn'
+import { PegChallenge } from './PegChallenge'
 
 /**
  * USULLAR — yodlashning 7 qadamli algoritmi va uni ILOVADA qayerda
@@ -117,6 +118,9 @@ export function MethodsPanel() {
 
   return (
     <div className="flex flex-col gap-3">
+      {/* Avval o'z natijangizda ko'ring — keyin nazariya */}
+      <PegChallenge />
+
       <Panel padding="sm" tone="brand">
         <h2 className="font-extrabold">Yodlashning 3 tayanchi</h2>
         <ol className="mt-1 flex list-decimal flex-col gap-1 ps-4 text-sm">
