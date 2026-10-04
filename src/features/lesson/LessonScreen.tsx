@@ -12,6 +12,7 @@ import { buildUnits } from '@/core/path'
 import { useTopicOrder } from '@/features/home/useTopicOrder'
 import { pickLessonCards } from '@/core/lesson/order'
 import { currentUnitId } from './currentUnit'
+import { WordPreview } from './WordPreview'
 import { mergeLevelUp } from '@/core/gamification'
 import { isLightningOffered } from '@/core/games'
 import { unitIdOf } from '@/core/path'
@@ -94,6 +95,23 @@ export function LessonScreen() {
   const [lessonKey, setLessonKey] = useState(0)
   /** Chiqish tasdig'i ochiqmi */
   const [exitAsked, setExitAsked] = useState(false)
+  /**
+   * Dars oldidan so'zlar ro'yxati ko'rildimi.
+   *
+   * Har yangi dars (`lessonKey`) uchun qaytadan `false`: avval bugungi
+   * so'zlarning to'liq ro'yxati (tarjima, o'qilishi, talaffuz), keyin
+   * yodlash.
+   */
+  const [previewDone, setPreviewDone] = useState(false)
+  /*
+   * Ro'yxat FAQAT yangi dars ochilganda qaytadan ko'rsatiladi. Yuklash
+   * effektiga qo'yilmaydi: u kartalar soni (jonli) kelganda ham qayta
+   * ishlaydi va "Yodlashni boshlash" bosilgandan keyin bola yana
+   * ro'yxatga qaytarib tashlanardi — o'lchandi, testlarda ko'rindi.
+   */
+  useEffect(() => {
+    setPreviewDone(false)
+  }, [lessonKey, lessonId, learningLanguage])
   /** Joriy bosqich ko'rsatkichi — tasdiqda "3/4 so'z" deb aytish uchun */
   const [sessionProgress, setSessionProgress] = useState<{ done: number; total: number } | null>(
     null,
@@ -107,7 +125,8 @@ export function LessonScreen() {
    * ketayotgan bo'lsa tasdiq so'raladi (o'zlashtirish halqasi xotirada —
    * chiqilsa noldan boshlanadi); yakun ekranida esa to'g'ridan-to'g'ri.
    */
-  const inProgress = cards !== null && cards.length > 0 && summary === null
+  // Ro'yxatni ko'rish paytida hali hech narsa yo'qotilmaydi — tasdiq kerak emas
+  const inProgress = cards !== null && cards.length > 0 && summary === null && previewDone
   const handleExit = useCallback(() => {
     if (inProgress) setExitAsked(true)
     else navigate(PATHS.home)
@@ -273,6 +292,13 @@ export function LessonScreen() {
             (word) => !(first.learnedWords ?? []).some((known) => known.id === word.id),
           ),
         ],
+        // Ikkala bosqichda adashilganlar — yakunda "qiynaldingiz" ro'yxati
+        missedWords: [
+          ...(first.missedWords ?? []),
+          ...(result.missedWords ?? []).filter(
+            (word) => !(first.missedWords ?? []).some((known) => known.id === word.id),
+          ),
+        ],
       })
     },
     [lessonSummary],
@@ -347,7 +373,12 @@ export function LessonScreen() {
         />
       )}
 
-      {cards !== null && cards.length > 0 && summary === null && lessonSummary === null && (
+      {/* DARS OLDIDAN: bugungi so'zlarning to'liq ro'yxati */}
+      {cards !== null && cards.length > 0 && summary === null && lessonSummary === null && !previewDone && (
+        <WordPreview cards={cards} onStart={() => setPreviewDone(true)} />
+      )}
+
+      {cards !== null && cards.length > 0 && summary === null && lessonSummary === null && previewDone && (
         <SessionRunner
           key={lessonKey}
           cards={cards}

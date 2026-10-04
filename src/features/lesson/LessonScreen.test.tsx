@@ -13,6 +13,15 @@ const WORDS: NewCardRecordInput[] = [
   { word: 'father', translation: 'ota', language: 'en', topic: 'Oila', level: 'A1' },
 ]
 
+/**
+ * Dars ro'yxat bilan boshlanadi — "Yodlashni boshlash" bosilgach seans.
+ * Qaytaradi: seans ko'rsatkichi.
+ */
+async function startSession() {
+  fireEvent.click(await screen.findByTestId('preview-start'))
+  return screen.findByTestId('session-progress')
+}
+
 function renderLesson(path: string) {
   useSettingsStore.getState().reset()
   useSettingsStore.getState().setLearningLanguage('en')
@@ -45,7 +54,7 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
 
     // "Oila" bo'limida ikkita YANGI so'z bor, har biri uch bosqichda
     // Ko'rsatkich SO'ZLARNI sanaydi: bo'limda ikkita so'z bor
-    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/2')
+    expect(await startSession()).toHaveTextContent('0/2')
   })
 
   it('BIR so‘zli bo‘limda ham variantli mashq chiqadi — chalg‘ituvchilar butun lug‘atdan', async () => {
@@ -58,7 +67,7 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
      */
     renderLesson('/lesson/a1-salomlashish')
 
-    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/1')
+    expect(await startSession()).toHaveTextContent('0/1')
     fireEvent.click(await screen.findByRole('button', { name: /tushundim/i }))
 
     // Variantlar orasida boshqa bo'limning tarjimalari bor
@@ -71,7 +80,7 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
      * 9 ta to'g'ri javobni yo'qqa chiqarardi.
      */
     renderLesson('/lesson/a1-oila')
-    await screen.findByTestId('session-progress')
+    await startSession()
 
     fireEvent.click(screen.getByRole('button', { name: /darsdan chiqish/i }))
 
@@ -93,7 +102,7 @@ describe('LessonScreen — bo‘lim bo‘yicha dars', () => {
     renderLesson('/lesson')
 
     // Butun lug'atdan uchala so'z ham darsga tushadi
-    expect(await screen.findByTestId('session-progress')).toHaveTextContent('0/3')
+    expect(await startSession()).toHaveTextContent('0/3')
   })
 
   it('yo‘q bo‘lim id sida "so‘z yo‘q" DEMAYDI', async () => {
@@ -184,7 +193,7 @@ describe('LessonScreen — aralash takror bosqichi', () => {
 
     renderLesson('/lesson')
 
-    expect(await screen.findByTestId('session-progress')).toBeInTheDocument()
+    expect(await startSession()).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Dars' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /aralash takror/i })).not.toBeInTheDocument()
   })

@@ -8,6 +8,7 @@ import {
   db,
   getAllCards,
   getDailyStat,
+  getDailyStatsSince,
   planKey,
   removeStudyPlan,
   saveStudyPlan,
@@ -20,7 +21,7 @@ import {
   planProgress,
   type StudyPlan,
 } from '@/core/books'
-import { startOfDay } from '@/lib/date'
+import { addDays, startOfDay } from '@/lib/date'
 import { buildUnits } from '@/core/path'
 import { useTopicOrder } from '@/features/home/useTopicOrder'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -64,10 +65,12 @@ export function BooksScreen() {
   const data = useLiveQuery(async () => {
     if (!learningLanguage) return null
     const now = Date.now()
-    const [cards, daily, profile] = await Promise.all([
+    const [cards, daily, profile, history] = await Promise.all([
       getAllCards(learningLanguage),
       getDailyStat(now),
       db.profile.get('me'),
+      // Zanjir uchun oxirgi 14 kun
+      getDailyStatsSince(addDays(startOfDay(now), -13)),
     ])
     const dayStart = startOfDay(now)
 
@@ -78,6 +81,7 @@ export function BooksScreen() {
       plans: profile?.studyPlans ?? {},
       /** Bugun ko'rilgan NOYOB so'zlar — kunlik vazifa shuni sanaydi */
       doneToday: daily.cardIds.length,
+      history,
       activeRecallToday: daily.activeRecallSessions ?? 0,
       /*
        * Ilgak ustaxonasi: BUGUN ko'rilgan, hali ilgagi yo'q so'zlar —
@@ -182,6 +186,7 @@ export function BooksScreen() {
           dueCount={fresh.dueCount}
           hooksToday={fresh.hooksToday}
           seenCount={fresh.seenCount}
+          history={fresh.history}
           activeRecallToday={fresh.activeRecallToday}
           hookCandidates={fresh.hookCandidates}
           dayKey={fresh.dayKey}

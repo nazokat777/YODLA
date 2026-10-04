@@ -7,6 +7,7 @@ import { BADGE_BY_ID, CHEST_MIN_ANSWERS } from '@/core/gamification'
 import { SessionChest } from './SessionChest'
 import { LevelUpBanner } from './LevelUpBanner'
 import { TomorrowCard } from './TomorrowCard'
+import { WordResults } from './WordResults'
 import { LootStrip } from './LootStrip'
 import type { SessionSummary } from './SessionRunner'
 
@@ -166,8 +167,16 @@ export function SessionSummaryPanel({
       {/* Asosiy harakatlar — ma'lumot bloklaridan oldin */}
       {actions && <div className="flex flex-col gap-2">{actions}</div>}
 
-      {/* Bilingan so'zlar — to'plam hissi va yengil qayta ko'rish */}
-      {summary.learnedWords && <LootStrip words={summary.learnedWords} />}
+      {/*
+        So'zlar natijasi: qaysi biri yaxshi yodlandi, qaysi biri qiynadi —
+        to'liq ro'yxat, tarjima va o'qilishi bilan. Xatolar ro'yxati yo'q
+        seanslarda (eski chaqiruvchilar) — oddiy "bugungi o'lja".
+      */}
+      {summary.learnedWords && summary.missedWords !== undefined ? (
+        <WordResults learned={summary.learnedWords} missed={summary.missedWords} />
+      ) : (
+        summary.learnedWords && <LootStrip words={summary.learnedWords} />
+      )}
 
       {/* Halqa ochiq qoladi: ertangi kun va rekord (Zeigarnik) */}
       <TomorrowCard />

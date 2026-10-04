@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { addMissingCards, db, type NewCardRecordInput } from '@/core/db'
 import { saveTopicOrder } from '@/content/topicOrderCache'
@@ -57,6 +57,8 @@ describe('LessonScreen — dars yakunida imtihon taklifi', () => {
       </MemoryRouter>,
     )
 
+    // Avval so'zlar ro'yxati — keyin yodlash
+    fireEvent.click(await screen.findByTestId('preview-start'))
     expect(await screen.findByTestId('exam-offer')).toHaveAttribute('href', '/exam/a1-oila')
   })
 
@@ -83,6 +85,7 @@ describe('LessonScreen — dars yakunida imtihon taklifi', () => {
       </MemoryRouter>,
     )
 
+    fireEvent.click(await screen.findByTestId('preview-start'))
     expect(await screen.findByRole('button', { name: 'Yana bir dars' })).toBeInTheDocument()
     expect(screen.queryByTestId('exam-offer')).not.toBeInTheDocument()
   })

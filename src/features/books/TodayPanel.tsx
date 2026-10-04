@@ -7,6 +7,7 @@ import { cn } from '@/lib/cn'
 import { FocusTimer } from './FocusTimer'
 import { DailyReminder } from './DailyReminder'
 import { HookWorkshop } from './HookWorkshop'
+import { ChainStrip } from './ChainStrip'
 import type { CardRecord } from '@/core/db'
 
 interface TodayPanelProps {
@@ -22,6 +23,8 @@ interface TodayPanelProps {
   seenCount: number
   /** Yangi so'zlar qayerdan olinadi (rejadagi kitobning keyingi darsi) */
   lessonTo?: string
+  /** Oxirgi kunlar statistikasi — planka zanjiri uchun */
+  history?: ReadonlyArray<{ day: number; cardIds: readonly string[] }>
   /** Bugun tugatilgan faol eslash seanslari */
   activeRecallToday?: number
   /** Bugun ko'rilgan, lekin hali ilgagi yo'q so'zlar */
@@ -83,6 +86,7 @@ export function TodayPanel({
   seenCount,
   lessonTo = PATHS.lesson,
   activeRecallToday = 0,
+  history = [],
   hookCandidates = [],
   dayKey,
   onOpenMap,
@@ -190,6 +194,8 @@ export function TodayPanel({
               : 'Kichikdan boshlang: avval minimal planka.'}
         </p>
       </Panel>
+
+      <ChainStrip history={history} minWords={minWords} />
 
       {!task && (
         <Panel padding="sm" className="text-sm">
