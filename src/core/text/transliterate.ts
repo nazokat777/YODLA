@@ -128,6 +128,17 @@ function transliterateArabic(text: string): string {
 
     if (char === TA_MARBUTA) {
       afterTanwin = false
+      /*
+       * Harakat olgan ta marbuta — "t" bo'lib o'qiladi: `سَبُّورَةٌ` →
+       * sabburatun, `الرِّيشَةُ` → arrishatu. Ilgari u doim "a" edi va
+       * keyingi harakat unga yopishib "sabburaun" chiqardi (o'lchandi —
+       * dars oldidagi ro'yxatda). Harakatsiz (pauza) — oldingi "a".
+       */
+      const next = chars[position + 1]
+      if (next !== undefined && next in ARABIC_MARKS) {
+        parts.push({ text: 't', isConsonant: true })
+        continue
+      }
       if (!flat().endsWith('a')) parts.push({ text: 'a', isConsonant: false })
       continue
     }
@@ -266,6 +277,38 @@ function transliterateCyrillic(text: string): string {
   }
 
   return out
+}
+
+/** Arab harakatlari (fatha … sukun, tanvinlar, shadda) */
+const ARABIC_VOWEL_MARK = /[ً-ْ]/g
+/** Arab harflari */
+const ARABIC_LETTER = /[ء-ي]/g
+
+/**
+ * Arabcha matn HARAKATLANGANMI (unli belgilari bormi).
+ *
+ * Harakatsiz matnni harfma-harf o'qib bo'lmaydi: `دفتر يومياتك` →
+ * "dftr yvmyatk" — bu o'qilish emas, chalg'ituvchi shovqin. Bola uni
+ * to'g'ri talaffuz deb o'ylashi mumkin. Shuning uchun o'qilish faqat
+ * harakatlangan matnga ko'rsatiladi: belgilar harflarning kamida
+ * uchdan biricha bo'lsa.
+ */
+export function isVocalizedArabic(text: string): boolean {
+  const letters = text.match(ARABIC_LETTER)?.length ?? 0
+  if (letters === 0) return false
+  const marks = text.match(ARABIC_VOWEL_MARK)?.length ?? 0
+  return marks / letters >= 1 / 3
+}
+
+/**
+ * Matnning o'qilishi — FAQAT ishonchli bo'lsa (ko'rsatish uchun).
+ *
+ * `transliterate` dan farqi: harakatsiz arabcha matnga `null` qaytaradi.
+ * Ekranlarda shu ishlatiladi; `transliterate` esa xom vosita.
+ */
+export function readingFor(text: string, script: ScriptCode): string | null {
+  if (script === 'arabic' && !isVocalizedArabic(text)) return null
+  return transliterate(text, script)
 }
 
 /**

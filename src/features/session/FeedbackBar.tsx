@@ -5,7 +5,7 @@ import type { AnswerVerdict, Exercise } from '@/core/exercises'
 import type { CardRecord } from '@/core/db'
 import { setMnemonic } from '@/core/db'
 import { SECRET_WORD_XP } from '@/core/games'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import { WordImage } from '@/components/ui/WordImage'
 import { WordStrengthMeter } from '@/components/ui/WordStrengthMeter'
 import { cn } from '@/lib/cn'
@@ -155,7 +155,7 @@ export function FeedbackBar({
   const tone = TONE[verdict]
   const language = LANGUAGES[exercise.card.language]
   const { answer, context } = resolveAnswerLines(exercise)
-  const answerReading = answer.isTarget ? transliterate(answer.text, language.script) : null
+  const answerReading = answer.isTarget ? readingFor(answer.text, language.script) : null
   const panelRef = useRef<HTMLDivElement>(null)
 
   /**

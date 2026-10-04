@@ -6,7 +6,7 @@ import { LANGUAGES } from '@/core/config/languages'
 import type { CardRecord } from '@/core/db'
 import { wordOfDay } from '@/core/stats'
 import { imageCodeFor } from '@/content/wordImages'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import { haptic } from '@/lib/haptics'
 import { rememberRevealedWord } from '@/lib/wordOfDayMemo'
 import { Link } from 'react-router-dom'
@@ -46,7 +46,7 @@ export function WordOfDay({ cards, unitId = null }: WordOfDayProps) {
   if (!card) return null
   const language = LANGUAGES[card.language]
   const lessonId = card.level && card.topic ? unitIdOf(card.level, card.topic) : null
-  const reading = transliterate(card.word, language.script)
+  const reading = readingFor(card.word, language.script)
 
   return (
     <Panel data-home-card data-testid="word-of-day" className="flex flex-col gap-2">

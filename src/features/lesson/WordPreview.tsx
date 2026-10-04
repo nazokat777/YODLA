@@ -5,7 +5,7 @@ import { SpeakButton } from '@/components/ui/SpeakButton'
 import { WordImage } from '@/components/ui/WordImage'
 import { LANGUAGES } from '@/core/config/languages'
 import type { CardRecord } from '@/core/db'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import { cancelSpeech, speak } from '@/lib/speech'
 import { useHasVoice } from '@/hooks/useHasVoice'
 
@@ -81,9 +81,9 @@ export function WordPreview({ cards, onStart }: WordPreviewProps) {
 
       <ol className="flex flex-col gap-2">
         {cards.map((card, index) => {
-          const reading = transliterate(card.word, language.script)
+          const reading = readingFor(card.word, language.script)
           const sentenceReading = card.sentence
-            ? transliterate(card.sentence, language.script)
+            ? readingFor(card.sentence, language.script)
             : null
 
           return (

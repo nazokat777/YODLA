@@ -52,7 +52,7 @@ describe('WordIntro', () => {
           id: 'ar:kitob',
           word: 'كِتَاب',
           language: 'ar',
-          sentence: 'أقرأ الكتاب',
+          sentence: 'أَقْرَأُ الْكِتَابَ',
           sentenceTranslation: "Men kitob o'qiyman",
         }}
         onContinue={vi.fn()}
@@ -60,6 +60,23 @@ describe('WordIntro', () => {
     )
     expect(screen.getByTestId('intro-sentence-reading')).toHaveAttribute('dir', 'ltr')
     expect(screen.getByTestId('intro-sentence-reading').textContent?.length).toBeGreaterThan(3)
+  })
+
+  it('HARAKATSIZ arabcha jumlaga o‘qilish ko‘rsatilmaydi — "dftr" kabi shovqin chalg‘itadi', () => {
+    render(
+      <WordIntro
+        card={{
+          ...CARD,
+          id: 'ar:kitob',
+          word: 'كِتَاب',
+          language: 'ar',
+          sentence: 'أقرأ الكتاب',
+          sentenceTranslation: "Men kitob o'qiyman",
+        }}
+        onContinue={vi.fn()}
+      />,
+    )
+    expect(screen.queryByTestId('intro-sentence-reading')).not.toBeInTheDocument()
   })
 
   it('lotin yozuvida jumla o‘qilishi CHIZILMAYDI', () => {

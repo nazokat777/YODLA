@@ -1,4 +1,4 @@
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import type { LanguageMeta } from '@/core/types'
 import { cn } from '@/lib/cn'
 
@@ -22,7 +22,7 @@ interface WordDisplayProps {
 export function WordDisplay({ text, language, size = 'lg', className, testId }: WordDisplayProps) {
   const isRtl = language.dir === 'rtl'
   // O'qishga yordam: notanish yozuvdagi so'zni ovoz chiqarib o'qish uchun
-  const reading = transliterate(text, language.script)
+  const reading = readingFor(text, language.script)
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { LANGUAGES } from '@/core/config/languages'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import type { LearnedWord } from './SessionRunner'
 
@@ -88,7 +88,7 @@ function WordList({ testId, title, hint, words, tone, language }: WordListProps)
       <p className="mt-0.5 text-xs text-ink-600">{hint}</p>
       <ul className="mt-2 flex flex-col divide-y divide-ink-300/40">
         {words.map((word) => {
-          const reading = meta ? transliterate(word.word, meta.script) : null
+          const reading = meta ? readingFor(word.word, meta.script) : null
           return (
             <li key={word.id} className="flex items-center gap-2 py-1.5">
               <span className="flex min-w-0 flex-col">

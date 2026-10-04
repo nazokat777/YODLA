@@ -10,7 +10,7 @@ import type { CardRecord } from '@/core/db'
 import { enterStagger, scrambleReveal, withMotion } from '@/lib/motion'
 import { speak } from '@/lib/speech'
 import { WordDisplay } from './WordDisplay'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 import { revealedWordToday } from '@/lib/wordOfDayMemo'
 import { memoryTip } from '@/core/mnemonics/memoryTip'
 import { imageCodeFor } from '@/content/wordImages'
@@ -35,7 +35,7 @@ interface WordIntroProps {
 export function WordIntro({ card, onContinue }: WordIntroProps) {
   const language = LANGUAGES[card.language]
   const isRevealedWordOfDay = revealedWordToday() === card.id
-  const sentenceReading = card.sentence ? transliterate(card.sentence, language.script) : null
+  const sentenceReading = card.sentence ? readingFor(card.sentence, language.script) : null
   const rootRef = useRef<HTMLDivElement>(null)
   /*
    * XOTIRA USULI — bitta mikro-ko'rsatma. O'qish sayoz iz qoldiradi;
@@ -44,7 +44,7 @@ export function WordIntro({ card, onContinue }: WordIntroProps) {
    */
   // Notanish yozuvda (arab, kirill) maslahatdagi so'z o'qilishi bilan:
   // «كِتَاب (kitab)» — bola uni ovoz chiqarib ayta oladi
-  const wordReading = transliterate(card.word, language.script)
+  const wordReading = readingFor(card.word, language.script)
   const tip = memoryTip({
     id: card.id,
     word: wordReading ? `${card.word} (${wordReading})` : card.word,

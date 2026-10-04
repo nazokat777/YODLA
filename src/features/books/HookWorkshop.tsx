@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
 import { setMnemonic, type CardRecord } from '@/core/db'
-import { transliterate } from '@/core/text/transliterate'
+import { readingFor } from '@/core/text/transliterate'
 
 interface HookWorkshopProps {
   /** Bugun ko'rilgan, ilgagi hali yo'q so'zlar (eng ko'pi 3 ta) */
@@ -41,7 +41,7 @@ export function HookWorkshop({ cards }: HookWorkshopProps) {
 
 function HookForm({ card }: { card: CardRecord }) {
   const language = LANGUAGES[card.language]
-  const reading = transliterate(card.word, language.script)
+  const reading = readingFor(card.word, language.script)
   const [sound, setSound] = useState('')
   const [scene, setScene] = useState('')
   const [saved, setSaved] = useState(false)

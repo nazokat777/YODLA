@@ -100,3 +100,22 @@ describe('transliterate — lotin yozuvi', () => {
     expect(transliterate('  ', 'arabic')).toBeNull()
   })
 })
+
+describe('ta marbuta va harakatsiz matn', () => {
+  it('harakatli ta marbuta "t" bo‘lib o‘qiladi', () => {
+    expect(transliterate('سَبُّورَةٌ', 'arabic')).toBe('sabburatun')
+    expect(transliterate('الرِّيْشَةُ', 'arabic')).toBe('arrishatu')
+    // Harakatsiz (pauza) — "a"
+    expect(transliterate('مَدِينَة', 'arabic')).toBe('madina')
+  })
+
+  it('harakatsiz matnga ishonchli o‘qilish YO‘Q', async () => {
+    const { readingFor, isVocalizedArabic } = await import('./transliterate')
+    expect(isVocalizedArabic('دفتر يومياتك عندي.')).toBe(false)
+    expect(readingFor('دفتر يومياتك عندي.', 'arabic')).toBeNull()
+    // Harakatlangan jumla — o'qilishi bor
+    expect(readingFor('هَذَا كِتَابٌ', 'arabic')).toBe(transliterate('هَذَا كِتَابٌ', 'arabic'))
+    expect(readingFor('هَذَا كِتَابٌ', 'arabic')).not.toBeNull()
+    expect(readingFor('привет', 'cyrillic')).toBe('privet')
+  })
+})
