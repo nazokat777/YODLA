@@ -123,6 +123,19 @@ export function BooksScreen() {
     [fresh, topicOrder, startingLevel],
   )
 
+  /**
+   * Lug'at guruhlari nomi KITOB bilan: "Qiroat 1-kitob · 8-dars". Faqat
+   * "8-dars" bo'lsa, uchta kitobning 8-darsi bir-biridan farqlanmasdi.
+   */
+  const vocabularyUnits = useMemo(
+    () =>
+      units.map((unit) => ({
+        id: unit.id,
+        title: unit.section ? `${unit.section} · ${unit.title}` : unit.title,
+      })),
+    [units],
+  )
+
   /** Rejasi bor BIRINCHI kitobning bugungi vazifasi — "Bugun" uchun */
   const activeTask = useMemo(() => {
     if (!fresh) return null
@@ -237,7 +250,7 @@ export function BooksScreen() {
       )}
 
       {tab === 'words' && (
-        <VocabularyPanel language={fresh.language} cards={fresh.cards} unitOrder={units} />
+        <VocabularyPanel language={fresh.language} cards={fresh.cards} unitOrder={vocabularyUnits} />
       )}
 
       {tab === 'methods' && <MethodsPanel />}
