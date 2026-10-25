@@ -16,6 +16,13 @@ import { ReviewScreen } from './ReviewScreen'
 vi.mock('@/core/games', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/core/games')>()),
   isLucky: () => false,
+  /*
+   * Sehrli so'z HAFTA kalitidan tanlanadi — 2–3 kartali testda har
+   * ikkinchi hafta aynan test so'ziga tushib, XP +30 ga oshardi va test
+   * sanaga qarab yiqilardi (o'lchandi). Bu yerda u o'chirilgan; o'zi
+   * SessionRunner.test da alohida tekshiriladi.
+   */
+  secretWordId: () => null,
 }))
 
 const EN_WORDS: NewCardRecordInput[] = [
