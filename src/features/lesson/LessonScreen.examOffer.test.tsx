@@ -90,3 +90,62 @@ describe('LessonScreen — dars yakunida imtihon taklifi', () => {
     expect(screen.queryByTestId('exam-offer')).not.toBeInTheDocument()
   })
 })
+
+describe('LessonScreen — "Yana bir dars"', () => {
+  it('ikkinchi dars ham yangi so‘zlar ro‘yxatidan boshlanadi (aralash takrordan emas)', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await addMissingCards([
+      ...WORDS,
+      { word: 'father', translation: 'ota', language: 'en', topic: 'Oila', level: 'A1' },
+      { word: 'sister', translation: 'opa', language: 'en', topic: 'Oila', level: 'A1' },
+    ])
+    saveTopicOrder('en', ['Salomlashish', 'Oila'])
+    // Aralash takror bosqichi bo'lishi uchun ko'rilgan so'z kerak
+    await db.cards.update('en:hello', { totalReviews: 2 })
+
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    render(
+      <MemoryRouter initialEntries={['/lesson/a1-oila']}>
+        <Routes>
+          <Route path="/lesson/:lessonId?" element={<LessonScreen />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(await screen.findByTestId('preview-start'))
+    // Mock runner: 1-bosqich → aralash takror → yakun
+    fireEvent.click(await screen.findByRole('button', { name: 'Yana bir dars' }))
+
+    // Yangi dars yana RO'YXAT bilan boshlanadi
+    expect(await screen.findByTestId('word-preview')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Aralash takror' })).not.toBeInTheDocument()
+  })
+})
+
+describe('LessonScreen — tugagan darsdan keyin keyingisi', () => {
+  it('bo‘lim tugagach "Keyingi dars · Oila" — o‘sha kitobning keyingi darsi', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await addMissingCards(WORDS)
+    saveTopicOrder('en', ['Salomlashish', 'Oila'])
+    // Salomlashish (1 so'z) tugagan, Oila hali yo'q
+    await db.cards.update('en:hello', { totalReviews: 2 })
+
+    useSettingsStore.getState().reset()
+    useSettingsStore.getState().setLearningLanguage('en')
+    render(
+      <MemoryRouter initialEntries={['/lesson/a1-salomlashish']}>
+        <Routes>
+          <Route path="/lesson/:lessonId?" element={<LessonScreen />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(await screen.findByTestId('preview-start'))
+    const next = await screen.findByTestId('next-unit')
+    expect(next).toHaveAttribute('href', '/lesson/a1-oila')
+    expect(next).toHaveTextContent('Keyingi dars · Oila')
+  })
+})

@@ -141,22 +141,42 @@ export function LessonScreen() {
    */
   const topicOrder = useTopicOrder(learningLanguage)
   const [examOffer, setExamOffer] = useState<{ unitId: string; count: number } | null>(null)
+  /**
+   * Shu dars (bo'lim) TUGAGAN bo'lsa — o'sha kitobning KEYINGI darsi.
+   *
+   * Bola rejadagi kitob bo'yicha `/lesson/<bo'lim>` dan keladi. Bo'lim
+   * tugagach "Yana bir dars" o'sha tugagan bo'limni qayta ochardi —
+   * yangi so'z yo'q, faqat eskilari. Endi kitob bo'ylab oldinga yuradi.
+   */
+  const [nextUnit, setNextUnit] = useState<{ id: string; title: string } | null>(null)
   useEffect(() => {
     if (!summary || !learningLanguage || topicOrder === null) return
     let cancelled = false
     setExamOffer(null)
+    setNextUnit(null)
     void Promise.all([getAllCards(learningLanguage), db.profile.get('me')])
       .then(([all, profile]) => {
         if (cancelled) return
         const units = buildUnits(all, { minLevel: startingLevel, topicOrder })
         const pending = pendingExam(units, examResultsFor(profile?.examResults, learningLanguage))
         if (pending) setExamOffer({ unitId: pending.unitId, count: pending.covered.length })
+
+        const current = lessonId ? units.find((unit) => unit.id === lessonId) : undefined
+        if (current && current.learned === current.total) {
+          const next = units.find(
+            (unit, index) =>
+              index > units.indexOf(current) &&
+              unit.section === current.section &&
+              unit.learned < unit.total,
+          )
+          if (next) setNextUnit({ id: next.id, title: next.title })
+        }
       })
       .catch(() => {})
     return () => {
       cancelled = true
     }
-  }, [summary, learningLanguage, topicOrder, startingLevel])
+  }, [summary, learningLanguage, topicOrder, startingLevel, lessonId])
 
   /** Chaqmoq raund taklifi — har dars uchun BIR marta tashlanadi */
   const [lightningOffered, setLightningOffered] = useState(isLightningOffered)
@@ -182,6 +202,13 @@ export function LessonScreen() {
     let cancelled = false
     setCards(null)
     setSummary(null)
+    /*
+     * 1-bosqich natijasi ham TOZALANADI. Ilgari u qolib ketardi va "Yana
+     * bir dars" bosilganda yangi dars yangi so'zlarni o'tkazib, darhol
+     * aralash takrorga o'tardi (1-bosqich `lessonSummary === null` ni
+     * kutadi) — yakunda esa eski darsning natijasi qo'shilib ketardi.
+     */
+    setLessonSummary(null)
     setIsMissingUnit(false)
     setLightningOffered(isLightningOffered())
 
@@ -442,14 +469,26 @@ export function LessonScreen() {
                   ⚡ Chaqmoq raund — 20 soniya, XP ×2!
                 </LinkButton>
               )}
-              <Button
-                block
-                size="lg"
-                variant={examOffer ? 'secondary' : 'primary'}
-                onClick={() => setLessonKey((key) => key + 1)}
-              >
-                Yana bir dars
-              </Button>
+              {nextUnit ? (
+                <LinkButton
+                  to={PATHS.lessonById(nextUnit.id)}
+                  block
+                  size="lg"
+                  variant={examOffer ? 'secondary' : 'primary'}
+                  data-testid="next-unit"
+                >
+                  Keyingi dars · {nextUnit.title} →
+                </LinkButton>
+              ) : (
+                <Button
+                  block
+                  size="lg"
+                  variant={examOffer ? 'secondary' : 'primary'}
+                  onClick={() => setLessonKey((key) => key + 1)}
+                >
+                  Yana bir dars
+                </Button>
+              )}
               <LinkButton to={PATHS.home} block variant="ghost">
                 Bosh sahifaga
               </LinkButton>
