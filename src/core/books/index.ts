@@ -2,3 +2,4 @@
 export * from './books'
 export * from './plan'
 export * from './chain'
+export * from './vocabulary'

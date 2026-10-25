@@ -28,13 +28,15 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/cn'
 import { BookPlanCard } from './BookPlanCard'
 import { MethodsPanel } from './MethodsPanel'
+import { VocabularyPanel } from './VocabularyPanel'
 import { TodayPanel } from './TodayPanel'
 
-type Tab = 'today' | 'map' | 'methods'
+type Tab = 'today' | 'map' | 'words' | 'methods'
 
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: 'today', label: 'Bugun' },
   { id: 'map', label: 'Xarita' },
+  { id: 'words', label: 'Lug‘atim' },
   { id: 'methods', label: 'Usullar' },
 ]
 
@@ -159,7 +161,7 @@ export function BooksScreen() {
         </p>
       </header>
 
-      <div role="tablist" aria-label="Mnemonika bo‘limlari" className="grid grid-cols-3 gap-1 rounded-2xl bg-ink-300/25 p-1">
+      <div role="tablist" aria-label="Mnemonika bo‘limlari" className="grid grid-cols-4 gap-1 rounded-2xl bg-ink-300/25 p-1">
         {TABS.map((item) => (
           <button
             key={item.id}
@@ -169,7 +171,7 @@ export function BooksScreen() {
             data-testid={`tab-${item.id}`}
             onClick={() => setTab(item.id)}
             className={cn(
-              'tap-highlight-none rounded-xl py-2 text-sm font-extrabold transition-colors',
+              'tap-highlight-none rounded-xl py-2 text-[13px] font-extrabold transition-colors',
               tab === item.id ? 'bg-white text-ink-900 shadow-sm' : 'text-ink-600',
             )}
           >
@@ -232,6 +234,10 @@ export function BooksScreen() {
             })}
           </ul>
         </>
+      )}
+
+      {tab === 'words' && (
+        <VocabularyPanel language={fresh.language} cards={fresh.cards} unitOrder={units} />
       )}
 
       {tab === 'methods' && <MethodsPanel />}

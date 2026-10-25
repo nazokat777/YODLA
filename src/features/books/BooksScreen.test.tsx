@@ -182,3 +182,33 @@ describe('BooksScreen — ilgak ustaxonasi va faol eslash', () => {
     })
   })
 })
+
+describe('BooksScreen — Lug‘atim', () => {
+  beforeEach(async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await db.dailyStats.clear()
+    localStorage.clear()
+    await addMissingCards(WORDS)
+    await db.cards.update('en:a', { totalReviews: 2, interval: 30, repetitions: 4 })
+    await db.cards.update('en:b', { totalReviews: 3, lapses: 3, interval: 1, repetitions: 1 })
+  })
+
+  it('faqat o‘rganilgan so‘zlar, filtr va tarjimani yopish', async () => {
+    renderBooks('/books?tab=words')
+
+    expect(await screen.findByTestId('vocabulary-count')).toHaveTextContent('2 ta so‘z')
+    expect(screen.getByTestId('vocab-en:a')).toHaveTextContent('aa')
+    expect(screen.queryByTestId('vocab-en:c')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('vocab-filter-hard'))
+    expect(screen.getByTestId('vocabulary-count')).toHaveTextContent('1 ta so‘z')
+    expect(screen.getByTestId('vocab-en:b')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('vocab-filter-all'))
+    fireEvent.click(screen.getByTestId('vocab-hide'))
+    expect(screen.getByTestId('vocab-en:a')).not.toHaveTextContent('aa')
+    fireEvent.click(screen.getAllByRole('button', { name: 'ko‘rsatish' })[0]!)
+    expect(screen.getAllByText(/aa|bb/).length).toBeGreaterThan(0)
+  })
+})
