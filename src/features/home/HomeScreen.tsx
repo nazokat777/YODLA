@@ -5,7 +5,7 @@ import { PATHS } from '@/app/paths'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { Panel } from '@/components/ui/Panel'
 import { LANGUAGES } from '@/core/config/languages'
-import { computeLanguageStats, type ExamResult, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
+import { computeLanguageStats, planKey, type ExamResult, getAllCards, getGlobalCardStats, getNextDueDate } from '@/core/db'
 import { formatTimeUntil } from '@/lib/format'
 import { addDays, startOfDay } from '@/lib/date'
 import { useNowTick } from '@/hooks/useNowTick'
@@ -27,6 +27,7 @@ import { LearningPath } from './LearningPath'
 import { useTopicOrder } from './useTopicOrder'
 import { buildUnits } from '@/core/path'
 import { examResultsFor, pendingExam } from '@/core/exam'
+import { buildBooks, nextUnitOfBook } from '@/core/books'
 import { WordSky } from './WordSky'
 import { WeeklyQuest } from './WeeklyQuest'
 import { StreakTierToast } from './StreakTierToast'
@@ -127,6 +128,23 @@ export function HomeScreen() {
   }, [cards, topicOrder, startingLevel, examResults])
 
   /*
+   * Asosiy tugma qaysi darsni ochadi. O'quv REJASI bo'lsa — rejadagi
+   * kitobning keyingi darsi: aks holda qahramon tugmasi bir kitobga,
+   * reja kartasi boshqasiga olib borardi (bitta ekranda ikki gap).
+   */
+  const studyPlans = progress?.profile.studyPlans
+  const heroLessonTo = useMemo(() => {
+    if (!cards || !learningLanguage || topicOrder === null || !studyPlans) return PATHS.lesson
+    const planned = buildBooks(cards).find(
+      (book) => studyPlans[planKey(learningLanguage, book.id)] !== undefined,
+    )
+    if (!planned) return PATHS.lesson
+    const units = buildUnits(cards, { minLevel: startingLevel, topicOrder })
+    const unitId = nextUnitOfBook(units, planned.id)
+    return unitId ? PATHS.lessonById(unitId) : PATHS.lesson
+  }, [cards, learningLanguage, topicOrder, studyPlans, startingLevel])
+
+  /*
    * Kirish animatsiyasi: kartalar ketma-ket chiqadi, XP sanaladi.
    *
    * XP JSXda YAKUNIY qiymati bilan chiziladi — animatsiya bo'lmasa
@@ -174,6 +192,7 @@ export function HomeScreen() {
         frozenYesterday={progress?.profile.frozenDays.includes(addDays(startOfDay(now), -1)) ?? false}
         freezesLeft={progress?.profile.freezesAvailable ?? 0}
         exam={exam}
+        lessonTo={heroLessonTo}
       />
 
       {/* Yo'ldosh — so'zlar bilan o'sadigan jonzot (g'amxo'rlik effekti) */}

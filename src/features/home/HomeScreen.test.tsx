@@ -264,4 +264,29 @@ describe('HomeScreen — bugungi reja', () => {
     // Tugma rejadagi kitobning darsini ochadi
     expect(await screen.findByTestId('plan-card-start')).toHaveTextContent('kamida 1 so‘z')
   })
+
+  it('reja bo‘lsa qahramon tugmasi ham REJADAGI kitobning darsiga olib boradi', async () => {
+    await db.cards.clear()
+    await db.profile.clear()
+    await addMissingCards([
+      { word: 'hello', translation: 'salom', language: 'en', topic: 'Salomlashish', level: 'A1' },
+      { word: 'a', translation: 'aa', language: 'en', topic: 'Kitob 1 · 1-dars', level: 'A1' },
+    ])
+    const { saveTopicOrder } = await import('@/content/topicOrderCache')
+    saveTopicOrder('en', ['Salomlashish', 'Kitob 1 · 1-dars'])
+    const { createProfile } = await import('@/core/db')
+    await db.profile.put({
+      ...createProfile(),
+      studyPlans: {
+        'en:kitob-1': { bookId: 'kitob-1', days: 10, startedAt: 0, learnedAtStart: 0 },
+      },
+    })
+
+    renderScreen()
+
+    // Umumiy joriy bo'lim "Salomlashish" — lekin reja Kitob 1 uchun
+    await waitFor(() => {
+      expect(screen.getByTestId('hero-cta')).toHaveAttribute('href', '/lesson/a1-kitob-1-1-dars')
+    })
+  })
 })

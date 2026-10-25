@@ -28,6 +28,8 @@ interface HomeHeroProps {
    * so'zlarni olishdan oldin eskilarini mustahkamlash muhimroq.
    */
   exam?: { unitId: string; count: number } | null
+  /** "Darsni boshlash" qaysi darsni ochadi (rejadagi kitob) — sukut umumiy joriy dars */
+  lessonTo?: string
 }
 
 /** Halqa geometriyasi */
@@ -59,6 +61,7 @@ export function HomeHero({
   frozenYesterday = false,
   freezesLeft = 0,
   exam = null,
+  lessonTo = PATHS.lesson,
 }: HomeHeroProps) {
   const ratio = dailyGoalWords > 0 ? Math.min(1, wordsToday / dailyGoalWords) : 0
   const goalDone = wordsToday >= dailyGoalWords
@@ -235,7 +238,7 @@ export function HomeHero({
         so'zlar yangi so'zdan muhim), aks holda dars.
       */}
       <Link
-        to={dueCount > 0 ? PATHS.review : exam ? PATHS.examById(exam.unitId) : PATHS.lesson}
+        to={dueCount > 0 ? PATHS.review : exam ? PATHS.examById(exam.unitId) : lessonTo}
         data-testid="hero-cta"
         className="hero-cta tap-highlight-none relative mt-5 flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-white px-5 py-3.5 text-base font-extrabold text-ink-900 shadow-[0_6px_0_0_rgb(0_0_0/0.18)] transition-transform active:translate-y-[3px] active:shadow-none"
       >
