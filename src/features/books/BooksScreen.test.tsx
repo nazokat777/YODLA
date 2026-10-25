@@ -200,10 +200,16 @@ describe('BooksScreen — Lug‘atim', () => {
     expect(await screen.findByTestId('vocabulary-count')).toHaveTextContent('2 ta so‘z')
     expect(screen.getByTestId('vocab-en:a')).toHaveTextContent('aa')
     expect(screen.queryByTestId('vocab-en:c')).not.toBeInTheDocument()
+    // Har dars guruhida qayta mashq havolasi
+    expect(screen.getByTestId('vocab-practice-a1-kitob-1-1-dars')).toHaveAttribute(
+      'href',
+      '/lesson/a1-kitob-1-1-dars',
+    )
 
     fireEvent.click(screen.getByTestId('vocab-filter-hard'))
     expect(screen.getByTestId('vocabulary-count')).toHaveTextContent('1 ta so‘z')
     expect(screen.getByTestId('vocab-en:b')).toBeInTheDocument()
+    expect(screen.getByTestId('vocab-practice-hard')).toHaveAttribute('href', '/review/weak')
 
     fireEvent.click(screen.getByTestId('vocab-filter-all'))
     fireEvent.click(screen.getByTestId('vocab-hide'))

@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { PATHS } from '@/app/paths'
+import { LinkButton } from '@/components/ui/LinkButton'
 import { Panel } from '@/components/ui/Panel'
 import { SpeakButton } from '@/components/ui/SpeakButton'
 import { LANGUAGES } from '@/core/config/languages'
@@ -125,6 +128,13 @@ export function VocabularyPanel({ language, cards, unitOrder }: VocabularyPanelP
         </div>
       </Panel>
 
+      {/* Qiyin so'zlar ko'rinib turganda — darhol ular ustida ishlash */}
+      {filter === 'hard' && total > 0 && (
+        <LinkButton to={PATHS.weakReview} block data-testid="vocab-practice-hard">
+          ⚠️ Shu {total} ta qiyin so‘zni mashq qilish
+        </LinkButton>
+      )}
+
       {total === 0 && (
         <Panel padding="sm" className="text-center text-sm text-ink-600">
           {query
@@ -139,9 +149,21 @@ export function VocabularyPanel({ language, cards, unitOrder }: VocabularyPanelP
 
       {groups.slice(0, shown).map((group) => (
         <Panel key={group.unitId} padding="sm" data-testid={`vocab-group-${group.unitId}`}>
-          <h3 className="mb-1 text-sm font-extrabold text-ink-600">
-            {group.title} · {group.entries.length}
-          </h3>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <h3 className="text-sm font-extrabold text-ink-600">
+              {group.title} · {group.entries.length}
+            </h3>
+            {/* Shu dars so'zlarini qayta mashq qilish */}
+            {group.unitId !== 'boshqa' && (
+              <Link
+                to={PATHS.lessonById(group.unitId)}
+                className="shrink-0 text-xs font-bold text-brand-700"
+                data-testid={`vocab-practice-${group.unitId}`}
+              >
+                ↻ Mashq
+              </Link>
+            )}
+          </div>
           <ul className="flex flex-col divide-y divide-ink-300/40">
             {group.entries.map(({ card, strength, hard }) => (
               <VocabularyRow
