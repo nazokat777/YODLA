@@ -245,6 +245,53 @@ qoldiradi; so'z ustida ish chuqur. Usul so'zga qarab BARQAROR (id
 xeshi): bir so'z har safar bir xil usul — usul so'zning "o'z"iga
 aylanadi.
 
+## Dars oqimi: ro'yxat → yodlash → natija
+
+1. **Ro'yxat** (`WordPreview`): darsdan oldin bugungi so'zlarning TO'LIQ
+   ro'yxati — rasm, yozilishi, o'qilishi `[sabburatun]`, tarjimasi,
+   talaffuz tugmasi, jumla va tarjimasi; "🔊 Hammasini eshitish". Hajmni
+   bilish — mnemonikaning birinchi qadami. `previewDone` faqat YANGI dars
+   ochilganda qaytadan `false` bo'ladi (yuklash effektida emas — jonli
+   kartalar soni uni qayta ishga tushirib, bolani ro'yxatga qaytarardi).
+2. **Yodlash**: tanishtiruv + o'zlashtirish halqasi + aralash takror.
+3. **Natija** (`WordResults`): ikki to'liq ro'yxat — ✅ "Yaxshi
+   yodladingiz" (xatosiz) va ⚠️ "Qiynaldingiz" (`missedWords`, ertaga
+   birinchi qaytadi), har so'z o'qilishi, tarjimasi va talaffuzi bilan.
+
+**O'qilish faqat ishonchli bo'lsa**: ekranlar `readingFor` ni ishlatadi —
+harakatsiz arabcha matnga `null` ("dftr yvmyatk" kabi shovqin bola uchun
+noto'g'ri talaffuz bo'lardi). Harakatli ta marbuta — "t" (`سَبُّورَةٌ` →
+sabburatun).
+
+## 🧠 Mnemonika
+
+Pastki menyudagi bo'lim (`/books`), to'rt qism:
+
+| Qism | Nima beradi |
+| ---- | ----------- |
+| **Bugun** | neyrobiologik chek-ro'yxat: minimal planka (eng yomon kunda ham 5 so'z — zanjir uzilmasin), rejadagi ulush, takrorlash, ilgak, gap tuzish, "O'zbekchasidan ayt"; ilova tekshira oladiganlari AVTOMATIK belgilanadi. Planka zanjiri (14 kun), ilgak ustaxonasi (o'xshash so'z + sahna), diqqat taymeri 15+3 / 25+5, har kungi eslatma telefon kalendariga (.ics, `RRULE:FREQ=DAILY` — serversiz) |
+| **Xarita** | har kitobning aniq raqamlari (so'z, dars, jumla, uzoq xotirada) va 1/2/3/6 oylik reja: kunlik ulush, kun raqami, orqada/oldinda, tugash sanasi. Tugma REJADAGI kitobning keyingi darsini ochadi |
+| **Lug'atim** | o'rganilgan so'zlar darslar bo'yicha, mustahkamlik ●●○, qidiruv (so'z/tarjima/o'qilish), qiyin/mustahkam filtri, "tarjimani yopish" (o'z-o'zini tekshirish), "↻ Mashq" |
+| **Usullar** | "Xotira sinovi" (qarmoq usuli: usulsiz test → 1–10 qarmoqlar → usul bilan test, o'sish ko'rinadi), 3 tayanch va 8 qadamli algoritm — har qadam ilovada qayerda |
+
+Manba: o'zbek tilidagi mnemonika ma'ruzalari tahlili (hajm, konkretika,
+bog'lash; ilgak + obraz; qaramasdan eslash; ikki tomon; oraliqli takror;
+hayotda ishlatish; intizom — minimal planka). `core/books` (kitoblar,
+reja, zanjir, lug'at) sof funksiyalar, to'liq test bilan.
+
+Reja qoidalari: kun boshida hech kim "orqada" emas (kutilgan = kunlik ×
+(kun − 1)); orqada qolganda ulush oshadi, lekin ikki baravardan ko'p
+emas; reja `profile.studyPlans["til:kitob"]` da, muddat o'zgarsa
+boshlanish sanasi saqlanadi.
+
+**Faol eslash** (`/review/active`, `SessionRunner activeRecall`): faqat
+so'zni o'zi chiqaradigan mashqlar — o'zbekchasidan yozish, harflardan
+yig'ish, gap tuzish, bo'shliq. Bugun va shu hafta ko'rilganlar, zaifi
+oldin.
+
+**Grammatika/qoidalar soni**: lug'at kontentida grammatika ma'lumoti YO'Q
+— faqat so'z, dars va jumla. Qoida sonlari o'ylab topilmaydi.
+
 ## Yig'ma imtihon
 
 **Har bo'lim tugagach — shu bo'limgacha bo'lgan HAMMASIDAN imtihon**
@@ -714,6 +761,8 @@ rad javobidan keyin qayta-qayta so'rash bezor qiladi.
 | `/mnemonics`         | Assotsiatsiyalar | AppShell | onboarding kerak |
 | `/lesson/:lessonId?` | Dars        | Focus    | onboarding kerak  |
 | `/exam/:unitId`      | Yig'ma imtihon | Focus | onboarding kerak  |
+| `/books`             | Mnemonika   | AppShell | onboarding kerak  |
+| `/review/active`     | Faol eslash | AppShell | onboarding kerak  |
 | `*`                  | 404         | Focus    | —                 |
 
 > `/review` va `/lesson` bitta `SessionRunner` komponentini ishlatadi —
